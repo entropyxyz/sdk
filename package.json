@@ -1,0 +1,19 @@
+{
+  "name": "entropyjs",
+  "version": "0.0.1",
+  "description": "JS SDK for entropy blockchain ",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/entropyxyz/entropy-js.git"
+  },
+  "author": "Entropy",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/entropyxyz/entropy-js/issues"
+  },
+  "homepage": "https://github.com/entropyxyz/entropy-js#readme"
+}
