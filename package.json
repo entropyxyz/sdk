@@ -3,9 +3,14 @@
   "version": "0.0.1",
   "description": "JS SDK for entropy blockchain ",
   "main": "index.js",
+  "private": true,
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "workspaces": [
+    "packages/*"
+  ],
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/entropyxyz/entropy-js.git"
