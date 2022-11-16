@@ -8,10 +8,20 @@ export * from "@polkadot/api";
 export class SubstrateRead {
   api: ApiPromise;
 
+  /**
+   * Constructs a new object for read only calls to Entropy chain
+   * does not require a user wallet
+   * @param api the api object for an Entropy chain
+   */
   constructor(api: ApiPromise) {
     this.api = api;
   }
 
+  /**
+   * Static function to setup a Substrate Read object
+   * @param endpoint endpoint ws address, optional will default to localhost 
+   * @returns Self
+   */
   static async setup(endpoint?: string): Promise<SubstrateRead> {
     const api = await getApi(endpoint);
     return new SubstrateRead(api);
@@ -22,12 +32,23 @@ export class Substrate extends SubstrateRead {
   api: ApiPromise;
   signer: Signer;
 
+  /**
+   * Constructs a new object to talk to Entropy chain
+   * @param api an api object for Entropy chain
+   * @param signer a signer object for the user talking to the Entropy chain
+   */
   constructor(api: ApiPromise, signer: Signer) {
     super(api);
     this.api = api;
     this.signer = signer;
   }
 
+  /**
+   * Static function to setup a Substrate instance 
+   * @param seed Private key for wallet
+   * @param endpoint endpoint ws address, optional will default to localhost 
+   * @returns Self
+   */
   static async setup(seed: string, endpoint?: string): Promise<Substrate> {
     const api = await getApi(endpoint);
     const wallet = await getWallet(seed);
@@ -35,6 +56,11 @@ export class Substrate extends SubstrateRead {
   }
 }
 
+/**
+ * 
+ * @param endpoint a string of the ws address of the chain
+ * @returns an api object for talking to entropy chain
+ */
 const getApi = async (endpoint?: string): Promise<ApiPromise> => {
   const wsProvider = endpoint
     ? new WsProvider(endpoint)
@@ -44,6 +70,11 @@ const getApi = async (endpoint?: string): Promise<ApiPromise> => {
   return api;
 };
 
+/**
+ * 
+ * @param seed A string of the private key of the wallet
+ * @returns a wallet object and a pair object
+ */
 const getWallet = (seed: string): Signer => {
   const keyring = new Keyring({ type: "sr25519" });
   const pair = sr25519PairFromSeed(seed);
