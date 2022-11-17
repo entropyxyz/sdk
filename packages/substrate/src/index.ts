@@ -1,9 +1,10 @@
-import { AddressOrPair } from "@polkadot/api/types";
+import { AddressOrPair, SubmittableExtrinsic } from "@polkadot/api/types";
 import { ApiPromise, WsProvider } from "../../substrate/src";
 import { Keyring } from "@polkadot/keyring";
 import { sr25519PairFromSeed } from "@polkadot/util-crypto";
 import { Signer } from "./types";
-export * from "@polkadot/api";
+import { SubmittableResult } from "@polkadot/api";
+export * as polkadotJs from "@polkadot/api";
 
 export class SubstrateRead {
   api: ApiPromise;
@@ -19,7 +20,7 @@ export class SubstrateRead {
 
   /**
    * Static function to setup a Substrate Read object
-   * @param endpoint endpoint ws address, optional will default to localhost 
+   * @param endpoint endpoint ws address, optional will default to localhost
    * @returns Self
    */
   static async setup(endpoint?: string): Promise<SubstrateRead> {
@@ -44,9 +45,9 @@ export class Substrate extends SubstrateRead {
   }
 
   /**
-   * Static function to setup a Substrate instance 
+   * Static function to setup a Substrate instance
    * @param seed Private key for wallet
-   * @param endpoint endpoint ws address, optional will default to localhost 
+   * @param endpoint endpoint ws address, optional will default to localhost
    * @returns Self
    */
   static async setup(seed: string, endpoint?: string): Promise<Substrate> {
@@ -54,10 +55,49 @@ export class Substrate extends SubstrateRead {
     const wallet = await getWallet(seed);
     return new Substrate(api, wallet);
   }
+
+  async sendAndWait(
+    call: SubmittableExtrinsic<"promise">,
+    api: ApiPromise,
+    sender: AddressOrPair
+  ): Promise<undefined> {
+    return new Promise<undefined>((resolve, reject) => {
+      call
+        .signAndSend(sender, (res: SubmittableResult) => {
+          const { dispatchError, status } = res;
+
+          if (dispatchError) {
+            if (dispatchError.isModule) {
+              // for module errors, we have the section indexed, lookup
+              const decoded: any = api.registry.findMetaError(
+                dispatchError.asModule
+              );
+              const { documentation, name, section } = decoded;
+
+              const err = Error(
+                `${section}.${name}: ${documentation.join(" ")}`
+              );
+
+              err.name = name;
+              reject(err);
+            } else {
+              reject(Error(dispatchError.toString()));
+            }
+          }
+
+          if (status.isInBlock || status.isFinalized) {
+            resolve(undefined);
+          }
+        })
+        .catch((e) => {
+          reject(Error(e.message));
+        });
+    });
+  }
 }
 
 /**
- * 
+ *
  * @param endpoint a string of the ws address of the chain
  * @returns an api object for talking to entropy chain
  */
@@ -71,7 +111,7 @@ const getApi = async (endpoint?: string): Promise<ApiPromise> => {
 };
 
 /**
- * 
+ *
  * @param seed A string of the private key of the wallet
  * @returns a wallet object and a pair object
  */
