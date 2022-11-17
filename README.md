@@ -10,7 +10,7 @@
 
 ### Linting
 
-Linting is available and can be done by running `yarn eslint .`. You can also use the ESLint extension if you're using VSCode.
+Linting is available and can be done by running `yarn eslint`. You can also use the ESLint extension if you're using VSCode.
 
 ### Testing
 
