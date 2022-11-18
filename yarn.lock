@@ -2349,6 +2349,11 @@ ws@^8.8.1:
   resolved "https://registry.yarnpkg.com/ws/-/ws-8.11.0.tgz#6a0d36b8edfd9f96d8b25683db2f8d7de6e8e143"
   integrity sha512-HPG3wQd9sNQoT9xHyNCXoDUa+Xw/VevmY9FoHyQ+g+rrMn4j6FB4np7Z0OhdTgjx6MgQLK7jwSy1YecU1+4Asg==
 
+x25519@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/x25519/-/x25519-0.1.0.tgz#148cc3a07adc8fbdd7be6b36828b9d6eee1738d8"
+  integrity sha512-ySw7TP6e6kBgkakLG1HGOkZIiElg1zZ+7U54xqcaH4Alb7P6dNQy1Mng146iBHK811+oji+mRQiIEl+I/kE2pQ==
+
 y18n@^5.0.5:
   version "5.0.8"
   resolved "https://registry.yarnpkg.com/y18n/-/y18n-5.0.8.tgz#7f4934d0f7ca8c56f95314939ddcd2dd91ce1d55"

@@ -14,6 +14,6 @@ export interface EventFilter {
 
 export type StashKeys = Array<Address>
 
-export type ThresholdKeys = Array<Address>
+export type ThresholdInfo = Array<Array<Address>>
 
 export type Address = AccountId32 | string | Uint8Array

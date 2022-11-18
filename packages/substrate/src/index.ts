@@ -2,7 +2,7 @@ import { AddressOrPair, SubmittableExtrinsic } from "@polkadot/api/types";
 import { AnyJson } from "@polkadot/types-codec/types";
 import { Keyring } from "@polkadot/keyring";
 import { sr25519PairFromSeed } from "@polkadot/util-crypto";
-import { Signer, StashKeys, ThresholdKeys, EventFilter, Address } from "./types";
+import { Signer, StashKeys, ThresholdInfo, EventFilter, Address } from "./types";
 import { SubmittableResult, ApiPromise, WsProvider } from "@polkadot/api";
 export * as polkadotJs from "@polkadot/api";
 import { EventRecord } from "@polkadot/types/interfaces/types";
@@ -33,16 +33,15 @@ export class SubstrateRead {
    * @param stashKeys An array of stash keys to query
    * @returns threshold server keys associated with the server
    */
-  async getThresholdAccounts(stashKeys: StashKeys): Promise<ThresholdKeys> {
-    let result: ThresholdKeys = [];
+  async getThresholdInfo(stashKeys: StashKeys): Promise<ThresholdInfo> {
+    let result: ThresholdInfo = [];
     for (let i = 0; i < stashKeys.length; i++) {
       // TODO needs to be changed after next update
       let r = await this.api.query.stakingExtension.thresholdAccounts(
         stashKeys[i]
       );
-
       const convertedResult: any = r.toHuman() ? r.toHuman() : null;
-      convertedResult ? result.push(convertedResult[0]) : null;
+      convertedResult ? result.push(convertedResult) : null;
     }
     return result;
   }

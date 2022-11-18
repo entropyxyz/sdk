@@ -18,16 +18,22 @@ describe("Substrate Tests", async () => {
     const register: any = await substrate.register();
     assert.equal(register.isRegistering, true);
   });
-  it(`gets threshold keys`, async () => {
+  it(`gets threshold Info`, async () => {
     const stashKeys = [
       "5GNJqTPyNqANBkUVMN1LPPrxXnFouWXoe2wNSmmEoLctxiZY",
       "5HpG9w8EBLe5XCrbczpwq5TSXvedjrBGCwqxK1iQ7qUsSWFc",
     ];
     const thresholdKeysExpected = [
-      "5H8qc7f4mXFY16NBWSB9qkc6pTks98HdVuoQTs1aova5fRtN",
-      "5D2SVCUkK5FgFiBwPTJuTN65J6fACSEoZrL41thZBAycwnQV",
+      [
+        "5H8qc7f4mXFY16NBWSB9qkc6pTks98HdVuoQTs1aova5fRtN",
+        "0x0ac029f0b853b23bed652d6d0de69b7cc38d94f93732eefc85b5861e90f73a22",
+      ],
+      [
+        "5D2SVCUkK5FgFiBwPTJuTN65J6fACSEoZrL41thZBAycwnQV",
+        "0xe13087d3e3d5aa1501bd769eff57f55924aaa9b544c9d2b2edf765509988660a",
+      ],
     ];
-    const thresholdKeys = await substrate.getThresholdAccounts(stashKeys);
+    const thresholdKeys = await substrate.getThresholdInfo(stashKeys);
     assert.equal(thresholdKeys.length, 2);
     assert.deepEqual(thresholdKeys, thresholdKeysExpected);
   });
