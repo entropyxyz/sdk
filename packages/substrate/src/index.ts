@@ -1,10 +1,11 @@
 import { AddressOrPair, SubmittableExtrinsic } from "@polkadot/api/types";
-import { ApiPromise, WsProvider } from "../../substrate/src";
+import { AnyJson } from "@polkadot/types-codec/types";
 import { Keyring } from "@polkadot/keyring";
 import { sr25519PairFromSeed } from "@polkadot/util-crypto";
-import { Signer } from "./types";
-import { SubmittableResult } from "@polkadot/api";
+import { Signer, StashKeys, ThresholdKeys, EventFilter } from "./types";
+import { SubmittableResult, ApiPromise, WsProvider } from "@polkadot/api";
 export * as polkadotJs from "@polkadot/api";
+import { EventRecord } from "@polkadot/types/interfaces/types";
 
 export class SubstrateRead {
   api: ApiPromise;
@@ -26,6 +27,29 @@ export class SubstrateRead {
   static async setup(endpoint?: string): Promise<SubstrateRead> {
     const api = await getApi(endpoint);
     return new SubstrateRead(api);
+  }
+  /**
+   *
+   * @param stashKeys An array of stash keys to query
+   * @returns threshold server keys associated with the server
+   */
+  async getThresholdAccounts(stashKeys: StashKeys): Promise<ThresholdKeys> {
+    let result: ThresholdKeys = [];
+    for (let i = 0; i < stashKeys.length; i++) {
+      // TODO needs to be changed after next update
+      let r = await this.api.query.stakingExtension.thresholdAccounts(
+        stashKeys[i]
+      );
+
+      const convertedResult: any = r.toHuman() ? r.toHuman() : null;
+      convertedResult ? result.push(convertedResult[0]) : null;
+    }
+    return result;
+  }
+
+  async isRegistering(address: String): Promise<AnyJson> {
+    const result = await this.api.query.relayer.registering(address);
+    return result.toHuman();
   }
 }
 
@@ -56,6 +80,12 @@ export class Substrate extends SubstrateRead {
     return new Substrate(api, wallet);
   }
 
+  /**
+   * Signs and sends the given `call` from `sender` and waits for the transaction to be included in a block.
+   * @param api api object
+   * @param call a call that can be submitted to the chain
+   * @param sender the sender of the transaction
+   */
   async sendAndWait(
     call: SubmittableExtrinsic<"promise">,
     api: ApiPromise,
@@ -93,6 +123,66 @@ export class Substrate extends SubstrateRead {
           reject(Error(e.message));
         });
     });
+  }
+
+  /**
+   * Signs and sends the given `call` from `sender` and waits for an event that fits `filter`.
+   * @param api api object
+   * @param call a call that can be submitted to the chain
+   * @param sender the sender of the transaction
+   * @param filter which event to filter for
+   * @returns event that fits the filter
+   */
+  async sendAndWaitFor(
+    api: ApiPromise,
+    call: SubmittableExtrinsic<"promise">,
+    sender: AddressOrPair,
+    filter: EventFilter
+  ): Promise<EventRecord> {
+    return new Promise<EventRecord>((resolve, reject) => {
+      call
+        .signAndSend(sender, (res: SubmittableResult) => {
+          const { dispatchError, status } = res;
+
+          if (dispatchError) {
+            if (dispatchError.isModule) {
+              // for module errors, we have the section indexed, lookup
+              const decoded: any = api.registry.findMetaError(
+                dispatchError.asModule
+              );
+              const { documentation, name, section } = decoded;
+
+              reject(Error(`${section}.${name}: ${documentation.join(" ")}`));
+            } else {
+              reject(Error(dispatchError.toString()));
+            }
+          }
+
+          if (status.isInBlock || status.isFinalized) {
+            const record = res.findRecord(filter.section, filter.name);
+
+            if (record) {
+              resolve(record);
+            } else {
+              reject(Error("Event record not found"));
+            }
+          }
+        })
+        .catch((e) => {
+          reject(Error(e.message));
+        });
+    });
+  }
+
+  /**
+   * registers an account then checks if it is registered
+   * @returns If the account is registered
+   */
+  async register(): Promise<AnyJson> {
+    const tx = this.api.tx.relayer.register();
+    await this.sendAndWait(tx, this.api, this.signer.wallet);
+    const isRegistered = await this.isRegistering(this.signer.wallet.address);
+    return isRegistered;
   }
 }
 
