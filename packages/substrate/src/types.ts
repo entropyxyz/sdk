@@ -1,6 +1,6 @@
-import { AddressOrPair } from "@polkadot/api/types";
 import { Keypair } from "@polkadot/util-crypto/types";
 import { KeyringPair } from "@polkadot/keyring/types";
+import type { AccountId32 } from '@polkadot/types/interfaces/runtime';
 
 export interface Signer {
 	wallet: KeyringPair
@@ -12,6 +12,8 @@ export interface EventFilter {
 	name: string;
   }
 
-export type StashKeys = Array<String>
+export type StashKeys = Array<Address>
 
-export type ThresholdKeys = Array<String>
+export type ThresholdKeys = Array<Address>
+
+export type Address = AccountId32 | string | Uint8Array

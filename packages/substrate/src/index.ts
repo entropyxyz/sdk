@@ -2,7 +2,7 @@ import { AddressOrPair, SubmittableExtrinsic } from "@polkadot/api/types";
 import { AnyJson } from "@polkadot/types-codec/types";
 import { Keyring } from "@polkadot/keyring";
 import { sr25519PairFromSeed } from "@polkadot/util-crypto";
-import { Signer, StashKeys, ThresholdKeys, EventFilter } from "./types";
+import { Signer, StashKeys, ThresholdKeys, EventFilter, Address } from "./types";
 import { SubmittableResult, ApiPromise, WsProvider } from "@polkadot/api";
 export * as polkadotJs from "@polkadot/api";
 import { EventRecord } from "@polkadot/types/interfaces/types";
@@ -47,7 +47,7 @@ export class SubstrateRead {
     return result;
   }
 
-  async isRegistering(address: String): Promise<AnyJson> {
+  async isRegistering(address: Address): Promise<AnyJson> {
     const result = await this.api.query.relayer.registering(address);
     return result.toHuman();
   }
