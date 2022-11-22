@@ -32,7 +32,7 @@ describe("Crypto Tests", async () => {
     ]);
     const serverDHKey = crypto.parseServerDHKey(mockData);
     const root = process.cwd();
-    const thresholdKey = readKey(`${root}/0`);
+    const thresholdKey = readKey(`${root.split("packages")[0]}0`);
     const result = crypto.encryptAndSign(
       aliceSecretKey,
       thresholdKey,

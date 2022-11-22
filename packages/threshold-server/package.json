@@ -1,0 +1,16 @@
+{
+  "name": "@entropy/threshold-server",
+  "version": "0.0.1",
+  "description": "Threshold server package for EntropyJs",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha -r ts-node/register 'src/tests.test.ts'"
+  },
+  "keywords": [],
+  "author": "Entropy",
+  "license": "ISC",
+  "dependencies": {
+    "@entropy/substrate": "0.0.1",
+    "axios": "^0.27.2"
+  }
+}
