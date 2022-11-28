@@ -18,7 +18,7 @@ describe("Core Tests", async () => {
   });
   it(`registers then signs`, async () => {
     const root = process.cwd();
-    const thresholdKey = readKey(`${root.split("packages")[0]}0`);
+    const thresholdKey = readKey(`${root.split("packages/")[0]}/0`);
     const serverStashKeys = [
       "5GNJqTPyNqANBkUVMN1LPPrxXnFouWXoe2wNSmmEoLctxiZY",
     ];
