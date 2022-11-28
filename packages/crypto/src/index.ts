@@ -1,16 +1,16 @@
 import { from_hex, encrypt_and_sign } from "x25519";
-import { serverDHInfo } from "./types";
 /**
  * A class to encapsulate all the cryptography needed for using entropy
  * relies heavily on WASM
  */
 export class Crypto {
+  // TODO: JA give proper type to serverDHInfo
   /**
    *
    * @param serverDHInfo Information on server returned by entropy chain 
    * @returns converted x25519PublicKey
    */
-  parseServerDHKey(serverDHInfo: serverDHInfo): Uint8Array {
+  parseServerDHKey(serverDHInfo: any): Uint8Array {
     return from_hex(serverDHInfo[1]);
   }
 
