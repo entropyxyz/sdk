@@ -10,6 +10,7 @@
   "author": "Entropy",
   "license": "ISC",
   "dependencies": {
-    "@entropy/substrate": "0.0.1"
+    "@entropy/substrate": "0.0.1",
+    "ethers": "^5.7.2"
   }
 }
