@@ -1,18 +1,19 @@
 const axios = require("axios").default;
 
 export class ThresholdServer {
-  url: String;
+  urls: Array<String>;
 
-  constructor(url: String) {
-    this.url = url;
+  constructor(urls: Array<String>) {
+    this.urls = urls;
   }
 
-  async sendKey(emsg: String): Promise<String> {
-    const postRequest = await axios.post(`${this.url}/user/new`, emsg, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    return postRequest;
+  async sendKeys(emsg: Array<String>) {
+    for (let i = 0; i < this.urls.length; i++) {
+      await axios.post(`${this.urls[i]}/user/new`, emsg[i], {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+    }
   }
 }
