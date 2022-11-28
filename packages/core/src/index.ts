@@ -7,21 +7,37 @@ import { AnyJson } from "@polkadot/types-codec/types";
 import { utils } from "ethers";
 import { SignatureLike } from "@ethersproject/bytes";
 
+/**
+ * Encapsulates all subclasses and exposes functions to make interacting with entropy simple
+ */
 export default class Entropy {
   crypto: Crypto;
   substrate: Substrate;
   thresholdServer: ThresholdServer;
 
+  /**
+   *
+   * @param crypto The Crypto class from the crypto package
+   * @param substrate The Substrate class from the substrate package
+   * @param thresholdServer The thresholdServer class from the threshold server package
+   */
   constructor(
     crypto: Crypto,
     substrate: Substrate,
-    thresoldServer: ThresholdServer
+    thresholdServer: ThresholdServer
   ) {
     this.crypto = crypto;
     this.substrate = substrate;
-    this.thresholdServer = thresoldServer;
+    this.thresholdServer = thresholdServer;
   }
 
+  /**
+   * launches all sub classes encapsulated by this class
+   * @param urls the urls of the threshold server (to be deprecated)
+   * @param seed private key of user interacting with entropy
+   * @param endpoint an endpoint for the entropy blockchain (will default to localhost:9944)
+   * @returns An Entropy class instance
+   */
   static async setup(
     urls: Array<String>,
     seed: string,
@@ -34,10 +50,17 @@ export default class Entropy {
     return new Entropy(crypto, substrate, thresholdServer);
   }
 
+  /**
+   * Registers a user in the entropy blockchain
+   * @param keyShares Entropy threshold keys to be distributed (including your own to be stored)?
+   * @param serverStashKeys The stash keys of the validators to talk to (to be deprecated)
+   * @returns A JSON return from the chain which contains a boolean of if the registration was successfully
+   */
   async register(
     keyShares: keyShare[],
     serverStashKeys: Address[]
   ): Promise<AnyJson> {
+    //TODO JA better return type
     // TODO should we run validation here on the amount of keys to send
     // i.e make sure key shares is signing party big and stash keys are key shares -1 size
     const thresholdAccountsInfo = await this.substrate.getThresholdInfo(
@@ -77,11 +100,23 @@ export default class Entropy {
     return isRegistered.toHuman();
   }
 
-  async sign(tx: utils.UnsignedTransaction, retries: Number ): Promise<SignatureLike> {
+  /**
+   * Sign a tx (for ethereum currently) using the entropy blockchain. This will take an unsigned tx and return
+   * a signature, it is up to the user to handle from there
+   * @param tx the transaction to be signed
+   * @param retries To be deprecated when alice signs with the validators, but polling for sig retries
+   * @returns A signature to then be included in a transaction
+   */
+  async sign(
+    tx: utils.UnsignedTransaction,
+    retries: Number
+  ): Promise<SignatureLike> {
     const sigData = await utils.serializeTransaction(tx);
     const sigHash = utils.keccak256(sigData);
 
-    const prepTx = await this.substrate.api.tx.relayer.prepTransaction({ sigHash });
+    const prepTx = await this.substrate.api.tx.relayer.prepTransaction({
+      sigHash,
+    });
     await this.substrate.sendAndWait(
       prepTx,
       this.substrate.api,
@@ -92,9 +127,9 @@ export default class Entropy {
       await this.thresholdServer.pollNodeForSignature(
         sigHash.slice(2),
         this.thresholdServer.urls[0],
-		retries
+        retries
       );
 
-	return signature
+    return signature;
   }
 }
