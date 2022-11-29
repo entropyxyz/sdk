@@ -133,8 +133,8 @@ export class Substrate extends SubstrateRead {
    * @returns event that fits the filter
    */
   async sendAndWaitFor(
-    api: ApiPromise,
     call: SubmittableExtrinsic<"promise">,
+    api: ApiPromise,
     sender: AddressOrPair,
     filter: EventFilter
   ): Promise<EventRecord> {

@@ -10,8 +10,9 @@ describe("Core Tests", async () => {
   const aliceSeed =
     "0xe5be9a5092b81bca64be81d212e7f2f9eba183bb7a90954f7b76361f6edb5c0a";
   const urls = ["http://127.0.0.1:3001"];
+
   before(async function () {
-    entropy = await Entropy.setup(urls, aliceSeed);
+    entropy = await Entropy.setup(aliceSeed);
   });
   after(function () {
     entropy.substrate.api.disconnect();
@@ -24,7 +25,7 @@ describe("Core Tests", async () => {
     ];
     // either works or not working from clean state and keys already there, good error, working error
     try {
-      await entropy.register([thresholdKey], serverStashKeys);
+      await entropy.register([thresholdKey], serverStashKeys, urls);
     } catch (e: any) {
       assert.equal(e.response.data, "Kv error: Recv Error: channel closed");
     }
@@ -41,7 +42,7 @@ describe("Core Tests", async () => {
 
     // good error, only running one node so sig will not happen
     try {
-      await entropy.sign(tx, 0);
+      await entropy.sign(tx, 0, urls);
     } catch (e: any) {
       assert.equal(
         e.message,

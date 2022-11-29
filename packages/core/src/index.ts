@@ -33,19 +33,14 @@ export default class Entropy {
 
   /**
    * launches all sub classes encapsulated by this class
-   * @param urls the urls of the threshold server (to be deprecated)
    * @param seed private key of user interacting with entropy
    * @param endpoint an endpoint for the entropy blockchain (will default to localhost:9944)
    * @returns An Entropy class instance
    */
-  static async setup(
-    urls: Array<String>,
-    seed: string,
-    endpoint?: string
-  ): Promise<Entropy> {
+  static async setup(seed: string, endpoint?: string): Promise<Entropy> {
     const crypto = new Crypto();
     const substrate = await Substrate.setup(seed, endpoint);
-    const thresholdServer = new ThresholdServer(urls);
+    const thresholdServer = new ThresholdServer();
 
     return new Entropy(crypto, substrate, thresholdServer);
   }
@@ -58,7 +53,8 @@ export default class Entropy {
    */
   async register(
     keyShares: keyShare[],
-    serverStashKeys: Address[]
+    serverStashKeys: Address[],
+    urls: Array<String>
   ): Promise<AnyJson> {
     //TODO JA better return type
     // TODO should we run validation here on the amount of keys to send
@@ -81,18 +77,24 @@ export default class Entropy {
     }
 
     const registerTx = this.substrate.api.tx.relayer.register();
-    await this.substrate.sendAndWait(
+    const record = await this.substrate.sendAndWaitFor(
       registerTx,
       this.substrate.api,
-      this.substrate.signer.wallet
+      this.substrate.signer.wallet,
+      {
+        section: "relayer",
+        name: "SignalRegister",
+      }
     );
+
+    // TODO get urls from event record (not implemented in devnet)
+    // record.event.data[1].toString()}
 
     const result = await this.substrate.api.query.relayer.registering(
       this.substrate.signer.wallet.address
     );
     // TODO: JA handle result, log info? do nothing? assert it is true?
-
-    await this.thresholdServer.sendKeys(encryptedMessages);
+    await this.thresholdServer.sendKeys(encryptedMessages, urls);
 
     const isRegistered = await this.substrate.api.query.relayer.registered(
       this.substrate.signer.wallet.address
@@ -109,7 +111,8 @@ export default class Entropy {
    */
   async sign(
     tx: utils.UnsignedTransaction,
-    retries: Number
+    retries: Number,
+    urls: Array<String>
   ): Promise<SignatureLike> {
     const sigData = await utils.serializeTransaction(tx);
     const sigHash = utils.keccak256(sigData);
@@ -117,16 +120,22 @@ export default class Entropy {
     const prepTx = await this.substrate.api.tx.relayer.prepTransaction({
       sigHash,
     });
-    await this.substrate.sendAndWait(
+    const record = await this.substrate.sendAndWaitFor(
       prepTx,
       this.substrate.api,
-      this.substrate.signer.wallet
+      this.substrate.signer.wallet,
+      {
+        section: "relayer",
+        name: "TransactionPropagated",
+      }
     );
+
+    // TODO get urls from event record (not implemented in devnet)
 
     const signature: SignatureLike =
       await this.thresholdServer.pollNodeForSignature(
         sigHash.slice(2),
-        this.thresholdServer.urls[0],
+        urls[0],
         retries
       );
 

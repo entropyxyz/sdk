@@ -2,15 +2,13 @@ const axios = require("axios").default;
 import { SignatureLike } from "@ethersproject/bytes";
 
 export class ThresholdServer {
-  urls: Array<String>;
 
-  constructor(urls: Array<String>) {
-    this.urls = urls;
+  constructor() {
   }
 
-  async sendKeys(emsg: Array<String>) {
-    for (let i = 0; i < this.urls.length; i++) {
-      await axios.post(`${this.urls[i]}/user/new`, emsg[i], {
+  async sendKeys(emsg: Array<String>, urls: Array<String>) {
+    for (let i = 0; i < urls.length; i++) {
+      await axios.post(`${urls[i]}/user/new`, emsg[i], {
         headers: {
           "Content-Type": "application/json",
         },
