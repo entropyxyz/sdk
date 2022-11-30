@@ -107,7 +107,7 @@
                 <a href="../">
             
                     
-                    Classes
+                    Packages
             
                 </a>
             
@@ -116,12 +116,12 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="1.2.1" data-path="Entropy.html">
+        <li class="chapter " data-level="1.2.1" data-path="Core.html">
             
-                <a href="Entropy.html">
+                <a href="Core.html">
             
                     
-                    Entropy
+                    Core
             
                 </a>
             
@@ -218,7 +218,30 @@
     
                                 <section class="normal markdown-section">
                                 
-                                
+                                <h1 id="substrate">Substrate</h1>
+<ul>
+<li>The Substrate package contains the substrate class and has functions associated with using the entropy chain (which is built with substrate)</li>
+<li>The Substrate class also contains a WS connection and API object with the entropy chain that can be access directly (see polkadot.js for more documentation on that)</li>
+</ul>
+<h2 id="examples">Examples</h2>
+<h3 id="setup">Setup</h3>
+<pre><code class="lang-js"><span class="hljs-keyword">const</span> privateKey =
+  <span class="hljs-string">&quot;0xe5be9a5092b81bca64be81d212e7f2f9eba183bb7a90954f7b76361f6edb5c0a&quot;</span>;
+<span class="hljs-keyword">const</span> chainEndPoint = <span class="hljs-string">&quot;ws://127.0.0.1:9944&quot;</span>;
+
+<span class="hljs-keyword">const</span> substrate = <span class="hljs-keyword">await</span> Substrate.setup(privateKey, chainEndpoint);
+</code></pre>
+<h3 id="accessing-the-underlying-api-object">Accessing the underlying api object</h3>
+<pre><code class="lang-js"><span class="hljs-keyword">const</span> api = substrate.api;
+</code></pre>
+<h2 id="substrate-read">Substrate Read</h2>
+<ul>
+<li>If you only need access to reading the chain and don&apos;t require writing to it you can launch the SubstrateRead class which does not require a private key</li>
+</ul>
+<pre><code class="lang-js"><span class="hljs-keyword">const</span> chainEndPoint = <span class="hljs-string">&quot;ws://127.0.0.1:9944&quot;</span>;
+<span class="hljs-keyword">const</span> substrateRead = <span class="hljs-keyword">await</span> SubstrateRead.setup(chainEndpoint);
+</code></pre>
+
                                 
                                 </section>
                             
@@ -261,7 +284,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Substrate","level":"1.2.3","depth":2,"next":{"title":"Threshold Server","level":"1.2.4","depth":2,"path":"Classes/ThresholdServer.md","ref":"Classes/ThresholdServer.md","articles":[]},"previous":{"title":"Crypto","level":"1.2.2","depth":2,"path":"Classes/Crypto.md","ref":"Classes/Crypto.md","articles":[]},"dir":"neutral"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["livereload"],"pluginsConfig":{"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"Classes/Substrate.md","mtime":"2022-11-29T19:00:38.561Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2022-11-29T19:03:31.326Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Substrate","level":"1.2.3","depth":2,"next":{"title":"Threshold Server","level":"1.2.4","depth":2,"path":"Packages/ThresholdServer.md","ref":"Packages/ThresholdServer.md","articles":[]},"previous":{"title":"Crypto","level":"1.2.2","depth":2,"path":"Packages/Crypto.md","ref":"Packages/Crypto.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["livereload"],"pluginsConfig":{"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"Packages/Substrate.md","mtime":"2022-11-30T18:45:20.457Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2022-11-30T18:55:03.046Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
