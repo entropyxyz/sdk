@@ -2,11 +2,21 @@ import { AddressOrPair, SubmittableExtrinsic } from "@polkadot/api/types";
 import { AnyJson } from "@polkadot/types-codec/types";
 import { Keyring } from "@polkadot/keyring";
 import { sr25519PairFromSeed } from "@polkadot/util-crypto";
-import { Signer, StashKeys, ThresholdInfo, EventFilter, Address } from "./types";
+import {
+  Signer,
+  StashKeys,
+  ThresholdInfo,
+  EventFilter,
+  Address,
+} from "./types";
 import { SubmittableResult, ApiPromise, WsProvider } from "@polkadot/api";
 export * as polkadotJs from "@polkadot/api";
 import { EventRecord } from "@polkadot/types/interfaces/types";
 
+/**
+ * A class for talking to the Entropy blockchain, read only functions
+ * does not require a private key to use
+ */
 export class SubstrateRead {
   api: ApiPromise;
 
@@ -46,12 +56,20 @@ export class SubstrateRead {
     return result;
   }
 
+  /**
+   *
+   * @param address The address that is being checked if registered
+   * @returns An object that contains if the account was registered
+   */
   async isRegistering(address: Address): Promise<AnyJson> {
     const result = await this.api.query.relayer.registering(address);
     return result.toHuman();
   }
 }
 
+/**
+ * A class for talking to the Entropy blockchain, includes read and write functions
+ */
 export class Substrate extends SubstrateRead {
   api: ApiPromise;
   signer: Signer;
