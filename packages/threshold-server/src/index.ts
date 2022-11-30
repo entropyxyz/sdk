@@ -1,14 +1,18 @@
 const axios = require("axios").default;
 import { SignatureLike } from "@ethersproject/bytes";
 
+/**
+ * Class used for talking to an Entropy validator server
+ */
 export class ThresholdServer {
-
-  constructor() {
-  }
-
-  async sendKeys(emsg: Array<String>, urls: Array<String>) {
+  /**
+   *
+   * @param emsgs encrypted messages to be sent to a validator node
+   * @param urls urls of the nodes to send to
+   */
+  async sendKeys(emsgs: Array<String>, urls: Array<String>) {
     for (let i = 0; i < urls.length; i++) {
-      await axios.post(`${urls[i]}/user/new`, emsg[i], {
+      await axios.post(`${urls[i]}/user/new`, emsgs[i], {
         headers: {
           "Content-Type": "application/json",
         },
@@ -16,10 +20,13 @@ export class ThresholdServer {
     }
   }
 
+  /**
+   * To be deprecated so light on docs
+   */
   async pollNodeForSignature(
     sigHash: String,
     thresholdUrl: String,
-	retries: Number
+    retries: Number
   ): Promise<SignatureLike> {
     let i = 0;
     let status;
@@ -41,6 +48,9 @@ export class ThresholdServer {
   }
 }
 
+/**
+ * To be deprecated with poll for signature
+ */
 function sleep(delay: number) {
   const start = new Date().getTime();
   while (new Date().getTime() < start + delay);
