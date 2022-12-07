@@ -132,12 +132,11 @@ export default class Entropy {
 
     // TODO get urls from event record (not implemented in devnet)
 
-    const signature: SignatureLike =
-      await this.thresholdServer.pollNodeForSignature(
-        sigHash.slice(2),
-        urls[0],
-        retries
-      );
+    const signature: SignatureLike = await this.thresholdServer.pollNodeForSignature(
+      sigHash.slice(2),
+      urls[0],
+      retries
+    );
 
     return signature;
   }

@@ -11,11 +11,11 @@ describe("Threshold Tests", async () => {
       await thresholdServer.sendKeys([mock], ["http://127.0.0.1:3001"]);
       throw new Error("should have failed gracefully");
     } catch (e: any) {
-    // comment in when error update happen on master for now just 500 error
-    //   assert.equal(
-    //     e.response.data,
-    //     "Not Registering error: Register Onchain first"
-    //   );
+      // comment in when error update happen on master for now just 500 error
+      //   assert.equal(
+      //     e.response.data,
+      //     "Not Registering error: Register Onchain first"
+      //   );
     }
   });
 });
