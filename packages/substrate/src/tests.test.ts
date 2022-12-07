@@ -1,5 +1,5 @@
+/* eslint @typescript-eslint/no-explicit-any: 0 */
 import { Substrate } from "./index";
-import should from "should";
 import "mocha";
 
 const { assert } = require("chai");

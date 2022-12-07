@@ -1,4 +1,4 @@
-import should from "should";
+/* eslint @typescript-eslint/no-explicit-any: 0 */
 import "mocha";
 import Entropy from ".";
 import { readKey } from "./utils";

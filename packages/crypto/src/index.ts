@@ -1,3 +1,4 @@
+/* eslint @typescript-eslint/no-explicit-any: 0 */
 import { from_hex, encrypt_and_sign } from "x25519";
 /**
  * A class to encapsulate all the cryptography needed for using entropy
@@ -25,7 +26,7 @@ export class Crypto {
     secretKey: Uint8Array,
     thresholdKey: Uint8Array,
     serverDHKey: Uint8Array
-  ): String {
+  ): string {
     return encrypt_and_sign(secretKey, thresholdKey, serverDHKey);
   }
 }
