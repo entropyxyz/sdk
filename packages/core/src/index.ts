@@ -54,7 +54,7 @@ export default class Entropy {
   async register(
     keyShares: keyShare[],
     serverStashKeys: Address[],
-    urls: Array<String>
+    urls: Array<string>
   ): Promise<AnyJson> {
     //TODO JA better return type
     // TODO should we run validation here on the amount of keys to send
@@ -63,7 +63,7 @@ export default class Entropy {
       serverStashKeys
     );
 
-    let encryptedMessages: Array<String> = [];
+    const encryptedMessages: Array<string> = [];
     for (let i = 0; i < serverStashKeys.length; i++) {
       const serverDHKey = this.crypto.parseServerDHKey(
         thresholdAccountsInfo[i]
@@ -77,7 +77,7 @@ export default class Entropy {
     }
 
     const registerTx = this.substrate.api.tx.relayer.register();
-    const record = await this.substrate.sendAndWaitFor(
+    await this.substrate.sendAndWaitFor(
       registerTx,
       this.substrate.api,
       this.substrate.signer.wallet,
@@ -90,7 +90,7 @@ export default class Entropy {
     // TODO get urls from event record (not implemented in devnet)
     // record.event.data[1].toString()}
 
-    const result = await this.substrate.api.query.relayer.registering(
+    await this.substrate.api.query.relayer.registering(
       this.substrate.signer.wallet.address
     );
     // TODO: JA handle result, log info? do nothing? assert it is true?
@@ -111,8 +111,8 @@ export default class Entropy {
    */
   async sign(
     tx: utils.UnsignedTransaction,
-    retries: Number,
-    urls: Array<String>
+    retries: number,
+    urls: Array<string>
   ): Promise<SignatureLike> {
     const sigData = await utils.serializeTransaction(tx);
     const sigHash = utils.keccak256(sigData);
@@ -120,7 +120,7 @@ export default class Entropy {
     const prepTx = await this.substrate.api.tx.relayer.prepTransaction({
       sigHash,
     });
-    const record = await this.substrate.sendAndWaitFor(
+    await this.substrate.sendAndWaitFor(
       prepTx,
       this.substrate.api,
       this.substrate.signer.wallet,
@@ -132,12 +132,11 @@ export default class Entropy {
 
     // TODO get urls from event record (not implemented in devnet)
 
-    const signature: SignatureLike =
-      await this.thresholdServer.pollNodeForSignature(
-        sigHash.slice(2),
-        urls[0],
-        retries
-      );
+    const signature: SignatureLike = await this.thresholdServer.pollNodeForSignature(
+      sigHash.slice(2),
+      urls[0],
+      retries
+    );
 
     return signature;
   }

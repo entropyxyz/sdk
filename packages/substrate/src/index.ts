@@ -1,3 +1,4 @@
+/* eslint @typescript-eslint/no-explicit-any: 0 */
 import { AddressOrPair, SubmittableExtrinsic } from "@polkadot/api/types";
 import { AnyJson } from "@polkadot/types-codec/types";
 import { Keyring } from "@polkadot/keyring";
@@ -44,10 +45,10 @@ export class SubstrateRead {
    * @returns threshold server keys associated with the server
    */
   async getThresholdInfo(stashKeys: StashKeys): Promise<ThresholdInfo> {
-    let result: ThresholdInfo = [];
+    const result: ThresholdInfo = [];
     for (let i = 0; i < stashKeys.length; i++) {
       // TODO needs to be changed after next update
-      let r = await this.api.query.stakingExtension.thresholdAccounts(
+      const r = await this.api.query.stakingExtension.thresholdAccounts(
         stashKeys[i]
       );
       const convertedResult: any = r.toHuman() ? r.toHuman() : null;

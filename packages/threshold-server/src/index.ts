@@ -10,7 +10,7 @@ export class ThresholdServer {
    * @param emsgs encrypted messages to be sent to a validator node
    * @param urls urls of the nodes to send to
    */
-  async sendKeys(emsgs: Array<String>, urls: Array<String>) {
+  async sendKeys(emsgs: Array<string>, urls: Array<string>) {
     for (let i = 0; i < urls.length; i++) {
       await axios.post(`${urls[i]}/user/new`, emsgs[i], {
         headers: {
@@ -24,9 +24,9 @@ export class ThresholdServer {
    * To be deprecated so light on docs
    */
   async pollNodeForSignature(
-    sigHash: String,
-    thresholdUrl: String,
-    retries: Number
+    sigHash: string,
+    thresholdUrl: string,
+    retries: number
   ): Promise<SignatureLike> {
     let i = 0;
     let status;

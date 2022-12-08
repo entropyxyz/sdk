@@ -15,4 +15,3 @@ Linting is available and can be done by running `yarn eslint`. You can also use 
 ### Testing
 
 Tests in `@entropy/substrate` will fail if you do not have a running [Entropy Node](https://github.com/entropyxyz/entropy-core) **with** the `--ws-external` flag (WebSockets are disabled by default).
-
