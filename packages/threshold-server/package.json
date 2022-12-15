@@ -4,7 +4,7 @@
   "description": "Threshold server package for EntropyJs",
   "main": "index.js",
   "scripts": {
-    "test": "mocha -r ts-node/register 'src/tests.test.ts'"
+    "test": "mocha -t 50000 -r ts-node/register 'src/tests.test.ts'"
   },
   "keywords": [],
   "author": "Entropy",

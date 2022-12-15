@@ -47,8 +47,7 @@ export class SubstrateRead {
   async getThresholdInfo(stashKeys: StashKeys): Promise<ThresholdInfo> {
     const result: ThresholdInfo = [];
     for (let i = 0; i < stashKeys.length; i++) {
-      // TODO needs to be changed after next update
-      const r = await this.api.query.stakingExtension.thresholdAccounts(
+      const r = await this.api.query.stakingExtension.thresholdServers(
         stashKeys[i]
       );
       const convertedResult: any = r.toHuman() ? r.toHuman() : null;

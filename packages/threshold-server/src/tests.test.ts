@@ -1,6 +1,7 @@
 /* eslint @typescript-eslint/no-explicit-any: 0 */
 import "mocha";
 import { ThresholdServer } from ".";
+const { assert } = require("chai");
 
 describe("Threshold Tests", async () => {
   const thresholdServer = new ThresholdServer();
@@ -11,11 +12,10 @@ describe("Threshold Tests", async () => {
       await thresholdServer.sendKeys([mock], ["http://127.0.0.1:3001"]);
       throw new Error("should have failed gracefully");
     } catch (e: any) {
-      // comment in when error update happen on master for now just 500 error
-      //   assert.equal(
-      //     e.response.data,
-      //     "Not Registering error: Register Onchain first"
-      //   );
+      assert.equal(
+        e.response.data,
+        "Not Registering error: Register Onchain first"
+      );
     }
   });
 });
