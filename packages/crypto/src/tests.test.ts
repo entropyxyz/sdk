@@ -6,10 +6,13 @@ const { assert } = require("chai");
 
 describe("Crypto Tests", async () => {
   const crypto = new Crypto();
-  const mockData = [
-    "5H8qc7f4mXFY16NBWSB9qkc6pTks98HdVuoQTs1aova5fRtN",
-    "0x0ac029f0b853b23bed652d6d0de69b7cc38d94f93732eefc85b5861e90f73a22",
-  ];
+  const mockData = {
+    endpoint: "127.0.0.1:3001",
+    tssAccount: "5H8qc7f4mXFY16NBWSB9qkc6pTks98HdVuoQTs1aova5fRtN",
+    x25519PublicKey:
+      "0x0ac029f0b853b23bed652d6d0de69b7cc38d94f93732eefc85b5861e90f73a22",
+  };
+
   it(`parses server threshold info`, async () => {
     const mockReturn = [
       10,

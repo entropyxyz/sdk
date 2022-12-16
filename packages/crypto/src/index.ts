@@ -12,7 +12,7 @@ export class Crypto {
    * @returns converted x25519PublicKey
    */
   parseServerDHKey(serverDHInfo: any): Uint8Array {
-    return from_hex(serverDHInfo[1]);
+    return from_hex(serverDHInfo.x25519PublicKey);
   }
 
   /**

@@ -126,7 +126,7 @@ export default class Entropy {
       this.substrate.signer.wallet,
       {
         section: "relayer",
-        name: "TransactionPropagated",
+        name: "SignatureRequested",
       }
     );
 
