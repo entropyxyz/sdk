@@ -111,8 +111,7 @@ export default class Entropy {
    */
   async sign(
     tx: utils.UnsignedTransaction,
-    retries: number,
-    urls: Array<string>
+    retries: number
   ): Promise<SignatureLike> {
     const sigData = await utils.serializeTransaction(tx);
     const sigHash = utils.keccak256(sigData);
@@ -120,7 +119,7 @@ export default class Entropy {
     const prepTx = await this.substrate.api.tx.relayer.prepTransaction({
       sigHash,
     });
-    await this.substrate.sendAndWaitFor(
+    const record = await this.substrate.sendAndWaitFor(
       prepTx,
       this.substrate.api,
       this.substrate.signer.wallet,
@@ -129,7 +128,7 @@ export default class Entropy {
         name: "SignatureRequested",
       }
     );
-
+    const urls = record.event.data.toHuman()[0].ipAddresses;
     // TODO get urls from event record (not implemented in devnet)
 
     const signature: SignatureLike = await this.thresholdServer.pollNodeForSignature(

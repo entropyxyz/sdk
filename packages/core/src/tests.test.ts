@@ -42,7 +42,7 @@ describe("Core Tests", async () => {
 
     // good error, only running one node so sig will not happen
     try {
-      await entropy.sign(tx, 0, urls);
+      await entropy.sign(tx, 0);
     } catch (e: any) {
       assert.equal(
         e.message,
