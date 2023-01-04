@@ -41,4 +41,16 @@ describe("Substrate Tests", async () => {
     assert.equal(thresholdKeys.length, 2);
     assert.deepEqual(thresholdKeys, thresholdKeysExpected);
   });
+  it(`gets all stash keys from chain and returns the selected ones`, async () => {
+    const stashKeys: any = await substrate.getStashKeys();
+    assert.equal(stashKeys.length, 2);
+
+    const mockReturnedKeys = [
+      "5HpG9w8EBLe5XCrbczpwq5TSXvedjrBGCwqxK1iQ7qUsSWFc",
+      "5GNJqTPyNqANBkUVMN1LPPrxXnFouWXoe2wNSmmEoLctxiZY",
+    ];
+
+    const returnedKeys: any = substrate.selectStashKeys(stashKeys);
+    assert.deepEqual(returnedKeys, mockReturnedKeys);
+  });
 });

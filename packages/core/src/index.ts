@@ -1,5 +1,5 @@
+/* eslint @typescript-eslint/no-explicit-any: 0 */
 import { Substrate } from "../../substrate/src";
-import { Address } from "../../substrate/src/types";
 import { ThresholdServer } from "../../threshold-server/src";
 import { Crypto } from "../../crypto/src";
 import { keyShare } from "./types";
@@ -51,19 +51,19 @@ export default class Entropy {
    * @param serverStashKeys The stash keys of the validators to talk to (to be deprecated)
    * @returns A JSON return from the chain which contains a boolean of if the registration was successfully
    */
-  async register(
-    keyShares: keyShare[],
-    serverStashKeys: Address[],
-    urls: Array<string>
-  ): Promise<AnyJson> {
+  async register(keyShares: keyShare[]): Promise<AnyJson> {
     //TODO JA better return type
+    const serverKeys = await this.substrate.getStashKeys();
+    const serverStashKeys = this.substrate.selectStashKeys(serverKeys);
+
     // TODO should we run validation here on the amount of keys to send
     // i.e make sure key shares is signing party big and stash keys are key shares -1 size
-    const thresholdAccountsInfo = await this.substrate.getThresholdInfo(
+    const thresholdAccountsInfo: any = await this.substrate.getThresholdInfo(
       serverStashKeys
     );
 
     const encryptedMessages: Array<string> = [];
+    const urls: Array<string> = [];
     for (let i = 0; i < serverStashKeys.length; i++) {
       const serverDHKey = this.crypto.parseServerDHKey(
         thresholdAccountsInfo[i]
@@ -74,6 +74,7 @@ export default class Entropy {
         serverDHKey
       );
       encryptedMessages.push(encryptedMessage);
+      urls.push(thresholdAccountsInfo[i].endpoint);
     }
 
     const registerTx = this.substrate.api.tx.relayer.register();
@@ -86,9 +87,6 @@ export default class Entropy {
         name: "SignalRegister",
       }
     );
-
-    // TODO get urls from event record (not implemented in devnet)
-    // record.event.data[1].toString()}
 
     await this.substrate.api.query.relayer.registering(
       this.substrate.signer.wallet.address
