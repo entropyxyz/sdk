@@ -57,6 +57,28 @@ export class SubstrateRead {
   }
 
   /**
+   * gets all stash keys split up into signing subgroups from chain
+   * @returns A promise of non converted stash keys
+   */
+  async getStashKeys(): Promise<any> {
+    const stashKeys = await this.api.query.stakingExtension.signingGroups.entries();
+    return stashKeys;
+  }
+  /**
+   * Gets one key from every signing subgroup
+   * @param stashKeys Unconverted stash keys
+   * @returns One stash key from each signing sub group
+   */
+  selectStashKeys(stashKeys: any): StashKeys {
+    const returnedKeys = [];
+    stashKeys.map((keyInfo) => {
+      // TODO: currently picks first stash key in group (second array item is set to 0)
+      // create good algorithm for randomly choosing a threshold server
+      returnedKeys.push(keyInfo[1].toHuman()[0]);
+    });
+    return returnedKeys;
+  }
+  /**
    *
    * @param address The address that is being checked if registered
    * @returns An object that contains if the account was registered

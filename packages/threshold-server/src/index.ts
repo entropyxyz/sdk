@@ -12,7 +12,7 @@ export class ThresholdServer {
    */
   async sendKeys(emsgs: Array<string>, urls: Array<string>) {
     for (let i = 0; i < urls.length; i++) {
-      await axios.post(`${urls[i]}/user/new`, emsgs[i], {
+      await axios.post(`http://${urls[i]}/user/new`, emsgs[i], {
         headers: {
           "Content-Type": "application/json",
         },
