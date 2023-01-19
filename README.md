@@ -24,18 +24,19 @@ Steps to run entropy node:
 
 Running the dev server and blockchain:
 
-- 1. In one terminal window `./target/release/entropy --dev`
-- 1. In another terminal window `./target/release/server --alice`
-- 1. In another terminal `./scripts/server_bob.sh`
+- 1. in `cargo run --release -p entropy -- --dev` in `entropy-core` root directory
+- 1. in another terminal run `cargo run --release -p server -- --alice` in `entropy-core` root directory
+
+- 1. In another terminal run `./scripts/server_bob.sh` in `entropy-js` root directory
 
 ### Common Errors running tests
 
 - 1. If computer is put to sleep or laptop is closes blockchain node will stop running and likely cause issues with the state of the blockchain. You will need to erase the chain key value store data and restart the node. in `entropy-core` run
      `./target/release/entropy purge-chain --dev`
+     `./target/release/entropy purge-chain --dev`
      `rm -rf kvstore/`
 
 - 1. If you forgot the `tofnd` password:
-     - `./target/release/entropy purge-chain --dev`
      - `rm -rf kvstore/`
      - `./target/release/entropy --dev`
      - `./target/release/server --alice`
