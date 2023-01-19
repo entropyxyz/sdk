@@ -32,13 +32,12 @@ Running the dev server and blockchain:
 ### Common Errors running tests
 
 - 1. If computer is put to sleep or laptop is closed, the blockchain node will stop running and likely cause issues with the state of the blockchain. You will need to erase the chain key value store data and restart the node. in `entropy-core` run
-     `./target/release/entropy purge-chain --dev`
-     `./target/release/entropy purge-chain --dev`
-     `rm -rf kvstore/`
+
+  - `rm -rf kvstore/`
+    you only need to do this if you want a clean state or forgot your password
 
 - 1. If you forgot the `tofnd` password:
      - `rm -rf kvstore/`
-     - `./target/release/entropy --dev`
      - `./target/release/server --alice`
 
 - 1. If you forgot bob's password:
