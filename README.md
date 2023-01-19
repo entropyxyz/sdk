@@ -31,7 +31,7 @@ Running the dev server and blockchain:
 
 ### Common Errors running tests
 
-- 1. If computer is put to sleep or laptop is closes blockchain node will stop running and likely cause issues with the state of the blockchain. You will need to erase the chain key value store data and restart the node. in `entropy-core` run
+- 1. If computer is put to sleep or laptop is closed, the blockchain node will stop running and likely cause issues with the state of the blockchain. You will need to erase the chain key value store data and restart the node. in `entropy-core` run
      `./target/release/entropy purge-chain --dev`
      `./target/release/entropy purge-chain --dev`
      `rm -rf kvstore/`
