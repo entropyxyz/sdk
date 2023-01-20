@@ -27,7 +27,7 @@ Running the dev server and blockchain:
 - 1. in `cargo run --release -p entropy -- --dev` in `entropy-core` root directory
 - 1. in another terminal run `cargo run --release -p server -- --alice` in `entropy-core` root directory
 
-- 1. In another terminal run `./scripts/server_bob.sh` in `entropy-js` root directory
+- 1. In another terminal run `./scripts/server_bob.sh` in `entropy-core` root directory
 
 ### Common Errors running tests
 
