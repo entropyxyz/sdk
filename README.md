@@ -29,6 +29,17 @@ Running the dev server and blockchain:
 
 - 1. In another terminal run `./scripts/server_bob.sh` in `entropy-js` root directory
 
+## A Tour of `entropy-js`
+
+`entropy-js` is composed of a few packages:
+
+- `@entropy/core` contains the high level API for interacting with the Entropy network and is composed of the below subpackages.
+- `@entropy/substrate` is a subpackage for interacting directly with the Entropy blockchain.
+- `@entropy/crypto` is a subpackage for cryptographic functionality that is not specific to .
+- `@entropy/threshold-server` is a subpackage for interacting with Entropy's threshold signing servers.
+
+## Troubleshooting
+
 ### Common Errors running tests
 
 - 1. If computer is put to sleep or laptop is closed, the blockchain node will stop running and likely cause issues with the state of the blockchain. You will need to erase the chain key value store data and restart the node. in `entropy-core` run

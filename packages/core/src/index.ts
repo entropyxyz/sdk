@@ -48,10 +48,9 @@ export default class Entropy {
   /**
    * Registers a user in the entropy blockchain
    * @param keyShares Entropy threshold keys to be distributed (including your own to be stored)?
-   * @param serverStashKeys The stash keys of the validators to talk to (to be deprecated)
    * @returns A JSON return from the chain which contains a boolean of if the registration was successfully
    */
-  async register(keyShares: keyShare[]): Promise<AnyJson> {
+  async register(keyShares: keyShare[], constraintModificationAddress: string, initialConstraints?: Constraints): Promise<AnyJson> {
     //TODO JA better return type
     const serverKeys = await this.substrate.getStashKeys();
     const serverStashKeys = this.substrate.selectStashKeys(serverKeys);
