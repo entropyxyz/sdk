@@ -16,7 +16,7 @@ describe("Core Tests", async () => {
   after(function () {
     entropy.substrate.api.disconnect();
   });
-  it.only(`registers then signs`, async () => {
+  it(`registers then signs`, async () => {
     const root = process.cwd();
     const thresholdKey = readKey(`${root.split("packages/")[0]}/0`);
     const thresholdKey2 = readKey(`${root.split("packages/")[0]}/1`);
@@ -25,7 +25,7 @@ describe("Core Tests", async () => {
     try {
       await entropy.register([thresholdKey, thresholdKey2]);
     } catch (e: any) {
-      assert.equal(e.response.data, "Kv error: Recv Error: channel closed");
+      assert.equal(e, "Error: already registered");
     }
 
     const tx: ethers.utils.UnsignedTransaction = {
