@@ -10,5 +10,8 @@
   "license": "ISC",
   "dependencies": {
     "@polkadot/api": "^9.8.1"
+  },
+  "devDependencies": {
+    "@polkadot/typegen": "^9.12.1"
   }
 }
