@@ -8,6 +8,23 @@
 
 `yarn`
 
+
+### Typegen
+#### in `entropy-core`
+
+<!-- TODO: remove when acl-storage branch is merged  -->
+- checkout branch `acl-storage`
+- cargo run -p entropy -- --dev
+- entropy stubstrate node running on: http://localhost:9933
+
+#### in entropy-js
+
+cd ./packages/substrate/
+
+run ./update-metadata
+
+`entropy-metadata.json` should be populated with entropy substrate metadata
+
 ### Linting
 
 Linting is available and can be done by running `yarn eslint`. You can also use the ESLint extension if you're using VSCode.
