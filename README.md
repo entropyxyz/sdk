@@ -8,6 +8,9 @@
 
 `yarn`
 
+### Nodejs Version
+Run `nvm use` to use the correct node version.
+
 
 ### Typegen
 #### in `entropy-core`
