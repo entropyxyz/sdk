@@ -23,8 +23,10 @@ describe("Core Tests", async () => {
 
     // either works or not working from clean state and keys already there, good error, working error
     try {
-      await entropy.register([thresholdKey, thresholdKey2]);
+      // TODO use register() in substrate, not directly
+      await entropy.register([thresholdKey, thresholdKey2], "5EYCAe5g7bGpFHagwe26HiRHdHdE3hobrwV6hq1UD2BPAiZb");
     } catch (e: any) {
+      console.log(e);
       assert.equal(e, "Error: already registered");
     }
 
