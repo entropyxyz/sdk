@@ -52,6 +52,13 @@ export default class Entropy {
    * @returns A JSON return from the chain which contains a boolean of if the registration was successfully
    */
   async register(keyShares: keyShare[]): Promise<AnyJson> {
+    const isRegistered_check = await this.substrate.api.query.relayer.registered(
+      this.substrate.signer.wallet.address
+    );
+
+    if (isRegistered_check.toHuman()) {
+      throw new Error("already registered");
+    }
     //TODO JA better return type
     const serverKeys = await this.substrate.getStashKeys();
     const serverStashKeys = this.substrate.selectStashKeys(serverKeys);
