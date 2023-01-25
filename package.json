@@ -10,7 +10,8 @@
     "lint:fix": "eslint . --ext .ts --fix",
     "prettier:fix": "prettier --write .",
     "prettier": "prettier --check .",
-    "peek": "tsc --build --clean"
+    "peek": "tsc --build --clean",
+    "clean:all": "yarn workspaces run --parallel clean"
   },
   "workspaces": [
     "packages/*"
