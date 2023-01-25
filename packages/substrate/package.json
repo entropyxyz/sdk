@@ -4,7 +4,8 @@
   "description": "Substrate realted functionality",
   "main": "index.js",
   "scripts": {
-    "test": "mocha -t 50000 -r ts-node/register 'src/tests.test.ts'"
+    "test": "mocha -t 50000 -r ts-node/register 'src/tests.test.ts'",
+    "clean": "rm -Rf node_modules && yarn cache clean --all && yarn install"
   },
   "author": "Entropy",
   "license": "ISC",
