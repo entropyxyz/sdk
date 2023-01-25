@@ -178,7 +178,7 @@ export class Substrate extends SubstrateRead {
     sender: AddressOrPair,
     filter: EventFilter
   ): Promise<EventRecord> {
-    return new Promise<EventRecord>((resolve, reject) => {
+    return new Promise<any>((resolve, reject) => {
       call
         .signAndSend(sender, (res: SubmittableResult) => {
           const { dispatchError, status } = res;
