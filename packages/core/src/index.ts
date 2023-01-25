@@ -35,6 +35,7 @@ export default class Entropy {
    * launches all sub classes encapsulated by this class
    * @param seed private key of user interacting with entropy
    * @param endpoint an endpoint for the entropy blockchain (will default to localhost:9944)
+   * @param constraint_account 
    * @returns An Entropy class instance
    */
   static async setup(seed: string, endpoint?: string): Promise<Entropy> {
@@ -48,10 +49,10 @@ export default class Entropy {
   /**
    * Registers a user in the entropy blockchain
    * @param keyShares Entropy threshold keys to be distributed (including your own to be stored)?
-   * @param serverStashKeys The stash keys of the validators to talk to (to be deprecated)
+   * @param constraintModificationAccount The Substrate account that will be used to modify constraints after registration
    * @returns A JSON return from the chain which contains a boolean of if the registration was successfully
    */
-  async register(keyShares: keyShare[]): Promise<AnyJson> {
+  async register(keyShares: keyShare[], constraintModificationAccount: string, initialConstraints?: string): Promise<AnyJson> {
     const isRegistered_check = await this.substrate.api.query.relayer.registered(
       this.substrate.signer.wallet.address
     );
@@ -59,6 +60,12 @@ export default class Entropy {
     if (isRegistered_check.toHuman()) {
       throw new Error("already registered");
     }
+    // TODO sanatize address input or use an address type
+    if (constraintModificationAccount.length != "5EYCAe5g7bGpFHagwe26HiRHdHdE3hobrwV6hq1UD2BPAiZb".length) {
+      // 32 bytes , 256 bits is standard for Substrate SS58 addresses
+      throw new Error("constraintModificationAccount must be a Substrate address");
+    }
+
     //TODO JA better return type
     const serverKeys = await this.substrate.getStashKeys();
     const serverStashKeys = this.substrate.selectStashKeys(serverKeys);
@@ -84,7 +91,7 @@ export default class Entropy {
       urls.push(thresholdAccountsInfo[i].endpoint);
     }
 
-    const registerTx = this.substrate.api.tx.relayer.register();
+    const registerTx = this.substrate.api.tx.relayer.register(constraintModificationAccount, initialConstraints ? initialConstraints : null);
     await this.substrate.sendAndWaitFor(
       registerTx,
       this.substrate.api,

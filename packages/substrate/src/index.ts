@@ -217,8 +217,10 @@ export class Substrate extends SubstrateRead {
    * registers an account then checks if it is registered
    * @returns If the account is registered
    */
-  async register(): Promise<AnyJson> {
-    const tx = this.api.tx.relayer.register();
+  // TODO use this function in core.register()
+  async register(constraintModificationAccount: string, initialConstraints = null): Promise<AnyJson> {
+    // Null is the initial constra
+    const tx = this.api.tx.relayer.register(constraintModificationAccount, initialConstraints);
     await this.sendAndWait(tx, this.api, this.signer.wallet);
     const isRegistered = await this.isRegistering(this.signer.wallet.address);
     return isRegistered;

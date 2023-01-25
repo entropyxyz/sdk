@@ -15,7 +15,7 @@ describe("Substrate Tests", async () => {
     substrate.api.disconnect();
   });
   it.skip(`checks if registering and registers`, async () => {
-    const register: any = await substrate.register();
+    const register: any = await substrate.register("5H8qc7f4mXFY16NBWSB9qkc6pTks98HdVuoQTs1aova5fRtN", null);
     assert.equal(register.isRegistering, true);
   });
   it(`gets threshold Info`, async () => {
