@@ -16,14 +16,15 @@ describe("Core Tests", async () => {
   after(function () {
     entropy.substrate.api.disconnect();
   });
-  it.skip(`registers then signs`, async () => {
+  it(`registers then signs`, async () => {
     const root = process.cwd();
     const thresholdKey = readKey(`${root.split("packages/")[0]}/0`);
     const thresholdKey2 = readKey(`${root.split("packages/")[0]}/1`);
 
     // either works or not working from clean state and keys already there, good error, working error
     try {
-      await entropy.register([thresholdKey, thresholdKey2]);
+      // TODO use register() in substrate, not directly
+      await entropy.register([thresholdKey, thresholdKey2], "5GNJqTPyNqANBkUVMN1LPPrxXnFouWXoe2wNSmmEoLctxiZY"); // constraint mod account is alice stash, ie `subkey inspect //Alice//stash`
     } catch (e: any) {
       assert.equal(e, "Error: already registered");
     }

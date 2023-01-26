@@ -6,22 +6,22 @@ const { assert } = require("chai");
 
 describe("Substrate Tests", async () => {
   let substrate: Substrate;
-  const aliceSeed =
-    "0xe5be9a5092b81bca64be81d212e7f2f9eba183bb7a90954f7b76361f6edb5c0a";
+  const bobSeed =
+    "0x398f0c28f98885e046333d4a41c19cee4c37368a9832c6502f6cfd182e2aef89"; // `subkey inspect //Bob` 'secret seed'
   before(async function () {
-    substrate = await Substrate.setup(aliceSeed);
+    substrate = await Substrate.setup(bobSeed);
   });
   after(function () {
     substrate.api.disconnect();
   });
-  it.skip(`checks if registering and registers`, async () => {
-    const register: any = await substrate.register();
+  it(`checks if registering and registers`, async () => {
+    const register: any = await substrate.register("5HpG9w8EBLe5XCrbczpwq5TSXvedjrBGCwqxK1iQ7qUsSWFc", null); // constraint mod account is ALICE_STASH 
     assert.equal(register.isRegistering, true);
   });
   it(`gets threshold Info`, async () => {
     const stashKeys = [
-      "5GNJqTPyNqANBkUVMN1LPPrxXnFouWXoe2wNSmmEoLctxiZY",
-      "5HpG9w8EBLe5XCrbczpwq5TSXvedjrBGCwqxK1iQ7qUsSWFc",
+      "5GNJqTPyNqANBkUVMN1LPPrxXnFouWXoe2wNSmmEoLctxiZY", // validator 1
+      "5HpG9w8EBLe5XCrbczpwq5TSXvedjrBGCwqxK1iQ7qUsSWFc", // validator 2
     ];
     const thresholdKeysExpected = [
       {

@@ -8,25 +8,9 @@
 
 `yarn`
 
-### Nodejs Version
+### Node.js Version
+
 Run `nvm use` to use the correct node version.
-
-
-### Typegen
-#### in `entropy-core`
-
-<!-- TODO: remove when acl-storage branch is merged  -->
-- checkout branch `acl-storage`
-- cargo run -p entropy -- --dev
-- entropy stubstrate node running on: http://localhost:9933
-
-#### in entropy-js
-
-cd ./packages/substrate/
-
-run ./update-metadata
-
-`entropy-metadata.json` should be populated with entropy substrate metadata
 
 ### Linting
 
@@ -34,31 +18,35 @@ Linting is available and can be done by running `yarn eslint`. You can also use 
 
 ### Testing
 
-Tests in `@entropy/substrate` will fail if you do not have a running [Entropy Node](https://github.com/entropyxyz/entropy-core) **with** the `--ws-external` flag (WebSockets are disabled by default).
+Testing in this repo is done against `entropy-core`, so clone and setup that repo. After that, you can run the tests in this repo.
 
-Steps to run entropy node:
+- Make sure you build release in `entropy-core` with `cargo build --release`.
+- In **three seperate terminals**, run:
+  - `./scripts/sdk-entropy-node.sh`
+  - `./scripts/sdk-alice-tss.sh`
+  - `./scripts/sdk-bob-tss.sh`
 
-- 1. `git clone git@github.com:entropyxyz/entropy-core.git`
-- 1. `cd entropy-core`
-- 1. go through the `README.md` and setup instructions in `entropy-core`
+This will spin up a local blockchain node, and two threshold server nodes.
 
-Running the dev server and blockchain:
+Then, in this repo, **fourth terminal**, run `yarn test` in to run the tests.
 
-- 1. in `cargo run --release -p entropy -- --dev` in `entropy-core` root directory
-- 1. in another terminal run `cargo run --release -p server -- --alice` in `entropy-core` root directory
+### Typegen
 
-- 1. In another terminal run `./scripts/server_bob.sh` in `entropy-core` root directory
+When the Substrate node in `entropy-core` is updated, you will need to update the type metadata. To do this:
+
+#### in `entropy-core`
+
+- `cargo build --release -p entropy`
+- `./scripts/sdk-entropy-node.sh`
+
+#### in entropy-js
+
+- `cd ./packages/substrate/`
+- `./update-metadata.sh`
+
+`packages/substrate/entropy-metadata.json` should be populated with the latest Entropy node metadata
 
 ### Common Errors running tests
 
-- 1. If computer is put to sleep or laptop is closed, the blockchain node will stop running and likely cause issues with the state of the blockchain. You will need to erase the chain key value store data and restart the node. in `entropy-core` run
-
-  - `rm -rf kvstore/`
-    you only need to do this if you want a clean state or forgot your password
-
-- 1. If you forgot the `tofnd` password:
-     - `rm -rf kvstore/`
-     - `./target/release/server --alice`
-
-- 1. If you forgot bob's password:
-     `rm -rf bob`
+- In `entropy-core`, make sure you run `cargo build --release` (and `cargo build`) so any `./scripts` use the latest binaries.
+- Make sure you have the latest deps in `entropy-js` by running `yarn clean:all` in the root of the repo, and then `yarn`.

@@ -8,11 +8,11 @@ export class ThresholdServer {
   /**
    *
    * @param emsgs encrypted messages to be sent to a validator node
-   * @param urls urls of the nodes to send to
+   * @param serverWithPort IP/domain and port of the threshold server, seperated by ':'
    */
-  async sendKeys(emsgs: Array<string>, urls: Array<string>) {
-    for (let i = 0; i < urls.length; i++) {
-      await axios.post(`http://${urls[i]}/user/new`, emsgs[i], {
+  async sendKeys(emsgs: Array<string>, serverWithPort: Array<string>) {
+    for (let i = 0; i < serverWithPort.length; i++) {
+      await axios.post(`http://${serverWithPort[i]}/user/new`, emsgs[i], {
         headers: {
           "Content-Type": "application/json",
         },
