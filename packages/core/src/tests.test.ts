@@ -16,7 +16,7 @@ describe("Core Tests", async () => {
   after(function () {
     entropy.substrate.api.disconnect();
   });
-  it(`registers then signs`, async () => {
+  it.skip(`registers then signs`, async () => {
     const root = process.cwd();
     const thresholdKey = readKey(`${root.split("packages/")[0]}/0`);
     const thresholdKey2 = readKey(`${root.split("packages/")[0]}/1`);

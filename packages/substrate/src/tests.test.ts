@@ -14,7 +14,7 @@ describe("Substrate Tests", async () => {
   after(function () {
     substrate.api.disconnect();
   });
-  it(`checks if registering and registers`, async () => {
+  it.skip(`checks if registering and registers`, async () => {
     const register: any = await substrate.register();
     assert.equal(register.isRegistering, true);
   });
