@@ -6,6 +6,7 @@ import { keyShare } from "./types";
 import { AnyJson } from "@polkadot/types-codec/types";
 import { utils } from "ethers";
 import { SignatureLike } from "@ethersproject/bytes";
+import { isValidSubstrateAddress } from "./utils";
 
 /**
  * Encapsulates all subclasses and exposes functions to make interacting with entropy simple
@@ -60,8 +61,8 @@ export default class Entropy {
     if (isRegistered_check.toHuman()) {
       throw new Error("already registered");
     }
-    // TODO after typegen: address type, instead of 48 length 
-    if (constraintModificationAccount.length != 48) {
+    // TODO after typegen: typed Addresses
+    if (!isValidSubstrateAddress(constraintModificationAccount)) {
       throw new Error("constraintModificationAccount must be a Substrate address");
     }
 
