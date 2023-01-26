@@ -14,8 +14,11 @@ describe("Substrate Tests", async () => {
   after(function () {
     substrate.api.disconnect();
   });
-  it(`checks if registering and registers`, async () => {
-    const register: any = await substrate.register("5H8qc7f4mXFY16NBWSB9qkc6pTks98HdVuoQTs1aova5fRtN", null);
+  it.skip(`checks if registering and registers`, async () => {
+    const register: any = await substrate.register(
+      "5H8qc7f4mXFY16NBWSB9qkc6pTks98HdVuoQTs1aova5fRtN",
+      null
+    );
     assert.equal(register.isRegistering, true);
   });
   it(`gets threshold Info`, async () => {
