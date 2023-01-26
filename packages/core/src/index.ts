@@ -60,9 +60,8 @@ export default class Entropy {
     if (isRegistered_check.toHuman()) {
       throw new Error("already registered");
     }
-    // TODO sanatize address input or use an address type
-    if (constraintModificationAccount.length != "5EYCAe5g7bGpFHagwe26HiRHdHdE3hobrwV6hq1UD2BPAiZb".length) {
-      // 32 bytes , 256 bits is standard for Substrate SS58 addresses
+    // TODO after typegen: address type, instead of 48 length 
+    if (constraintModificationAccount.length != 48) {
       throw new Error("constraintModificationAccount must be a Substrate address");
     }
 
