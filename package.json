@@ -11,7 +11,7 @@
     "prettier:fix": "prettier --write .",
     "prettier": "prettier --check .",
     "peek": "tsc --build --clean",
-    "clean:all": "yarn workspaces foreach run clean"
+    "clean": "rm -Rf node_modules && yarn cache clean --all && yarn install"
   },
   "workspaces": [
     "core/*",
