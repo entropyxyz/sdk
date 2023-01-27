@@ -1,4 +1,3 @@
-/* eslint @typescript-eslint/no-explicit-any: 0 */
 import { AddressOrPair, SubmittableExtrinsic } from "@polkadot/api/types";
 import { AnyJson } from "@polkadot/types-codec/types";
 import { Keyring } from "@polkadot/keyring";
@@ -47,6 +46,7 @@ export class SubstrateRead {
   async getThresholdInfo(stashKeys: StashKeys): Promise<ThresholdInfo> {
     const result: ThresholdInfo = [];
     for (let i = 0; i < stashKeys.length; i++) {
+      // @ts-expect-error
       const r = await this.api.query.stakingExtension.thresholdServers(
         stashKeys[i]
       );
@@ -61,6 +61,7 @@ export class SubstrateRead {
    * @returns A promise of non converted stash keys
    */
   async getStashKeys(): Promise<any> {
+    // @ts-expect-error
     const stashKeys = await this.api.query.stakingExtension.signingGroups.entries();
     return stashKeys;
   }
@@ -74,6 +75,7 @@ export class SubstrateRead {
     stashKeys.map((keyInfo) => {
       // TODO: currently picks first stash key in group (second array item is set to 0)
       // create good algorithm for randomly choosing a threshold server
+      // @ts-expect-error
       returnedKeys.push(keyInfo[1].toHuman()[0]);
     });
     return returnedKeys;
@@ -84,6 +86,7 @@ export class SubstrateRead {
    * @returns An object that contains if the account was registered
    */
   async isRegistering(address: Address): Promise<AnyJson> {
+    // @ts-expect-error
     const result = await this.api.query.relayer.registering(address);
     return result.toHuman();
   }
@@ -220,6 +223,7 @@ export class Substrate extends SubstrateRead {
   // TODO use this function in core.register()
   async register(constraintModificationAccount: string, initialConstraints = null): Promise<AnyJson> {
     // Null is the initial constra
+    // @ts-expect-error
     const tx = this.api.tx.relayer.register(constraintModificationAccount, initialConstraints);
     await this.sendAndWait(tx, this.api, this.signer.wallet);
     const isRegistered = await this.isRegistering(this.signer.wallet.address);
