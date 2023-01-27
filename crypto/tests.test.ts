@@ -1,5 +1,5 @@
+import { readKey } from "../core/utils";
 import { Crypto } from "./index";
-import { readKey } from "../../core/src/utils";
 import "mocha";
 
 const { assert } = require("chai");

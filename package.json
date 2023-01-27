@@ -5,7 +5,7 @@
   "main": "index.js",
   "private": true,
   "scripts": {
-    "test": "mocha -t 100000 -r ts-node/register '*/src/tests.test.ts'",
+    "test": "mocha -t 100000 -r ts-node/register '**/tests.test.ts'",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
     "prettier:fix": "prettier --write .",
@@ -50,5 +50,13 @@
     "hooks": {
       "pre-commit": "yarn lint && yarn prettier && yarn peek"
     }
+  },
+  "dependencies": {
+    "@ethersproject/bytes": "^5.7.0",
+    "@polkadot/api": "^9.12.1",
+    "@polkadot/types-codec": "^9.12.1",
+    "axios": "^1.2.5",
+    "ethers": "^5.7.2",
+    "x25519": "^0.1.0"
   }
 }

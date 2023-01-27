@@ -1,12 +1,12 @@
 /* eslint @typescript-eslint/no-explicit-any: 0 */
-import { Substrate } from "../../substrate/src";
-import { ThresholdServer } from "../../threshold-server/src";
-import { Crypto } from "../../crypto/src";
 import { keyShare } from "./types";
 import { AnyJson } from "@polkadot/types-codec/types";
 import { utils } from "ethers";
 import { SignatureLike } from "@ethersproject/bytes";
 import { isValidSubstrateAddress } from "./utils";
+import { Substrate } from "../substrate";
+import { ThresholdServer } from "../threshold-server";
+import { Crypto } from "../crypto";
 
 /**
  * Encapsulates all subclasses and exposes functions to make interacting with entropy simple
@@ -36,7 +36,7 @@ export default class Entropy {
    * launches all sub classes encapsulated by this class
    * @param seed private key of user interacting with entropy
    * @param endpoint an endpoint for the entropy blockchain (will default to localhost:9944)
-   * @param constraint_account 
+   * @param constraint_account
    * @returns An Entropy class instance
    */
   static async setup(seed: string, endpoint?: string): Promise<Entropy> {
