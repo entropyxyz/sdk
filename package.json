@@ -11,10 +11,13 @@
     "prettier:fix": "prettier --write .",
     "prettier": "prettier --check .",
     "peek": "tsc --build --clean",
-    "clean:all": "yarn workspaces run --parallel clean"
+    "clean:all": "yarn workspaces foreach run clean"
   },
   "workspaces": [
-    "packages/*"
+    "core/*",
+    "crypto/*",
+    "substrate/*",
+    "threshold-server/*"
   ],
   "type": "module",
   "repository": {
