@@ -140,6 +140,8 @@ export default class Entropy {
         name: "SignatureRequested",
       }
     );
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
     const urls = record.event.data.toHuman()[0].ipAddresses;
     // TODO get urls from event record (not implemented in devnet)
 
