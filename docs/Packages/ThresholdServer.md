@@ -7,5 +7,5 @@
 ### launching
 
 ```js
-const thresholdServer = new ThresholdServer();
+const thresholdServer = new ThresholdServer()
 ```
