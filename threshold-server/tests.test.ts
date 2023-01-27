@@ -1,4 +1,3 @@
-/* eslint @typescript-eslint/no-explicit-any: 0 */
 import "mocha";
 import { ThresholdServer } from ".";
 const { assert } = require("chai");

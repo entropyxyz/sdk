@@ -1,4 +1,3 @@
-/* eslint @typescript-eslint/no-explicit-any: 0 */
 import { from_hex, encrypt_and_sign } from "x25519";
 /**
  * A class to encapsulate all the cryptography needed for using entropy
