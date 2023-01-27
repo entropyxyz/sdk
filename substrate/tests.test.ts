@@ -1,4 +1,3 @@
-/* eslint @typescript-eslint/no-explicit-any: 0 */
 import { Substrate } from "./index";
 import "mocha";
 
@@ -15,7 +14,7 @@ describe("Substrate Tests", async () => {
     substrate.api.disconnect();
   });
   it(`checks if registering and registers`, async () => {
-    const register: any = await substrate.register("5HpG9w8EBLe5XCrbczpwq5TSXvedjrBGCwqxK1iQ7qUsSWFc", null); // constraint mod account is ALICE_STASH 
+    const register: any = await substrate.register("5HpG9w8EBLe5XCrbczpwq5TSXvedjrBGCwqxK1iQ7qUsSWFc", null); // constraint mod account is ALICE_STASH
     assert.equal(register.isRegistering, true);
   });
   it(`gets threshold Info`, async () => {
