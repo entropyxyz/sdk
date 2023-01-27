@@ -1,1 +1,1 @@
-export type serverDHInfo = Array<string>;
+export type serverDHInfo = Array<string>

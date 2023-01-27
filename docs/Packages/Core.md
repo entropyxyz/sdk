@@ -14,10 +14,10 @@
 
 ```js
 const privateKey =
-  "0xe5be9a5092b81bca64be81d212e7f2f9eba183bb7a90954f7b76361f6edb5c0a";
-const chainEndPoint = "ws://127.0.0.1:9944";
+  '0xe5be9a5092b81bca64be81d212e7f2f9eba183bb7a90954f7b76361f6edb5c0a'
+const chainEndPoint = 'ws://127.0.0.1:9944'
 
-const entropy = await Entropy.setup(privateKey, chainEndpoint);
+const entropy = await Entropy.setup(privateKey, chainEndpoint)
 ```
 
 ### Methods
@@ -29,16 +29,12 @@ const entropy = await Entropy.setup(privateKey, chainEndpoint);
   ```js
   // this assumes keys are already generated
   // this is still not implemented (WASM things)
-  const entropyKeyShares = [];
+  const entropyKeyShares = []
   // to be deprecated
-  const serverStashKeys = [];
+  const serverStashKeys = []
   // to be deprecated
-  const urls = [];
-  const result = await entropy.register(
-    entropyKeyShares,
-    serverStashKeys,
-    urls
-  );
+  const urls = []
+  const result = await entropy.register(entropyKeyShares, serverStashKeys, urls)
   ```
 
 - Sign
