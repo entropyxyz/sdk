@@ -57,7 +57,6 @@ export default class Entropy {
     constraintModificationAccount: string,
     initialConstraints?: string
   ): Promise<AnyJson> {
-    // @ts-expect-error
     const isRegistered_check = await this.substrate.api.query.relayer.registered(
       this.substrate.signer.wallet.address
     )
@@ -95,7 +94,6 @@ export default class Entropy {
       urls.push(thresholdAccountsInfo[i].endpoint)
     }
 
-    // @ts-expect-error
     const registerTx = this.substrate.api.tx.relayer.register(
       constraintModificationAccount,
       initialConstraints ? initialConstraints : null
@@ -110,14 +108,12 @@ export default class Entropy {
       }
     )
 
-    // @ts-expect-error
     await this.substrate.api.query.relayer.registering(
       this.substrate.signer.wallet.address
     )
     // TODO: JA handle result, log info? do nothing? assert it is true?
     await this.thresholdServer.sendKeys(encryptedMessages, urls)
 
-    // @ts-expect-error
     const isRegistered = await this.substrate.api.query.relayer.registered(
       this.substrate.signer.wallet.address
     )
@@ -138,7 +134,6 @@ export default class Entropy {
     const sigData = await utils.serializeTransaction(tx)
     const sigHash = utils.keccak256(sigData)
 
-    // @ts-expect-error
     const prepTx = await this.substrate.api.tx.relayer.prepTransaction({
       sigHash,
     })
@@ -151,7 +146,6 @@ export default class Entropy {
         name: 'SignatureRequested',
       }
     )
-    // @ts-expect-error
     const urls = record.event.data.toHuman()[0].ipAddresses
     // TODO get urls from event record (not implemented in devnet)
 

@@ -19,7 +19,6 @@
     "substrate/*",
     "threshold-server/*"
   ],
-  "type": "module",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/entropyxyz/entropy-js.git"
