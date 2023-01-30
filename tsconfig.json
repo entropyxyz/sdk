@@ -1,11 +1,7 @@
 {
-  "extends": "../../tsconfig.base",
-  "include": ["*/"],
-  "exclude": ["node_modules", "./docs"],
   "compilerOptions": {
-    "composite": true,
-    "esModuleInterop": true,
-    "jsx": "preserve"
-  },
-  "references": []
+    "target": "es5",
+    "module": "commonjs",
+    "skipLibCheck": true,
+  }
 }
