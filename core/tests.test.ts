@@ -1,6 +1,6 @@
 import 'mocha'
 import Entropy from '.'
-import { readKey } from './utils'
+import { isValidSubstrateAddress, readKey } from './utils'
 const { assert } = require('chai')
 import { BigNumber, ethers } from 'ethers'
 
@@ -12,9 +12,11 @@ describe('Core Tests', async () => {
   before(async function () {
     entropy = await Entropy.setup(aliceSeed)
   })
+
   after(function () {
     entropy.substrate.api.disconnect()
   })
+
   it(`registers then signs`, async () => {
     const root = process.cwd()
     const thresholdKey = readKey(`${root.split('packages/')[0]}/0`)
@@ -50,5 +52,15 @@ describe('Core Tests', async () => {
         "Cannot read properties of undefined (reading 'data')"
       )
     }
+  })
+
+  it(`isValidSubstrateAddress() is true for valid account`, async () => {
+    const aliceStash = '5HpG9w8EBLe5XCrbczpwq5TSXvedjrBGCwqxK1iQ7qUsSWFc'
+    assert.equal(isValidSubstrateAddress(aliceStash), true)
+  })
+    
+  it(`isValidSubstrateAddress() is false for wrong account lengths`, async () => {
+    const invalidAccount = '5HpG9w8EBLe5XCrbczpwq5TSXvedjrBGCwqxK1iQ7qUsS' // shorter than allowed
+    assert.equal(isValidSubstrateAddress(invalidAccount), false)
   })
 })

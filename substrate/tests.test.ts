@@ -7,12 +7,15 @@ describe('Substrate Tests', async () => {
   let substrate: Substrate
   const bobSeed =
     '0x398f0c28f98885e046333d4a41c19cee4c37368a9832c6502f6cfd182e2aef89' // `subkey inspect //Bob` 'secret seed'
+  
   before(async function () {
     substrate = await Substrate.setup(bobSeed)
   })
+
   after(function () {
     substrate.api.disconnect()
   })
+
   it(`checks if registering and registers`, async () => {
     const register: any = await substrate.register(
       '5HpG9w8EBLe5XCrbczpwq5TSXvedjrBGCwqxK1iQ7qUsSWFc',
@@ -20,6 +23,7 @@ describe('Substrate Tests', async () => {
     ) // constraint mod account is ALICE_STASH
     assert.equal(register.isRegistering, true)
   })
+
   it(`gets threshold Info`, async () => {
     const stashKeys = [
       '5GNJqTPyNqANBkUVMN1LPPrxXnFouWXoe2wNSmmEoLctxiZY', // validator 1
@@ -43,6 +47,7 @@ describe('Substrate Tests', async () => {
     assert.equal(thresholdKeys.length, 2)
     assert.deepEqual(thresholdKeys, thresholdKeysExpected)
   })
+
   it(`gets all stash keys from chain and returns the selected ones`, async () => {
     const stashKeys: any = await substrate.getStashKeys()
     assert.equal(stashKeys.length, 2)
