@@ -5,7 +5,7 @@
   "main": "index.js",
   "private": true,
   "scripts": {
-    "test": "mocha -t 100000 -r ts-node/register '**/tests.test.ts'",
+    "test": "mocha -t 100000 -r ts-node/register '**/tests.test.ts' --exit",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
     "prettier:fix": "prettier --write .",
@@ -36,6 +36,7 @@
     "@typescript-eslint/eslint-plugin": "^5.43.0",
     "@typescript-eslint/parser": "^5.43.0",
     "chai": "^4.3.7",
+    "child_process": "^1.0.2",
     "eslint": "^8.27.0",
     "mocha": "^10.1.0",
     "prettier": "2.2.1",

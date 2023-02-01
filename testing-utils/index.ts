@@ -1,0 +1,1 @@
+export { spinChain } from "./spinUp";
