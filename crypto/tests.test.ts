@@ -1,17 +1,17 @@
-import { readKey } from '../core/utils'
-import { Crypto } from './index'
-import 'mocha'
+import { readKey } from "../core/utils";
+import { Crypto } from "./index";
+import "mocha";
 
-const { assert } = require('chai')
+const { assert } = require("chai");
 
-describe('Crypto Tests', async () => {
-  const crypto = new Crypto()
+describe("Crypto Tests", async () => {
+  const crypto = new Crypto();
   const mockData = {
-    endpoint: '127.0.0.1:3001',
-    tssAccount: '5H8qc7f4mXFY16NBWSB9qkc6pTks98HdVuoQTs1aova5fRtN',
+    endpoint: "127.0.0.1:3001",
+    tssAccount: "5H8qc7f4mXFY16NBWSB9qkc6pTks98HdVuoQTs1aova5fRtN",
     x25519PublicKey:
-      '0x0ac029f0b853b23bed652d6d0de69b7cc38d94f93732eefc85b5861e90f73a22',
-  }
+      "0x0ac029f0b853b23bed652d6d0de69b7cc38d94f93732eefc85b5861e90f73a22",
+  };
 
   it(`parses server threshold info`, async () => {
     const mockReturn = [
@@ -47,11 +47,11 @@ describe('Crypto Tests', async () => {
       247,
       58,
       34,
-    ]
+    ];
 
-    const result = crypto.parseServerDHKey(mockData)
-    assert.deepEqual(result.toString(), mockReturn.toString())
-  })
+    const result = crypto.parseServerDHKey(mockData);
+    assert.deepEqual(result.toString(), mockReturn.toString());
+  });
   it(`encrypts and signs`, async () => {
     const aliceSecretKey: Uint8Array = new Uint8Array([
       152,
@@ -118,16 +118,16 @@ describe('Crypto Tests', async () => {
       166,
       96,
       17,
-    ])
-    const serverDHKey = crypto.parseServerDHKey(mockData)
-    const root = process.cwd()
-    const thresholdKey = readKey(`${root.split('packages/')[0]}/0`)
+    ]);
+    const serverDHKey = crypto.parseServerDHKey(mockData);
+    const root = process.cwd();
+    const thresholdKey = readKey(`${root + "/testing-utils/test-keys/0"}`);
     const result = crypto.encryptAndSign(
       aliceSecretKey,
       thresholdKey,
       serverDHKey
-    )
+    );
 
-    assert.closeTo(result.length, 8130, 20)
-  })
-})
+    assert.closeTo(result.length, 8130, 20);
+  });
+});

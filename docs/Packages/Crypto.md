@@ -5,5 +5,5 @@ This package contains the crypto class which contains functions related to the c
 ### Usage
 
 ```js
-const crypto = new Crypto()
+const crypto = new Crypto();
 ```

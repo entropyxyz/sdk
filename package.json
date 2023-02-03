@@ -5,13 +5,14 @@
   "main": "index.js",
   "private": true,
   "scripts": {
-    "test": "mocha -t 100000 -r ts-node/register '**/tests.test.ts' --exit",
+    "test": "yarn removedb && mocha -t 100000 -r ts-node/register '**/tests.test.ts' --exit",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
     "prettier:fix": "prettier --write .",
     "prettier": "prettier --check .",
     "peek": "tsc --build --clean",
-    "clean": "rm -Rf node_modules && yarn cache clean --all && yarn install"
+    "clean": "rm -Rf node_modules && yarn cache clean --all && yarn install",
+    "removedb": "rm -rf test_db && rm -rf kvstore"
   },
   "workspaces": [
     "core/*",

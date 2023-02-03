@@ -1,4 +1,4 @@
-import { from_hex, encrypt_and_sign } from 'x25519'
+import { from_hex, encrypt_and_sign } from "x25519";
 /**
  * A class to encapsulate all the cryptography needed for using entropy
  * relies heavily on WASM
@@ -11,7 +11,7 @@ export class Crypto {
    * @returns converted x25519PublicKey
    */
   parseServerDHKey(serverDHInfo: any): Uint8Array {
-    return from_hex(serverDHInfo.x25519PublicKey)
+    return from_hex(serverDHInfo.x25519PublicKey);
   }
 
   /**
@@ -26,6 +26,6 @@ export class Crypto {
     thresholdKey: Uint8Array,
     serverDHKey: Uint8Array
   ): string {
-    return encrypt_and_sign(secretKey, thresholdKey, serverDHKey)
+    return encrypt_and_sign(secretKey, thresholdKey, serverDHKey);
   }
 }

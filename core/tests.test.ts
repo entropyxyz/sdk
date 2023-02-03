@@ -26,7 +26,7 @@ describe("Core Tests", async () => {
     serverProcess1.kill();
     serverProcess2.kill();
     chainProcess.kill();
-    removeDB()
+    removeDB();
   });
 
   it(`registers then signs`, async () => {

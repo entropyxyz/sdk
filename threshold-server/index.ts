@@ -1,5 +1,5 @@
-const axios = require('axios').default
-import { SignatureLike } from '@ethersproject/bytes'
+const axios = require("axios").default;
+import { SignatureLike } from "@ethersproject/bytes";
 
 /**
  * Class used for talking to an Entropy validator server
@@ -14,9 +14,9 @@ export class ThresholdServer {
     for (let i = 0; i < serverWithPort.length; i++) {
       await axios.post(`http://${serverWithPort[i]}/user/new`, emsgs[i], {
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-      })
+      });
     }
   }
 
@@ -28,23 +28,23 @@ export class ThresholdServer {
     thresholdUrl: string,
     retries: number
   ): Promise<SignatureLike> {
-    let i = 0
-    let status
-    let postRequest
+    let i = 0;
+    let status;
+    let postRequest;
     while (status !== 202 && i < retries) {
       try {
         postRequest = await axios.post(`${thresholdUrl}/signer/signature`, {
           message: sigHash,
-        })
-        status = postRequest.status
+        });
+        status = postRequest.status;
       } catch (e) {
-        status = 500
-        sleep(3000)
-        console.log({ message: 'repolling for signature soon', status, i })
+        status = 500;
+        sleep(3000);
+        console.log({ message: "repolling for signature soon", status, i });
       }
-      i++
+      i++;
     }
-    return Uint8Array.from(atob(postRequest.data), (c) => c.charCodeAt(0))
+    return Uint8Array.from(atob(postRequest.data), (c) => c.charCodeAt(0));
   }
 }
 
@@ -52,6 +52,6 @@ export class ThresholdServer {
  * To be deprecated with poll for signature
  */
 function sleep(delay: number) {
-  const start = new Date().getTime()
+  const start = new Date().getTime();
   while (new Date().getTime() < start + delay);
 }

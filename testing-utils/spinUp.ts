@@ -1,9 +1,6 @@
-import {spawn, ChildProcessWithoutNullStreams } from "child_process";
-import rimraf from 'rimraf'
+import { spawn, ChildProcessWithoutNullStreams } from "child_process";
+import rimraf from "rimraf";
 
-// This tracks all the processes that we spawn from this file.
-// Used to clean up processes when exiting this program.
-const p: { [key: string]: ChildProcessWithoutNullStreams } = {};
 
 export const spinChain = async (
   bin: string
@@ -44,10 +41,10 @@ export const spinThreshold = async (
 };
 
 export const removeDB = () => {
-  rimraf("test_db")
-  rimraf("kvstore")
-}
+  rimraf("test_db");
+  rimraf("kvstore");
+};
 
 export const sleep = (durationInMs: number) => {
   return new Promise((resolve) => setTimeout(resolve, durationInMs));
-}
+};

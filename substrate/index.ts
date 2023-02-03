@@ -1,18 +1,24 @@
-import { AddressOrPair, SubmittableExtrinsic } from '@polkadot/api/types'
-import { AnyJson } from '@polkadot/types-codec/types'
-import { Keyring } from '@polkadot/keyring'
-import { sr25519PairFromSeed } from '@polkadot/util-crypto'
-import { Signer, StashKeys, ThresholdInfo, EventFilter, Address } from './types'
-import { SubmittableResult, ApiPromise, WsProvider } from '@polkadot/api'
-export * as polkadotJs from '@polkadot/api'
-import { EventRecord } from '@polkadot/types/interfaces/types'
+import { AddressOrPair, SubmittableExtrinsic } from "@polkadot/api/types";
+import { AnyJson } from "@polkadot/types-codec/types";
+import { Keyring } from "@polkadot/keyring";
+import { sr25519PairFromSeed } from "@polkadot/util-crypto";
+import {
+  Signer,
+  StashKeys,
+  ThresholdInfo,
+  EventFilter,
+  Address,
+} from "./types";
+import { SubmittableResult, ApiPromise, WsProvider } from "@polkadot/api";
+export * as polkadotJs from "@polkadot/api";
+import { EventRecord } from "@polkadot/types/interfaces/types";
 
 /**
  * A class for talking to the Entropy blockchain, read only functions
  * does not require a private key to use
  */
 export class SubstrateRead {
-  api: ApiPromise
+  api: ApiPromise;
 
   /**
    * Constructs a new object for read only calls to Entropy chain
@@ -20,7 +26,7 @@ export class SubstrateRead {
    * @param api the api object for an Entropy chain
    */
   constructor(api: ApiPromise) {
-    this.api = api
+    this.api = api;
   }
 
   /**
@@ -29,8 +35,8 @@ export class SubstrateRead {
    * @returns Self
    */
   static async setup(endpoint?: string): Promise<SubstrateRead> {
-    const api = await getApi(endpoint)
-    return new SubstrateRead(api)
+    const api = await getApi(endpoint);
+    return new SubstrateRead(api);
   }
   /**
    *
@@ -38,15 +44,15 @@ export class SubstrateRead {
    * @returns threshold server keys associated with the server
    */
   async getThresholdInfo(stashKeys: StashKeys): Promise<ThresholdInfo> {
-    const result: ThresholdInfo = []
+    const result: ThresholdInfo = [];
     for (let i = 0; i < stashKeys.length; i++) {
       const r = await this.api.query.stakingExtension.thresholdServers(
         stashKeys[i]
-      )
-      const convertedResult: any = r.toHuman() ? r.toHuman() : null
-      convertedResult ? result.push(convertedResult) : null
+      );
+      const convertedResult: any = r.toHuman() ? r.toHuman() : null;
+      convertedResult ? result.push(convertedResult) : null;
     }
-    return result
+    return result;
   }
 
   /**
@@ -54,8 +60,8 @@ export class SubstrateRead {
    * @returns A promise of non converted stash keys
    */
   async getStashKeys(): Promise<any> {
-    const stashKeys = await this.api.query.stakingExtension.signingGroups.entries()
-    return stashKeys
+    const stashKeys = await this.api.query.stakingExtension.signingGroups.entries();
+    return stashKeys;
   }
   /**
    * Gets one key from every signing subgroup
@@ -63,13 +69,13 @@ export class SubstrateRead {
    * @returns One stash key from each signing sub group
    */
   selectStashKeys(stashKeys: any): StashKeys {
-    const returnedKeys = []
+    const returnedKeys = [];
     stashKeys.map((keyInfo) => {
       // TODO: currently picks first stash key in group (second array item is set to 0)
       // create good algorithm for randomly choosing a threshold server
-      returnedKeys.push(keyInfo[1].toHuman()[0])
-    })
-    return returnedKeys
+      returnedKeys.push(keyInfo[1].toHuman()[0]);
+    });
+    return returnedKeys;
   }
   /**
    *
@@ -77,8 +83,8 @@ export class SubstrateRead {
    * @returns An object that contains if the account was registered
    */
   async isRegistering(address: Address): Promise<AnyJson> {
-    const result = await this.api.query.relayer.registering(address)
-    return result.toHuman()
+    const result = await this.api.query.relayer.registering(address);
+    return result.toHuman();
   }
 }
 
@@ -86,8 +92,8 @@ export class SubstrateRead {
  * A class for talking to the Entropy blockchain, includes read and write functions
  */
 export class Substrate extends SubstrateRead {
-  api: ApiPromise
-  signer: Signer
+  api: ApiPromise;
+  signer: Signer;
 
   /**
    * Constructs a new object to talk to Entropy chain
@@ -95,9 +101,9 @@ export class Substrate extends SubstrateRead {
    * @param signer a signer object for the user talking to the Entropy chain
    */
   constructor(api: ApiPromise, signer: Signer) {
-    super(api)
-    this.api = api
-    this.signer = signer
+    super(api);
+    this.api = api;
+    this.signer = signer;
   }
 
   /**
@@ -107,9 +113,9 @@ export class Substrate extends SubstrateRead {
    * @returns Self
    */
   static async setup(seed: string, endpoint?: string): Promise<Substrate> {
-    const api = await getApi(endpoint)
-    const wallet = await getWallet(seed)
-    return new Substrate(api, wallet)
+    const api = await getApi(endpoint);
+    const wallet = await getWallet(seed);
+    return new Substrate(api, wallet);
   }
 
   /**
@@ -119,42 +125,42 @@ export class Substrate extends SubstrateRead {
    * @param sender the sender of the transaction
    */
   async sendAndWait(
-    call: SubmittableExtrinsic<'promise'>,
+    call: SubmittableExtrinsic<"promise">,
     api: ApiPromise,
     sender: AddressOrPair
   ): Promise<undefined> {
     return new Promise<undefined>((resolve, reject) => {
       call
         .signAndSend(sender, (res: SubmittableResult) => {
-          const { dispatchError, status } = res
+          const { dispatchError, status } = res;
 
           if (dispatchError) {
             if (dispatchError.isModule) {
               // for module errors, we have the section indexed, lookup
               const decoded: any = api.registry.findMetaError(
                 dispatchError.asModule
-              )
-              const { documentation, name, section } = decoded
+              );
+              const { documentation, name, section } = decoded;
 
               const err = Error(
-                `${section}.${name}: ${documentation.join(' ')}`
-              )
+                `${section}.${name}: ${documentation.join(" ")}`
+              );
 
-              err.name = name
-              reject(err)
+              err.name = name;
+              reject(err);
             } else {
-              reject(Error(dispatchError.toString()))
+              reject(Error(dispatchError.toString()));
             }
           }
 
           if (status.isInBlock || status.isFinalized) {
-            resolve(undefined)
+            resolve(undefined);
           }
         })
         .catch((e) => {
-          reject(Error(e.message))
-        })
-    })
+          reject(Error(e.message));
+        });
+    });
   }
 
   /**
@@ -166,7 +172,7 @@ export class Substrate extends SubstrateRead {
    * @returns event that fits the filter
    */
   async sendAndWaitFor(
-    call: SubmittableExtrinsic<'promise'>,
+    call: SubmittableExtrinsic<"promise">,
     api: ApiPromise,
     sender: AddressOrPair,
     filter: EventFilter
@@ -174,35 +180,35 @@ export class Substrate extends SubstrateRead {
     return new Promise<any>((resolve, reject) => {
       call
         .signAndSend(sender, (res: SubmittableResult) => {
-          const { dispatchError, status } = res
+          const { dispatchError, status } = res;
 
           if (dispatchError) {
             if (dispatchError.isModule) {
               // for module errors, we have the section indexed, lookup
               const decoded: any = api.registry.findMetaError(
                 dispatchError.asModule
-              )
-              const { documentation, name, section } = decoded
+              );
+              const { documentation, name, section } = decoded;
 
-              reject(Error(`${section}.${name}: ${documentation.join(' ')}`))
+              reject(Error(`${section}.${name}: ${documentation.join(" ")}`));
             } else {
-              reject(Error(dispatchError.toString()))
+              reject(Error(dispatchError.toString()));
             }
           }
 
           if (status.isInBlock || status.isFinalized) {
-            const record = res.findRecord(filter.section, filter.name)
+            const record = res.findRecord(filter.section, filter.name);
             if (record) {
-              resolve(record)
+              resolve(record);
             } else {
-              reject(Error('Event record not found'))
+              reject(Error("Event record not found"));
             }
           }
         })
         .catch((e) => {
-          reject(Error(e.message))
-        })
-    })
+          reject(Error(e.message));
+        });
+    });
   }
 
   /**
@@ -218,10 +224,10 @@ export class Substrate extends SubstrateRead {
     const tx = this.api.tx.relayer.register(
       constraintModificationAccount,
       initialConstraints
-    )
-    await this.sendAndWait(tx, this.api, this.signer.wallet)
-    const isRegistered = await this.isRegistering(this.signer.wallet.address)
-    return isRegistered
+    );
+    await this.sendAndWait(tx, this.api, this.signer.wallet);
+    const isRegistered = await this.isRegistering(this.signer.wallet.address);
+    return isRegistered;
   }
 }
 
@@ -233,11 +239,11 @@ export class Substrate extends SubstrateRead {
 const getApi = async (endpoint?: string): Promise<ApiPromise> => {
   const wsProvider = endpoint
     ? new WsProvider(endpoint)
-    : new WsProvider('ws://127.0.0.1:9944')
-  const api = new ApiPromise({ provider: wsProvider })
-  await api.isReady
-  return api
-}
+    : new WsProvider("ws://127.0.0.1:9944");
+  const api = new ApiPromise({ provider: wsProvider });
+  await api.isReady;
+  return api;
+};
 
 /**
  *
@@ -245,8 +251,8 @@ const getApi = async (endpoint?: string): Promise<ApiPromise> => {
  * @returns a wallet object and a pair object
  */
 const getWallet = (seed: string): Signer => {
-  const keyring = new Keyring({ type: 'sr25519' })
-  const pair = sr25519PairFromSeed(seed)
-  const wallet = keyring.addFromPair(pair)
-  return { wallet, pair }
-}
+  const keyring = new Keyring({ type: "sr25519" });
+  const pair = sr25519PairFromSeed(seed);
+  const wallet = keyring.addFromPair(pair);
+  return { wallet, pair };
+};
