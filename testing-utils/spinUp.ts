@@ -1,7 +1,6 @@
 import { spawn, ChildProcessWithoutNullStreams } from "child_process";
 import rimraf from "rimraf";
 
-
 export const spinChain = async (
   bin: string
 ): Promise<ChildProcessWithoutNullStreams> => {

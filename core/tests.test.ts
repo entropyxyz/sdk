@@ -42,7 +42,7 @@ describe("Core Tests", async () => {
         "5GNJqTPyNqANBkUVMN1LPPrxXnFouWXoe2wNSmmEoLctxiZY"
       ); // constraint mod account is alice stash, ie `subkey inspect //Alice//stash`
     } catch (e: any) {
-      console.log(e)
+      console.log(e);
       assert.equal(e, "Error: already registered");
     }
 
