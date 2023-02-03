@@ -179,3 +179,4 @@ dist
 */typegen/*
 kvstore/
 test_db/
+.entropy

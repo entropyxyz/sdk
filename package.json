@@ -12,7 +12,7 @@
     "prettier": "prettier --check .",
     "peek": "tsc --build --clean",
     "clean": "rm -Rf node_modules && yarn cache clean --all && yarn install",
-    "removedb": "rm -rf test_db && rm -rf kvstore"
+    "removedb": "rm -rf .entropy"
   },
   "workspaces": [
     "core/*",
