@@ -1,14 +1,13 @@
-import { execSync, spawn, ChildProcessWithoutNullStreams } from "child_process";
+import {spawn, ChildProcessWithoutNullStreams } from "child_process";
+import rimraf from 'rimraf'
 
 // This tracks all the processes that we spawn from this file.
 // Used to clean up processes when exiting this program.
 const p: { [key: string]: ChildProcessWithoutNullStreams } = {};
 
 export const spinChain = async (
-  bin: string,
-  key: string
+  bin: string
 ): Promise<ChildProcessWithoutNullStreams> => {
-  console.log("chain starting");
   const args = ["--dev"];
   const process = spawn(bin, args);
   process.stderr.on("data", async function (chunk) {
@@ -24,6 +23,31 @@ export const spinChain = async (
   return process;
 };
 
-function sleep(durationInMs: number) {
+export const spinThreshold = async (
+  bin: string,
+  name: string,
+  port: string
+): Promise<ChildProcessWithoutNullStreams> => {
+  const args = [];
+  if (name) {
+    args.push("--" + name);
+  }
+  const process = spawn(bin, args, {
+    env: { ROCKET_PORT: port, ROCKET_ADDRESS: "127.0.0.1" },
+  });
+  await sleep(1000);
+  process.stderr.on("data", async function (chunk) {
+    const message = chunk.toString();
+    console.log(message, "inside");
+  });
+  return process;
+};
+
+export const removeDB = () => {
+  rimraf("test_db")
+  rimraf("kvstore")
+}
+
+export const sleep = (durationInMs: number) => {
   return new Promise((resolve) => setTimeout(resolve, durationInMs));
 }

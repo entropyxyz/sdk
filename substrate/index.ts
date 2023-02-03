@@ -192,7 +192,6 @@ export class Substrate extends SubstrateRead {
 
           if (status.isInBlock || status.isFinalized) {
             const record = res.findRecord(filter.section, filter.name)
-
             if (record) {
               resolve(record)
             } else {

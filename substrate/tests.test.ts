@@ -8,12 +8,11 @@ describe("Substrate Tests", async () => {
   let substrate: Substrate;
   const bobSeed =
     "0x398f0c28f98885e046333d4a41c19cee4c37368a9832c6502f6cfd182e2aef89"; // `subkey inspect //Bob` 'secret seed'
-  const chainId = "dev";
   let chainProcess;
   beforeEach(async function () {
-    const chainPath = process.cwd() + "/entropy";
+    const chainPath = process.cwd() + "/testing-utils/test-binaries/entropy";
     try {
-      chainProcess = await spinChain(chainPath, chainId);
+      chainProcess = await spinChain(chainPath);
     } catch (e) {
       throw new Error(e);
     }
@@ -25,7 +24,7 @@ describe("Substrate Tests", async () => {
     chainProcess.kill();
   });
 
-  it.only(`checks if registering and registers`, async () => {
+  it(`checks if registering and registers`, async () => {
     const register: any = await substrate.register(
       "5HpG9w8EBLe5XCrbczpwq5TSXvedjrBGCwqxK1iQ7qUsSWFc",
       null
@@ -33,7 +32,7 @@ describe("Substrate Tests", async () => {
     assert.equal(register.isRegistering, true);
   });
 
-  it.only(`gets threshold Info`, async () => {
+  it(`gets threshold Info`, async () => {
     const stashKeys = [
       "5GNJqTPyNqANBkUVMN1LPPrxXnFouWXoe2wNSmmEoLctxiZY", // validator 1
       "5HpG9w8EBLe5XCrbczpwq5TSXvedjrBGCwqxK1iQ7qUsSWFc", // validator 2
