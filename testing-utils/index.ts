@@ -1,1 +1,1 @@
-export { spinChain, spinThreshold, sleep, removeDB } from "./spinUp";
+export { spinChain, spinThreshold, sleep, removeDB } from './spinUp'
