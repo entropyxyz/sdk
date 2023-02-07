@@ -4,11 +4,13 @@
 
 ### Setup
 
-`yarn`
-
 ### Node.js Version
 
 Run `nvm use` to use the correct node version.
+
+### Run Project
+
+- `yarn`
 
 ### Linting
 
