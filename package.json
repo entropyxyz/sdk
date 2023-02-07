@@ -2,7 +2,9 @@
   "name": "entropyjs",
   "version": "0.0.1",
   "description": "JS SDK for entropy blockchain ",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "module": "dist/index.mjs",
   "private": true,
   "scripts": {
     "test": "mocha -t 100000 -r ts-node/register '**/tests.test.ts'",
