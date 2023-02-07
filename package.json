@@ -11,7 +11,8 @@
     "prettier:fix": "prettier --write .",
     "prettier": "prettier --check .",
     "peek": "tsc --build --clean",
-    "clean": "rm -Rf node_modules && yarn cache clean --all && yarn install"
+    "clean": "rm -Rf node_modules && yarn cache clean --all && yarn install",
+    "bundle": "tsup --dts --format cjs,esm core/index.ts"
   },
   "workspaces": [
     "core/*",
