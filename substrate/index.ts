@@ -86,7 +86,6 @@ export class SubstrateRead {
  * A class for talking to the Entropy blockchain, includes read and write functions
  */
 export class Substrate extends SubstrateRead {
-  api: ApiPromise
   signer: Signer
 
   /**
