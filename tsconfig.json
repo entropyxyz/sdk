@@ -3,5 +3,6 @@
     "target": "es5",
     "module": "commonjs",
     "skipLibCheck": true,
+    "noEmit": true
   }
 }
