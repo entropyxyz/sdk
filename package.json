@@ -1,5 +1,5 @@
 {
-  "name": "entropyjs",
+  "name": "@entropyxyz/entropy-js",
   "version": "0.0.1",
   "description": "JS SDK for entropy blockchain ",
   "main": "dist/index.js",
@@ -27,6 +27,9 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/entropyxyz/entropy-js.git"
+  },
+  "publishConfig": {
+    "@entropyxyz:entropy-js": "https://npm.pkg.github.com"
   },
   "author": "Entropy",
   "license": "ISC",
