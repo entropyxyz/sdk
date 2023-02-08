@@ -4,14 +4,13 @@ import { Keyring } from '@polkadot/keyring'
 import { sr25519PairFromSeed } from '@polkadot/util-crypto'
 import { Signer, StashKeys, ThresholdInfo, EventFilter, Address } from './types'
 import { SubmittableResult, ApiPromise, WsProvider } from '@polkadot/api'
-export * as polkadotJs from '@polkadot/api'
 import { EventRecord } from '@polkadot/types/interfaces/types'
 
 /**
  * A class for talking to the Entropy blockchain, read only functions
  * does not require a private key to use
  */
-export class SubstrateRead {
+class SubstrateRead {
   api: ApiPromise
 
   /**
