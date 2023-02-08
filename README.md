@@ -21,7 +21,7 @@ Linting is available and can be done by running `yarn eslint`. You can also use 
 Testing in this repo is done against `entropy-core`, so clone and setup that repo. After that, you can run the tests in this repo.
 
 - Make sure you build release in `entropy-core` with `cargo build --release`.
-- In **three seperate terminals**, run:
+- In **three separate terminals**, run:
   - `./scripts/sdk-entropy-node.sh`
   - `./scripts/sdk-alice-tss.sh`
   - `./scripts/sdk-bob-tss.sh`
