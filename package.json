@@ -16,7 +16,8 @@
     "prettier": "prettier --check .",
     "peek": "tsc --build --clean",
     "clean": "rm -Rf node_modules && yarn cache clean --all && yarn install",
-    "bundle": "tsup --dts --format cjs,esm core/index.ts"
+    "bundle": "tsup --dts --format cjs,esm core/index.ts",
+    "find-deadcode": "ts-prune"
   },
   "workspaces": [
     "core/*",
@@ -49,6 +50,7 @@
     "should": "^13.2.3",
     "ts-mocha": "^10.0.0",
     "ts-node": "^10.9.1",
+    "ts-prune": "^0.10.3",
     "tsup": "^6.5.0",
     "typescript": "^4.9.3"
   },
