@@ -1723,9 +1723,9 @@ bufferutil@^4.0.1:
     node-gyp-build "^4.3.0"
 
 bundle-require@^4.0.0:
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/bundle-require/-/bundle-require-4.0.0.tgz#99e91aed83fb33041c123b013c356e7b76473e10"
-  integrity sha512-5xjxGtR06579D7UcTBhcQO7Zg3A7ji5xuIUl7kNHSvVJ7/CmAs3bCosfYWNuD/Xm5k0jS9VFuPipSpm5S+ZlKw==
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/bundle-require/-/bundle-require-4.0.1.tgz#2cc1ad76428043d15e0e7f30990ee3d5404aa2e3"
+  integrity sha512-9NQkRHlNdNpDBGmLpngF3EFDcwodhMUuLz9PaWYciVcQF9SE4LFjM2DB/xV1Li5JiuDMv7ZUWuC3rGbqR0MAXQ==
   dependencies:
     load-tsconfig "^0.2.3"
 
@@ -3505,9 +3505,9 @@ mocha@^10.1.0:
     yargs-unparser "2.0.0"
 
 mock-socket@^9.1.5:
-  version "9.1.5"
-  resolved "https://registry.yarnpkg.com/mock-socket/-/mock-socket-9.1.5.tgz#2c4e44922ad556843b6dfe09d14ed8041fa2cdeb"
-  integrity sha512-3DeNIcsQixWHHKk6NdoBhWI4t1VMj5/HzfnI1rE/pLl5qKx7+gd4DNA07ehTaZ6MoUU053si6Hd+YtiM/tQZfg==
+  version "9.2.0"
+  resolved "https://registry.yarnpkg.com/mock-socket/-/mock-socket-9.2.0.tgz#3951f1fac2376a05c8ddc530e14a546ec2019306"
+  integrity sha512-cFDvRRbNoxABvcmXfeECwTn61BWfiC2X6ZPM1S5FuGDFp65RS7R8ucoceU00GncRwPuuGcB4yGYN14TT50k7rw==
 
 ms@2.0.0:
   version "2.0.0"
