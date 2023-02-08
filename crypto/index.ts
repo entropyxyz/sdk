@@ -1,4 +1,7 @@
-import { from_hex, encrypt_and_sign } from 'x25519'
+import {
+  from_hex,
+  encrypt_and_sign,
+} from '@entropyxyz/x25519-chacha20poly1305-nodejs'
 /**
  * A class to encapsulate all the cryptography needed for using entropy
  * relies heavily on WASM

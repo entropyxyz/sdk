@@ -65,8 +65,7 @@
     "axios": "^1.2.5",
     "ethers": "^5.7.2",
     "x25519": "^0.1.0",
-    "@entropyxyz/x25519-chacha20poly1305-web": "^0.1.0",
-    "@entropyxyz/x25519-chacha20poly1305-nodejs": "^0.1.0",
-    "@entropyxyz/x25519-chacha20poly1305-bunlder": "^0.1.0"
+    "@entropyxyz/x25519-chacha20poly1305-web": "^0.1.2",
+    "@entropyxyz/x25519-chacha20poly1305-nodejs": "^0.1.1"
   }
 }
