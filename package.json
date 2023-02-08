@@ -64,7 +64,6 @@
     "@polkadot/types-codec": "^9.12.1",
     "axios": "^1.2.5",
     "ethers": "^5.7.2",
-    "x25519": "^0.1.0",
     "@entropyxyz/x25519-chacha20poly1305-web": "git+ssh://github.com/entropyxyz/x25519-chacha20poly1305-web.git",
     "@entropyxyz/x25519-chacha20poly1305-nodejs": "git+ssh://github.com/entropyxyz/x25519-chacha20poly1305-nodejs.git"
   }

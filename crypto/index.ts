@@ -1,7 +1,21 @@
-import {
-  from_hex,
-  encrypt_and_sign,
-} from '@entropyxyz/x25519-chacha20poly1305-nodejs'
+// import {
+//   from_hex,
+//   encrypt_and_sign,
+// } from '@entropyxyz/x25519-chacha20poly1305-web'
+let x25519_chacha20poly1305
+;(async () => {
+  if (typeof window === 'undefined') {
+    x25519_chacha20poly1305 = await import(
+      '@entropyxyz/x25519-chacha20poly1305-nodejs'
+    )
+  } else {
+    x25519_chacha20poly1305 = await import(
+      '@entropyxyz/x25519-chacha20poly1305-web/x25519_chacha20poly1305'
+    )
+  }
+})()
+
+const { from_hex, encrypt_and_sign } = x25519_chacha20poly1305
 /**
  * A class to encapsulate all the cryptography needed for using entropy
  * relies heavily on WASM
