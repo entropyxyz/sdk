@@ -4,6 +4,7 @@
     "skipLibCheck": true,
     "noEmit": true,
     "moduleResolution": "node",
+    "incremental": true,
     "typeRoots": ["node_modules/@types", "@types/"]
   }
 }
