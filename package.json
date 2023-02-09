@@ -17,6 +17,8 @@
     "peek": "tsc --build --clean",
     "clean": "rm -Rf node_modules && yarn cache clean --all && yarn install",
     "bundle": "tsup --dts --format cjs,esm core/index.ts",
+    "bundle:watch": "tsup --watch",
+    "bundle:prod": "tsup --minify",
     "find-deadcode": "ts-prune"
   },
   "workspaces": [
