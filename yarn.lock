@@ -237,6 +237,16 @@
   dependencies:
     "@jridgewell/trace-mapping" "0.3.9"
 
+"@entropyxyz/x25519-chacha20poly1305-nodejs@^0.1.1":
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/@entropyxyz/x25519-chacha20poly1305-nodejs/-/x25519-chacha20poly1305-nodejs-0.1.1.tgz#0aed1958e01becaf40aea2557ad3a69931bc1229"
+  integrity sha512-88ci7c/t0MVyKwOHU+ukS9r253RmKf7fdkxR8zuWDqLWboZq4KbKqFk+yxazRiQYgfeqF6sq2tR1AYUdl0geOQ==
+
+"@entropyxyz/x25519-chacha20poly1305-web@^0.1.2":
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/@entropyxyz/x25519-chacha20poly1305-web/-/x25519-chacha20poly1305-web-0.1.2.tgz#469d000e1a976530e9bc9045ccd307ea9ae08f96"
+  integrity sha512-vGlZGBK2ofw1Gfu38zC1m55LQVDIjgkWRfDcQ+T9mXYpgoBpRkQF2ZRQMiC+2j/aYlR7BiVQf8K6lq5NJRIFJg==
+
 "@esbuild/android-arm64@0.17.6":
   version "0.17.6"
   resolved "https://registry.yarnpkg.com/@esbuild/android-arm64/-/android-arm64-0.17.6.tgz#b11bd4e4d031bb320c93c83c137797b2be5b403b"
