@@ -30,6 +30,16 @@ This will spin up a local blockchain node, and two threshold server nodes.
 
 Then, in this repo, **fourth terminal**, run `yarn test` in to run the tests.
 
+### Note on tests
+
+Currently, the tests only work on the first run. This is because the `entropy-core` node is not reset between tests. To get all test to pass again run the commands above:
+
+- `./scripts/sdk-entropy-node.sh`
+- `./scripts/sdk-alice-tss.sh`
+- `./scripts/sdk-bob-tss.sh`
+
+This will be fixed in the future.
+
 ### Typegen
 
 When the Substrate node in `entropy-core` is updated, you will need to update the type metadata. To do this:
