@@ -4,6 +4,8 @@
 
 ### Setup
 
+- `cp .env.example .env`
+
 ### Node.js Version
 
 Run `nvm use` to use the correct node version.
@@ -39,6 +41,12 @@ Currently, the tests only work on the first run. This is because the `entropy-co
 - `./scripts/sdk-bob-tss.sh`
 
 This will be fixed in the future.
+
+### Adding Environment Variables
+
+- Add the variable to `.env.example` with a blank value
+- Add the variable to `.env`
+- Update the @types/environment.d.ts file with the variable name and type
 
 ### Typegen
 

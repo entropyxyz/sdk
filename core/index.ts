@@ -6,7 +6,9 @@ import { isValidSubstrateAddress } from './utils'
 import { Substrate } from '../substrate'
 import { ThresholdServer } from '../threshold-server'
 import { Crypto } from '../crypto'
+import * as dotenv from 'dotenv' // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
 
+dotenv.config()
 /**
  * Encapsulates all subclasses and exposes functions to make interacting with entropy simple
  */
