@@ -7,7 +7,8 @@ describe('Substrate Tests', async () => {
   let substrate: Substrate
   const bobSeed =
     '0x398f0c28f98885e046333d4a41c19cee4c37368a9832c6502f6cfd182e2aef89' // `subkey inspect //Bob` 'secret seed'
-  
+  const aliceSeed =
+    '0xe5be9a5092b81bca64be81d212e7f2f9eba183bb7a90954f7b76361f6edb5c0a'
   before(async function () {
     substrate = await Substrate.setup(bobSeed)
   })
@@ -19,7 +20,7 @@ describe('Substrate Tests', async () => {
   it(`checks if registering and registers`, async () => {
     const register: any = await substrate.register(
       '5HpG9w8EBLe5XCrbczpwq5TSXvedjrBGCwqxK1iQ7qUsSWFc',
-      null
+      false
     ) // constraint mod account is ALICE_STASH
     assert.equal(register.isRegistering, true)
   })
@@ -59,5 +60,28 @@ describe('Substrate Tests', async () => {
 
     const returnedKeys: any = substrate.selectStashKeys(stashKeys)
     assert.deepEqual(returnedKeys, mockReturnedKeys)
+  })
+  it(`checks free tx`, async () => {
+    const tx = substrate.api.tx.balances.transfer(
+      substrate.signer.wallet.address,
+      10
+    )
+    // fails no payment
+    try {
+      await substrate.handleFreeTx(tx)
+      throw new Error('should have failed')
+    } catch (e) {
+      assert.equal(e.message, '{"err":{"invalid":{"payment":null}}}')
+    }
+    const aliceSubstrate = await Substrate.setup(aliceSeed)
+    const tx2 = aliceSubstrate.api.tx.freeTx.giveZaps(
+      substrate.signer.wallet.address,
+      1
+    )
+    // sets free tx allowed
+    const sudoCall = aliceSubstrate.api.tx.sudo.sudo(tx2)
+    await aliceSubstrate.sendAndWait(sudoCall, false)
+    await substrate.handleFreeTx(tx)
+    aliceSubstrate.api.disconnect()
   })
 })

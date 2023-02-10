@@ -52,11 +52,13 @@ export default class Entropy {
    * Registers a user in the entropy blockchain
    * @param keyShares Entropy threshold keys to be distributed (including your own to be stored)?
    * @param constraintModificationAccount The Substrate account that will be used to modify constraints after registration
+   * @param freeTx Is this transaction meant to use the free tx pallet
    * @returns A JSON return from the chain which contains a boolean of if the registration was successfully
    */
   async register(
     keyShares: keyShare[],
     constraintModificationAccount: string,
+    freeTx: boolean,
     initialConstraints?: string
   ): Promise<AnyJson> {
     const isRegistered_check = await this.substrate.api.query.relayer.registered(
@@ -100,15 +102,10 @@ export default class Entropy {
       constraintModificationAccount,
       initialConstraints ? initialConstraints : null
     )
-    await this.substrate.sendAndWaitFor(
-      registerTx,
-      this.substrate.api,
-      this.substrate.signer.wallet,
-      {
-        section: 'relayer',
-        name: 'SignalRegister',
-      }
-    )
+    await this.substrate.sendAndWaitFor(registerTx, freeTx, {
+      section: 'relayer',
+      name: 'SignalRegister',
+    })
 
     await this.substrate.api.query.relayer.registering(
       this.substrate.signer.wallet.address
@@ -126,11 +123,13 @@ export default class Entropy {
    * Sign a tx (for ethereum currently) using the entropy blockchain. This will take an unsigned tx and return
    * a signature, it is up to the user to handle from there
    * @param tx the transaction to be signed
+   * @param freeTx Is this transaction meant to use the free tx pallet
    * @param retries To be deprecated when alice signs with the validators, but polling for sig retries
    * @returns A signature to then be included in a transaction
    */
   async sign(
     tx: utils.UnsignedTransaction,
+    freeTx: boolean,
     retries: number
   ): Promise<SignatureLike> {
     const sigData = await utils.serializeTransaction(tx)
@@ -139,15 +138,10 @@ export default class Entropy {
     const prepTx = await this.substrate.api.tx.relayer.prepTransaction({
       sigHash,
     })
-    const record = await this.substrate.sendAndWaitFor(
-      prepTx,
-      this.substrate.api,
-      this.substrate.signer.wallet,
-      {
-        section: 'relayer',
-        name: 'SignatureRequested',
-      }
-    )
+    const record = await this.substrate.sendAndWaitFor(prepTx, freeTx, {
+      section: 'relayer',
+      name: 'SignatureRequested',
+    })
     const urls = record.event.data.toHuman()[0].ipAddresses
     // TODO get urls from event record (not implemented in devnet)
 

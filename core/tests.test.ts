@@ -27,7 +27,8 @@ describe('Core Tests', async () => {
       // TODO use register() in substrate, not directly
       await entropy.register(
         [thresholdKey, thresholdKey2],
-        '5GNJqTPyNqANBkUVMN1LPPrxXnFouWXoe2wNSmmEoLctxiZY'
+        '5GNJqTPyNqANBkUVMN1LPPrxXnFouWXoe2wNSmmEoLctxiZY',
+        false
       ) // constraint mod account is alice stash, ie `subkey inspect //Alice//stash`
     } catch (e: any) {
       assert.equal(e, 'Error: already registered')
@@ -45,7 +46,7 @@ describe('Core Tests', async () => {
 
     // good error, only running one node so sig will not happen
     try {
-      await entropy.sign(tx, 0)
+      await entropy.sign(tx, false, 0)
     } catch (e: any) {
       assert.equal(
         e.message,
@@ -58,7 +59,7 @@ describe('Core Tests', async () => {
     const aliceStash = '5HpG9w8EBLe5XCrbczpwq5TSXvedjrBGCwqxK1iQ7qUsSWFc'
     assert.equal(isValidSubstrateAddress(aliceStash), true)
   })
-    
+
   it(`isValidSubstrateAddress() is false for wrong account lengths`, async () => {
     const invalidAccount = '5HpG9w8EBLe5XCrbczpwq5TSXvedjrBGCwqxK1iQ7qUsS' // shorter than allowed
     assert.equal(isValidSubstrateAddress(invalidAccount), false)

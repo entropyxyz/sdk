@@ -1,4 +1,4 @@
-import { AddressOrPair, SubmittableExtrinsic } from '@polkadot/api/types'
+import { SubmittableExtrinsic } from '@polkadot/api/types'
 import { AnyJson } from '@polkadot/types-codec/types'
 import { Keyring } from '@polkadot/keyring'
 import { sr25519PairFromSeed } from '@polkadot/util-crypto'
@@ -111,25 +111,40 @@ export class Substrate extends SubstrateRead {
   }
 
   /**
-   * Signs and sends the given `call` from `sender` and waits for the transaction to be included in a block.
-   * @param api api object
+   * Wraps a call in a free transaction and checks to see if the transaction will pass
    * @param call a call that can be submitted to the chain
-   * @param sender the sender of the transaction
+   * @returns the original call wrapped in a free transaction
+   */
+  async handleFreeTx(
+    call: SubmittableExtrinsic<'promise'>
+  ): Promise<SubmittableExtrinsic<'promise'>> {
+    const free_tx_wrapper = this.api.tx.freeTx.callUsingElectricity(call)
+    const result = await free_tx_wrapper.dryRun(this.signer.wallet)
+    if (result.isErr) {
+      throw new Error(result.toString())
+    }
+    return free_tx_wrapper
+  }
+
+  /**
+   * Signs and sends the given `call` from `sender` and waits for the transaction to be included in a block.
+   * @param call a call that can be submitted to the chain
+   * @param freeTx is the transaction meant to use the free tx pallet
    */
   async sendAndWait(
     call: SubmittableExtrinsic<'promise'>,
-    api: ApiPromise,
-    sender: AddressOrPair
+    freeTx: boolean
   ): Promise<undefined> {
+    const newCall = freeTx ? await this.handleFreeTx(call) : call
     return new Promise<undefined>((resolve, reject) => {
-      call
-        .signAndSend(sender, (res: SubmittableResult) => {
+      newCall
+        .signAndSend(this.signer.wallet, (res: SubmittableResult) => {
           const { dispatchError, status } = res
 
           if (dispatchError) {
             if (dispatchError.isModule) {
               // for module errors, we have the section indexed, lookup
-              const decoded: any = api.registry.findMetaError(
+              const decoded: any = this.api.registry.findMetaError(
                 dispatchError.asModule
               )
               const { documentation, name, section } = decoded
@@ -157,27 +172,26 @@ export class Substrate extends SubstrateRead {
 
   /**
    * Signs and sends the given `call` from `sender` and waits for an event that fits `filter`.
-   * @param api api object
    * @param call a call that can be submitted to the chain
-   * @param sender the sender of the transaction
+   * @param freeTx is the transaction meant to use the free tx pallet
    * @param filter which event to filter for
    * @returns event that fits the filter
    */
   async sendAndWaitFor(
     call: SubmittableExtrinsic<'promise'>,
-    api: ApiPromise,
-    sender: AddressOrPair,
+    freeTx: boolean,
     filter: EventFilter
   ): Promise<EventRecord> {
+    const newCall = freeTx ? await this.handleFreeTx(call) : call
     return new Promise<any>((resolve, reject) => {
-      call
-        .signAndSend(sender, (res: SubmittableResult) => {
+      newCall
+        .signAndSend(this.signer.wallet, (res: SubmittableResult) => {
           const { dispatchError, status } = res
 
           if (dispatchError) {
             if (dispatchError.isModule) {
               // for module errors, we have the section indexed, lookup
-              const decoded: any = api.registry.findMetaError(
+              const decoded: any = this.api.registry.findMetaError(
                 dispatchError.asModule
               )
               const { documentation, name, section } = decoded
@@ -211,6 +225,7 @@ export class Substrate extends SubstrateRead {
   // TODO use this function in core.register()
   async register(
     constraintModificationAccount: string,
+    freeTx: boolean,
     initialConstraints = null
   ): Promise<AnyJson> {
     // Null is the initial constra
@@ -218,7 +233,7 @@ export class Substrate extends SubstrateRead {
       constraintModificationAccount,
       initialConstraints
     )
-    await this.sendAndWait(tx, this.api, this.signer.wallet)
+    await this.sendAndWait(tx, freeTx)
     const isRegistered = await this.isRegistering(this.signer.wallet.address)
     return isRegistered
   }
