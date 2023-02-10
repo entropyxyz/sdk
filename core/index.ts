@@ -6,9 +6,7 @@ import { isValidSubstrateAddress } from './utils'
 import { Substrate } from '../substrate'
 import { ThresholdServer } from '../threshold-server'
 import { Crypto } from '../crypto'
-import * as dotenv from 'dotenv' // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
 
-dotenv.config()
 /**
  * Encapsulates all subclasses and exposes functions to make interacting with entropy simple
  */
@@ -88,8 +86,10 @@ export default class Entropy {
     const encryptedMessages: Array<string> = []
     const urls: Array<string> = []
     for (let i = 0; i < serverStashKeys.length; i++) {
-      const serverDHKey = this.crypto.parseServerDHKey(thresholdAccountsInfo[i])
-      const encryptedMessage = this.crypto.encryptAndSign(
+      const serverDHKey = await this.crypto.parseServerDHKey(
+        thresholdAccountsInfo[i]
+      )
+      const encryptedMessage = await this.crypto.encryptAndSign(
         this.substrate.signer.pair.secretKey,
         keyShares[i],
         serverDHKey
@@ -98,7 +98,7 @@ export default class Entropy {
       urls.push(thresholdAccountsInfo[i].endpoint)
     }
 
-    const registerTx = this.substrate.api.tx.relayer.register(
+    const registerTx = await this.substrate.api.tx.relayer.register(
       constraintModificationAccount,
       initialConstraints ? initialConstraints : null
     )

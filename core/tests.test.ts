@@ -19,8 +19,8 @@ describe('Core Tests', async () => {
 
   it(`registers then signs`, async () => {
     const root = process.cwd()
-    const thresholdKey = readKey(`${root.split('packages/')[0]}/0`)
-    const thresholdKey2 = readKey(`${root.split('packages/')[0]}/1`)
+    const thresholdKey = await readKey(`${root.split('packages/')[0]}/0`)
+    const thresholdKey2 = await readKey(`${root.split('packages/')[0]}/1`)
 
     // either works or not working from clean state and keys already there, good error, working error
     try {
