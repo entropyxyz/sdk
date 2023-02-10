@@ -6,7 +6,8 @@
     "incremental": true,
     "typeRoots": ["node_modules/@types", "@types/"],
     "moduleResolution": "node",
-    "tsBuildInfoFile": ".tsbuildinfo"
+    "tsBuildInfoFile": ".tsbuildinfo",
+    "module": "Node16"
   },
   "exclude": ["node_modules", "dist", "build", "examples"]
 }
