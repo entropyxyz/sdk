@@ -53,7 +53,7 @@ export default class Entropy {
    * @param keyShares Entropy threshold keys to be distributed (including your own to be stored)?
    * @param constraintModificationAccount The Substrate account that will be used to modify constraints after registration
    * @param freeTx Is this transaction meant to use the free tx pallet
-   * @returns A JSON return from the chain which contains a boolean of if the registration was successfully
+   * @returns A JSON return from the chain which contains a boolean of if the registration was successful
    */
   async register(
     keyShares: keyShare[],
