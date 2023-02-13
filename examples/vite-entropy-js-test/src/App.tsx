@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import reactLogo from './assets/react.svg'
-// import Entropy from '@entropyxyz/x25519-chacha20poly1305-web'
-import Entropy from '../../../core/index'
+import Entropy from '@entropyxyz/x25519-chacha20poly1305-web'
 import './App.css'
 
 function App() {
   const [count, setCount] = useState(0)
+  console.info(Entropy)
   return (
     <div className='App'>
       <div>
