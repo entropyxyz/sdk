@@ -27,7 +27,4 @@ export const handlers = [
   rest.get('https://jsonplaceholder.typicode.com/posts', (req, res, ctx) => {
     return res(ctx.status(200), ctx.json(posts))
   }),
-  rest.get('http://127.0.0.1:9944', (req, res, ctx) => {
-    return res(ctx.status(200), ctx.json({ message: 'hello world' }))
-  }),
 ]
