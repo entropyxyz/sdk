@@ -70,7 +70,6 @@
     "@polkadot/api": "^9.12.1",
     "@polkadot/types-codec": "^9.12.1",
     "axios": "^1.2.5",
-    "ethers": "^5.7.2",
-    "x25519": "^0.1.0"
+    "ethers": "^5.7.2"
   }
 }
