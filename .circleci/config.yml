@@ -28,6 +28,3 @@ workflows:
   build_test_lint: # this can be any name you choose
     jobs:
       - build_test_lint
-          filters:
-            branches:
-              only: master # only deploy when on master
