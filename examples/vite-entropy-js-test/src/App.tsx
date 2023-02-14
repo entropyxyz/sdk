@@ -1,9 +1,12 @@
-import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import './App.css'
+import { useEntropy } from './utils/useEntropy/useEntropy'
+import { ALICE } from './utils/entropy-utils'
+import React from 'react'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const entropy = useEntropy({ seed: ALICE.SEED })
+  console.log('entropy', entropy)
   return (
     <div className='App'>
       <div>
@@ -16,9 +19,6 @@ function App() {
       </div>
       <h1>Entropy.js SDK</h1>
       <div className='card'>
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
         <p>
           Edit <code>src/App.tsx</code> and save to test HMR
         </p>
