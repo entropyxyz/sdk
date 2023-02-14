@@ -1,0 +1,27 @@
+version: 2.1
+
+orbs:
+  node: circleci/node@5.0.2
+
+jobs:
+  build_test_lint: # this can be any name you choose
+    executor: node/default # use the default executor defined within the orb
+    steps:
+      - checkout
+      - node/install-packages:
+          pkg-manager: yarn
+      - run:
+          command: yarn --frozen-lockfile --network-timeout 180000
+          name: Build app
+      - run:
+          command: yarn run lint
+          name: Lint app
+      - run:
+          command: yarn run bundle
+          name: Bundle app
+
+
+workflows:
+  build_test_lint: # this can be any name you choose
+    jobs:
+      - build_test_lint
