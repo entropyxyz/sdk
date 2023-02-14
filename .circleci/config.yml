@@ -19,9 +19,6 @@ jobs:
       - run:
           command: yarn run bundle
           name: Bundle app
-      - persist_to_workspace:
-          root: ~/project
-          paths: .
 
 
 workflows:
