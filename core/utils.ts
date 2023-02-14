@@ -1,5 +1,4 @@
 import { decodeAddress, encodeAddress } from '@polkadot/keyring'
-import { hexToU8a, isHex } from '@polkadot/util'
 
 export const readKey = async (path: string) => {
   if (!path) {
@@ -33,10 +32,12 @@ export const readKey = async (path: string) => {
 
 export const isValidSubstrateAddress = (address: string) => {
   try {
-    encodeAddress(isHex(address) ? hexToU8a(address) : decodeAddress(address))
-
-    return true
-  } catch (error) {
+    const decoded = decodeAddress(address)
+    return encodeAddress(decoded) === address
+  } catch (e: unknown) {
+    if (e instanceof Error) {
+      console.warn(e.message)
+    }
     return false
   }
 }
