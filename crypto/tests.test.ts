@@ -49,7 +49,7 @@ describe('Crypto Tests', async () => {
       34,
     ]
 
-    const result = crypto.parseServerDHKey(mockData)
+    const result = await crypto.parseServerDHKey(mockData)
     assert.deepEqual(result.toString(), mockReturn.toString())
   })
   it(`encrypts and signs`, async () => {
@@ -119,10 +119,12 @@ describe('Crypto Tests', async () => {
       96,
       17,
     ])
-    const serverDHKey = crypto.parseServerDHKey(mockData)
+    const serverDHKey = await crypto.parseServerDHKey(mockData)
     const root = process.cwd()
-    const thresholdKey = readKey(`${root.split('packages/')[0]}/0`)
-    const result = crypto.encryptAndSign(
+    const thresholdKey = (await readKey(
+      `${root.split('packages/')[0]}/0`
+    )) as Uint8Array
+    const result = await crypto.encryptAndSign(
       aliceSecretKey,
       thresholdKey,
       serverDHKey
