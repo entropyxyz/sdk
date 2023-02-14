@@ -1,5 +1,6 @@
 import { decodeAddress, encodeAddress } from '@polkadot/keyring'
 import { hexToU8a, isHex } from '@polkadot/util'
+
 export const readKey = async (path: string) => {
   if (!path) {
     throw new Error('Path is required')
@@ -17,7 +18,7 @@ export const readKey = async (path: string) => {
   } else {
     // If we are in the browser, we need to use the FileReader API
     const file = new FileReader()
-    const result = new Promise((resolve, reject) => {
+    const result: Promise<Uint8Array> = new Promise((resolve, reject) => {
       file.onload = () => {
         const buffer = new Uint8Array(file.result as ArrayBuffer)
         resolve(buffer)
