@@ -30,4 +30,4 @@ workflows:
       - build_test_lint
           filters:
             branches:
-              only: main # only deploy when on main
+              only: master # only deploy when on master
