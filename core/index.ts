@@ -5,6 +5,7 @@ import { SignatureLike } from '@ethersproject/bytes'
 import { isValidSubstrateAddress } from './utils'
 import { Substrate } from '../substrate'
 import { ThresholdServer } from '../threshold-server'
+import { ITransactionRequest, Arch } from '../threshold-server/types'
 import { Crypto } from '../crypto'
 
 /**
@@ -149,18 +150,26 @@ export default class Entropy {
     freeTx: boolean,
     retries: number
   ): Promise<SignatureLike> {
-    const sigData = await utils.serializeTransaction(tx)
-    const sigHash = utils.keccak256(sigData)
+    const serializedTx = await utils.serializeTransaction(tx)
 
-    const prepTx = await this.substrate.api.tx.relayer.prepTransaction({
+    const sigHash = utils.keccak256(serializedTx)
+    const submitHashOnchain = await this.substrate.api.tx.relayer.prepTransaction({
       sigHash,
     })
-    const record = await this.substrate.sendAndWaitFor(prepTx, freeTx, {
+    const record = await this.substrate.sendAndWaitFor(submitHashOnchain, freeTx, {
       section: 'relayer',
       name: 'SignatureRequested',
     })
     const urls = record.event.data.toHuman()[0].ipAddresses
     // TODO get urls from event record (not implemented in devnet)
+    const evmTransactionRequest: ITransactionRequest = {
+      arch: Arch.Evm,
+      transaction_request: serializedTx,
+    }
+    await this.thresholdServer.submitTransactionRequest(
+      evmTransactionRequest,
+      urls
+    )
 
     const signature: SignatureLike = await this.thresholdServer.pollNodeForSignature(
       sigHash.slice(2),
