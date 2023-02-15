@@ -1,17 +1,12 @@
-import axios from 'axios'
+import axios, { AxiosResponse } from 'axios'
 import { SignatureLike } from '@ethersproject/bytes'
 import { sleep } from '../core/utils'
+import { ITransactionRequest } from './types'
 
 /**
  * Class used for talking to an Entropy validator server
  */
 export class ThresholdServer {
-  /**
-   *
-   * @param emsgs encrypted messages to be sent to a validator node
-   * @param serverWithPort IP/domain and port of the threshold server, seperated by ':'
-   */
-
   /**
    * @alpha
    *
@@ -19,18 +14,54 @@ export class ThresholdServer {
    * Is a method of the {@link ThresholdServer} class
    *
    * @param {Array<string>} emsgs - encrypted messages to be sent to a validator node
-   * @param {Array<string>} serverWithPort - IP/domain and port of the threshold server, seperated by ':'
+   * @param {Array<string>} serversWithPort - IP/domain and port of the threshold server, seperated by ':'
    *
    * @returns {Promise<void>} - void
    */
-  async sendKeys(emsgs: Array<string>, serverWithPort: Array<string>) {
-    for (let i = 0; i < serverWithPort.length; i++) {
-      await axios.post(`http://${serverWithPort[i]}/user/new`, emsgs[i], {
+
+  async sendKeys(emsgs: Array<string>, serversWithPort: Array<string>) {
+    const responses = []
+    for (let i = 0; i < serversWithPort.length; i++) {
+      responses.push(axios.post(`http://${serversWithPort[i]}/user/new`, emsgs[i], {
         headers: {
           'Content-Type': 'application/json',
         },
-      })
+      }))
     }
+
+    await Promise.all(responses)
+  }
+
+  
+  /**
+   * Submits the transaction request to the threshold server so its constraints can be validated
+   *
+   * @async
+   * @param {ITransactionRequest} txReq
+   * @param {string[]} serversWithPort IP/domain and port of the threshold server, separated by ':'
+   * @returns {Promise<Response[]>}
+   */
+  async submitTransactionRequest(
+    txReq: ITransactionRequest,
+    serversWithPort: string[]
+    ): Promise<Response[]> {
+    const responses = [];
+    for (const server of serversWithPort) {
+      try {
+        const response = axios.post(`http://${server}/user/tx`, txReq, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        responses.push(response);
+      } catch (error) {
+        // handle the error here (e.g. log it, rethrow it, etc.)
+        console.error(`Error submitting transaction request to ${server}:`, error);
+        return Promise.reject(error);
+      }
+    }
+
+    return Promise.all(responses);
   }
 
   /**
