@@ -23,24 +23,22 @@ commands:
 jobs:
   build_test_lint: # this can be any name you choose
     executor: node/default # use the default executor defined within the orb
-      - checkout
-      - node/install-packages:
-          pkg-manager: yarn
-      - run:
-          command:
-            https://entropy.family/latest/linux/x86_64/entropy.tar.zst
-      - run:
-          command: yarn --frozen-lockfile --network-timeout 180000
-          name: Build app
-      - run:
-          command: yarn run lint
-          name: Lint app
-      - run:
-          command: yarn run bundle
-          name: Bundle app
-      - run:
-          command: yarn run test
-          name: Test app
+      - steps:
+        - checkout
+        - node/install-packages:
+            pkg-manager: yarn
+        - run:
+            command: yarn --frozen-lockfile --network-timeout 180000
+            name: Build app
+        - run:
+            command: yarn run lint
+            name: Lint app
+        - run:
+            command: yarn run bundle
+            name: Bundle app
+        - run:
+            command: yarn run test
+            name: Test app
 
 
 workflows:
