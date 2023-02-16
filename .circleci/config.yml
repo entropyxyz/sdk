@@ -19,6 +19,9 @@ jobs:
       - run:
           command: yarn run bundle
           name: Bundle app
+      - run:
+          command: yarn run test
+          name: Test app
 
 
 workflows:
