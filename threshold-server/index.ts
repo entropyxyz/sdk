@@ -1,4 +1,4 @@
-import axios, { AxiosResponse } from 'axios'
+import axios from 'axios'
 import { SignatureLike } from '@ethersproject/bytes'
 import { sleep } from '../core/utils'
 import { ITransactionRequest } from './types'
