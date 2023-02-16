@@ -1,7 +1,7 @@
 version: 2.1
 
-# orbs:
-#   node: circleci/node@5.0.2
+orbs:
+  node: circleci/node@5.0.2
 
 commands:
   init:
@@ -24,7 +24,6 @@ jobs:
   build_test_lint: # this can be any name you choose
     machine:
       image: "ubuntu-2004:202201-02"
-      resource_class: "xlarge"
     steps:
       - checkout
       - init
