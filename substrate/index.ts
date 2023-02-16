@@ -1,41 +1,59 @@
-import { AddressOrPair, SubmittableExtrinsic } from '@polkadot/api/types'
+import { SubmittableExtrinsic } from '@polkadot/api/types'
 import { AnyJson } from '@polkadot/types-codec/types'
 import { Keyring } from '@polkadot/keyring'
 import { sr25519PairFromSeed } from '@polkadot/util-crypto'
 import { Signer, StashKeys, ThresholdInfo, EventFilter, Address } from './types'
 import { SubmittableResult, ApiPromise, WsProvider } from '@polkadot/api'
-export * as polkadotJs from '@polkadot/api'
 import { EventRecord } from '@polkadot/types/interfaces/types'
 
 /**
- * A class for talking to the Entropy blockchain, read only functions
+ *
+ * A class for interfacing with Entropy's blockchain, read only functions
  * does not require a private key to use
  */
-export class SubstrateRead {
+class SubstrateRead {
+  /**
+   *
+   *
+   * @type {ApiPromise} the api object for an Entropy chain
+   * @memberof SubstrateRead
+   */
   api: ApiPromise
 
   /**
-   * Constructs a new object for read only calls to Entropy chain
-   * does not require a user wallet
-   * @param api the api object for an Entropy chain
+   * Creates an instance of SubstrateRead.
+   *
+   * @remarks
+   * This function is part of the {@link SubstrateRead} class does not require a user wallet
+   * @param {ApiPromise} api - The {@link ApiPromise} object for an Entropy blockchain
    */
   constructor(api: ApiPromise) {
     this.api = api
   }
 
   /**
-   * Static function to setup a Substrate Read object
-   * @param endpoint endpoint ws address, optional will default to localhost
-   * @returns Self
+   * @alpha
+   *
+   * @remarks
+   * This function is part of the {@link SubstrateRead} class
+   *
+   * @static
+   * @param {string} [endpoint='ws://127.0.0.1:9944'] web socket address will default to localhost:9944
+   * @returns {*}  {Promise<SubstrateRead>} a {@link SubstrateRead} object
    */
   static async setup(endpoint?: string): Promise<SubstrateRead> {
     const api = await getApi(endpoint)
     return new SubstrateRead(api)
   }
+
   /**
+   * @alpha
    *
-   * @param stashKeys An array of stash keys to query
-   * @returns threshold server keys associated with the server
+   * @remarks
+   * This function is part of the {@link SubstrateRead} class
+   *
+   * @param {StashKeys} stashKeys - An array of stash keys to query
+   * @returns {*}  {Promise<ThresholdInfo>} threshold server keys associated with the server
    */
   async getThresholdInfo(stashKeys: StashKeys): Promise<ThresholdInfo> {
     const result: ThresholdInfo = []
@@ -50,17 +68,29 @@ export class SubstrateRead {
   }
 
   /**
-   * gets all stash keys split up into signing subgroups from chain
-   * @returns A promise of non converted stash keys
+   * @alpha
+   *
+   * @remarks
+   * This function is part of the {@link SubstrateRead} class
+   * Gets all stash keys split up into signing subgroups from chain
+   *
+   * @returns {*}  {Promise<any>} A promise of non converted stash keys
+   * @memberof SubstrateRead
    */
   async getStashKeys(): Promise<any> {
     const stashKeys = await this.api.query.stakingExtension.signingGroups.entries()
     return stashKeys
   }
+
   /**
+   * @alpha
+   *
+   * @remarks
+   * This function is part of the {@link SubstrateRead} class
    * Gets one key from every signing subgroup
-   * @param stashKeys Unconverted stash keys
-   * @returns One stash key from each signing sub group
+   *
+   * @param {*} stashKeys - An array of stash keys to query
+   * @returns {*}  {StashKeys} An array of stash keys
    */
   selectStashKeys(stashKeys: any): StashKeys {
     const returnedKeys = []
@@ -71,10 +101,16 @@ export class SubstrateRead {
     })
     return returnedKeys
   }
+
   /**
+   * @alpha
    *
-   * @param address The address that is being checked if registered
-   * @returns An object that contains if the account was registered
+   * @remarks
+   * This function is part of the {@link SubstrateRead} class
+   * Checks if an account is registered
+   *
+   * @param {Address} address - The address that is being checked if registered
+   * @returns {*}  {Promise<AnyJson>} An object that contains the account if it was registered
    */
   async isRegistering(address: Address): Promise<AnyJson> {
     const result = await this.api.query.relayer.registering(address)
@@ -83,16 +119,22 @@ export class SubstrateRead {
 }
 
 /**
- * A class for talking to the Entropy blockchain, includes read and write functions
+ * @alpha
+ * @remarks
+ * This is the {@link Substrate} class
+ * A class for interfacing with the Entropy blockchain, includes read and write functions
  */
 export class Substrate extends SubstrateRead {
-  api: ApiPromise
   signer: Signer
 
   /**
-   * Constructs a new object to talk to Entropy chain
-   * @param api an api object for Entropy chain
-   * @param signer a signer object for the user talking to the Entropy chain
+   * @alpha
+   * @remarks
+   * This function is part of the {@link Substrate} class
+   * Creates an instance of Substrate.
+   *
+   * @param {ApiPromise} api - The api object for an Entropy blockchain
+   * @param {Signer} signer - The signer object for the user interfacing with the Entropy blockchain
    */
   constructor(api: ApiPromise, signer: Signer) {
     super(api)
@@ -101,10 +143,15 @@ export class Substrate extends SubstrateRead {
   }
 
   /**
+   * @alpha
+   * @remarks
+   * This function is part of the {@link Substrate} class
    * Static function to setup a Substrate instance
-   * @param seed Private key for wallet
-   * @param endpoint endpoint ws address, optional will default to localhost
-   * @returns Self
+   *
+   * @static
+   * @param {string} seed - Private key for wallet
+   * @param {string} [endpoint] - endpoint websocket address, optional will default to localhost:9944
+   * @returns {*}  {Promise<Substrate>} - A promise that resolves to a Substrate object
    */
   static async setup(seed: string, endpoint?: string): Promise<Substrate> {
     const api = await getApi(endpoint)
@@ -113,25 +160,50 @@ export class Substrate extends SubstrateRead {
   }
 
   /**
+   * @alpha
+   *
+   * @remarks
+   * This function is part of the {@link Substrate} class
+   *
+   * @param {SubmittableExtrinsic<'promise'>} call - The extrinsic to send.
+   * @returns {*}  {Promise<SubmittableExtrinsic<'promise'>>} - A promise that resolves when the transaction is included in a block.
+   */
+  async handleFreeTx(
+    call: SubmittableExtrinsic<'promise'>
+  ): Promise<SubmittableExtrinsic<'promise'>> {
+    const free_tx_wrapper = this.api.tx.freeTx.callUsingElectricity(call)
+    const result = await free_tx_wrapper.dryRun(this.signer.wallet)
+    if (result.isErr) {
+      throw new Error(result.toString())
+    }
+    return free_tx_wrapper
+  }
+
+  /**
+   * @alpha
+   *
    * Signs and sends the given `call` from `sender` and waits for the transaction to be included in a block.
-   * @param api api object
-   * @param call a call that can be submitted to the chain
-   * @param sender the sender of the transaction
+   *
+   * @param {SubmittableExtrinsic<'promise'>} call - The extrinsic to send.
+   * @param {boolean} freeTx - use the free tx pallet
+   * @returns {*}  {Promise<undefined>} - A promise that resolves when the transaction is included in a block.
+   *
+   * @memberof Substrate
    */
   async sendAndWait(
     call: SubmittableExtrinsic<'promise'>,
-    api: ApiPromise,
-    sender: AddressOrPair
+    freeTx: boolean
   ): Promise<undefined> {
+    const newCall = freeTx ? await this.handleFreeTx(call) : call
     return new Promise<undefined>((resolve, reject) => {
-      call
-        .signAndSend(sender, (res: SubmittableResult) => {
+      newCall
+        .signAndSend(this.signer.wallet, (res: SubmittableResult) => {
           const { dispatchError, status } = res
 
           if (dispatchError) {
             if (dispatchError.isModule) {
               // for module errors, we have the section indexed, lookup
-              const decoded: any = api.registry.findMetaError(
+              const decoded: any = this.api.registry.findMetaError(
                 dispatchError.asModule
               )
               const { documentation, name, section } = decoded
@@ -158,28 +230,33 @@ export class Substrate extends SubstrateRead {
   }
 
   /**
+   * @alpha
+   *
+   * @remarks
    * Signs and sends the given `call` from `sender` and waits for an event that fits `filter`.
-   * @param api api object
-   * @param call a call that can be submitted to the chain
-   * @param sender the sender of the transaction
-   * @param filter which event to filter for
-   * @returns event that fits the filter
+   *
+   * @param {SubmittableExtrinsic<'promise'>} call - a call submitted to the blockchain
+   * @param {boolean} freeTx - transaction to use the free tx pallet
+   * @param {EventFilter} filter - which event to filter for
+   * @returns {*}  {Promise<EventRecord>} - event that fits the filter
+   *
+   * @memberof Substrate
    */
   async sendAndWaitFor(
     call: SubmittableExtrinsic<'promise'>,
-    api: ApiPromise,
-    sender: AddressOrPair,
+    freeTx: boolean,
     filter: EventFilter
   ): Promise<EventRecord> {
+    const newCall = freeTx ? await this.handleFreeTx(call) : call
     return new Promise<any>((resolve, reject) => {
-      call
-        .signAndSend(sender, (res: SubmittableResult) => {
+      newCall
+        .signAndSend(this.signer.wallet, (res: SubmittableResult) => {
           const { dispatchError, status } = res
 
           if (dispatchError) {
             if (dispatchError.isModule) {
               // for module errors, we have the section indexed, lookup
-              const decoded: any = api.registry.findMetaError(
+              const decoded: any = this.api.registry.findMetaError(
                 dispatchError.asModule
               )
               const { documentation, name, section } = decoded
@@ -206,43 +283,60 @@ export class Substrate extends SubstrateRead {
   }
 
   /**
-   * registers an account then checks if it is registered
-   * @returns If the account is registered
+   * @alpha
+   *
+   * @remarks
+   * Signs and sends the given `call` from `sender` and waits for an event that fits `filter`.
+   * This function is part of the {@link Substrate} class.
+   *
+   * @param {string} constraintModificationAccount The account that will be able to modify the constraints
+   * @param {boolean} freeTx transaction meant to use the free tx pallet
+   * @param {object} [initialConstraints=null] The initial constraints for the account
+   * @returns {*}  {Promise<AnyJson>} Promise if the account is registered
+   *
    */
-  // TODO use this function in core.register()
   async register(
     constraintModificationAccount: string,
-    initialConstraints = null
+    freeTx: boolean,
+    initialConstraints: object = null
   ): Promise<AnyJson> {
-    // Null is the initial constra
+    // Null is the initial constraint
     const tx = this.api.tx.relayer.register(
       constraintModificationAccount,
       initialConstraints
     )
-    await this.sendAndWait(tx, this.api, this.signer.wallet)
+    await this.sendAndWait(tx, freeTx)
     const isRegistered = await this.isRegistering(this.signer.wallet.address)
     return isRegistered
   }
 }
 
 /**
+ * @alpha
  *
- * @param endpoint a string of the ws address of the chain
- * @returns an api object for talking to entropy chain
+ * @remarks
+ * This function is part of the {@link Substrate} class
+ *
+ * @param {string} [endpoint='ws://127.0.0.1:9944'] websocket address of the chain
+ * @returns {*}  {Promise<ApiPromise>} Promise for interfacing with entropy chain
  */
-const getApi = async (endpoint?: string): Promise<ApiPromise> => {
-  const wsProvider = endpoint
-    ? new WsProvider(endpoint)
-    : new WsProvider('ws://127.0.0.1:9944')
+const getApi = async (
+  endpoint = 'ws://127.0.0.1:9944'
+): Promise<ApiPromise> => {
+  const wsProvider = new WsProvider(endpoint)
   const api = new ApiPromise({ provider: wsProvider })
   await api.isReady
   return api
 }
 
 /**
+ * @alpha
  *
- * @param seed A string of the private key of the wallet
- * @returns a wallet object and a pair object
+ * @remarks
+ * This function is part of the {@link Substrate} class
+ *
+ * @param {string} seed - the private key of the wallet
+ * @returns {*}  {@link Signer} - a signer object for the user talking to the Entropy blockchain
  */
 const getWallet = (seed: string): Signer => {
   const keyring = new Keyring({ type: 'sr25519' })

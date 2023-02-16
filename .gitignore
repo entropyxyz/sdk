@@ -180,3 +180,4 @@ dist
 kvstore/
 test_db/
 .entropy
+.tsbuildinfo/

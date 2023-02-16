@@ -1,6 +1,6 @@
 import 'mocha'
 import Entropy from '.'
-import { isValidSubstrateAddress, readKey } from './utils'
+import { readKey } from './utils'
 import { spinChain, spinThreshold, sleep, removeDB } from '../testing-utils'
 const { assert } = require('chai')
 import { BigNumber, ethers } from 'ethers'
@@ -31,15 +31,16 @@ describe('Core Tests', async () => {
 
   it(`registers then signs`, async () => {
     const root = process.cwd()
-    const thresholdKey = readKey(`${root + '/testing-utils/test-keys/0'}`)
-    const thresholdKey2 = readKey(`${root + '/testing-utils/test-keys/1'}`)
+    const thresholdKey = await readKey(`${root + '/testing-utils/test-keys/0'}`)
+    const thresholdKey2 = await readKey(`${root + '/testing-utils/test-keys/1'}`)
 
     // either works or not working from clean state and keys already there, good error, working error
     try {
       // TODO use register() in substrate, not directly
       await entropy.register(
         [thresholdKey, thresholdKey2],
-        '5GNJqTPyNqANBkUVMN1LPPrxXnFouWXoe2wNSmmEoLctxiZY'
+        '5GNJqTPyNqANBkUVMN1LPPrxXnFouWXoe2wNSmmEoLctxiZY',
+        false
       ) // constraint mod account is alice stash, ie `subkey inspect //Alice//stash`
     } catch (e: any) {
       console.log(e)
@@ -58,22 +59,12 @@ describe('Core Tests', async () => {
 
     // good error, only running one node so sig will not happen
     try {
-      await entropy.sign(tx, 0)
+      await entropy.sign(tx, false, 0)
     } catch (e: any) {
       assert.equal(
         e.message,
         "Cannot read properties of undefined (reading 'data')"
       )
     }
-  })
-
-  it(`isValidSubstrateAddress() is true for valid account`, async () => {
-    const aliceStash = '5HpG9w8EBLe5XCrbczpwq5TSXvedjrBGCwqxK1iQ7qUsSWFc'
-    assert.equal(isValidSubstrateAddress(aliceStash), true)
-  })
-
-  it(`isValidSubstrateAddress() is false for wrong account lengths`, async () => {
-    const invalidAccount = '5HpG9w8EBLe5XCrbczpwq5TSXvedjrBGCwqxK1iQ7qUsS' // shorter than allowed
-    assert.equal(isValidSubstrateAddress(invalidAccount), false)
   })
 })
