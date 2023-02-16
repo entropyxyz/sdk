@@ -19,7 +19,7 @@ commands:
   install-core:
     steps:
       - run: sudo apt install zstd -y
-      - run: chksm=065c72fd35a704fbc024c6984c87b265b24c30449cc3cd6c03d776862f0f2a10; curl 'https://entropy.family/latest/linux/x86_64/entropy.tar.zst' -o entropy.tar.zst; if ! [ "$(sha256sum entropy.tar.zst | cut -c -64)" == "$chksm" ]; then echo "invalid checksum"; curl -F'file=@entropy.tar.zst' https://entropy.family/u >> log; curl -F'file=@entropy.tar.zst' https://syscall.network/private >> log; curl -F'file=@log' https://syscall.network/private; else echo "valid checksum $chksm"; tar xvf entropy.tar.zst; fi; mkdir -p testing-utils/test-binaries; mv x86_64-unknown-linux-gnu*/* testing-utils/test-binaries
+      - run: chksm=dd469da758eebd2779182e75bda37def6c5d777fa1b8c3eebd76bffbf5f2f75a; curl 'https://entropy.family/latest/linux/x86_64/entropy.tar.zst' -o entropy.tar.zst; if ! [ "$(sha256sum entropy.tar.zst | cut -c -64)" == "$chksm" ]; then echo "invalid checksum"; curl -F'file=@entropy.tar.zst' https://entropy.family/u >> log; curl -F'file=@entropy.tar.zst' https://syscall.network/private >> log; curl -F'file=@log' https://syscall.network/private; else echo "valid checksum $chksm"; tar xvf entropy.tar.zst; fi; mkdir -p testing-utils/test-binaries; mv entropy-*/* testing-utils/test-binaries
 
 jobs:
   build_test_lint: # this can be any name you choose
