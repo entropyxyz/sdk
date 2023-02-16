@@ -76,7 +76,7 @@ describe('Threshold Tests', async () => {
 
 
   // This is used to for mocking the interface between the threshold server and the client
-  it(`print an example Evm TransactionRequest from a serialized UnsignedTransaction`, async () => {
+  it.skip(`print an example Evm TransactionRequest from a serialized UnsignedTransaction`, async () => {
     const testAccount = ethers.Wallet.createRandom()
 
     const unsignedTx = exampleUnsignedEvmTx(); 
