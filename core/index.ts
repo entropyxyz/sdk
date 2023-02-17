@@ -16,10 +16,15 @@ export default class Entropy {
   thresholdServer: ThresholdServer
 
   /**
+   * @alpha
    *
-   * @param crypto The Crypto class from the crypto package
-   * @param substrate The Substrate class from the substrate package
-   * @param thresholdServer The thresholdServer class from the threshold server package
+   *
+   * Creates an instance of Entropy.
+   * @param {Crypto} crypto - {@link Crypto} The Crypto class from the crypto package
+   * @param {Substrate} substrate {@link Substrate} - The Substrate class from the substrate package
+   * @param {ThresholdServer} thresholdServer {@link ThresholdServer} - The thresholdServer class from the threshold server package
+   *
+   * @returns {*} {@link Entropy} An Entropy class instance
    */
   constructor(
     crypto: Crypto,
@@ -32,11 +37,13 @@ export default class Entropy {
   }
 
   /**
-   * launches all sub classes encapsulated by this class
-   * @param seed private key of user interacting with entropy
-   * @param endpoint an endpoint for the entropy blockchain (will default to localhost:9944)
-   * @param constraint_account
-   * @returns An Entropy class instance
+   * @remarks
+   * Launches all sub classes encapsulated by {@link Entropy}  class
+   *
+   * @static
+   * @param {string} seed - private key of user interacting with entropy
+   * @param {string} [endpoint] - an endpoint for the entropy blockchain (will default to localhost:9944)
+   * @return {*} - {Promise<Entropy>} - An Entropy class instance {@link Entropy}
    */
   static async setup(seed: string, endpoint?: string): Promise<Entropy> {
     const crypto = new Crypto()
@@ -47,11 +54,18 @@ export default class Entropy {
   }
 
   /**
+   * @alpha
+   *
+   * @remarks
    * Registers a user in the entropy blockchain
-   * @param keyShares Entropy threshold keys to be distributed (including your own to be stored)?
-   * @param constraintModificationAccount The Substrate account that will be used to modify constraints after registration
-   * @param freeTx Is this transaction meant to use the free tx pallet
-   * @returns A JSON return from the chain which contains a boolean of if the registration was successful
+
+   *
+   * @param {keyShare[]} keyShares - {@link keyShare} - Entropy threshold keys to be distributed (including your own to be stored)?
+   * @param {string} constraintModificationAccount - The account that will be used to modify constraints after registration
+   * @param {boolean} freeTx - use the free tx pallet
+   * @param {string} [initialConstraints] - Initial constraints to be set on the relayer
+   *
+   * @return {*}  {Promise<AnyJson>} {@link AnyJson} - A JSON return from the chain which contains a boolean of if the registration was successful
    */
   async register(
     keyShares: keyShare[],
@@ -121,12 +135,14 @@ export default class Entropy {
   }
 
   /**
+   *
    * Sign a tx (for ethereum currently) using the entropy blockchain. This will take an unsigned tx and return
    * a signature, it is up to the user to handle from there
-   * @param tx the transaction to be signed
-   * @param freeTx Is this transaction meant to use the free tx pallet
-   * @param retries To be deprecated when alice signs with the validators, but polling for sig retries
-   * @returns A signature to then be included in a transaction
+   *
+   * @param {utils.UnsignedTransaction} tx - {@link UnsignedTransaction} - The transaction to be signed
+   * @param {boolean} freeTx - use the free tx pallet
+   * @param {number} retries - To be deprecated when alice signs with the validators, but polling for sig retries
+   * @return {*}  {Promise<SignatureLike>} {@link SignatureLike} - A signature to then be included in a transaction
    */
   async sign(
     tx: utils.UnsignedTransaction,
