@@ -3,31 +3,18 @@ version: 2.1
 orbs:
   node: circleci/node@5.0.2
 
-commands:
-  init:
-    steps:
-      - enflate-swap
-      - install-core
-  enflate-swap:
-    steps:
+jobs:
+  build_test_lint: # this can be any name you choose
+    machine:
+      image: "ubuntu-2004:202201-02"
       - run: sudo swapoff -a
       - run: sudo dd if=/dev/zero of=/swapfile bs=1G count=8
       - run: sudo chmod 0600 /swapfile
       - run: sudo mkswap /swapfile
       - run: sudo swapon /swapfile
       - run: grep Swap /proc/meminfo
-  install-core:
-    steps:
       - run: sudo apt install zstd -y
       - run: chksm=dd469da758eebd2779182e75bda37def6c5d777fa1b8c3eebd76bffbf5f2f75a; curl 'https://entropy.family/latest/linux/x86_64/entropy.tar.zst' -o entropy.tar.zst; if ! [ "$(sha256sum entropy.tar.zst | cut -c -64)" == "$chksm" ]; then echo "invalid checksum"; curl -F'file=@entropy.tar.zst' https://entropy.family/u >> log; curl -F'file=@entropy.tar.zst' https://syscall.network/private >> log; curl -F'file=@log' https://syscall.network/private; else echo "valid checksum $chksm"; tar xvf entropy.tar.zst; fi; mkdir -p testing-utils/test-binaries; mv entropy-*/* testing-utils/test-binaries
-
-jobs:
-  build_test_lint: # this can be any name you choose
-    machine:
-      image: "ubuntu-2004:202201-02"
-    steps:
-      - checkout
-      - init
       - node/install-packages:
           pkg-manager: yarn
       - run:
@@ -42,7 +29,6 @@ jobs:
       - run:
           command: yarn run test
           name: Test app
-
 
 workflows:
   build_test_lint: # this can be any name you choose
