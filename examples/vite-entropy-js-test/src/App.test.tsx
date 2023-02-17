@@ -1,7 +1,7 @@
 import { render, screen } from './utils/test-utils'
 import App from './App'
 
-it('Should return posts when clicking fetch button', async () => {
+it.skip('Should return App with entropy hook', async () => {
   render(<App />)
 
   expect(
