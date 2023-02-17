@@ -4,6 +4,7 @@ import rimraf from 'rimraf'
 export const spinChain = async (
   bin: string
 ): Promise<ChildProcessWithoutNullStreams> => {
+  console.log(bin)
   const args = ['--dev']
   const process = spawn(bin, args)
   process.stderr.on('data', async function (chunk) {
