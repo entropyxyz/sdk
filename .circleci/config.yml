@@ -9,6 +9,7 @@ jobs:
       image: "ubuntu-2004:202201-02"
 
     steps:
+      - checkout
       - node/install-packages:
           pkg-manager: yarn
       - run:
