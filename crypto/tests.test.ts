@@ -122,8 +122,9 @@ describe('Crypto Tests', async () => {
     const serverDHKey = await crypto.parseServerDHKey(mockData)
     const root = process.cwd()
     const thresholdKey = (await readKey(
-      `${root.split('packages/')[0]}/0`
+      `${root + '/testing-utils/test-keys/0'}`
     )) as Uint8Array
+
     const result = await crypto.encryptAndSign(
       aliceSecretKey,
       thresholdKey,

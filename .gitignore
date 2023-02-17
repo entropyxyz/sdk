@@ -177,4 +177,9 @@ dist
 # End of https://www.toptal.com/developers/gitignore/api/macos,node
 
 */typegen/*
+kvstore/
+test_db/
+.entropy
 .tsbuildinfo/
+testing-utils/test-binaries/entropy
+testing-utils/test-binaries/server

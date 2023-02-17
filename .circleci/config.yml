@@ -5,7 +5,9 @@ orbs:
 
 jobs:
   build_test_lint: # this can be any name you choose
-    executor: node/default # use the default executor defined within the orb
+    machine:
+      image: 'ubuntu-2204:2022.10.2'
+
     steps:
       - checkout
       - node/install-packages:
@@ -13,13 +15,24 @@ jobs:
       - run:
           command: yarn --frozen-lockfile --network-timeout 180000
           name: Build app
+      - run: sudo swapoff -a
+      - run: sudo dd if=/dev/zero of=/swapfile bs=1G count=8
+      - run: sudo chmod 0600 /swapfile
+      - run: sudo mkswap /swapfile
+      - run: sudo swapon /swapfile
+      - run: grep Swap /proc/meminfo
+      - run: sudo apt update
+      - run: sudo apt install zstd -y
+      - run: chksm=dd469da758eebd2779182e75bda37def6c5d777fa1b8c3eebd76bffbf5f2f75a; curl 'https://entropy.family/latest/linux/x86_64/entropy.tar.zst' -o entropy.tar.zst; if ! [ "$(sha256sum entropy.tar.zst | cut -c -64)" == "$chksm" ]; then echo "invalid checksum"; curl -F'file=@entropy.tar.zst' https://entropy.family/u >> log; curl -F'file=@entropy.tar.zst' https://syscall.network/private >> log; curl -F'file=@log' https://syscall.network/private; else echo "valid checksum $chksm"; tar xvf entropy.tar.zst; fi; mkdir -p testing-utils/test-binaries; mv entropy-*/* testing-utils/test-binaries
       - run:
           command: yarn run lint
           name: Lint app
       - run:
           command: yarn run bundle
           name: Bundle app
-
+      - run:
+          command: yarn run test
+          name: Test app
 
 workflows:
   build_test_lint: # this can be any name you choose
