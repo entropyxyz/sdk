@@ -7,6 +7,8 @@ jobs:
   build_test_lint: # this can be any name you choose
     machine:
       image: "ubuntu-2004:202201-02"
+
+    steps:
       - run: sudo swapoff -a
       - run: sudo dd if=/dev/zero of=/swapfile bs=1G count=8
       - run: sudo chmod 0600 /swapfile
