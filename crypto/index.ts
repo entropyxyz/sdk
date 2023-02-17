@@ -1,3 +1,8 @@
+import { Codec } from '@polkadot/types-codec/types'
+type ServerDHInfo = {
+  x25519PublicKey: string
+}
+
 /**
  * A class to encapsulate all the cryptography needed for using entropy
  * relies heavily on WASM
@@ -12,11 +17,13 @@ export class Crypto {
    * @param {*} serverDHInfo - Information on server returned by entropy chain
    * @return {*}  {Promise<Uint8Array>} - converted x25519PublicKey
    */
-  async parseServerDHKey(serverDHInfo: any): Promise<Uint8Array> {
+  async parseServerDHKey(codec: Codec & ServerDHInfo): Promise<Uint8Array> {
+    const serverDHInfo = (codec.toHuman() as unknown) as ServerDHInfo
     if (typeof window === 'undefined') {
       const { from_hex } = await import(
         '@entropyxyz/x25519-chacha20poly1305-nodejs/x25519-chacha20poly1305-nodejs'
       )
+      // TODO: Benjamin fix this, find out how x25519PublicKey is passed
       return from_hex(serverDHInfo.x25519PublicKey)
     } else {
       const { from_hex } = await import(

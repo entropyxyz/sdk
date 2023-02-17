@@ -11,7 +11,7 @@ describe('Crypto Tests', async () => {
     tssAccount: '5H8qc7f4mXFY16NBWSB9qkc6pTks98HdVuoQTs1aova5fRtN',
     x25519PublicKey:
       '0x0ac029f0b853b23bed652d6d0de69b7cc38d94f93732eefc85b5861e90f73a22',
-  }
+  } as const
 
   it(`parses server threshold info`, async () => {
     const mockReturn = [

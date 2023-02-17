@@ -1234,7 +1234,7 @@
     "@babel/runtime" "^7.20.13"
     "@polkadot/util" "^10.4.1"
 
-"@polkadot/types@9.14.1":
+"@polkadot/types@9.14.1", "@polkadot/types@^9.14.1":
   version "9.14.1"
   resolved "https://registry.yarnpkg.com/@polkadot/types/-/types-9.14.1.tgz#fbda7b0e4083d95fb4d725a2aa6a5036d492b792"
   integrity sha512-aFhXTcRbDvj0NulJ0utPNZveyP/vFr+CoLssAEZC8jL+kM0Q80zV2vF8RvWAXFPd46i+JWPSy2ELjpwI/3BqXw==

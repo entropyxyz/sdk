@@ -93,13 +93,11 @@ export default class Entropy {
 
     // TODO should we run validation here on the amount of keys to send
     // i.e make sure key shares is signing party big and stash keys are key shares -1 size
-    const thresholdAccountsInfo: any = await this.substrate.getThresholdInfo(
+    const thresholdAccountsInfo = await this.substrate.getThresholdInfo(
       serverStashKeys
     )
 
-    const encryptedMessages: Array<string> = []
-    const urls: Array<string> = []
-    for (let i = 0; i < serverStashKeys.length; i++) {
+    const encryptedMessagesPromises = serverStashKeys.map(async (_, i) => {
       const serverDHKey = await this.crypto.parseServerDHKey(
         thresholdAccountsInfo[i]
       )
@@ -108,9 +106,15 @@ export default class Entropy {
         keyShares[i],
         serverDHKey
       )
-      encryptedMessages.push(encryptedMessage)
-      urls.push(thresholdAccountsInfo[i].endpoint)
-    }
+      return await encryptedMessage
+    })
+
+    const encryptedMessages = await Promise.all(encryptedMessagesPromises)
+
+    const urls = serverStashKeys.map(
+      // @ts-expect-error TODO: Not sure why this is fucked
+      (_, i) => thresholdAccountsInfo[i].toHuman().endpoint
+    )
 
     const registerTx = this.substrate.api.tx.relayer.register(
       constraintModificationAccount,
@@ -159,7 +163,8 @@ export default class Entropy {
       section: 'relayer',
       name: 'SignatureRequested',
     })
-    const urls = record.event.data.toHuman()[0].ipAddresses
+    // @ts-expect-error TODO: Not sure why this is fucked
+    const urls = record.event.data.toHuman()[0].ipAddresses as string[]
     // TODO get urls from event record (not implemented in devnet)
 
     const signature: SignatureLike = await this.thresholdServer.pollNodeForSignature(

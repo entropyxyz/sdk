@@ -2,6 +2,7 @@
   "compilerOptions": {
     "target": "ES6",
     "skipLibCheck": true,
+    "noImplicitAny": true,
     "noEmit": true,
     "incremental": true,
     "typeRoots": ["node_modules/@types", "@types/"],

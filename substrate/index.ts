@@ -1,11 +1,11 @@
 import { SubmittableExtrinsic } from '@polkadot/api/types'
-import { AnyJson } from '@polkadot/types-codec/types'
 import { Keyring } from '@polkadot/keyring'
 import { sr25519PairFromSeed } from '@polkadot/util-crypto'
-import { Signer, StashKeys, ThresholdInfo, EventFilter, Address } from './types'
+import { Signer, EventFilter, Address } from './types'
 import { SubmittableResult, ApiPromise, WsProvider } from '@polkadot/api'
 import { EventRecord } from '@polkadot/types/interfaces/types'
-
+import { StorageKey } from '@polkadot/types'
+import { AnyTuple, Codec, AnyJson } from '@polkadot/types-codec/types'
 /**
  *
  * A class for interfacing with Entropy's blockchain, read only functions
@@ -55,16 +55,12 @@ class SubstrateRead {
    * @param {StashKeys} stashKeys - An array of stash keys to query
    * @returns {*}  {Promise<ThresholdInfo>} threshold server keys associated with the server
    */
-  async getThresholdInfo(stashKeys: StashKeys): Promise<ThresholdInfo> {
-    const result: ThresholdInfo = []
-    for (let i = 0; i < stashKeys.length; i++) {
-      const r = await this.api.query.stakingExtension.thresholdServers(
-        stashKeys[i]
-      )
-      const convertedResult: any = r.toHuman() ? r.toHuman() : null
-      convertedResult ? result.push(convertedResult) : null
-    }
-    return result
+  async getThresholdInfo(stashKeys: Codec[]): Promise<Codec[]> {
+    const promises = stashKeys.map((stashKey) =>
+      this.api.query.stakingExtension.thresholdServers(stashKey)
+    )
+    const results = await Promise.all(promises)
+    return results
   }
 
   /**
@@ -74,10 +70,10 @@ class SubstrateRead {
    * This function is part of the {@link SubstrateRead} class
    * Gets all stash keys split up into signing subgroups from chain
    *
-   * @returns {*}  {Promise<any>} A promise of non converted stash keys
+   * @returns {*} {Promise<any>} An array of stash keys
    * @memberof SubstrateRead
    */
-  async getStashKeys(): Promise<any> {
+  async getStashKeys(): Promise<[StorageKey<AnyTuple>, Codec][]> {
     const stashKeys = await this.api.query.stakingExtension.signingGroups.entries()
     return stashKeys
   }
@@ -92,14 +88,11 @@ class SubstrateRead {
    * @param {*} stashKeys - An array of stash keys to query
    * @returns {*}  {StashKeys} An array of stash keys
    */
-  selectStashKeys(stashKeys: any): StashKeys {
-    const returnedKeys = []
-    stashKeys.map((keyInfo) => {
-      // TODO: currently picks first stash key in group (second array item is set to 0)
-      // create good algorithm for randomly choosing a threshold server
-      returnedKeys.push(keyInfo[1].toHuman()[0])
+  selectStashKeys(stashKeys: [StorageKey<AnyTuple>, Codec][]) {
+    return stashKeys.map((key) => {
+      const keyInfo = key[1]
+      return keyInfo
     })
-    return returnedKeys
   }
 
   /**
