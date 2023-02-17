@@ -14,9 +14,13 @@ describe('Core Tests', async () => {
   const serverPath = process.cwd() + '/testing-utils/test-binaries/server'
 
   beforeEach(async function () {
-    chainProcess = await spinChain(chainPath)
-    serverProcess1 = await spinThreshold(serverPath, 'alice', '3001')
-    serverProcess2 = await spinThreshold(serverPath, 'bob', '3002')
+    try {
+      chainProcess = await spinChain(chainPath)
+      serverProcess1 = await spinThreshold(serverPath, 'alice', '3001')
+      serverProcess2 = await spinThreshold(serverPath, 'bob', '3002')
+    } catch (e) {
+      console.log(e)
+    }
     await sleep(3000)
     entropy = await Entropy.setup(aliceSeed)
   })
