@@ -156,13 +156,19 @@ export default class Entropy {
     const serializedTx = await utils.serializeTransaction(tx)
 
     const sigHash = utils.keccak256(serializedTx)
-    const submitHashOnchain = await this.substrate.api.tx.relayer.prepTransaction({
-      sigHash,
-    })
-    const record = await this.substrate.sendAndWaitFor(submitHashOnchain, freeTx, {
-      section: 'relayer',
-      name: 'SignatureRequested',
-    })
+    const submitHashOnchain = await this.substrate.api.tx.relayer.prepTransaction(
+      {
+        sigHash,
+      }
+    )
+    const record = await this.substrate.sendAndWaitFor(
+      submitHashOnchain,
+      freeTx,
+      {
+        section: 'relayer',
+        name: 'SignatureRequested',
+      }
+    )
     const urls = record.event.data.toHuman()[0].ipAddresses
     // TODO get urls from event record (not implemented in devnet)
     const evmTransactionRequest: ITransactionRequest = {
