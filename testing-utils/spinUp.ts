@@ -9,6 +9,7 @@ export const spinChain = async (
   const process = spawn(bin, args)
   process.stderr.on('data', async function (chunk) {
     const message = chunk.toString()
+    console.log({message})
     let ready
     while (!ready) {
       ready =
