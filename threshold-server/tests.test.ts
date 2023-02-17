@@ -58,7 +58,7 @@ describe('Threshold Tests', async () => {
     }
   })
 
-  it(`sends an evm transaction request to the threshold server`, async () => {
+  it(`sends a successful evm transaction request to the threshold server`, async () => {
     const unsignedTx = exampleUnsignedEvmTx();
     const serializedUnsignedTx = ethers.utils.serializeTransaction(unsignedTx)
     const evmTransactionRequest: ITransactionRequest = {
