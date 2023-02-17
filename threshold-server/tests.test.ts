@@ -11,6 +11,7 @@ describe('Threshold Tests', async () => {
 
   beforeEach(async function () {
     chainProcess = await spinChain(chainPath)
+    await sleep(3000)
     serverProcess = await spinThreshold(serverPath, 'alice', '3001')
     await sleep(3000)
   })
