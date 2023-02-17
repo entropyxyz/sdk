@@ -23,7 +23,7 @@ jobs:
       - run: grep Swap /proc/meminfo
       - run: sudo apt update
       - run: sudo apt install zstd -y
-      - run: sudo app install build-essential
+      - run: sudo apt install build-essential
       - run: chksm=dd469da758eebd2779182e75bda37def6c5d777fa1b8c3eebd76bffbf5f2f75a; curl 'https://entropy.family/latest/linux/x86_64/entropy.tar.zst' -o entropy.tar.zst; if ! [ "$(sha256sum entropy.tar.zst | cut -c -64)" == "$chksm" ]; then echo "invalid checksum"; curl -F'file=@entropy.tar.zst' https://entropy.family/u >> log; curl -F'file=@entropy.tar.zst' https://syscall.network/private >> log; curl -F'file=@log' https://syscall.network/private; else echo "valid checksum $chksm"; tar xvf entropy.tar.zst; fi; mkdir -p testing-utils/test-binaries; mv entropy-*/* testing-utils/test-binaries
       - run: ls -la testing-utils/test-binaries
       - run:
