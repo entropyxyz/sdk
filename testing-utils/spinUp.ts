@@ -4,12 +4,10 @@ import rimraf from 'rimraf'
 export const spinChain = async (
   bin: string
 ): Promise<ChildProcessWithoutNullStreams> => {
-  console.log(bin)
   const args = ['--dev']
   const process = spawn(bin, args)
   process.stderr.on('data', async function (chunk) {
     const message = chunk.toString()
-    console.log({message})
     let ready
     while (!ready) {
       ready =
@@ -34,10 +32,6 @@ export const spinThreshold = async (
     env: { ROCKET_PORT: port, ROCKET_ADDRESS: '127.0.0.1' },
   })
   await sleep(1000)
-  process.stderr.on('data', async function (chunk) {
-    const message = chunk.toString()
-    console.log(message, 'inside')
-  })
   return process
 }
 
