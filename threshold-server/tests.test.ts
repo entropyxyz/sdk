@@ -66,14 +66,12 @@ describe('Threshold Tests', async () => {
       transaction_request: serializedUnsignedTx,
     }
 
-    const response = await thresholdServer.submitTransactionRequest(
+    const [response] = await thresholdServer.submitTransactionRequest(
       evmTransactionRequest,
       [local_server]
     );
-
-    assert.equal(response[0].status, 200)
+    assert.equal(response.status, 200)
   })
-
 
   // This is used to for mocking the interface between the threshold server and the client
   it.skip(`print an example Evm TransactionRequest from a serialized UnsignedTransaction`, async () => {
