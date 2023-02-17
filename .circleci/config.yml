@@ -13,7 +13,7 @@ jobs:
       - node/install-packages:
           pkg-manager: yarn
       - run:
-          command: yarn --frozen-lockfile --network-timeouat 180000
+          command: yarn --frozen-lockfile --network-timeout 180000
           name: Build app
       - run: sudo swapoff -a
       - run: sudo dd if=/dev/zero of=/swapfile bs=1G count=8
