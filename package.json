@@ -8,7 +8,8 @@
   "browser": "dist/browser/index.mjs",
   "private": true,
   "scripts": {
-    "test": "yarn removedb && mocha -t 100000 -r ts-node/register '**/tests.test.ts' --exit",
+    "test": "yarn test:packages && yarn test:utils",
+    "test:packages": "yarn removedb && mocha -t 100000 -r ts-node/register '**/tests.test.ts' --exit",
     "test:utils": "mocha -t 100000 -r ts-node/register 'core/utils.test.ts'",
     "lint:ts": "tsc",
     "lint:eslint": "eslint . --ext .ts",
