@@ -3,11 +3,14 @@
  * relies heavily on WASM
  */
 export class Crypto {
-  // TODO: JA give proper type to serverDHInfo
   /**
+   * @alpha
    *
-   * @param serverDHInfo Information on server returned by entropy chain
-   * @returns converted x25519PublicKey
+   * @remarks
+   * TODO: JA give proper type to serverDHInfo
+   *
+   * @param {*} serverDHInfo - Information on server returned by entropy chain
+   * @return {*}  {Promise<Uint8Array>} - converted x25519PublicKey
    */
   async parseServerDHKey(serverDHInfo: any): Promise<Uint8Array> {
     if (typeof window === 'undefined') {
@@ -24,11 +27,17 @@ export class Crypto {
   }
 
   /**
+   * @alpha
    *
-   * @param secretKey user's secret key
-   * @param thresholdKey entropy threshold key of user for validator to store
-   * @param serverDHKey threshold key of validator to send to
-   * @returns String of the encrypted message to send to validator
+   * @remarks
+   * Encrypts and signs a message to send to a validator
+   *
+   *
+   * @param {Uint8Array} secretKey - user's secret key
+   * @param {Uint8Array} thresholdKey - entropy threshold key of user for validator to store
+   * @param {Uint8Array} serverDHKey - threshold key of validator to send to
+   * @return {*}  {Promise<string>}
+   * @memberof Crypto
    */
   async encryptAndSign(
     secretKey: Uint8Array,

@@ -40,3 +40,15 @@ export const isValidSubstrateAddress = (address: string) => {
     return false
   }
 }
+
+/**
+ * To be deprecated with poll for signature
+ *
+ * @param delay - delay in milliseconds
+ * @returns
+ *
+ */
+export function sleep(delay: number) {
+  const start = new Date().getTime()
+  while (new Date().getTime() < start + delay);
+}

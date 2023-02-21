@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { SignatureLike } from '@ethersproject/bytes'
+import { sleep } from '../core/utils'
 
 /**
  * Class used for talking to an Entropy validator server
@@ -9,6 +10,18 @@ export class ThresholdServer {
    *
    * @param emsgs encrypted messages to be sent to a validator node
    * @param serverWithPort IP/domain and port of the threshold server, seperated by ':'
+   */
+
+  /**
+   * @alpha
+   *
+   * @remarks
+   * Is a method of the {@link ThresholdServer} class
+   *
+   * @param {Array<string>} emsgs - encrypted messages to be sent to a validator node
+   * @param {Array<string>} serverWithPort - IP/domain and port of the threshold server, seperated by ':'
+   *
+   * @returns {Promise<void>} - void
    */
   async sendKeys(emsgs: Array<string>, serverWithPort: Array<string>) {
     for (let i = 0; i < serverWithPort.length; i++) {
@@ -21,7 +34,13 @@ export class ThresholdServer {
   }
 
   /**
-   * To be deprecated so light on docs
+   * @deprecated
+   *
+   * @param {string} sigHash - hash of the message to be signed
+   * @param {string} thresholdUrl - url of the threshold server
+   * @param {number} retries - number of times to retry
+   * @return {*}  {Promise<SignatureLike>} - {@link ThresholdServer}  signature of the message
+   * @memberof ThresholdServer
    */
   async pollNodeForSignature(
     sigHash: string,
@@ -46,12 +65,4 @@ export class ThresholdServer {
     }
     return Uint8Array.from(atob(postRequest.data), (c) => c.charCodeAt(0))
   }
-}
-
-/**
- * To be deprecated with poll for signature
- */
-function sleep(delay: number) {
-  const start = new Date().getTime()
-  while (new Date().getTime() < start + delay);
 }
