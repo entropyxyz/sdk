@@ -48,7 +48,7 @@ describe('Crypto Tests', async () => {
       58,
       34,
     ]
-
+    // @ts-expect-error will come back and fix this @benschac
     const result = await crypto.parseServerDHKey(mockData)
     assert.deepEqual(result.toString(), mockReturn.toString())
   })
@@ -119,6 +119,7 @@ describe('Crypto Tests', async () => {
       96,
       17,
     ])
+    // @ts-expect-error will come back and fix this @benschac
     const serverDHKey = await crypto.parseServerDHKey(mockData)
     const root = process.cwd()
     const thresholdKey = (await readKey(

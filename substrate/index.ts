@@ -196,14 +196,12 @@ export class Substrate extends SubstrateRead {
           if (dispatchError) {
             if (dispatchError.isModule) {
               // for module errors, we have the section indexed, lookup
-              const decoded: any = this.api.registry.findMetaError(
+              const decoded = this.api.registry.findMetaError(
                 dispatchError.asModule
               )
-              const { documentation, name, section } = decoded
+              const { docs, name, section } = decoded
 
-              const err = Error(
-                `${section}.${name}: ${documentation.join(' ')}`
-              )
+              const err = Error(`${section}.${name}: ${docs.join(' ')}`)
 
               err.name = name
               reject(err)
@@ -241,7 +239,7 @@ export class Substrate extends SubstrateRead {
     filter: EventFilter
   ): Promise<EventRecord> {
     const newCall = freeTx ? await this.handleFreeTx(call) : call
-    return new Promise<any>((resolve, reject) => {
+    return new Promise<EventRecord>((resolve, reject) => {
       newCall
         .signAndSend(this.signer.wallet, (res: SubmittableResult) => {
           const { dispatchError, status } = res
@@ -249,12 +247,16 @@ export class Substrate extends SubstrateRead {
           if (dispatchError) {
             if (dispatchError.isModule) {
               // for module errors, we have the section indexed, lookup
-              const decoded: any = this.api.registry.findMetaError(
+              const decoded = this.api.registry.findMetaError(
                 dispatchError.asModule
               )
-              const { documentation, name, section } = decoded
+              const { docs, name, section } = decoded ?? {
+                docs: [] as string[],
+                name: '',
+                section: '',
+              }
 
-              reject(Error(`${section}.${name}: ${documentation.join(' ')}`))
+              reject(Error(`${section}.${name}: ${docs.join(' ')}`))
             } else {
               reject(Error(dispatchError.toString()))
             }

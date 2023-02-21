@@ -4,10 +4,13 @@ import { readKey } from './utils'
 import { spinChain, spinThreshold, sleep, removeDB } from '../testing-utils'
 const { assert } = require('chai')
 import { BigNumber, ethers } from 'ethers'
+import { ChildProcessWithoutNullStreams } from 'child_process'
 
 describe('Core Tests', async () => {
   let entropy: Entropy
-  let chainProcess, serverProcess1, serverProcess2
+  let chainProcess: ChildProcessWithoutNullStreams,
+    serverProcess1: ChildProcessWithoutNullStreams,
+    serverProcess2: ChildProcessWithoutNullStreams
   const aliceSeed =
     '0xe5be9a5092b81bca64be81d212e7f2f9eba183bb7a90954f7b76361f6edb5c0a'
   const chainPath = process.cwd() + '/testing-utils/test-binaries/entropy'
@@ -48,9 +51,11 @@ describe('Core Tests', async () => {
         '5GNJqTPyNqANBkUVMN1LPPrxXnFouWXoe2wNSmmEoLctxiZY',
         false
       ) // constraint mod account is alice stash, ie `subkey inspect //Alice//stash`
-    } catch (e: any) {
-      console.log(e)
-      assert.equal(e, 'Error: already registered')
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        console.error(e)
+        assert.equal(e, 'Error: already registered')
+      }
     }
 
     const tx: ethers.utils.UnsignedTransaction = {
@@ -66,11 +71,14 @@ describe('Core Tests', async () => {
     // good error, only running one node so sig will not happen
     try {
       await entropy.sign(tx, false, 0)
-    } catch (e: any) {
-      assert.equal(
-        e.message,
-        "Cannot read properties of undefined (reading 'data')"
-      )
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        console.error(e)
+        assert.equal(
+          e.message,
+          "Cannot read properties of undefined (reading 'data')"
+        )
+      }
     }
   })
 })

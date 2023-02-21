@@ -1,11 +1,13 @@
 import 'mocha'
 import { ThresholdServer } from '.'
 import { spinThreshold, spinChain, sleep, removeDB } from '../testing-utils'
+import { ChildProcessWithoutNullStreams } from 'child_process'
 const { assert } = require('chai')
 
 describe('Threshold Tests', async () => {
   const thresholdServer = new ThresholdServer()
-  let serverProcess, chainProcess
+  let serverProcess: ChildProcessWithoutNullStreams,
+    chainProcess: ChildProcessWithoutNullStreams
   const chainPath = process.cwd() + '/testing-utils/test-binaries/entropy'
   const serverPath = process.cwd() + '/testing-utils/test-binaries/server'
 
@@ -29,14 +31,21 @@ describe('Threshold Tests', async () => {
     try {
       await thresholdServer.sendKeys([mock], ['127.0.0.1:3001'])
       throw new Error('should have failed gracefully')
-    } catch (e: any) {
-      if (e.response.data == 'Not Registering error: Register Onchain first') {
-        assert.equal(
-          e.response.data,
-          'Not Registering error: Register Onchain first'
-        )
-      } else {
-        assert.equal(e.response.data, 'Kv error: Recv Error: channel closed')
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        if (
+          // @ts-expect-error - didn't want to change code during refactor, will come back and change @benschac
+          e.response.data == 'Not Registering error: Register Onchain first'
+        ) {
+          assert.equal(
+            // @ts-expect-error - didn't want to change code during refactor, will come back and change @benschac
+            e.response.data,
+            'Not Registering error: Register Onchain first'
+          )
+        } else {
+          // @ts-expect-error - didn't want to change code during refactor, will come back and change @benschac
+          assert.equal(e.response.data, 'Kv error: Recv Error: channel closed')
+        }
       }
     }
   })

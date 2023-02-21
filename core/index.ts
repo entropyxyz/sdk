@@ -1,4 +1,3 @@
-import { keyShare } from './types'
 import { AnyJson } from '@polkadot/types-codec/types'
 import { utils } from 'ethers'
 import { SignatureLike } from '@ethersproject/bytes'
@@ -68,7 +67,7 @@ export default class Entropy {
    * @return {*}  {Promise<AnyJson>} {@link AnyJson} - A JSON return from the chain which contains a boolean of if the registration was successful
    */
   async register(
-    keyShares: keyShare[],
+    keyShares: Uint8Array[],
     constraintModificationAccount: string,
     freeTx: boolean,
     initialConstraints?: string
@@ -99,6 +98,7 @@ export default class Entropy {
 
     const encryptedMessagesPromises = serverStashKeys.map(async (_, i) => {
       const serverDHKey = await this.crypto.parseServerDHKey(
+        // @ts-expect-error will come back and fix with typegened types @benschac
         thresholdAccountsInfo[i]
       )
       const encryptedMessage = await this.crypto.encryptAndSign(
@@ -112,7 +112,7 @@ export default class Entropy {
     const encryptedMessages = await Promise.all(encryptedMessagesPromises)
 
     const urls = serverStashKeys.map(
-      // @ts-expect-error TODO: Not sure why this is fucked
+      // @ts-expect-error TODO: will come back and fix with typegened types @benschac
       (_, i) => thresholdAccountsInfo[i].toHuman().endpoint
     )
 

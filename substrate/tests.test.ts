@@ -1,6 +1,7 @@
 import { Substrate } from './index'
 import { spinChain } from '../testing-utils'
 import 'mocha'
+import { ChildProcessWithoutNullStreams } from 'child_process'
 
 const { assert } = require('chai')
 
@@ -10,7 +11,7 @@ describe('Substrate Tests', async () => {
     '0x398f0c28f98885e046333d4a41c19cee4c37368a9832c6502f6cfd182e2aef89' // `subkey inspect //Bob` 'secret seed'
   const aliceSeed =
     '0xe5be9a5092b81bca64be81d212e7f2f9eba183bb7a90954f7b76361f6edb5c0a'
-  let chainProcess
+  let chainProcess: ChildProcessWithoutNullStreams
   beforeEach(async function () {
     const chainPath = process.cwd() + '/testing-utils/test-binaries/entropy'
     try {
@@ -27,10 +28,11 @@ describe('Substrate Tests', async () => {
   })
 
   it(`checks if registering and registers`, async () => {
-    const register: any = await substrate.register(
+    const register = await substrate.register(
       '5HpG9w8EBLe5XCrbczpwq5TSXvedjrBGCwqxK1iQ7qUsSWFc',
       false
     ) // constraint mod account is ALICE_STASH
+    // @ts-expect-error will come back and fix this @benschac
     assert.equal(register.isRegistering, true)
   })
 
@@ -53,13 +55,15 @@ describe('Substrate Tests', async () => {
           '0xe13087d3e3d5aa1501bd769eff57f55924aaa9b544c9d2b2edf765509988660a',
       },
     ]
+
+    // @ts-expect-error will come back and fix this with generated types @benschac
     const thresholdKeys = await substrate.getThresholdInfo(stashKeys)
     assert.equal(thresholdKeys.length, 2)
     assert.deepEqual(thresholdKeys, thresholdKeysExpected)
   })
 
   it(`gets all stash keys from chain and returns the selected ones`, async () => {
-    const stashKeys: any = await substrate.getStashKeys()
+    const stashKeys = await substrate.getStashKeys()
     assert.equal(stashKeys.length, 2)
 
     const mockReturnedKeys = [
@@ -67,7 +71,7 @@ describe('Substrate Tests', async () => {
       '5GNJqTPyNqANBkUVMN1LPPrxXnFouWXoe2wNSmmEoLctxiZY',
     ]
 
-    const returnedKeys: any = substrate.selectStashKeys(stashKeys)
+    const returnedKeys = substrate.selectStashKeys(stashKeys)
     assert.deepEqual(returnedKeys, mockReturnedKeys)
   })
   it(`checks free tx`, async () => {
