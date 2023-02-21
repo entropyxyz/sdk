@@ -183,3 +183,4 @@ test_db/
 .tsbuildinfo/
 testing-utils/test-binaries/entropy
 testing-utils/test-binaries/server
+prepTests.sh

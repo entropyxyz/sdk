@@ -34,13 +34,13 @@ Then, in this repo, **fourth terminal**, run `yarn test` in to run the tests.
 
 ### Note on tests
 
-Currently, the tests only work on the first run. This is because the `entropy-core` node is not reset between tests. To get all test to pass again run the commands above:
+Tests require entropy core to be compiled and in this repo to run.
 
-- `./scripts/sdk-entropy-node.sh`
-- `./scripts/sdk-alice-tss.sh`
-- `./scripts/sdk-bob-tss.sh`
+To run these tests
 
-This will be fixed in the future.
+- Go to [core](https://github.com/entropyxyz/entropy-core), compile the repo
+- Go into the target/release and copy over entorpy and server binaries
+- Add them to testing-utils/testing-binaries
 
 ### Adding Environment Variables
 
