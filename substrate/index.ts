@@ -206,10 +206,10 @@ export class Substrate extends SubstrateRead {
               const decoded: any = this.api.registry.findMetaError(
                 dispatchError.asModule
               )
-              const { documentation, name, section } = decoded
+              const { docs, name, section } = decoded
 
               const err = Error(
-                `${section}.${name}: ${documentation.join(' ')}`
+                `${section}.${name}: ${docs.join(' ')}`
               )
 
               err.name = name

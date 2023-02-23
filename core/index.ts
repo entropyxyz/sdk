@@ -81,7 +81,7 @@ export default class Entropy {
     if (isRegistered_check.toHuman()) {
       throw new Error('already registered')
     }
-    // TODO after typegen: typed Addresses
+    // TODO JH after typegen: typed Addresses
     if (!isValidSubstrateAddress(constraintModificationAccount)) {
       throw new Error(
         'constraintModificationAccount must be a Substrate address'
@@ -184,5 +184,26 @@ export default class Entropy {
     )
 
     return signature
+  }
+
+  async updateConstraints(
+    constraints: any,
+    entropyAccount: string,
+    freeTx?: boolean,
+  ): Promise<any> {
+    // TODO JH after typegen, typed Addresses and use new constraints structs
+    // query constriants pallet to get list of users they can modify constraints for
+    // throw error if multiple accounts and no entropyAccount is passed in
+    // update constraints for that user
+
+    return this.substrate.sendAndWait(
+      this.substrate.api.tx.constraints.updateConstraints(entropyAccount, constraints),
+      freeTx
+    )
+  }
+
+  async getConstraints(entropyAccount: string): Promise<any> {
+    // TODO JH after typegen, typed Addresses and use new constraints structs
+    return this.substrate.api.query.constraints.evmAcl(entropyAccount)
   }
 }

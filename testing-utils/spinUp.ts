@@ -35,9 +35,8 @@ export const spinThreshold = async (
   return process
 }
 
-export const removeDB = () => {
-  rimraf('test_db')
-  rimraf('kvstore')
+export const removeDB = async () => {
+  return Promise.all([rimraf('test_db'), rimraf('kvstore')])
 }
 
 export const sleep = (durationInMs: number) => {
