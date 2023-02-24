@@ -10,13 +10,6 @@ import { EventRecord } from '@polkadot/types/interfaces/types'
  * A class for interfacing with the Entropy Constraint system
  */
 export class Constraints extends Substrate {
-  signer: Signer
-  /**
-   *
-   *
-   * @type {ApiPromise} the api object for an Entropy chain
-   */
-  api: ApiPromise
   /**
    * @alpha
    * @remarks
