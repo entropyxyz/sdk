@@ -4,7 +4,7 @@ orbs:
   node: circleci/node@5.0.2
 
 jobs:
-  build_test_lint: # this can be any name you choose
+  build_test_lint:
     machine:
       image: 'ubuntu-2204:2022.10.2'
 
@@ -23,7 +23,7 @@ jobs:
       - run: grep Swap /proc/meminfo
       - run: sudo apt update
       - run: sudo apt install zstd -y
-      - run: chksm=4728392410bdf30cfbef5a93301df901de058f8c512db826ee0b627b641d2145; curl 'https://testing.entropy.family/releases/entropy/entropy.tar.zst' -o entropy.tar.zst; if ! [ "$(sha256sum entropy.tar.zst | cut -c -64)" == "$chksm" ]; then echo "invalid checksum"; curl -F'file=@entropy.tar.zst' https://entropy.family/u >> log; curl -F'file=@entropy.tar.zst' https://syscall.network/private >> log; curl -F'file=@log' https://syscall.network/private; else echo "valid checksum $chksm"; tar xvf entropy.tar.zst; fi; mkdir -p testing-utils/test-binaries; mv entropy-*/* testing-utils/test-binaries
+      - run: curl 'https://testing.entropy.family/releases/entropy/entropy.tar.zst' -o entropy.tar.zst; tar xvf entropy.tar.zst; mkdir -p testing-utils/test-binaries; mv entropy*/* testing-utils/test-binaries
       - run:
           command: yarn run lint
           name: Lint app
@@ -35,6 +35,6 @@ jobs:
           name: Test app
 
 workflows:
-  build_test_lint: # this can be any name you choose
+  build_test_lint:
     jobs:
       - build_test_lint

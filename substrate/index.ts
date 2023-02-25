@@ -186,16 +186,16 @@ export class Substrate extends SubstrateRead {
    *
    * @param {SubmittableExtrinsic<'promise'>} call - The extrinsic to send.
    * @param {boolean} freeTx - use the free tx pallet
-   * @returns {*}  {Promise<undefined>} - A promise that resolves when the transaction is included in a block.
+   * @returns {*}  {Promise<EventRecord>} - a promise that contains the event that fits the filter
    *
    * @memberof Substrate
    */
   async sendAndWait(
     call: SubmittableExtrinsic<'promise'>,
     freeTx: boolean
-  ): Promise<undefined> {
+  ): Promise<EventRecord> {
     const newCall = freeTx ? await this.handleFreeTx(call) : call
-    return new Promise<undefined>((resolve, reject) => {
+    return new Promise<EventRecord>((resolve, reject) => {
       newCall
         .signAndSend(this.signer.wallet, (res: SubmittableResult) => {
           const { dispatchError, status } = res
@@ -206,11 +206,9 @@ export class Substrate extends SubstrateRead {
               const decoded: any = this.api.registry.findMetaError(
                 dispatchError.asModule
               )
-              const { documentation, name, section } = decoded
+              const { docs, name, section } = decoded
 
-              const err = Error(
-                `${section}.${name}: ${documentation.join(' ')}`
-              )
+              const err = Error(`${section}.${name}: ${docs.join(' ')}`)
 
               err.name = name
               reject(err)
@@ -238,7 +236,7 @@ export class Substrate extends SubstrateRead {
    * @param {SubmittableExtrinsic<'promise'>} call - a call submitted to the blockchain
    * @param {boolean} freeTx - transaction to use the free tx pallet
    * @param {EventFilter} filter - which event to filter for
-   * @returns {*}  {Promise<EventRecord>} - event that fits the filter
+   * @returns {*}  {Promise<EventRecord>} - a promise that contains the event that fits the filter
    *
    * @memberof Substrate
    */
@@ -248,7 +246,7 @@ export class Substrate extends SubstrateRead {
     filter: EventFilter
   ): Promise<EventRecord> {
     const newCall = freeTx ? await this.handleFreeTx(call) : call
-    return new Promise<any>((resolve, reject) => {
+    return new Promise<EventRecord>((resolve, reject) => {
       newCall
         .signAndSend(this.signer.wallet, (res: SubmittableResult) => {
           const { dispatchError, status } = res
@@ -259,9 +257,9 @@ export class Substrate extends SubstrateRead {
               const decoded: any = this.api.registry.findMetaError(
                 dispatchError.asModule
               )
-              const { documentation, name, section } = decoded
+              const { docs, name, section } = decoded
 
-              reject(Error(`${section}.${name}: ${documentation.join(' ')}`))
+              reject(Error(`${section}.${name}: ${docs.join(' ')}`))
             } else {
               reject(Error(dispatchError.toString()))
             }
@@ -320,7 +318,7 @@ export class Substrate extends SubstrateRead {
  * @param {string} [endpoint='ws://127.0.0.1:9944'] websocket address of the chain
  * @returns {*}  {Promise<ApiPromise>} Promise for interfacing with entropy chain
  */
-const getApi = async (
+export const getApi = async (
   endpoint = 'ws://127.0.0.1:9944'
 ): Promise<ApiPromise> => {
   const wsProvider = new WsProvider(endpoint)
@@ -338,7 +336,7 @@ const getApi = async (
  * @param {string} seed - the private key of the wallet
  * @returns {*}  {@link Signer} - a signer object for the user talking to the Entropy blockchain
  */
-const getWallet = (seed: string): Signer => {
+export const getWallet = (seed: string): Signer => {
   const keyring = new Keyring({ type: 'sr25519' })
   const pair = sr25519PairFromSeed(seed)
   const wallet = keyring.addFromPair(pair)

@@ -4,6 +4,7 @@ import { utils } from 'ethers'
 import { SignatureLike } from '@ethersproject/bytes'
 import { isValidSubstrateAddress } from './utils'
 import { Substrate } from '../substrate'
+import { Constraints } from '../constraints'
 import { ThresholdServer } from '../threshold-server'
 import { Crypto } from '../crypto'
 
@@ -14,7 +15,7 @@ export default class Entropy {
   crypto: Crypto
   substrate: Substrate
   thresholdServer: ThresholdServer
-
+  constraints: Constraints
   /**
    * @alpha
    *
@@ -29,11 +30,13 @@ export default class Entropy {
   constructor(
     crypto: Crypto,
     substrate: Substrate,
-    thresholdServer: ThresholdServer
+    thresholdServer: ThresholdServer,
+    constraints: Constraints
   ) {
     this.crypto = crypto
     this.substrate = substrate
     this.thresholdServer = thresholdServer
+    this.constraints = constraints
   }
 
   /**
@@ -49,8 +52,8 @@ export default class Entropy {
     const crypto = new Crypto()
     const substrate = await Substrate.setup(seed, endpoint)
     const thresholdServer = new ThresholdServer()
-
-    return new Entropy(crypto, substrate, thresholdServer)
+    const constraints = new Constraints(substrate.api, substrate.signer)
+    return new Entropy(crypto, substrate, thresholdServer, constraints)
   }
 
   /**
