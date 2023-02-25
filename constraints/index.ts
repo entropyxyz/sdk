@@ -57,7 +57,7 @@ export class Constraints extends Substrate {
     freeTx?: boolean
   ): Promise<EventRecord> {
     // TODO JH after typegen, typed Addresses and use new constraints structs
-    // query constriants pallet to get list of users they can modify constraints for
+    // query constraints pallet to get list of users they can modify constraints for
     // throw error if multiple accounts and no entropyAccount is passed in
     // update constraints for that user
 

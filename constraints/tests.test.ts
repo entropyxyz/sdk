@@ -63,7 +63,7 @@ describe('Constraint Tests', async () => {
       )
     }
 
-    // make sure constriants haven't been updated at all
+    // make sure constraints haven't been updated at all
     const constraint = await entropy.constraints.getEvmAcl(aliceAddress)
     assert.equal(constraint.toString(), initialConstraints.toString())
     // update constraints with AliceStash
