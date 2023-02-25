@@ -4,7 +4,7 @@ orbs:
   node: circleci/node@5.0.2
 
 jobs:
-  build_test_lint: # this can be any name you choose
+  build_test_lint:
     machine:
       image: 'ubuntu-2204:2022.10.2'
 
@@ -35,6 +35,6 @@ jobs:
           name: Test app
 
 workflows:
-  build_test_lint: # this can be any name you choose
+  build_test_lint:
     jobs:
       - build_test_lint
