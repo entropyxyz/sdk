@@ -1,7 +1,7 @@
 import 'mocha'
 import Entropy from '.'
-import { readKey } from './utils'
 import { spinChain, spinThreshold, sleep, removeDB } from '../testing-utils'
+import { readKey } from './utils'
 const { assert } = require('chai')
 import { BigNumber, ethers } from 'ethers'
 
