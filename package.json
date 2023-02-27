@@ -16,7 +16,7 @@
     "lint:eslint": "eslint . --ext .ts",
     "lint": "yarn lint:ts && yarn lint:eslint",
     "lint:fix": "eslint . --ext .ts --fix",
-    "prettier:fix": "prettier --write .",
+    "prettier:fix": "prettier --write . --ignore-path .gitignore",
     "prettier": "prettier --check .",
     "peek": "tsc --build --clean",
     "clean": "rm -Rf node_modules && yarn cache clean --all && yarn install",
