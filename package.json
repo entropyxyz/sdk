@@ -28,12 +28,6 @@
     "bundle:prod": "tsup --minify",
     "find-deadcode": "ts-prune"
   },
-  "workspaces": [
-    "core/*",
-    "crypto/*",
-    "substrate/*",
-    "threshold-server/*"
-  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/entropyxyz/entropy-js.git"
