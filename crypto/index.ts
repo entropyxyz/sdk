@@ -15,12 +15,12 @@ export class Crypto {
   async parseServerDHKey(serverDHInfo: any): Promise<Uint8Array> {
     if (typeof window === 'undefined') {
       const { from_hex } = await import(
-        '@entropyxyz/x25519-chacha20poly1305-nodejs/x25519-chacha20poly1305-nodejs'
+        '@entropyxyz/x25519-chacha20poly1305-nodejs'
       )
       return from_hex(serverDHInfo.x25519PublicKey)
     } else {
       const { from_hex } = await import(
-        '@entropyxyz/x25519-chacha20poly1305-web/x25519_chacha20poly1305'
+        '@entropyxyz/x25519-chacha20poly1305-web'
       )
       return from_hex(serverDHInfo.x25519PublicKey)
     }
