@@ -8,7 +8,7 @@
   ],
   "types": "dist/index.d.ts",
   "module": "dist/index.cjs",
-  "browser": "dist/index.cjs",
+  "browser": "dist/index.js",
   "type": "module",
   "scripts": {
     "test": "yarn test:packages && yarn test:utils",
