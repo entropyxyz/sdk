@@ -3,7 +3,9 @@
   "version": "0.0.4",
   "description": "JS SDK for entropy blockchain ",
   "main": "dist/index.cjs",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "types": "dist/index.d.ts",
   "module": "dist/index.cjs",
   "browser": "dist/index.cjs",
