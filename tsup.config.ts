@@ -1,7 +1,6 @@
 import { defineConfig } from 'tsup'
 
 export default defineConfig((options) => {
-  const platform = options.platform === 'node' ? 'node' : 'browser'
   return {
     entry: ['core/index.ts'],
     replaceNodeEnv: true,
@@ -12,8 +11,6 @@ export default defineConfig((options) => {
     clean: true,
     target: 'es6',
     minify: options.minify,
-    outDir: `dist/${platform}`,
     watch: options.watch,
-    platform,
   }
 })
