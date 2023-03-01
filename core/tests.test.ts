@@ -20,7 +20,7 @@ describe('Core Tests', () => {
     } catch (e) {
       console.log(e)
     }
-    await sleep(4000)
+    await sleep(7000)
     entropy = await Entropy.setup(aliceSeed)
   })
 
