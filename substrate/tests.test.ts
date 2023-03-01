@@ -17,7 +17,7 @@ describe('Substrate Tests', () => {
     } catch (e) {
       throw new Error(e)
     }
-    await sleep(5000)
+    await sleep(7000)
     substrate = await Substrate.setup(bobSeed)
   })
 

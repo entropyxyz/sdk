@@ -18,7 +18,7 @@ describe('Constraint Tests', () => {
     } catch (e) {
       console.log(e)
     }
-    await sleep(5000)
+    await sleep(7000)
     entropy = await Entropy.setup(daveSeed)
   })
 
