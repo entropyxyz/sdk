@@ -1,4 +1,3 @@
-import 'mocha'
 import { ThresholdServer } from '.'
 import { spinThreshold, spinChain, sleep, removeDB } from '../testing-utils'
 const { assert } = require('chai')
@@ -18,7 +17,7 @@ const exampleUnsignedEvmTx = (): ethers.utils.UnsignedTransaction => {
   }
 }
 
-describe('Threshold Tests', async () => {
+describe('Threshold Tests', () => {
   const thresholdServer = new ThresholdServer()
   let serverProcess, chainProcess
   const chainPath = process.cwd() + '/testing-utils/test-binaries/entropy'
@@ -26,9 +25,8 @@ describe('Threshold Tests', async () => {
 
   beforeEach(async function () {
     chainProcess = await spinChain(chainPath)
-    await sleep(3000)
     serverProcess = await spinThreshold(serverPath, 'alice', '3001')
-    await sleep(3000)
+    await sleep(7000)
   })
 
   afterEach(async function () {

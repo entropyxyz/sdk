@@ -1,11 +1,10 @@
-import 'mocha'
 import Entropy from '.'
 import { spinChain, spinThreshold, sleep, removeDB } from '../testing-utils'
 import { readKey } from './utils'
 const { assert } = require('chai')
 import { BigNumber, ethers } from 'ethers'
 
-describe('Core Tests', async () => {
+describe('Core Tests', () => {
   let entropy: Entropy
   let chainProcess, serverProcess1, serverProcess2
   const aliceSeed =
@@ -21,7 +20,7 @@ describe('Core Tests', async () => {
     } catch (e) {
       console.log(e)
     }
-    await sleep(3000)
+    await sleep(7000)
     entropy = await Entropy.setup(aliceSeed)
   })
 

@@ -1,7 +1,7 @@
 import { SubmittableExtrinsic } from '@polkadot/api/types'
 import { AnyJson } from '@polkadot/types-codec/types'
 import { Keyring } from '@polkadot/keyring'
-import { sr25519PairFromSeed } from '@polkadot/util-crypto'
+import { sr25519PairFromSeed, cryptoWaitReady } from '@polkadot/util-crypto'
 import { Signer, StashKeys, ThresholdInfo, EventFilter, Address } from './types'
 import { SubmittableResult, ApiPromise, WsProvider } from '@polkadot/api'
 import { EventRecord } from '@polkadot/types/interfaces/types'
@@ -336,8 +336,9 @@ export const getApi = async (
  * @param {string} seed - the private key of the wallet
  * @returns {*}  {@link Signer} - a signer object for the user talking to the Entropy blockchain
  */
-export const getWallet = (seed: string): Signer => {
+export const getWallet = async (seed: string): Promise<Signer> => {
   const keyring = new Keyring({ type: 'sr25519' })
+  await cryptoWaitReady()
   const pair = sr25519PairFromSeed(seed)
   const wallet = keyring.addFromPair(pair)
   return { wallet, pair }

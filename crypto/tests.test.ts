@@ -1,10 +1,9 @@
 import { readKey } from '../core/utils'
 import { Crypto } from './index'
-import 'mocha'
 
 const { assert } = require('chai')
 
-describe('Crypto Tests', async () => {
+describe('Crypto Tests', () => {
   const crypto = new Crypto()
   const mockData = {
     endpoint: '127.0.0.1:3001',
