@@ -1,10 +1,9 @@
 import { Substrate } from './index'
-import { spinChain } from '../testing-utils'
-import 'mocha'
+import { spinChain, sleep } from '../testing-utils'
 
 const { assert } = require('chai')
 
-describe('Substrate Tests', async () => {
+describe('Substrate Tests', () => {
   let substrate: Substrate
   const bobSeed =
     '0x398f0c28f98885e046333d4a41c19cee4c37368a9832c6502f6cfd182e2aef89' // `subkey inspect //Bob` 'secret seed'
@@ -18,6 +17,7 @@ describe('Substrate Tests', async () => {
     } catch (e) {
       throw new Error(e)
     }
+    await sleep(5000)
     substrate = await Substrate.setup(bobSeed)
   })
 

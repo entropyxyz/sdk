@@ -338,7 +338,7 @@ export const getApi = async (
  */
 export const getWallet = async (seed: string): Promise<Signer> => {
   const keyring = new Keyring({ type: 'sr25519' })
-  await cryptoWaitReady();
+  await cryptoWaitReady()
   const pair = sr25519PairFromSeed(seed)
   const wallet = keyring.addFromPair(pair)
   return { wallet, pair }

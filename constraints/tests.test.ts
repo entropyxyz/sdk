@@ -1,4 +1,3 @@
-import 'mocha'
 import Entropy from '../core'
 import { spinChain, sleep } from '../testing-utils'
 const { assert } = require('chai')
@@ -7,7 +6,7 @@ const aliceAddress = '5DAAnrj7VHTznn2AWBemMuyBwZWs6FNFjdyVXUeYum3PTXFy'
 const daveSeed =
   '0x868020ae0687dda7d57565093a69090211449845a7e11453612800b663307246' // `subkey inspect //Dave` 'secret seed'
 
-describe('Constraint Tests', async () => {
+describe('Constraint Tests', () => {
   let entropy: Entropy
   let chainProcess
 
@@ -16,21 +15,16 @@ describe('Constraint Tests', async () => {
   beforeEach(async function () {
     try {
       chainProcess = await spinChain(chainPath)
-      // serverProcess1 = await spinThreshold(serverPath, 'alice', '3001')
-      // serverProcess2 = await spinThreshold(serverPath, 'bob', '3002')
     } catch (e) {
       console.log(e)
     }
-    await sleep(3000)
+    await sleep(5000)
     entropy = await Entropy.setup(daveSeed)
   })
 
   afterEach(async function () {
-    const substrate = entropy.substrate.api.disconnect()
-    const chain = chainProcess.kill()
-
-    await Promise.all([substrate, chain])
-    await sleep(1000)
+    chainProcess.kill()
+    entropy.substrate.api.disconnect()
   })
   it(`constraints can be updated by authorized user`, async () => {
     const newConstraints = {
@@ -46,7 +40,6 @@ describe('Constraint Tests', async () => {
     const randomConstraintsSeed =
       '0x1a7d114100653850c65edecda8a9b2b4dd65d900edef8e70b1a6ecdcda967056' // `subkey inspect //Bob//stash` 'secret seed'
     const randomEntropy = await Entropy.setup(randomConstraintsSeed)
-
     const aliceConstraintEntropy = await Entropy.setup(daveSeed)
 
     // make sure random user cannot update her constraints
@@ -76,5 +69,7 @@ describe('Constraint Tests', async () => {
     const constraints2 = await entropy.constraints.getEvmAcl(aliceAddress)
     assert.notEqual(constraints2.toString(), initialConstraints.toString())
     assert.equal(constraints2.toString(), JSON.stringify(newConstraints.evmAcl))
+    aliceConstraintEntropy.substrate.api.disconnect()
+    randomEntropy.substrate.api.disconnect()
   })
 })

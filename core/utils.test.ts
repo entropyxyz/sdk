@@ -1,4 +1,3 @@
-import 'mocha'
 import { isValidSubstrateAddress } from './utils'
 const { assert } = require('chai')
 
