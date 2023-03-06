@@ -39,7 +39,7 @@ Tests require entropy core to be compiled and in this repo to run.
 To run these tests
 
 - Go to [core](https://github.com/entropyxyz/entropy-core), compile the repo
-- Go into the target/release and copy over entorpy and server binaries
+- Go into the target/release and copy over entropy and server binaries
 - Add them to testing-utils/testing-binaries
 
 ### Adding Environment Variables
