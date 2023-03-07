@@ -30,8 +30,7 @@ import type {
   FrameSupportDispatchPerDispatchClassWeightsPerClass,
   FrameSupportDispatchRawOrigin,
   FrameSupportPalletId,
-  FrameSupportScheduleLookupError,
-  FrameSupportScheduleMaybeHashed,
+  FrameSupportPreimagesBounded,
   FrameSupportTokensMiscBalanceStatus,
   FrameSystemAccountInfo,
   FrameSystemCall,
@@ -85,10 +84,8 @@ import type {
   PalletDemocracyDelegations,
   PalletDemocracyError,
   PalletDemocracyEvent,
-  PalletDemocracyPreimageStatus,
   PalletDemocracyReferendumInfo,
   PalletDemocracyReferendumStatus,
-  PalletDemocracyReleases,
   PalletDemocracyTally,
   PalletDemocracyVoteAccountVote,
   PalletDemocracyVotePriorLock,
@@ -187,7 +184,7 @@ import type {
   PalletSchedulerCall,
   PalletSchedulerError,
   PalletSchedulerEvent,
-  PalletSchedulerScheduledV3,
+  PalletSchedulerScheduled,
   PalletSessionCall,
   PalletSessionError,
   PalletSessionEvent,
@@ -295,6 +292,7 @@ import type {
   SpTransactionStorageProofTransactionStorageProof,
   SpVersionRuntimeVersion,
   SpWeightsRuntimeDbWeight,
+  SpWeightsWeightV2Weight,
 } from '@polkadot/types/lookup'
 
 declare module '@polkadot/types/types/registry' {
@@ -323,8 +321,7 @@ declare module '@polkadot/types/types/registry' {
     FrameSupportDispatchPerDispatchClassWeightsPerClass: FrameSupportDispatchPerDispatchClassWeightsPerClass
     FrameSupportDispatchRawOrigin: FrameSupportDispatchRawOrigin
     FrameSupportPalletId: FrameSupportPalletId
-    FrameSupportScheduleLookupError: FrameSupportScheduleLookupError
-    FrameSupportScheduleMaybeHashed: FrameSupportScheduleMaybeHashed
+    FrameSupportPreimagesBounded: FrameSupportPreimagesBounded
     FrameSupportTokensMiscBalanceStatus: FrameSupportTokensMiscBalanceStatus
     FrameSystemAccountInfo: FrameSystemAccountInfo
     FrameSystemCall: FrameSystemCall
@@ -378,10 +375,8 @@ declare module '@polkadot/types/types/registry' {
     PalletDemocracyDelegations: PalletDemocracyDelegations
     PalletDemocracyError: PalletDemocracyError
     PalletDemocracyEvent: PalletDemocracyEvent
-    PalletDemocracyPreimageStatus: PalletDemocracyPreimageStatus
     PalletDemocracyReferendumInfo: PalletDemocracyReferendumInfo
     PalletDemocracyReferendumStatus: PalletDemocracyReferendumStatus
-    PalletDemocracyReleases: PalletDemocracyReleases
     PalletDemocracyTally: PalletDemocracyTally
     PalletDemocracyVoteAccountVote: PalletDemocracyVoteAccountVote
     PalletDemocracyVotePriorLock: PalletDemocracyVotePriorLock
@@ -480,7 +475,7 @@ declare module '@polkadot/types/types/registry' {
     PalletSchedulerCall: PalletSchedulerCall
     PalletSchedulerError: PalletSchedulerError
     PalletSchedulerEvent: PalletSchedulerEvent
-    PalletSchedulerScheduledV3: PalletSchedulerScheduledV3
+    PalletSchedulerScheduled: PalletSchedulerScheduled
     PalletSessionCall: PalletSessionCall
     PalletSessionError: PalletSessionError
     PalletSessionEvent: PalletSessionEvent
@@ -588,5 +583,6 @@ declare module '@polkadot/types/types/registry' {
     SpTransactionStorageProofTransactionStorageProof: SpTransactionStorageProofTransactionStorageProof
     SpVersionRuntimeVersion: SpVersionRuntimeVersion
     SpWeightsRuntimeDbWeight: SpWeightsRuntimeDbWeight
+    SpWeightsWeightV2Weight: SpWeightsWeightV2Weight
   } // InterfaceTypes
 } // declare module

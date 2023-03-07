@@ -18,7 +18,6 @@ import type {
   Option,
   U8aFixed,
   Vec,
-  WrapperKeepOpaque,
   WrapperOpaque,
   bool,
   u128,
@@ -34,90 +33,6 @@ import type {
   Perbill,
   Percent,
 } from '@polkadot/types/interfaces/runtime'
-import type {
-  EntropyRuntimeSessionKeys,
-  EntropySharedConstraintsAclH160,
-  EntropySharedConstraintsAclH256,
-  EntropySharedConstraintsArch,
-  EntropySharedMessage,
-  FrameSupportDispatchPerDispatchClassWeight,
-  FrameSystemAccountInfo,
-  FrameSystemEventRecord,
-  FrameSystemLastRuntimeUpgradeInfo,
-  FrameSystemPhase,
-  PalletAuthorshipUncleEntryItem,
-  PalletBagsListListBag,
-  PalletBagsListListNode,
-  PalletBalancesAccountData,
-  PalletBalancesBalanceLock,
-  PalletBalancesReleases,
-  PalletBalancesReserveData,
-  PalletBountiesBounty,
-  PalletCollectiveVotes,
-  PalletDemocracyPreimageStatus,
-  PalletDemocracyReferendumInfo,
-  PalletDemocracyReleases,
-  PalletDemocracyVoteThreshold,
-  PalletDemocracyVoteVoting,
-  PalletElectionProviderMultiPhasePhase,
-  PalletElectionProviderMultiPhaseReadySolution,
-  PalletElectionProviderMultiPhaseRoundSnapshot,
-  PalletElectionProviderMultiPhaseSignedSignedSubmission,
-  PalletElectionProviderMultiPhaseSolutionOrSnapshotSize,
-  PalletElectionsPhragmenSeatHolder,
-  PalletElectionsPhragmenVoter,
-  PalletFreeTxElectricalPanel,
-  PalletGrandpaStoredPendingChange,
-  PalletGrandpaStoredState,
-  PalletIdentityRegistrarInfo,
-  PalletIdentityRegistration,
-  PalletImOnlineBoundedOpaqueNetworkState,
-  PalletImOnlineSr25519AppSr25519Public,
-  PalletMultisigMultisig,
-  PalletNominationPoolsBondedPoolInner,
-  PalletNominationPoolsPoolMember,
-  PalletNominationPoolsRewardPool,
-  PalletNominationPoolsSubPools,
-  PalletPreimageRequestStatus,
-  PalletProxyAnnouncement,
-  PalletProxyProxyDefinition,
-  PalletRecoveryActiveRecovery,
-  PalletRecoveryRecoveryConfig,
-  PalletRelayerRegisteringDetails,
-  PalletSchedulerScheduledV3,
-  PalletSocietyBid,
-  PalletSocietyBidKind,
-  PalletSocietyVote,
-  PalletSocietyVouchingStatus,
-  PalletStakingActiveEraInfo,
-  PalletStakingEraRewardPoints,
-  PalletStakingExposure,
-  PalletStakingExtensionServerInfo,
-  PalletStakingForcing,
-  PalletStakingNominations,
-  PalletStakingReleases,
-  PalletStakingRewardDestination,
-  PalletStakingSlashingSlashingSpans,
-  PalletStakingSlashingSpanRecord,
-  PalletStakingStakingLedger,
-  PalletStakingUnappliedSlash,
-  PalletStakingValidatorPrefs,
-  PalletTipsOpenTip,
-  PalletTransactionPaymentReleases,
-  PalletTransactionStorageTransactionInfo,
-  PalletTreasuryProposal,
-  PalletVestingReleases,
-  PalletVestingVestingInfo,
-  SpAuthorityDiscoveryAppPublic,
-  SpConsensusBabeAppPublic,
-  SpConsensusBabeBabeEpochConfiguration,
-  SpConsensusBabeDigestsNextConfigDescriptor,
-  SpConsensusBabeDigestsPreDigest,
-  SpCoreCryptoKeyTypeId,
-  SpNposElectionsElectionScore,
-  SpRuntimeDigest,
-  SpStakingOffenceOffenceDetails,
-} from '@polkadot/types/lookup'
 import type { Observable } from '@polkadot/types/types'
 
 export type __AugmentedQuery<ApiType extends ApiTypes> = AugmentedQuery<
@@ -502,7 +417,6 @@ declare module '@polkadot/api-base/types/storage' {
             | EntropySharedConstraintsArch
             | 'Evm'
             | 'Btc'
-            | 'Generic'
             | number
             | Uint8Array
         ) => Observable<Option<Null>>,
@@ -662,33 +576,27 @@ declare module '@polkadot/api-base/types/storage' {
        **/
       nextExternal: AugmentedQuery<
         ApiType,
-        () => Observable<Option<ITuple<[H256, PalletDemocracyVoteThreshold]>>>,
+        () => Observable<
+          Option<
+            ITuple<[FrameSupportPreimagesBounded, PalletDemocracyVoteThreshold]>
+          >
+        >,
         []
       > &
         QueryableStorageEntry<ApiType, []>
-      /**
-       * Map of hashes to the proposal preimage, along with who registered it and their deposit.
-       * The block number is the block at which it was deposited.
-       **/
-      preimages: AugmentedQuery<
-        ApiType,
-        (
-          arg: H256 | string | Uint8Array
-        ) => Observable<Option<PalletDemocracyPreimageStatus>>,
-        [H256]
-      > &
-        QueryableStorageEntry<ApiType, [H256]>
       /**
        * The number of (public) proposals that have been made so far.
        **/
       publicPropCount: AugmentedQuery<ApiType, () => Observable<u32>, []> &
         QueryableStorageEntry<ApiType, []>
       /**
-       * The public proposals. Unsorted. The second item is the proposal's hash.
+       * The public proposals. Unsorted. The second item is the proposal.
        **/
       publicProps: AugmentedQuery<
         ApiType,
-        () => Observable<Vec<ITuple<[u32, H256, AccountId32]>>>,
+        () => Observable<
+          Vec<ITuple<[u32, FrameSupportPreimagesBounded, AccountId32]>>
+        >,
         []
       > &
         QueryableStorageEntry<ApiType, []>
@@ -710,17 +618,6 @@ declare module '@polkadot/api-base/types/storage' {
         [u32]
       > &
         QueryableStorageEntry<ApiType, [u32]>
-      /**
-       * Storage version of the pallet.
-       *
-       * New networks start with last version.
-       **/
-      storageVersion: AugmentedQuery<
-        ApiType,
-        () => Observable<Option<PalletDemocracyReleases>>,
-        []
-      > &
-        QueryableStorageEntry<ApiType, []>
       /**
        * All votes for a particular voter. We store the balance for the number of votes that we
        * have recorded. The second item is the total amount of delegations, that will be added.
@@ -1178,16 +1075,6 @@ declare module '@polkadot/api-base/types/storage' {
       [key: string]: QueryableStorageEntry<ApiType>
     }
     multisig: {
-      calls: AugmentedQuery<
-        ApiType,
-        (
-          arg: U8aFixed | string | Uint8Array
-        ) => Observable<
-          Option<ITuple<[WrapperKeepOpaque<Call>, AccountId32, u128]>>
-        >,
-        [U8aFixed]
-      > &
-        QueryableStorageEntry<ApiType, [U8aFixed]>
       /**
        * The set of open multisig operations.
        **/
@@ -1419,15 +1306,16 @@ declare module '@polkadot/api-base/types/storage' {
       [key: string]: QueryableStorageEntry<ApiType>
     }
     preimage: {
-      /**
-       * The preimages stored by this pallet.
-       **/
       preimageFor: AugmentedQuery<
         ApiType,
-        (arg: H256 | string | Uint8Array) => Observable<Option<Bytes>>,
-        [H256]
+        (
+          arg:
+            | ITuple<[H256, u32]>
+            | [H256 | string | Uint8Array, u32 | AnyNumber | Uint8Array]
+        ) => Observable<Option<Bytes>>,
+        [ITuple<[H256, u32]>]
       > &
-        QueryableStorageEntry<ApiType, [H256]>
+        QueryableStorageEntry<ApiType, [ITuple<[H256, u32]>]>
       /**
        * The request status of a given hash.
        **/
@@ -1546,14 +1434,6 @@ declare module '@polkadot/api-base/types/storage' {
         [u32]
       > &
         QueryableStorageEntry<ApiType, [u32]>
-      pending: AugmentedQuery<
-        ApiType,
-        (
-          arg: u32 | AnyNumber | Uint8Array
-        ) => Observable<Vec<EntropySharedMessage>>,
-        [u32]
-      > &
-        QueryableStorageEntry<ApiType, [u32]>
       registered: AugmentedQuery<
         ApiType,
         (arg: AccountId32 | string | Uint8Array) => Observable<Option<bool>>,
@@ -1565,18 +1445,6 @@ declare module '@polkadot/api-base/types/storage' {
         (
           arg: AccountId32 | string | Uint8Array
         ) => Observable<Option<PalletRelayerRegisteringDetails>>,
-        [AccountId32]
-      > &
-        QueryableStorageEntry<ApiType, [AccountId32]>
-      responsibility: AugmentedQuery<
-        ApiType,
-        (arg: u32 | AnyNumber | Uint8Array) => Observable<Option<AccountId32>>,
-        [u32]
-      > &
-        QueryableStorageEntry<ApiType, [u32]>
-      unresponsive: AugmentedQuery<
-        ApiType,
-        (arg: AccountId32 | string | Uint8Array) => Observable<u32>,
         [AccountId32]
       > &
         QueryableStorageEntry<ApiType, [AccountId32]>
@@ -1593,21 +1461,30 @@ declare module '@polkadot/api-base/types/storage' {
         ApiType,
         (
           arg: u32 | AnyNumber | Uint8Array
-        ) => Observable<Vec<Option<PalletSchedulerScheduledV3>>>,
+        ) => Observable<Vec<Option<PalletSchedulerScheduled>>>,
         [u32]
       > &
         QueryableStorageEntry<ApiType, [u32]>
+      incompleteSince: AugmentedQuery<
+        ApiType,
+        () => Observable<Option<u32>>,
+        []
+      > &
+        QueryableStorageEntry<ApiType, []>
       /**
-       * Lookup from identity to the block number and index of the task.
+       * Lookup from a name to the block number and index of the task.
+       *
+       * For v3 -> v4 the previously unbounded identities are Blake2-256 hashed to form the v4
+       * identities.
        **/
       lookup: AugmentedQuery<
         ApiType,
         (
-          arg: Bytes | string | Uint8Array
+          arg: U8aFixed | string | Uint8Array
         ) => Observable<Option<ITuple<[u32, u32]>>>,
-        [Bytes]
+        [U8aFixed]
       > &
-        QueryableStorageEntry<ApiType, [Bytes]>
+        QueryableStorageEntry<ApiType, [U8aFixed]>
       /**
        * Generic query
        **/
