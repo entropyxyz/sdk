@@ -22,15 +22,7 @@ import type {
   Perbill,
   Percent,
   Permill,
-  WeightV1,
 } from '@polkadot/types/interfaces/runtime'
-import type {
-  FrameSupportPalletId,
-  FrameSystemLimitsBlockLength,
-  FrameSystemLimitsBlockWeights,
-  SpVersionRuntimeVersion,
-  SpWeightsRuntimeDbWeight,
-} from '@polkadot/types/lookup'
 
 export type __AugmentedConst<ApiType extends ApiTypes> = AugmentedConst<ApiType>
 
@@ -218,6 +210,14 @@ declare module '@polkadot/api-base/types/consts' {
        **/
       launchPeriod: u32 & AugmentedConst<ApiType>
       /**
+       * The maximum number of items which can be blacklisted.
+       **/
+      maxBlacklisted: u32 & AugmentedConst<ApiType>
+      /**
+       * The maximum number of deposits a public proposal may have at any time.
+       **/
+      maxDeposits: u32 & AugmentedConst<ApiType>
+      /**
        * The maximum number of public proposals that can exist at any time.
        **/
       maxProposals: u32 & AugmentedConst<ApiType>
@@ -232,10 +232,6 @@ declare module '@polkadot/api-base/types/consts' {
        * The minimum amount to be used as a deposit for a public referendum proposal.
        **/
       minimumDeposit: u128 & AugmentedConst<ApiType>
-      /**
-       * The amount of balance that must be deposited per byte of preimage stored.
-       **/
-      preimageByteDeposit: u128 & AugmentedConst<ApiType>
       /**
        * The minimum period of vote locking.
        *
@@ -275,7 +271,7 @@ declare module '@polkadot/api-base/types/consts' {
       maxElectingVoters: u32 & AugmentedConst<ApiType>
       minerMaxLength: u32 & AugmentedConst<ApiType>
       minerMaxVotesPerVoter: u32 & AugmentedConst<ApiType>
-      minerMaxWeight: WeightV1 & AugmentedConst<ApiType>
+      minerMaxWeight: SpWeightsWeightV2Weight & AugmentedConst<ApiType>
       /**
        * The priority of the unsigned transaction submitted in the unsigned-phase
        **/
@@ -320,7 +316,7 @@ declare module '@polkadot/api-base/types/consts' {
        * this pallet), then [`MinerConfig::solution_weight`] is used to compare against
        * this value.
        **/
-      signedMaxWeight: WeightV1 & AugmentedConst<ApiType>
+      signedMaxWeight: SpWeightsWeightV2Weight & AugmentedConst<ApiType>
       /**
        * Duration of the signed phase.
        **/
@@ -594,13 +590,11 @@ declare module '@polkadot/api-base/types/consts' {
     }
     scheduler: {
       /**
-       * The maximum weight that may be scheduled per block for any dispatchables of less
-       * priority than `schedule::HARD_DEADLINE`.
+       * The maximum weight that may be scheduled per block for any dispatchables.
        **/
-      maximumWeight: WeightV1 & AugmentedConst<ApiType>
+      maximumWeight: SpWeightsWeightV2Weight & AugmentedConst<ApiType>
       /**
        * The maximum number of scheduled calls in the queue for a single block.
-       * Not strictly enforced, but used for weight estimation.
        **/
       maxScheduledPerBlock: u32 & AugmentedConst<ApiType>
       /**
