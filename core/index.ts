@@ -71,12 +71,19 @@ export default class Entropy {
    *
    * @return {*}  {Promise<AnyJson>} {@link AnyJson} - A JSON return from the chain which contains a boolean of if the registration was successful
    */
-  async register(
-    keyShares: keyShare[],
-    constraintModificationAccount: string,
-    freeTx: boolean,
+  async register(props: {
+    keyShares: keyShare[]
+    constraintModificationAccount: string
+    freeTx: boolean
     initialConstraints?: string
-  ): Promise<AnyJson> {
+  }): Promise<AnyJson> {
+    const {
+      keyShares,
+      constraintModificationAccount,
+      freeTx,
+      initialConstraints,
+    } = props
+
     const isRegistered_check = await this.substrate.api.query.relayer.registered(
       this.substrate.signer.wallet.address
     )
