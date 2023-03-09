@@ -42,11 +42,13 @@ describe('Core Tests', () => {
     // either works or not working from clean state and keys already there, good error, working error
     try {
       // TODO use register() in substrate, not directly
-      await entropy.register(
-        [thresholdKey, thresholdKey2],
-        '5GNJqTPyNqANBkUVMN1LPPrxXnFouWXoe2wNSmmEoLctxiZY',
-        false
-      ) // constraint mod account is alice stash, ie `subkey inspect //Alice//stash`
+      await entropy.register({
+        keyShares: [thresholdKey, thresholdKey2],
+        constraintModificationAccount:
+          '5GNJqTPyNqANBkUVMN1LPPrxXnFouWXoe2wNSmmEoLctxiZY',
+        freeTx: false,
+      })
+      // constraint mod account is alice stash, ie `subkey inspect //Alice//stash`
     } catch (e: any) {
       console.log(e)
       assert.equal(e, 'Error: already registered')
