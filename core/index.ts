@@ -2,11 +2,10 @@ import { keyShare } from './types'
 import { AnyJson } from '@polkadot/types-codec/types'
 import { utils } from 'ethers'
 import { SignatureLike } from '@ethersproject/bytes'
-import { isValidSubstrateAddress } from './utils'
+import { isValidSubstrateAddress, sleep } from './utils'
 import { Substrate } from '../substrate'
 import { Constraints } from '../constraints'
-import { ThresholdServer } from '../threshold-server'
-import { ITransactionRequest, Arch } from '../threshold-server/types'
+import { ThresholdServer, ITransactionRequest, Arch } from '../threshold-server'
 import { Crypto } from '../crypto'
 
 /**
@@ -169,12 +168,19 @@ export default class Entropy {
         name: 'SignatureRequested',
       }
     )
+    // there is a delay between when prepTransaction get included in the block and when the ocw
+    // actually posts the event to the server.
+    // Takes about 10 seconds, but /user/tx returns 424 if we don't wait
+    sleep(15000)
+
     const urls = record.event.data.toHuman()[0].ipAddresses
     // TODO get urls from event record (not implemented in devnet)
     const evmTransactionRequest: ITransactionRequest = {
       arch: Arch.Evm,
       transaction_request: serializedTx,
     }
+
+    // TODO use retries with this function (instead of the sleep a few lines above)
     await this.thresholdServer.submitTransactionRequest(
       evmTransactionRequest,
       urls

@@ -2,6 +2,7 @@ import axios, { AxiosResponse } from 'axios'
 import { SignatureLike } from '@ethersproject/bytes'
 import { sleep } from '../core/utils'
 import { ITransactionRequest } from './types'
+export * from './types'
 
 /**
  * Class used for talking to an Entropy validator server
@@ -69,9 +70,12 @@ export class ThresholdServer {
     let postRequest
     while (status !== 202 && i < retries) {
       try {
-        postRequest = await axios.post(`${thresholdUrl}/signer/signature`, {
-          message: sigHash,
-        })
+        postRequest = await axios.post(
+          `http://${thresholdUrl}/signer/signature`,
+          {
+            message: sigHash,
+          }
+        )
         status = postRequest.status
       } catch (e) {
         status = 500

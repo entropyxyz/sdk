@@ -11,7 +11,7 @@
   "browser": "dist/index.js",
   "type": "module",
   "scripts": {
-    "test": "yarn removedb && jest --runInBand",
+    "test": "yarn removedb && jest -i --verbose --useStderr true",
     "lint:ts": "tsc",
     "lint:eslint": "eslint . --ext .ts",
     "lint": "yarn lint:ts && yarn lint:eslint",

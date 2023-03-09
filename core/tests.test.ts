@@ -1,8 +1,12 @@
 import Entropy from '.'
-import { spinChain, spinThreshold, sleep, removeDB } from '../testing-utils'
-import { readKey } from './utils'
-const { assert } = require('chai')
-import { BigNumber, ethers } from 'ethers'
+import {
+  spinChain,
+  spinThreshold,
+  sleep,
+  removeDB,
+  exampleUnsignedEvmTx,
+  registerTestUser,
+} from '../testing-utils'
 
 describe('Core Tests', () => {
   let entropy: Entropy
@@ -32,44 +36,8 @@ describe('Core Tests', () => {
     removeDB()
   })
 
-  it(`registers then signs`, async () => {
-    const root = process.cwd()
-    const thresholdKey = await readKey(`${root + '/testing-utils/test-keys/0'}`)
-    const thresholdKey2 = await readKey(
-      `${root + '/testing-utils/test-keys/1'}`
-    )
-
-    // either works or not working from clean state and keys already there, good error, working error
-    try {
-      // TODO use register() in substrate, not directly
-      await entropy.register(
-        [thresholdKey, thresholdKey2],
-        '5GNJqTPyNqANBkUVMN1LPPrxXnFouWXoe2wNSmmEoLctxiZY',
-        false
-      ) // constraint mod account is alice stash, ie `subkey inspect //Alice//stash`
-    } catch (e: any) {
-      console.log(e)
-      assert.equal(e, 'Error: already registered')
-    }
-
-    const tx: ethers.utils.UnsignedTransaction = {
-      to: '0x772b9a9e8aa1c9db861c6611a82d251db4fac990',
-      value: BigNumber.from('1'),
-      chainId: 1,
-      nonce: 1,
-      data: ethers.utils.hexlify(
-        ethers.utils.toUtf8Bytes('Created On Entropy')
-      ),
-    }
-
-    // good error, only running one node so sig will not happen
-    try {
-      await entropy.sign(tx, false, 0)
-    } catch (e: any) {
-      assert.equal(
-        e.message,
-        "Cannot read properties of undefined (reading 'data')"
-      )
-    }
+  it(`registers user`, async () => {
+    await registerTestUser(entropy)
+    await entropy.sign(exampleUnsignedEvmTx(), false, 3)
   })
 })

@@ -1,21 +1,15 @@
 import { ThresholdServer } from '.'
-import { spinThreshold, spinChain, sleep, removeDB } from '../testing-utils'
+import {
+  spinThreshold,
+  spinChain,
+  sleep,
+  removeDB,
+  exampleUnsignedEvmTx,
+  LOCAL_SERVER,
+} from '../testing-utils'
 const { assert } = require('chai')
-import { BigNumber, ethers } from 'ethers'
+import { ethers } from 'ethers'
 import { ITransactionRequest, Arch } from './types'
-
-const LOCAL_SERVER = '127.0.0.1:3001'
-
-// Example of an unsigned transaction
-const exampleUnsignedEvmTx = (): ethers.utils.UnsignedTransaction => {
-  return {
-    to: '0x772b9a9e8aa1c9db861c6611a82d251db4fac990',
-    value: BigNumber.from('1'),
-    chainId: 1,
-    nonce: 1,
-    data: ethers.utils.hexlify(ethers.utils.toUtf8Bytes('Created On Entropy')),
-  }
-}
 
 describe('Threshold Tests', () => {
   const thresholdServer = new ThresholdServer()
@@ -52,22 +46,6 @@ describe('Threshold Tests', () => {
         assert.equal(e.response.data, 'Kv error: Recv Error: channel closed')
       }
     }
-  })
-
-  it(`sends a successful evm transaction request to the threshold server`, async () => {
-    const unsignedTx = exampleUnsignedEvmTx()
-    const serializedUnsignedTx = ethers.utils.serializeTransaction(unsignedTx)
-    const evmTransactionRequest: ITransactionRequest = {
-      arch: Arch.Evm,
-      transaction_request: serializedUnsignedTx,
-    }
-
-    const [
-      response,
-    ] = await thresholdServer.submitTransactionRequest(evmTransactionRequest, [
-      LOCAL_SERVER,
-    ])
-    assert.equal(response.status, 200)
   })
 
   // This is used to for mocking the interface between the threshold server and the client
