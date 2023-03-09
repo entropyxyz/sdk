@@ -1,4 +1,4 @@
-import { keyShare } from './types'
+import { FixMe } from './types'
 import { AnyJson } from '@polkadot/types-codec/types'
 import { utils } from 'ethers'
 import { SignatureLike } from '@ethersproject/bytes'
@@ -72,7 +72,7 @@ export default class Entropy {
    * @return {*}  {Promise<AnyJson>} {@link AnyJson} - A JSON return from the chain which contains a boolean of if the registration was successful
    */
   async register(props: {
-    keyShares: keyShare[]
+    keyShares: FixMe[]
     constraintModificationAccount: string
     freeTx: boolean
     initialConstraints?: string
