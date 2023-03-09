@@ -4,8 +4,6 @@
 
 ### Setup
 
-- `cp .env.example .env`
-
 ### Node.js Version
 
 Run `nvm use` to use the correct node version.
@@ -23,7 +21,7 @@ Linting is available and can be done by running `yarn eslint`. You can also use 
 Testing in this repo is done against `entropy-core`, so clone and setup that repo. After that, you can run the tests in this repo.
 
 - Make sure you build release in `entropy-core` with `cargo build --release`.
-- In **three separate terminals**, run:
+- In **three separate terminals in the `entropy-core` directory**, run:
   - `./scripts/sdk-entropy-node.sh`
   - `./scripts/sdk-alice-tss.sh`
   - `./scripts/sdk-bob-tss.sh`
@@ -41,12 +39,6 @@ To run these tests
 - Go to [core](https://github.com/entropyxyz/entropy-core), compile the repo
 - Go into the target/release and copy over entropy and server binaries
 - Add them to testing-utils/testing-binaries
-
-### Adding Environment Variables
-
-- Add the variable to `.env.example` with a blank value
-- Add the variable to `.env`
-- Update the @types/environment.d.ts file with the variable name and type
 
 ### Typegen
 
@@ -67,4 +59,4 @@ When the Substrate node in `entropy-core` is updated, you will need to update th
 ### Common Errors running tests
 
 - In `entropy-core`, make sure you run `cargo build --release` (and `cargo build`) so any `./scripts` use the latest binaries.
-- Make sure you have the latest deps in `entropy-js` by running `yarn clean:all` in the root of the repo, and then `yarn`.
+- Make sure you have the latest dependencies in `entropy-js` by running `yarn clean:all` in the root of the repo, and then `yarn`.
