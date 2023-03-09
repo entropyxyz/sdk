@@ -2,11 +2,21 @@ import reactLogo from './assets/react.svg'
 import './App.css'
 import { useEntropy } from './utils/useEntropy/useEntropy'
 import { ALICE } from './utils/entropy-utils'
+import { readKey } from '../../../core/utils'
 import React from 'react'
 
 function App() {
-  const entropy = useEntropy({ seed: ALICE.SEED })
-  console.log('entropy', entropy)
+  const [keyShares, setKeyShares] = React.useState<Uint8Array[]>([])
+  React.useEffect(() => {
+    async function setupKeyShares() {
+      const thresholdKey0 = await readKey('./0')
+      const thresholdKey1 = await readKey('./1')
+      setKeyShares([thresholdKey0, thresholdKey1])
+    }
+    setupKeyShares()
+  }, [])
+  const { entropy, register } = useEntropy({ seed: ALICE.SEED, keyShares })
+
   return (
     <div className='App'>
       <div>
@@ -23,9 +33,18 @@ function App() {
           Edit <code>src/App.tsx</code> and save to test HMR
         </p>
       </div>
-      <p className='read-the-docs'>
-        Click on the Vite and React logos to learn more
-      </p>
+      <button
+        onClick={() =>
+          register({
+            freeTx: true,
+            constraintModificationAccount:
+              '5GNJqTPyNqANBkUVMN1LPPrxXnFouWXoe2wNSmmEoLctxiZY',
+          })
+        }
+      >
+        Register
+      </button>
+      <p className='read-the-docs'></p>
     </div>
   )
 }

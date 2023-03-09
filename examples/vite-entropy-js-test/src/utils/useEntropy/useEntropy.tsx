@@ -2,6 +2,7 @@ import React from 'react'
 // For example app, it makes sense to import from the root of the package
 // At least just to double check for sanity that we didn't break anything
 import Entropy from '../../../../../core'
+import { readKey } from '../../../../../core/utils'
 
 /**
  * @alpha
@@ -12,7 +13,13 @@ import Entropy from '../../../../../core'
  * @param {string} seed - The seed to use for entropy generation.
  * @return {*} {{@link Entropy} | undefined | string | boolean}
  */
-export function useEntropy({ seed }: { seed: string }) {
+export function useEntropy({
+  seed,
+  keyShares,
+}: {
+  seed: string
+  keyShares: Uint8Array[]
+}) {
   const [entropy, setEntropy] = React.useState<Entropy>()
   const [error, setError] = React.useState<string>()
   const [loading, setLoading] = React.useState<boolean>(true)
@@ -31,8 +38,36 @@ export function useEntropy({ seed }: { seed: string }) {
         }
       }
     }
+
     setup()
+
+    return () => {
+      if (entropy) {
+        entropy.substrate.api.disconnect()
+      }
+    }
   }, [])
 
-  return { entropy, error, loading }
+  const register = async ({
+    initialConstraints,
+    constraintModificationAccount,
+    freeTx,
+  }: {
+    initialConstraints?: string
+    constraintModificationAccount: string
+    freeTx?: boolean | undefined
+  }) => {
+    if (!entropy) {
+      throw new Error('Entropy is not initialized')
+    }
+
+    await entropy.register({
+      keyShares: keyShares,
+      constraintModificationAccount,
+      initialConstraints,
+      freeTx: freeTx ?? false,
+    })
+  }
+
+  return { entropy, error, loading, register }
 }

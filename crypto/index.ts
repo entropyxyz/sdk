@@ -19,9 +19,14 @@ export class Crypto {
       )
       return from_hex(serverDHInfo.x25519PublicKey)
     } else {
-      const { from_hex } = await import(
-        '@entropyxyz/x25519-chacha20poly1305-web'
+      console.log('are we in web?')
+      const { from_hex, initSync } = await import(
+        '@entropyxyz/x25519-chacha20poly1305-web/x25519_chacha20poly1305'
       )
+      await initSync(
+        '@entropyxyz/x25519-chacha20poly1305-web/x25519_chacha20poly1305_bg.wasm'
+      )
+
       return from_hex(serverDHInfo.x25519PublicKey)
     }
   }
