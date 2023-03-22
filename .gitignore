@@ -181,6 +181,5 @@ kvstore/
 test_db/
 .entropy
 .tsbuildinfo/
-testing-utils/test-binaries/entropy
-testing-utils/test-binaries/server
+testing-utils/test-binaries/*
 prepTests.sh

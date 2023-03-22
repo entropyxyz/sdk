@@ -14,7 +14,7 @@ describe('Constraint Tests', () => {
 
   beforeEach(async function () {
     try {
-      chainProcess = await spinChain(chainPath)
+      chainProcess = await spinChain(chainPath, 'chain', '4001')
     } catch (e) {
       console.log(e)
     }

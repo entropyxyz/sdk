@@ -3,10 +3,11 @@ import { spinChain, spinThreshold, sleep, removeDB } from '../testing-utils'
 import { readKey } from './utils'
 const { assert } = require('chai')
 import { BigNumber, ethers } from 'ethers'
+import { changeEndpoint } from '../testing-utils/spinUp'
 
 describe('Core Tests', () => {
   let entropy: Entropy
-  let chainProcess, serverProcess1, serverProcess2
+  let chainProcess1, chainProcess2, serverProcess1, serverProcess2
   const aliceSeed =
     '0xe5be9a5092b81bca64be81d212e7f2f9eba183bb7a90954f7b76361f6edb5c0a'
   const chainPath = process.cwd() + '/testing-utils/test-binaries/entropy'
@@ -14,13 +15,18 @@ describe('Core Tests', () => {
 
   beforeEach(async function () {
     try {
-      chainProcess = await spinChain(chainPath)
+      // do the spin chain
       serverProcess1 = await spinThreshold(serverPath, 'alice', '3001')
       serverProcess2 = await spinThreshold(serverPath, 'bob', '3002')
+      chainProcess1 = await spinChain(chainPath, 'Alice', '9944')
+      chainProcess2 = await spinChain(chainPath, 'Bob', '9945')
+      // change change bob to listen on port 3002.
     } catch (e) {
       console.log(e)
     }
     await sleep(7000)
+    changeEndpoint("ws://localhost:9945", "http://localhost:3002/signer/new_party")
+    // call insert_keys on chain2() + drop the api connection
     entropy = await Entropy.setup(aliceSeed)
   })
 
@@ -28,11 +34,12 @@ describe('Core Tests', () => {
     entropy.substrate.api.disconnect()
     serverProcess1.kill()
     serverProcess2.kill()
-    chainProcess.kill()
+    chainProcess1.kill()
+    chainProcess2.kill()
     removeDB()
   })
 
-  it(`registers then signs`, async () => {
+  it.only(`registers then signs`, async () => {
     const root = process.cwd()
     const thresholdKey = await readKey(`${root + '/testing-utils/test-keys/0'}`)
     const thresholdKey2 = await readKey(

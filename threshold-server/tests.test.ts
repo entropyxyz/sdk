@@ -24,7 +24,7 @@ describe('Threshold Tests', () => {
   const serverPath = process.cwd() + '/testing-utils/test-binaries/server'
 
   beforeEach(async function () {
-    chainProcess = await spinChain(chainPath)
+    chainProcess = await spinChain(chainPath, 'chain', '4001')
     serverProcess = await spinThreshold(serverPath, 'alice', '3001')
     await sleep(7000)
   })
