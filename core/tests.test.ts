@@ -38,6 +38,7 @@ describe('Core Tests', () => {
     await api2.disconnect()
     chainProcess1.kill()
     chainProcess2.kill()
+    await sleep(2000)
     removeDB()
   })
 

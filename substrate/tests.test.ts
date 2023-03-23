@@ -24,6 +24,7 @@ describe('Substrate Tests', () => {
   afterEach(async function () {
     await substrate.api.disconnect()
     chainProcess.kill()
+    await sleep(2000)
   })
 
   it(`checks if registering and registers`, async () => {
