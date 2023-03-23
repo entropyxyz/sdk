@@ -23,7 +23,7 @@ describe('Core Tests', () => {
     } catch (e) {
       console.log(e)
     }
-    await sleep(5000)
+    await sleep(7000)
     api2 = await changeEndpoint(
       'ws://localhost:9945',
       'http://localhost:3002/signer/new_party'
@@ -33,8 +33,8 @@ describe('Core Tests', () => {
 
   afterEach(async function () {
     entropy.substrate.api.disconnect()
-    api2.disconnect()
     serverProcess1.kill()
+    api2.disconnect()
     serverProcess2.kill()
     chainProcess1.kill()
     chainProcess2.kill()
