@@ -1,3 +1,4 @@
+import { ApiPromise } from '@polkadot/api'
 import { stringToHex } from '@polkadot/util/string'
 import { spawn, ChildProcessWithoutNullStreams } from 'child_process'
 import rimraf from 'rimraf'
@@ -6,7 +7,7 @@ import { getApi } from '../substrate'
 export const changeEndpoint = async (
   endpoint: string,
   new_url: string
-): Promise<any> => {
+): Promise<ApiPromise> => {
   const api = await getApi(endpoint)
   const key = 'propagation'
   const value = stringToHex(new_url)

@@ -8,7 +8,7 @@ export default defineConfig((options) => {
     external: ['dotenv', 'node:fs', 'fs', '**/*.test.ts', 'core/utils.ts'],
     dts: true,
     sourcemap: true,
-    clean: false,
+    clean: true,
     target: 'es6',
     minify: options.minify,
     watch: options.watch,
