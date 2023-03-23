@@ -91,6 +91,14 @@ export class ThresholdServer {
     return Uint8Array.from(atob(postRequest.data), (c) => c.charCodeAt(0))
   }
 
+  /**
+   * @deprecated
+   *
+   * @param {ITransactionRequest} evmTransactionRequest - evm transaction request to be sent
+   * @param {string} thresholdUrls - urls of the threshold server
+   * @param {number} retries - number of times to retry
+   * @memberof ThresholdServer
+   */
   async pollNodeToStartSigning(
     evmTransactionRequest: ITransactionRequest,
     thresholdUrls: string[],
