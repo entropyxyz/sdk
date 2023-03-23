@@ -18,14 +18,15 @@ describe('Core Tests', () => {
       // do the spin chain
       serverProcess1 = await spinThreshold(serverPath, 'alice', '3001')
       serverProcess2 = await spinThreshold(serverPath, 'bob', '3002')
-      chainProcess1 = await spinChain(chainPath, 'Alice', '9944')
-      chainProcess2 = await spinChain(chainPath, 'Bob', '9945')
+      chainProcess1 = await spinChain(chainPath, 'alice', '9944')
+      await sleep(3000)
+      chainProcess2 = await spinChain(chainPath, 'bob', '9945')
       // change change bob to listen on port 3002.
     } catch (e) {
       console.log(e)
     }
-    await sleep(7000)
-    changeEndpoint("ws://localhost:9945", "http://localhost:3002/signer/new_party")
+    await sleep(5000)
+    await changeEndpoint("ws://localhost:9945", "http://localhost:3002/signer/new_party")
     // call insert_keys on chain2() + drop the api connection
     entropy = await Entropy.setup(aliceSeed)
   })
@@ -39,7 +40,7 @@ describe('Core Tests', () => {
     removeDB()
   })
 
-  it.only(`registers then signs`, async () => {
+  it(`registers then signs`, async () => {
     const root = process.cwd()
     const thresholdKey = await readKey(`${root + '/testing-utils/test-keys/0'}`)
     const thresholdKey2 = await readKey(
@@ -71,14 +72,7 @@ describe('Core Tests', () => {
       ),
     }
 
-    // good error, only running one node so sig will not happen
-    try {
-      await entropy.sign(tx, false, 0)
-    } catch (e: any) {
-      assert.equal(
-        e.message,
-        "Cannot read properties of undefined (reading 'data')"
-      )
-    }
+    const signature: any = await entropy.sign(tx, false, 15)
+    assert.equal(signature.length, 65)
   })
 })

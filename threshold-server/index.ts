@@ -45,7 +45,7 @@ export class ThresholdServer {
   ): Promise<AxiosResponse<any, any>[]> {
     return Promise.all(
       serversWithPort.map(async (server) =>
-        sendHttpPost(`http://${server}/user/tx`, txReq)
+        await axios.post(`http://${server}/user/tx`, txReq)
       )
     )
   }
@@ -69,18 +69,46 @@ export class ThresholdServer {
     let postRequest
     while (status !== 202 && i < retries) {
       try {
-        postRequest = await axios.post(`${thresholdUrl}/signer/signature`, {
+        postRequest = await axios.post(`http://${thresholdUrl}/signer/signature`, {
           message: sigHash,
         })
         status = postRequest.status
       } catch (e) {
         status = 500
-        sleep(3000)
-        console.info({ message: 'repolling for signature soon', status, i })
+        await sleep(3000)
+        console.info({ message: 'repolling for signature soon', status, i, response: e.response.data,  })
       }
       i++
     }
     return Uint8Array.from(atob(postRequest.data), (c) => c.charCodeAt(0))
+  }
+
+  async pollNodeToStartSigning(
+    evmTransactionRequest: ITransactionRequest,
+    thresholdUrls: string[],
+    retries: number
+  ) {
+    let i = 0
+    let status
+    let postRequest
+    while (status !== 202 && i < retries) {
+      try {
+        postRequest = await this.submitTransactionRequest(
+          evmTransactionRequest,
+          thresholdUrls
+        )
+        status = postRequest.status
+      } catch (e: any) {
+        await sleep(3000)
+        console.info({
+          message: 'repolling for signature start soon',
+          status,
+          response: e.response.data,
+          i,
+        })
+      }
+      i++
+    }
   }
 }
 

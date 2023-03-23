@@ -13,7 +13,7 @@ describe('Substrate Tests', () => {
   beforeEach(async function () {
     const chainPath = process.cwd() + '/testing-utils/test-binaries/entropy'
     try {
-      chainProcess = await spinChain(chainPath, 'chain', '4001')
+      chainProcess = await spinChain(chainPath, 'dev')
     } catch (e) {
       throw new Error(e)
     }

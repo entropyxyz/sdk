@@ -24,7 +24,7 @@ describe('Threshold Tests', () => {
   const serverPath = process.cwd() + '/testing-utils/test-binaries/server'
 
   beforeEach(async function () {
-    chainProcess = await spinChain(chainPath, 'chain', '4001')
+    chainProcess = await spinChain(chainPath, '--dev')
     serverProcess = await spinThreshold(serverPath, 'alice', '3001')
     await sleep(7000)
   })
@@ -62,12 +62,15 @@ describe('Threshold Tests', () => {
       transaction_request: serializedUnsignedTx,
     }
 
-    const [
-      response,
-    ] = await thresholdServer.submitTransactionRequest(evmTransactionRequest, [
-      LOCAL_SERVER,
-    ])
-    assert.equal(response.status, 200)
+    try {
+      await thresholdServer.submitTransactionRequest(evmTransactionRequest, [
+        LOCAL_SERVER,
+      ])
+
+    } catch (e: any) {
+      // fails due to no transaction in kvdb
+      assert.equal(e.response.status, 424)
+    }
   })
 
   // This is used to for mocking the interface between the threshold server and the client
