@@ -35,9 +35,9 @@ describe('Core Tests', () => {
     serverProcess1.kill()
     serverProcess2.kill()
     chainProcess1.kill()
-    entropy.substrate.api.disconnect()
     chainProcess2.kill()
     api2.disconnect()
+    entropy.substrate.api.disconnect()
     removeDB()
   })
 
