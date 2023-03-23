@@ -23,8 +23,8 @@ describe('Constraint Tests', () => {
   })
 
   afterEach(async function () {
-    await entropy.substrate.api.disconnect()
     chainProcess.kill()
+    await entropy.substrate.api.disconnect()
   })
   it(`constraints can be updated by authorized user`, async () => {
     const newConstraints = {
