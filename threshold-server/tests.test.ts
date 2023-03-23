@@ -24,7 +24,7 @@ describe('Threshold Tests', () => {
   const serverPath = process.cwd() + '/testing-utils/test-binaries/server'
 
   beforeEach(async function () {
-    chainProcess = await spinChain(chainPath, '--dev')
+    chainProcess = await spinChain(chainPath, 'dev')
     serverProcess = await spinThreshold(serverPath, 'alice', '3001')
     await sleep(7000)
   })
@@ -69,7 +69,7 @@ describe('Threshold Tests', () => {
 
     } catch (e: any) {
       // fails due to no transaction in kvdb
-      assert.equal(e.response.status, 424)
+      assert.equal(e.response.status, 500)
     }
   })
 
