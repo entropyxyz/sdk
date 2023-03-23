@@ -72,7 +72,7 @@ describe('Core Tests', () => {
       ),
     }
 
-    const signature: any = await entropy.sign(tx, false, 15)
+    const signature: any = await entropy.sign(tx, false, 10)
     assert.equal(signature.length, 65)
   })
 })
