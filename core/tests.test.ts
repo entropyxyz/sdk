@@ -26,7 +26,10 @@ describe('Core Tests', () => {
       console.log(e)
     }
     await sleep(5000)
-    await changeEndpoint("ws://localhost:9945", "http://localhost:3002/signer/new_party")
+    await changeEndpoint(
+      'ws://localhost:9945',
+      'http://localhost:3002/signer/new_party'
+    )
     // call insert_keys on chain2() + drop the api connection
     entropy = await Entropy.setup(aliceSeed)
   })

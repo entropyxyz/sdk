@@ -66,7 +66,6 @@ describe('Threshold Tests', () => {
       await thresholdServer.submitTransactionRequest(evmTransactionRequest, [
         LOCAL_SERVER,
       ])
-
     } catch (e: any) {
       // fails due to no transaction in kvdb
       assert.equal(e.response.status, 500)

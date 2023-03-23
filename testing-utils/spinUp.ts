@@ -1,5 +1,3 @@
-import { to_hex } from '@entropyxyz/x25519-chacha20poly1305-nodejs'
-import { Int } from '@polkadot/types-codec'
 import { stringToHex } from '@polkadot/util/string'
 import { spawn, ChildProcessWithoutNullStreams } from 'child_process'
 import rimraf from 'rimraf'

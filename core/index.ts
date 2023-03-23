@@ -183,14 +183,18 @@ export default class Entropy {
       transaction_request: serializedTx,
     }
 
-    await this.thresholdServer.pollNodeToStartSigning(evmTransactionRequest, urls, retries)
+    await this.thresholdServer.pollNodeToStartSigning(
+      evmTransactionRequest,
+      urls,
+      retries
+    )
 
     const signature: SignatureLike = await this.thresholdServer.pollNodeForSignature(
       sigHash.slice(2),
       urls[0],
       retries
     )
-    console.log({signature})
+    console.log({ signature })
     return signature
   }
 }
