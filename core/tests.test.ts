@@ -34,8 +34,8 @@ describe('Core Tests', () => {
   afterEach(async function () {
     entropy.substrate.api.disconnect()
     serverProcess1.kill()
-    api2.disconnect()
     serverProcess2.kill()
+    api2.disconnect()
     chainProcess1.kill()
     chainProcess2.kill()
     removeDB()
