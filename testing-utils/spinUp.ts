@@ -3,7 +3,10 @@ import { spawn, ChildProcessWithoutNullStreams } from 'child_process'
 import rimraf from 'rimraf'
 import { getApi } from '../substrate'
 
-export const changeEndpoint = async (endpoint: string, new_url: string) => {
+export const changeEndpoint = async (
+  endpoint: string,
+  new_url: string
+): Promise<any> => {
   const api = await getApi(endpoint)
   const key = 'propagation'
   const value = stringToHex(new_url)
@@ -12,7 +15,7 @@ export const changeEndpoint = async (endpoint: string, new_url: string) => {
   console.log('  Set Feed  ' + ` ${new_url}` + ' Successful')
   console.log('  Insert Keys  ')
   console.log(' Successful')
-  await api.disconnect()
+  return api
 }
 
 export const spinChain = async (

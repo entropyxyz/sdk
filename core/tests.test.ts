@@ -7,7 +7,7 @@ import { changeEndpoint } from '../testing-utils/spinUp'
 
 describe('Core Tests', () => {
   let entropy: Entropy
-  let chainProcess1, chainProcess2, serverProcess1, serverProcess2
+  let chainProcess1, chainProcess2, serverProcess1, serverProcess2, api2
   const aliceSeed =
     '0xe5be9a5092b81bca64be81d212e7f2f9eba183bb7a90954f7b76361f6edb5c0a'
   const chainPath = process.cwd() + '/testing-utils/test-binaries/entropy'
@@ -24,7 +24,7 @@ describe('Core Tests', () => {
       console.log(e)
     }
     await sleep(5000)
-    await changeEndpoint(
+    api2 = await changeEndpoint(
       'ws://localhost:9945',
       'http://localhost:3002/signer/new_party'
     )
@@ -37,6 +37,7 @@ describe('Core Tests', () => {
     chainProcess1.kill()
     chainProcess2.kill()
     entropy.substrate.api.disconnect()
+    api2.disconnect()
     removeDB()
   })
 
