@@ -22,7 +22,7 @@ describe('Substrate Tests', () => {
   })
 
   afterEach(async function () {
-    substrate.api.disconnect()
+    await substrate.api.disconnect()
     chainProcess.kill()
   })
 
