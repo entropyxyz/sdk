@@ -194,7 +194,6 @@ export default class Entropy {
       urls[0],
       retries
     )
-    console.log({ signature })
     return signature
   }
 }
