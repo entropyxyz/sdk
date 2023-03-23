@@ -36,8 +36,6 @@ describe('Core Tests', () => {
     serverProcess2.kill()
     chainProcess1.kill()
     chainProcess2.kill()
-    api2.disconnect()
-    entropy.substrate.api.disconnect()
     removeDB()
   })
 
@@ -75,5 +73,7 @@ describe('Core Tests', () => {
 
     const signature: any = await entropy.sign(tx, false, 10)
     assert.equal(signature.length, 65)
+    entropy.substrate.api.disconnect()
+    api2.disconnect()
   })
 })
