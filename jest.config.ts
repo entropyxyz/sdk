@@ -9,7 +9,7 @@ const config: Config = {
   modulePathIgnorePatterns: ['examples/'],
   verbose: false,
   forceExit: true,
-  silent: false,
+  silent: true,
 }
 
 export default config
