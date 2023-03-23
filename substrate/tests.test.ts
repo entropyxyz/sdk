@@ -22,9 +22,13 @@ describe('Substrate Tests', () => {
   })
 
   afterEach(async function () {
-    await substrate.api.disconnect()
+    try {
+      await substrate.api.disconnect()
+    } catch (e) {
+      console.log(e)
+    }
     chainProcess.kill()
-    await sleep(2000)
+    await sleep(4000)
   })
 
   it(`checks if registering and registers`, async () => {
