@@ -3,8 +3,6 @@ import { spawn, ChildProcessWithoutNullStreams } from 'child_process'
 import rimraf from 'rimraf'
 import { getApi } from '../substrate'
 
-// const endpoint = "ws://localhost:9946";
-// const new_url = "http://localhost:3002/signer/new_party";
 export const changeEndpoint = async (endpoint: string, new_url: string) => {
   const api = await getApi(endpoint)
   const key = 'propagation'

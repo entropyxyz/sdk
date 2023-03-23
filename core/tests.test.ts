@@ -15,13 +15,11 @@ describe('Core Tests', () => {
 
   beforeEach(async function () {
     try {
-      // do the spin chain
       serverProcess1 = await spinThreshold(serverPath, 'alice', '3001')
       serverProcess2 = await spinThreshold(serverPath, 'bob', '3002')
       chainProcess1 = await spinChain(chainPath, 'alice', '9944')
       await sleep(3000)
       chainProcess2 = await spinChain(chainPath, 'bob', '9945')
-      // change change bob to listen on port 3002.
     } catch (e) {
       console.log(e)
     }
@@ -30,7 +28,6 @@ describe('Core Tests', () => {
       'ws://localhost:9945',
       'http://localhost:3002/signer/new_party'
     )
-    // call insert_keys on chain2() + drop the api connection
     entropy = await Entropy.setup(aliceSeed)
   })
 
