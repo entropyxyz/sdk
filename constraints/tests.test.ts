@@ -24,6 +24,7 @@ describe('Constraint Tests', () => {
 
   afterEach(async function () {
     await disconnect(entropy.substrate.api)
+    await sleep(3000)
     chainProcess.kill()
   })
   it(`constraints can be updated by authorized user`, async () => {
@@ -71,5 +72,6 @@ describe('Constraint Tests', () => {
     assert.equal(constraints2.toString(), JSON.stringify(newConstraints.evmAcl))
     await disconnect(aliceConstraintEntropy.substrate.api)
     await disconnect(randomEntropy.substrate.api)
+    await sleep(3000)
   })
 })
