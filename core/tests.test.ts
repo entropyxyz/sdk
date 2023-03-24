@@ -38,7 +38,6 @@ describe('Core Tests', () => {
   })
 
   afterEach(async function () {
-    await disconnect(entropy.substrate.api)
     serverProcess1.kill()
     serverProcess2.kill()
     chainProcess1.kill()
@@ -80,5 +79,6 @@ describe('Core Tests', () => {
 
     const signature: any = await entropy.sign(tx, false, 10)
     assert.equal(signature.length, 65)
+    await disconnect(entropy.substrate.api)
   })
 })
