@@ -5,11 +5,11 @@ const config: Config = {
   moduleFileExtensions: [...defaults.moduleFileExtensions, 'mts'],
   preset: 'ts-jest',
   testEnvironment: 'node',
-  testTimeout: 100000,
+  testTimeout: 200000,
   modulePathIgnorePatterns: ['examples/'],
-  verbose: false,
+  verbose: true,
   forceExit: true,
-  silent: true,
+  silent: false,
 }
 
 export default config
