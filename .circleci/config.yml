@@ -28,6 +28,9 @@ jobs:
           command: yarn run lint
           name: Lint app
       - run:
+          command: yarn run prettier
+          name: Prettier app
+      - run:
           command: yarn run bundle
           name: Bundle app
       - run:

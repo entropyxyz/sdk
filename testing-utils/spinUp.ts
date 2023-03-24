@@ -4,7 +4,7 @@ import { spawn, ChildProcessWithoutNullStreams } from 'child_process'
 import rimraf from 'rimraf'
 import { getApi } from '../substrate'
 
-export const changeEndpoint = async (
+export const modifyOcwPostEndpoint = async (
   endpoint: string,
   new_url: string
 ): Promise<ApiPromise> => {

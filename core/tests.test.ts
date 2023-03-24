@@ -3,7 +3,7 @@ import { spinChain, spinThreshold, sleep, removeDB } from '../testing-utils'
 import { readKey } from './utils'
 const { assert } = require('chai')
 import { BigNumber, ethers } from 'ethers'
-import { changeEndpoint } from '../testing-utils/spinUp'
+import { modifyOcwPostEndpoint } from '../testing-utils/spinUp'
 
 describe('Core Tests', () => {
   let entropy: Entropy
@@ -24,7 +24,7 @@ describe('Core Tests', () => {
       console.log(e)
     }
     await sleep(7000)
-    api2 = await changeEndpoint(
+    api2 = await modifyOcwPostEndpoint(
       'ws://localhost:9945',
       'http://localhost:3002/signer/new_party'
     )
