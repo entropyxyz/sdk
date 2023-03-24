@@ -95,6 +95,6 @@ export const disconnect = async (api: ApiPromise) => {
   while (isConnected) {
     await api.disconnect()
     isConnected = api.isConnected
-    await sleep(1000)
+    await sleep(2000)
   }
 }
