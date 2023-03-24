@@ -1,5 +1,5 @@
 import { Substrate } from './index'
-import { spinChain, sleep } from '../testing-utils'
+import { spinChain, sleep, disconnect } from '../testing-utils'
 
 const { assert } = require('chai')
 
@@ -13,7 +13,7 @@ describe('Substrate Tests', () => {
   beforeEach(async function () {
     const chainPath = process.cwd() + '/testing-utils/test-binaries/entropy'
     try {
-      chainProcess = await spinChain(chainPath)
+      chainProcess = await spinChain(chainPath, 'dev')
     } catch (e) {
       throw new Error(e)
     }
@@ -22,8 +22,9 @@ describe('Substrate Tests', () => {
   })
 
   afterEach(async function () {
-    substrate.api.disconnect()
+    await disconnect(substrate.api)
     chainProcess.kill()
+    await sleep(6000)
   })
 
   it(`checks if registering and registers`, async () => {
@@ -93,6 +94,6 @@ describe('Substrate Tests', () => {
     const sudoCall = aliceSubstrate.api.tx.sudo.sudo(tx2)
     await aliceSubstrate.sendAndWait(sudoCall, false)
     await substrate.handleFreeTx(tx)
-    aliceSubstrate.api.disconnect()
+    await disconnect(aliceSubstrate.api)
   })
 })

@@ -1,12 +1,19 @@
 import Entropy from '.'
-import { spinChain, spinThreshold, sleep, removeDB } from '../testing-utils'
+import {
+  spinChain,
+  spinThreshold,
+  sleep,
+  removeDB,
+  disconnect,
+  modifyOcwPostEndpoint,
+} from '../testing-utils'
 import { readKey } from './utils'
 const { assert } = require('chai')
 import { BigNumber, ethers } from 'ethers'
 
 describe('Core Tests', () => {
   let entropy: Entropy
-  let chainProcess, serverProcess1, serverProcess2
+  let chainProcess1, chainProcess2, serverProcess1, serverProcess2
   const aliceSeed =
     '0xe5be9a5092b81bca64be81d212e7f2f9eba183bb7a90954f7b76361f6edb5c0a'
   const chainPath = process.cwd() + '/testing-utils/test-binaries/entropy'
@@ -14,21 +21,29 @@ describe('Core Tests', () => {
 
   beforeEach(async function () {
     try {
-      chainProcess = await spinChain(chainPath)
       serverProcess1 = await spinThreshold(serverPath, 'alice', '3001')
       serverProcess2 = await spinThreshold(serverPath, 'bob', '3002')
+      chainProcess1 = await spinChain(chainPath, 'alice', '9944')
+      await sleep(3000)
+      chainProcess2 = await spinChain(chainPath, 'bob', '9945')
     } catch (e) {
       console.log(e)
     }
-    await sleep(7000)
+    await sleep(9000)
+    await modifyOcwPostEndpoint(
+      'ws://localhost:9945',
+      'http://localhost:3002/signer/new_party'
+    )
     entropy = await Entropy.setup(aliceSeed)
   })
 
   afterEach(async function () {
-    entropy.substrate.api.disconnect()
+    await disconnect(entropy.substrate.api)
+    await sleep(3000)
     serverProcess1.kill()
     serverProcess2.kill()
-    chainProcess.kill()
+    chainProcess1.kill()
+    chainProcess2.kill()
     removeDB()
   })
 
@@ -64,14 +79,7 @@ describe('Core Tests', () => {
       ),
     }
 
-    // good error, only running one node so sig will not happen
-    try {
-      await entropy.sign(tx, false, 0)
-    } catch (e: any) {
-      assert.equal(
-        e.message,
-        "Cannot read properties of undefined (reading 'data')"
-      )
-    }
+    const signature: any = await entropy.sign(tx, false, 10)
+    assert.equal(signature.length, 65)
   })
 })

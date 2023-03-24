@@ -177,14 +177,16 @@ export default class Entropy {
       }
     )
     const urls = record.event.data.toHuman()[0].ipAddresses
-    // TODO get urls from event record (not implemented in devnet)
+
     const evmTransactionRequest: ITransactionRequest = {
       arch: Arch.Evm,
       transaction_request: serializedTx,
     }
-    await this.thresholdServer.submitTransactionRequest(
+
+    await this.thresholdServer.pollNodeToStartSigning(
       evmTransactionRequest,
-      urls
+      urls,
+      retries
     )
 
     const signature: SignatureLike = await this.thresholdServer.pollNodeForSignature(
@@ -192,7 +194,6 @@ export default class Entropy {
       urls[0],
       retries
     )
-
     return signature
   }
 }
