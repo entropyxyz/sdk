@@ -29,7 +29,7 @@ describe('Core Tests', () => {
     } catch (e) {
       console.log(e)
     }
-    await sleep(7000)
+    await sleep(9000)
     await modifyOcwPostEndpoint(
       'ws://localhost:9945',
       'http://localhost:3002/signer/new_party'
