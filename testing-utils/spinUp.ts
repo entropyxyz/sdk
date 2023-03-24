@@ -7,7 +7,7 @@ import { getApi } from '../substrate'
 export const modifyOcwPostEndpoint = async (
   endpoint: string,
   new_url: string
-): Promise<ApiPromise> => {
+) => {
   const api = await getApi(endpoint)
   const key = 'propagation'
   const value = stringToHex(new_url)
@@ -16,7 +16,7 @@ export const modifyOcwPostEndpoint = async (
   console.log('  Set Feed  ' + ` ${new_url}` + ' Successful')
   console.log('  Insert Keys  ')
   console.log(' Successful')
-  return api
+  await disconnect(api)
 }
 
 export const spinChain = async (

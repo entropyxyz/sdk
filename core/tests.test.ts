@@ -13,7 +13,7 @@ import { BigNumber, ethers } from 'ethers'
 
 describe('Core Tests', () => {
   let entropy: Entropy
-  let chainProcess1, chainProcess2, serverProcess1, serverProcess2, api2
+  let chainProcess1, chainProcess2, serverProcess1, serverProcess2
   const aliceSeed =
     '0xe5be9a5092b81bca64be81d212e7f2f9eba183bb7a90954f7b76361f6edb5c0a'
   const chainPath = process.cwd() + '/testing-utils/test-binaries/entropy'
@@ -30,7 +30,7 @@ describe('Core Tests', () => {
       console.log(e)
     }
     await sleep(7000)
-    api2 = await modifyOcwPostEndpoint(
+    await modifyOcwPostEndpoint(
       'ws://localhost:9945',
       'http://localhost:3002/signer/new_party'
     )
@@ -39,7 +39,6 @@ describe('Core Tests', () => {
 
   afterEach(async function () {
     await disconnect(entropy.substrate.api)
-    await disconnect(api2)
     serverProcess1.kill()
     serverProcess2.kill()
     chainProcess1.kill()
