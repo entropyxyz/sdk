@@ -88,3 +88,13 @@ export const removeDB = () => {
 export const sleep = (durationInMs: number) => {
   return new Promise((resolve) => setTimeout(resolve, durationInMs))
 }
+
+export const disconnect = async (api: ApiPromise) => {
+  let isConnected = true
+
+  while (isConnected) {
+    await api.disconnect()
+    isConnected = api.isConnected
+    await sleep(1000)
+  }
+}

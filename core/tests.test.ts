@@ -1,9 +1,15 @@
 import Entropy from '.'
-import { spinChain, spinThreshold, sleep, removeDB } from '../testing-utils'
+import {
+  spinChain,
+  spinThreshold,
+  sleep,
+  removeDB,
+  disconnect,
+  modifyOcwPostEndpoint,
+} from '../testing-utils'
 import { readKey } from './utils'
 const { assert } = require('chai')
 import { BigNumber, ethers } from 'ethers'
-import { modifyOcwPostEndpoint } from '../testing-utils/spinUp'
 
 describe('Core Tests', () => {
   let entropy: Entropy
@@ -32,17 +38,12 @@ describe('Core Tests', () => {
   })
 
   afterEach(async function () {
-    try {
-      await entropy.substrate.api.disconnect()
-      await api2.disconnect()
-    } catch (e) {
-      console.log(e)
-    }
+    await disconnect(entropy.substrate.api)
+    await disconnect(api2)
     serverProcess1.kill()
     serverProcess2.kill()
     chainProcess1.kill()
     chainProcess2.kill()
-    await sleep(6000)
     removeDB()
   })
 

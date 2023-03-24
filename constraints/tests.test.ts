@@ -1,5 +1,5 @@
 import Entropy from '../core'
-import { spinChain, sleep } from '../testing-utils'
+import { spinChain, sleep, disconnect } from '../testing-utils'
 const { assert } = require('chai')
 
 const aliceAddress = '5DAAnrj7VHTznn2AWBemMuyBwZWs6FNFjdyVXUeYum3PTXFy'
@@ -23,13 +23,8 @@ describe('Constraint Tests', () => {
   })
 
   afterEach(async function () {
+    await disconnect(entropy.substrate.api)
     chainProcess.kill()
-    try {
-      await entropy.substrate.api.disconnect()
-    } catch (e) {
-      console.log(e)
-    }
-    await sleep(6000)
   })
   it(`constraints can be updated by authorized user`, async () => {
     const newConstraints = {

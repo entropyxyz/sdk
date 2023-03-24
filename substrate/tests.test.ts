@@ -1,5 +1,5 @@
 import { Substrate } from './index'
-import { spinChain, sleep } from '../testing-utils'
+import { spinChain, sleep, disconnect } from '../testing-utils'
 
 const { assert } = require('chai')
 
@@ -22,11 +22,7 @@ describe('Substrate Tests', () => {
   })
 
   afterEach(async function () {
-    try {
-      await substrate.api.disconnect()
-    } catch (e) {
-      console.log(e)
-    }
+    await disconnect(substrate.api)
     chainProcess.kill()
     await sleep(6000)
   })
@@ -98,6 +94,6 @@ describe('Substrate Tests', () => {
     const sudoCall = aliceSubstrate.api.tx.sudo.sudo(tx2)
     await aliceSubstrate.sendAndWait(sudoCall, false)
     await substrate.handleFreeTx(tx)
-    aliceSubstrate.api.disconnect()
+    await disconnect(aliceSubstrate.api)
   })
 })
