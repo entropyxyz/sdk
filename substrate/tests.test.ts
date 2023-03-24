@@ -28,7 +28,7 @@ describe('Substrate Tests', () => {
       console.log(e)
     }
     chainProcess.kill()
-    await sleep(4000)
+    await sleep(6000)
   })
 
   it(`checks if registering and registers`, async () => {

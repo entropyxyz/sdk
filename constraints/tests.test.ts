@@ -29,7 +29,7 @@ describe('Constraint Tests', () => {
     } catch (e) {
       console.log(e)
     }
-    await sleep(4000)
+    await sleep(6000)
   })
   it(`constraints can be updated by authorized user`, async () => {
     const newConstraints = {

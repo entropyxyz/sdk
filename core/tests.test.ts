@@ -42,7 +42,7 @@ describe('Core Tests', () => {
     serverProcess2.kill()
     chainProcess1.kill()
     chainProcess2.kill()
-    await sleep(4000)
+    await sleep(6000)
     removeDB()
   })
 
