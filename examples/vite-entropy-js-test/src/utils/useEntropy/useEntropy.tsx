@@ -2,6 +2,7 @@ import React from 'react'
 // For example app, it makes sense to import from the root of the package
 // At least just to double check for sanity that we didn't break anything
 import Entropy from '../../../../../core'
+import { readKey } from '../readKey'
 
 /**
  * @alpha
@@ -32,6 +33,12 @@ export function useEntropy({ seed }: { seed: string }) {
       }
     }
     setup()
+  }, [])
+  const register = React.useCallback(async () => {
+    await readKey('../../utils/')
+    if (entropy) {
+      entropy.register()
+    }
   }, [])
 
   return { entropy, error, loading }
