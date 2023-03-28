@@ -181,6 +181,7 @@ export default class Entropy {
     const evmTransactionRequest: ITransactionRequest = {
       arch: Arch.Evm,
       transaction_request: serializedTx,
+      signing_address: this.substrate.signer.wallet.address,
     }
 
     await this.thresholdServer.pollNodeToStartSigning(
