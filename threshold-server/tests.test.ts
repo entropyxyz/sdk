@@ -5,7 +5,7 @@ import { BigNumber, ethers } from 'ethers'
 import { ITransactionRequest, Arch } from './types'
 
 const LOCAL_SERVER = '127.0.0.1:3001'
-
+const alice_address = '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY'
 // Example of an unsigned transaction
 const exampleUnsignedEvmTx = (): ethers.utils.UnsignedTransaction => {
   return {
@@ -60,6 +60,7 @@ describe('Threshold Tests', () => {
     const evmTransactionRequest: ITransactionRequest = {
       arch: Arch.Evm,
       transaction_request: serializedUnsignedTx,
+      signing_address: alice_address,
     }
 
     try {
@@ -95,6 +96,7 @@ describe('Threshold Tests', () => {
     const evmTransactionRequest: ITransactionRequest = {
       arch: Arch.Evm,
       transaction_request: serializedUnsignedTx,
+      signing_address: alice_address,
     }
     console.info(
       `evmTransactionRequest:\n${JSON.stringify(evmTransactionRequest)}\n`
