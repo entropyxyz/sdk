@@ -6,7 +6,7 @@ import React from 'react'
 
 function App() {
   const entropy = useEntropy({ seed: ALICE.SEED })
-  console.log('entropy', entropy)
+  console.log('entropy', entropy.entropy?.crypto.parseServerDHKey)
   return (
     <div className='App'>
       <div>
