@@ -8,6 +8,10 @@ export const ALICE = Object.freeze({
   STASH: aliceStash,
 })
 
+export const CONSTRAINT = Object.freeze({
+  modificationAccount: '5GNJqTPyNqANBkUVMN1LPPrxXnFouWXoe2wNSmmEoLctxiZY',
+})
+
 // TODO: Write a type for valid and invalid accounts
 const invalidAccount = '5HpG9w8EBLe5XCrbczpwq5TSXvedjrBGCwqxK1iQ7qUsS'
 enum Chain {
