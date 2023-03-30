@@ -1,12 +1,34 @@
 import reactLogo from './assets/react.svg'
 import './App.css'
 import { useEntropy } from './utils/useEntropy/useEntropy'
-import { ALICE } from './utils/entropy-utils'
+import { ALICE, CONSTRAINT, tx } from './utils/entropy-utils'
 import React from 'react'
+import { readKey } from './utils/readKey'
+import { BigNumber, ethers } from 'ethers'
 
 function App() {
   const entropy = useEntropy({ seed: ALICE.SEED })
-  console.log('entropy', entropy.entropy?.crypto.parseServerDHKey)
+  const [thresholdKeys, setThresholdKey] = React.useState<Uint8Array[]>([])
+  const [error, setError] = React.useState<Error | null>(null)
+  console.log('entropy', entropy)
+  React.useEffect(() => {
+    async function getThresholdKeys() {
+      const keys = []
+      try {
+        for (let i = 0; i < 2; i++) {
+          keys.push(readKey(`../utils/test-keys/${i}`))
+        }
+      } catch (e) {
+        if (e instanceof Error) {
+          console.log('error', e)
+          setError(e)
+        }
+      }
+
+      const thresholdKeys = await Promise.all(keys)
+      setThresholdKey(thresholdKeys)
+    }
+  }, [])
   return (
     <div className='App'>
       <div>
@@ -22,6 +44,29 @@ function App() {
         <p>
           Edit <code>src/App.tsx</code> and save to test HMR
         </p>
+        <button
+          onClick={() => {
+            const [thresholdKey, thresholdKey2] = thresholdKeys
+
+            return entropy.entropy?.register({
+              keyShares: [thresholdKey, thresholdKey2],
+              constraintModificationAccount: CONSTRAINT.modificationAccount,
+              freeTx: false,
+            })
+          }}
+        >
+          register user
+        </button>
+        <button
+          onClick={async () => {
+            if (!entropy.entropy) return
+            const signature: any = await entropy.entropy.sign(tx, false, 10)
+
+            console.info('signature', signature)
+          }}
+        >
+          sign transaction
+        </button>
       </div>
       <p className='read-the-docs'>
         Click on the Vite and React logos to learn more
