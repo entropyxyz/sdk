@@ -1,3 +1,4 @@
+import { ChildProcessWithoutNullStreams } from 'child_process'
 import Entropy from '.'
 import {
   spinChain,
@@ -11,13 +12,17 @@ import { readKey } from './utils'
 const { assert } = require('chai')
 import { BigNumber, ethers } from 'ethers'
 
+const root = process.cwd()
 describe('Core Tests', () => {
   let entropy: Entropy
-  let chainProcess1, chainProcess2, serverProcess1, serverProcess2
+  let chainProcess1: ChildProcessWithoutNullStreams | undefined
+  let chainProcess2: ChildProcessWithoutNullStreams | undefined
+  let serverProcess1: ChildProcessWithoutNullStreams | undefined
+  let serverProcess2: ChildProcessWithoutNullStreams | undefined
   const aliceSeed =
     '0xe5be9a5092b81bca64be81d212e7f2f9eba183bb7a90954f7b76361f6edb5c0a'
-  const chainPath = process.cwd() + '/testing-utils/test-binaries/entropy'
-  const serverPath = process.cwd() + '/testing-utils/test-binaries/server'
+  const chainPath = `${root}/testing-utils/test-binaries/entropy`
+  const serverPath = `${root}/testing-utils/test-binaries/server`
 
   beforeEach(async function () {
     try {
@@ -47,12 +52,9 @@ describe('Core Tests', () => {
     removeDB()
   })
 
-  it(`registers then signs`, async () => {
-    const root = process.cwd()
-    const thresholdKey = await readKey(`${root + '/testing-utils/test-keys/0'}`)
-    const thresholdKey2 = await readKey(
-      `${root + '/testing-utils/test-keys/1'}`
-    )
+  it('registers then signs', async () => {
+    const thresholdKey = await readKey(`${root}/testing-utils/test-keys/0`)
+    const thresholdKey2 = await readKey(`${root}/testing-utils/test-keys/1`)
 
     // either works or not working from clean state and keys already there, good error, working error
     try {

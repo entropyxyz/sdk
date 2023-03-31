@@ -19,10 +19,9 @@ export class Crypto {
       )
       return from_hex(serverDHInfo.x25519PublicKey)
     } else {
-      const { from_hex } = await import(
-        '@entropyxyz/x25519-chacha20poly1305-web'
-      )
-      return from_hex(serverDHInfo.x25519PublicKey)
+      console.log('in browser')
+      const js = await import('@entropyxyz/x25519-chacha20poly1305-bundler')
+      return js.from_hex(serverDHInfo.x25519PublicKey)
     }
   }
 
@@ -51,9 +50,15 @@ export class Crypto {
       return encrypt_and_sign(secretKey, thresholdKey, serverDHKey)
     } else {
       const { encrypt_and_sign } = await import(
-        '@entropyxyz/x25519-chacha20poly1305-web'
+        '@entropyxyz/x25519-chacha20poly1305-bundler'
       )
-      return encrypt_and_sign(secretKey, thresholdKey, serverDHKey)
+      console.log(secretKey, thresholdKey, serverDHKey, 'hiiiiiiii')
+      const result = await encrypt_and_sign(
+        secretKey,
+        thresholdKey,
+        serverDHKey
+      )
+      return result
     }
   }
 }

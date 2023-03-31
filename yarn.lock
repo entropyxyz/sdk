@@ -596,6 +596,11 @@
   dependencies:
     "@jridgewell/trace-mapping" "0.3.9"
 
+"@entropyxyz/x25519-chacha20poly1305-bundler@^0.0.2":
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/@entropyxyz/x25519-chacha20poly1305-bundler/-/x25519-chacha20poly1305-bundler-0.0.2.tgz#08f7280c710fbe9daa506a7bccdf5a7744e16054"
+  integrity sha512-vn37E/9pfCnGO0fJdm7AiZ8m8/RulfOi6puMH3lSJ2c8x7ji3CZDJh5Y/ZK2lO/sO+D5tkDjAK8fzENG5rKY9w==
+
 "@entropyxyz/x25519-chacha20poly1305-nodejs@^0.1.1":
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/@entropyxyz/x25519-chacha20poly1305-nodejs/-/x25519-chacha20poly1305-nodejs-0.1.1.tgz#0aed1958e01becaf40aea2557ad3a69931bc1229"
