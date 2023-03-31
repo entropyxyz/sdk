@@ -55,8 +55,8 @@ function App() {
               })
             } catch (e) {
               if (e instanceof Error) {
-                console.log('register failed')
-                console.log('error', e)
+                console.error('register failed')
+                console.error('error', e)
               }
             }
           }}
@@ -71,7 +71,7 @@ function App() {
               const signature = await entropy.entropy.sign(tx, false, 10)
               console.info('signature passed!', signature)
             } catch (e) {
-              console.info('error', e)
+              console.error('error', e)
             }
           }}
         >
