@@ -116,7 +116,7 @@ export default class Entropy {
       )
 
       console.log(keyShares[i], i, keyShares, 'keyShares[i] from module')
-      debugger
+      // debugger
       const encryptedMessage = await this.crypto.encryptAndSign(
         this.substrate.signer.pair.secretKey,
         keyShares[i],
