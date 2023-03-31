@@ -107,13 +107,16 @@ export default class Entropy {
     const thresholdAccountsInfo: any = await this.substrate.getThresholdInfo(
       serverStashKeys
     )
-
+    console.log(serverStashKeys, 'serverStashKeys from module')
     const encryptedMessages: Array<string> = []
     const urls: Array<string> = []
     for (let i = 0; i < serverStashKeys.length; i++) {
       const serverDHKey = await this.crypto.parseServerDHKey(
         thresholdAccountsInfo[i]
       )
+
+      console.log(keyShares[i], i, keyShares, 'keyShares[i] from module')
+      debugger
       const encryptedMessage = await this.crypto.encryptAndSign(
         this.substrate.signer.pair.secretKey,
         keyShares[i],

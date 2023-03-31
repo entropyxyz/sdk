@@ -4,7 +4,6 @@ import { useEntropy } from './utils/useEntropy/useEntropy'
 import { ALICE, CONSTRAINT, tx } from './utils/entropy-utils'
 import React from 'react'
 import { readKey } from './utils/readKey'
-import { BigNumber, ethers } from 'ethers'
 
 function App() {
   const entropy = useEntropy({ seed: ALICE.SEED })
@@ -28,14 +27,15 @@ function App() {
       const thresholdKeys = await Promise.all(keys)
       setThresholdKey(thresholdKeys)
     }
+    getThresholdKeys()
   }, [])
   return (
     <div className='App'>
       <div>
-        <a href='https://vitejs.dev' target='_blank'>
+        <a href='https://vitejs.dev' target='_blank' rel='noreferrer'>
           <img src='/vite.svg' className='logo' alt='Vite logo' />
         </a>
-        <a href='https://reactjs.org' target='_blank'>
+        <a href='https://reactjs.org' target='_blank' rel='noreferrer'>
           <img src={reactLogo} className='logo react' alt='React logo' />
         </a>
       </div>
@@ -47,22 +47,32 @@ function App() {
         <button
           onClick={() => {
             const [thresholdKey, thresholdKey2] = thresholdKeys
-
-            return entropy.entropy?.register({
-              keyShares: [thresholdKey, thresholdKey2],
-              constraintModificationAccount: CONSTRAINT.modificationAccount,
-              freeTx: false,
-            })
+            try {
+              entropy.entropy?.register({
+                keyShares: [thresholdKey, thresholdKey2],
+                constraintModificationAccount: CONSTRAINT.modificationAccount,
+                freeTx: false,
+              })
+            } catch (e) {
+              if (e instanceof Error) {
+                console.log('register failed')
+                console.log('error', e)
+              }
+            }
           }}
         >
           register user
         </button>
+
         <button
           onClick={async () => {
             if (!entropy.entropy) return
-            const signature: any = await entropy.entropy.sign(tx, false, 10)
-
-            console.info('signature', signature)
+            try {
+              const signature = await entropy.entropy.sign(tx, false, 10)
+              console.info('signature passed!', signature)
+            } catch (e) {
+              console.info('error', e)
+            }
           }}
         >
           sign transaction
