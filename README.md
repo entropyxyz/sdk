@@ -7,6 +7,7 @@
 ### Node.js Version
 
 Run `nvm use` to use the correct node version.
+Make sure the project is running on node version 16
 
 ### Run Project
 
@@ -57,6 +58,12 @@ When the Substrate node in `entropy-core` is updated, you will need to update th
 `packages/substrate/entropy-metadata.json` should be populated with the latest Entropy node metadata
 
 ### Common Errors running tests
+
+Check if your machine is running any entropy or server processes. If so, kill them. This can happen if tests run, fail and don't kill the spawned processes that was running from the test suite.
+
+- `lsof -i -P -n | grep LISTEN`
+- `pkill entropy`
+- `pkill server`
 
 - In `entropy-core`, make sure you run `cargo build --release` (and `cargo build`) so any `./scripts` use the latest binaries.
 - Make sure you have the latest dependencies in `entropy-js` by running `yarn clean:all` in the root of the repo, and then `yarn`.
