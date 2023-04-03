@@ -10,8 +10,12 @@ jobs:
 
     steps:
       - checkout
+      - node/install:
+          version: 18.15
       - node/install-packages:
           pkg-manager: yarn
+          node-version: 18.15
+          run: node
       - run:
           command: yarn --frozen-lockfile --network-timeout 180000
           name: Build app
