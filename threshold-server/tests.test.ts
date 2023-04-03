@@ -43,13 +43,10 @@ describe('Threshold Tests', () => {
       await thresholdServer.sendKeys([mock], [LOCAL_SERVER])
       throw new Error('should have failed gracefully')
     } catch (e: any) {
-      if (e.response.data == 'Not Registering error: Register Onchain first') {
-        assert.equal(
-          e.response.data,
-          'Not Registering error: Register Onchain first'
-        )
+      if (e.message == 'Not Registering error: Register Onchain first') {
+        assert.equal(e.message, 'Not Registering error: Register Onchain first')
       } else {
-        assert.equal(e.response.data, 'Kv error: Recv Error: channel closed')
+        assert.equal(e.message, 'Kv error: Recv Error: channel closed')
       }
     }
   })

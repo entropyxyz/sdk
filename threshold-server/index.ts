@@ -23,11 +23,17 @@ export class ThresholdServer {
     encryptedKeys: Array<string>,
     serversWithPort: Array<string>
   ): Promise<unknown[]> {
-    return Promise.all(
-      serversWithPort.map(async (server, index) =>
-        sendHttpPost(`http://${server}/user/new`, encryptedKeys[index])
-      )
+    const val = Promise.all(
+      serversWithPort.map(async (server, index) => {
+        const response = await sendHttpPost(
+          `http://${server}/user/new`,
+          encryptedKeys[index]
+        )
+        return response
+      })
     )
+    console.log(val)
+    return val
   }
 
   /**
@@ -89,7 +95,7 @@ export class ThresholdServer {
             'Content-Type': 'application/json',
           },
         })
-        status = postRequest.status
+        status = postRequest.status as string
       } catch (e) {
         status = 500
         await sleep(3000)
@@ -97,12 +103,12 @@ export class ThresholdServer {
           message: 'repolling for signature soon',
           status,
           i,
-          response: e.response.data,
+          response: e.response,
         })
       }
       i++
     }
-    return Uint8Array.from(atob(postRequest.data), (c) => c.charCodeAt(0))
+    return Uint8Array.from(atob(postRequest), (c) => c.charCodeAt(0))
   }
 
   /**
@@ -133,7 +139,7 @@ export class ThresholdServer {
         console.info({
           message: 'repolling for signature start soon',
           status,
-          response: e.response.data,
+          response: e.response,
           i,
         })
       }
@@ -151,14 +157,25 @@ export class ThresholdServer {
  * @returns {Promise<Promise<unknown>>}
  */
 async function sendHttpPost(url: string, data: any): Promise<unknown> {
-  const response = await fetch(url, {
-    method: 'POST',
-    body: JSON.stringify(data),
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  })
+  let response
+  try {
+    const thing = await fetch(url, {
+      method: 'POST',
+      body: JSON.stringify(data),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    response = await thing.json()
+  } catch (e) {
+    console.log('hit error block in sendHttpPost')
+    if (!response.ok) {
+      console.error(e)
+      return response.text().then((text) => {
+        throw new Error(text)
+      })
+    }
+  }
 
-  const json = await response.json()
-  return json
+  return response
 }
