@@ -1,4 +1,3 @@
-import axios, { AxiosResponse } from 'axios'
 import { SignatureLike } from '@ethersproject/bytes'
 import { sleep } from '../core/utils'
 import { ITransactionRequest } from './types'
@@ -23,7 +22,7 @@ export class ThresholdServer {
   async sendKeys(
     encryptedKeys: Array<string>,
     serversWithPort: Array<string>
-  ): Promise<AxiosResponse<any, any>[]> {
+  ): Promise<unknown[]> {
     return Promise.all(
       serversWithPort.map(async (server, index) =>
         sendHttpPost(`http://${server}/user/new`, encryptedKeys[index])
@@ -42,11 +41,23 @@ export class ThresholdServer {
   async submitTransactionRequest(
     txReq: ITransactionRequest,
     serversWithPort: string[]
-  ): Promise<AxiosResponse<any, any>[]> {
+  ): Promise<unknown> {
     return Promise.all(
-      serversWithPort.map(
-        async (server) => await axios.post(`http://${server}/user/tx`, txReq)
-      )
+      serversWithPort.map(async (server) => {
+        try {
+          const response = await fetch(`http://${server}/user/tx`, {
+            method: 'POST',
+            body: JSON.stringify(txReq),
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          })
+          const data = await response.json()
+          return data
+        } catch (e) {
+          console.error(e)
+        }
+      })
     )
   }
 
@@ -69,12 +80,15 @@ export class ThresholdServer {
     let postRequest
     while (status !== 202 && i < retries) {
       try {
-        postRequest = await axios.post(
-          `http://${thresholdUrl}/signer/signature`,
-          {
-            message: sigHash,
-          }
-        )
+        postRequest = await fetch(`http://${thresholdUrl}/signer/signature`, {
+          method: 'POST',
+          body: JSON.stringify({
+            sigHash,
+          }),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
         status = postRequest.status
       } catch (e) {
         status = 500
@@ -136,14 +150,15 @@ export class ThresholdServer {
  * @param data the data to send in the request body
  * @returns {Promise<AxiosResponse<any, any>>}
  */
-async function sendHttpPost(
-  url: string,
-  data: any
-): Promise<AxiosResponse<any, any>> {
-  const headers = {
-    'Content-Type': 'application/json',
-  }
-  return axios.post(url, data, {
-    headers: headers,
+async function sendHttpPost(url: string, data: any): Promise<unknown> {
+  const response = await fetch(url, {
+    method: 'POST',
+    body: JSON.stringify(data),
+    headers: {
+      'Content-Type': 'application/json',
+    },
   })
+
+  const json = await response.json()
+  return json
 }
