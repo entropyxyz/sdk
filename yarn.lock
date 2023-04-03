@@ -3405,7 +3405,7 @@ flat-cache@^3.0.4:
     flatted "^3.1.0"
     rimraf "^3.0.2"
 
-flatted@^3.1.0:
+flatted@^3.1.0, flatted@^3.2.7:
   version "3.2.7"
   resolved "https://registry.yarnpkg.com/flatted/-/flatted-3.2.7.tgz#609f39207cb614b89d0765b477cb2d437fbf9787"
   integrity sha512-5nqDSxl8nn5BSNxyR3n4I6eDmbolI6WT+QqR547RwxQapgjQBmtktdP+HTBb/a/zLsbzERTONyUB5pefh5TtjQ==
@@ -3425,6 +3425,11 @@ form-data@^3.0.0:
     asynckit "^0.4.0"
     combined-stream "^1.0.8"
     mime-types "^2.1.12"
+
+form-to-json@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/form-to-json/-/form-to-json-1.0.1.tgz#c52295f8b30503b6db37c57ffe63e401a02acfec"
+  integrity sha512-Z+Rfw6gBHBKhflxx5hNur3LPZ5I3E089CYo/EAIvIY/ILP6xUmXvUN4SC+VweFY+YJKWs6UlsJ0DIlXedLgmtA==
 
 formdata-polyfill@^4.0.10:
   version "4.0.10"

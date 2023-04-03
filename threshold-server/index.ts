@@ -1,7 +1,7 @@
 import { SignatureLike } from '@ethersproject/bytes'
 import { sleep } from '../core/utils'
 import { ITransactionRequest } from './types'
-
+import flatted from 'flatted'
 /**
  * Class used for talking to an Entropy validator server
  */
@@ -54,7 +54,7 @@ export class ThresholdServer {
         try {
           const response = await fetch(`http://${server}/user/tx`, {
             method: 'POST',
-            body: JSON.stringify(txReq),
+            body: flatted.toJSON(txReq),
             headers: {
               'Content-Type': 'application/json',
             },
@@ -95,7 +95,7 @@ export class ThresholdServer {
       try {
         postRequest = await fetch(`http://${thresholdUrl}/signer/signature`, {
           method: 'POST',
-          body: JSON.stringify({
+          body: flatted.toJSON({
             sigHash,
           }),
           headers: {
@@ -174,7 +174,7 @@ async function sendHttpPost(url: string, data: any): Promise<unknown> {
   try {
     const thing = await fetch(url, {
       method: 'POST',
-      body: JSON.stringify(data),
+      body: flatted.toJSON(data),
       headers: {
         'Content-Type': 'application/json',
       },
