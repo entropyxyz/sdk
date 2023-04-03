@@ -66,7 +66,7 @@ describe('Threshold Tests', () => {
       ])
     } catch (e: any) {
       // fails due to no transaction in kvdb
-      assert.equal(e.response.status, 500)
+      assert.equal(e.status, 500)
     }
   })
 
