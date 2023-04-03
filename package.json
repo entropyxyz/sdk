@@ -74,7 +74,9 @@
     "@ethersproject/bytes": "^5.7.0",
     "@polkadot/api": "^9.13.5",
     "@polkadot/types-codec": "^9.13.5",
-    "ethers": "^5.7.2"
+    "ethers": "^5.7.2",
+    "flatted": "^3.2.7",
+    "form-to-json": "^1.0.1"
   },
   "directories": {
     "example": "examples"
