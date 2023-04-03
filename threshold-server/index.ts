@@ -25,7 +25,8 @@ export class ThresholdServer {
   ): Promise<unknown[]> {
     const val = Promise.all(
       serversWithPort.map(async (server, index) => {
-        const response = await sendHttpPost(
+        console.log(encryptedKeys, index, 'sendkeys')
+        const response = sendHttpPost(
           `http://${server}/user/new`,
           encryptedKeys[index]
         )
@@ -58,6 +59,12 @@ export class ThresholdServer {
               'Content-Type': 'application/json',
             },
           })
+          if (await !response.ok) {
+            const err = await response.text().then((text) => {
+              throw new Error(text)
+            })
+            return err
+          }
           const data = await response.json()
           return data
         } catch (e) {
@@ -95,6 +102,12 @@ export class ThresholdServer {
             'Content-Type': 'application/json',
           },
         })
+
+        if (await !postRequest.ok) {
+          return postRequest.text().then((text) => {
+            throw new Error(text)
+          })
+        }
         status = postRequest.status as string
       } catch (e) {
         status = 500
@@ -166,15 +179,15 @@ async function sendHttpPost(url: string, data: any): Promise<unknown> {
         'Content-Type': 'application/json',
       },
     })
-    response = await thing.json()
-  } catch (e) {
-    console.log('hit error block in sendHttpPost')
-    if (!response.ok) {
-      console.error(e)
-      return response.text().then((text) => {
+    if (await !thing.ok) {
+      return await thing.text().then((text) => {
         throw new Error(text)
       })
     }
+    response = await thing.json()
+  } catch (e) {
+    console.log('hit error block in sendHttpPost')
+    throw new Error(e.message)
   }
 
   return response
