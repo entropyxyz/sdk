@@ -51,11 +51,14 @@ export class ThresholdServer {
     return Promise.all(
       serversWithPort.map(async (server) => {
         try {
+          console.log(
+            JSON.stringify({ data: txReq }),
+            'txreq from submitTransactionRequest'
+          )
           const response = await fetch(`http://${server}/user/tx`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            //@ts-expect-error - data is a valid property of the body
-            body: { data: txReq },
+            body: JSON.stringify(txReq),
           })
           if (await !response.ok) {
             const err = await response.text().then((text) => {
@@ -94,8 +97,7 @@ export class ThresholdServer {
         postRequest = await fetch(`http://${thresholdUrl}/signer/signature`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          // @ts-expect-error - data is a valid property of the body
-          body: { data: sigHash },
+          body: JSON.stringify({ data: sigHash }),
         })
 
         if (await !postRequest.ok) {
@@ -172,8 +174,7 @@ async function sendHttpPost(url: string, data: any): Promise<unknown> {
       headers: {
         'Content-Type': 'application/json',
       },
-      //@ts-expect-error - data is a valid property of the body
-      body: { data: data },
+      body: JSON.stringify({ data: data }),
     })
 
     if (await !thing.ok) {
