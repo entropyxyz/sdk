@@ -1,7 +1,6 @@
 import { SignatureLike } from '@ethersproject/bytes'
 import { sleep } from '../core/utils'
 import { ITransactionRequest } from './types'
-import flatted from 'flatted'
 /**
  * Class used for talking to an Entropy validator server
  */
@@ -54,10 +53,9 @@ export class ThresholdServer {
         try {
           const response = await fetch(`http://${server}/user/tx`, {
             method: 'POST',
-            body: flatted.toJSON(txReq),
-            headers: {
-              'Content-Type': 'application/json',
-            },
+            headers: { 'Content-Type': 'application/json' },
+            //@ts-expect-error - data is a valid property of the body
+            body: { data: txReq },
           })
           if (await !response.ok) {
             const err = await response.text().then((text) => {
@@ -95,12 +93,9 @@ export class ThresholdServer {
       try {
         postRequest = await fetch(`http://${thresholdUrl}/signer/signature`, {
           method: 'POST',
-          body: flatted.toJSON({
-            sigHash,
-          }),
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers: { 'Content-Type': 'application/json' },
+          // @ts-expect-error - data is a valid property of the body
+          body: { data: sigHash },
         })
 
         if (await !postRequest.ok) {
@@ -174,16 +169,19 @@ async function sendHttpPost(url: string, data: any): Promise<unknown> {
   try {
     const thing = await fetch(url, {
       method: 'POST',
-      body: flatted.toJSON(data),
       headers: {
         'Content-Type': 'application/json',
       },
+      //@ts-expect-error - data is a valid property of the body
+      body: { data: data },
     })
+
     if (await !thing.ok) {
       return await thing.text().then((text) => {
         throw new Error(text)
       })
     }
+    console.log(thing, 'thing')
     response = await thing.json()
   } catch (e) {
     console.log('hit error block in sendHttpPost')
