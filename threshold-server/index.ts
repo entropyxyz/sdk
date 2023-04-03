@@ -16,7 +16,7 @@ export class ThresholdServer {
    * @param {Array<string>} emsgs - encrypted messages to be sent to a validator node
    * @param {Array<string>} serversWithPort - IP/domain and port of the threshold server, seperated by ':'
    *
-   * @returns {Promise<AxiosResponse<any, any>[]>}
+   * @returns {Promise<unknown>[]>}
    */
 
   async sendKeys(
@@ -36,7 +36,7 @@ export class ThresholdServer {
    * @async
    * @param {ITransactionRequest} txReq
    * @param {string[]} serversWithPort IP/domain and port of the threshold server, separated by ':'
-   * @returns {Promise<AxiosResponse<any, any>[]>}
+   * @returns {Promise<Promise<unknown>[]>}
    */
   async submitTransactionRequest(
     txReq: ITransactionRequest,
@@ -148,7 +148,7 @@ export class ThresholdServer {
  * @async
  * @param url the URL to send the POST request to
  * @param data the data to send in the request body
- * @returns {Promise<AxiosResponse<any, any>>}
+ * @returns {Promise<Promise<unknown>>}
  */
 async function sendHttpPost(url: string, data: any): Promise<unknown> {
   const response = await fetch(url, {
