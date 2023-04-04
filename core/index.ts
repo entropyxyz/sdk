@@ -6,9 +6,8 @@ import { isValidSubstrateAddress } from './utils'
 import { Substrate } from '../substrate'
 import { Constraints } from '../constraints'
 import { ThresholdServer } from '../threshold-server'
-import { ITransactionRequest, Arch } from '../threshold-server/types'
+import { ITransactionRequest, Arch, EncMsg } from '../threshold-server/types'
 import { Crypto } from '../crypto'
-
 /**
  * Encapsulates all subclasses and exposes functions to make interacting with entropy simple
  */
@@ -176,23 +175,39 @@ export default class Entropy {
         name: 'SignatureRequested',
       }
     )
-    const urls = record.event.data.toHuman()[0].ipAddresses
-
+    const validatorsInfo: Array<any> = record.event.data.toHuman()[0].validatorsInfo
+    const txRequests: Array<EncMsg> = []
     const evmTransactionRequest: ITransactionRequest = {
       arch: Arch.Evm,
       transaction_request: serializedTx,
-      signing_address: this.substrate.signer.wallet.address,
+    }
+    for (let i = 0; i < validatorsInfo.length; i++) {
+      const serverDHKey = await this.crypto.parseServerDHKey({
+        x25519PublicKey: validatorsInfo[i].x25519PublicKey,
+      })
+      // const encoder = new util.TextEncoder()
+      // const encodedTxRequest = encoder.encode(JSON.stringify(evmTransactionRequest))
+      const encoded = Uint8Array.from(JSON.stringify(evmTransactionRequest), x => x.charCodeAt(0))
+
+      console.log(Buffer.from(JSON.stringify(evmTransactionRequest)))
+      console.log({encoded})
+      const encryptedMessage = await this.crypto.encryptAndSign(
+        this.substrate.signer.pair.secretKey,
+        encoded,
+        serverDHKey
+      )
+      console.log({encryptedMessage})
+      txRequests.push({url: validatorsInfo[i].ipAddress, encMsg: encryptedMessage})
     }
 
     await this.thresholdServer.pollNodeToStartSigning(
-      evmTransactionRequest,
-      urls,
+      txRequests,
       retries
     )
 
     const signature: SignatureLike = await this.thresholdServer.pollNodeForSignature(
       sigHash.slice(2),
-      urls[0],
+      validatorsInfo[0].ipAddress,
       retries
     )
     return signature
