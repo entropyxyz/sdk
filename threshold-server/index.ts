@@ -52,13 +52,13 @@ export class ThresholdServer {
       serversWithPort.map(async (server) => {
         try {
           console.log(
-            JSON.stringify({ data: txReq }),
+            JSON.stringify({ data: [txReq] }),
             'txreq from submitTransactionRequest'
           )
           const response = await fetch(`http://${server}/user/tx`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(txReq),
+            body: JSON.stringify({ data: [txReq] }),
           })
           if (await !response.ok) {
             const err = await response.text().then((text) => {
@@ -97,7 +97,7 @@ export class ThresholdServer {
         postRequest = await fetch(`http://${thresholdUrl}/signer/signature`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ data: sigHash }),
+          body: JSON.stringify({ data: [sigHash] }),
         })
 
         if (await !postRequest.ok) {
@@ -168,13 +168,16 @@ export class ThresholdServer {
  */
 async function sendHttpPost(url: string, data: any): Promise<unknown> {
   let response
+
+  console.log(JSON.stringify({ data: [data] }), 'hiiiiiiiiii')
+
   try {
     const thing = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ data: data }),
+      body: JSON.stringify({ data: [data] }),
     })
 
     if (await !thing.ok) {
