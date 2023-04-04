@@ -3,9 +3,9 @@ import { spinThreshold, spinChain, sleep, removeDB } from '../testing-utils'
 const { assert } = require('chai')
 import { BigNumber, ethers } from 'ethers'
 import { ITransactionRequest, Arch } from './types'
-
+import { Crypto } from '../crypto'
+import { getWallet } from '../substrate'
 const LOCAL_SERVER = '127.0.0.1:3001'
-const alice_address = '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY'
 // Example of an unsigned transaction
 const exampleUnsignedEvmTx = (): ethers.utils.UnsignedTransaction => {
   return {
@@ -19,10 +19,15 @@ const exampleUnsignedEvmTx = (): ethers.utils.UnsignedTransaction => {
 
 describe('Threshold Tests', () => {
   const thresholdServer = new ThresholdServer()
+  const crypto = new Crypto()
   let serverProcess, chainProcess
   const chainPath = process.cwd() + '/testing-utils/test-binaries/entropy'
   const serverPath = process.cwd() + '/testing-utils/test-binaries/server'
 
+  const x25519_public_key_alice =
+    '0x0ac029f0b853b23bed652d6d0de69b7cc38d94f93732eefc85b5861e90f73a22'
+  const aliceSeed =
+    '0xe5be9a5092b81bca64be81d212e7f2f9eba183bb7a90954f7b76361f6edb5c0a'
   beforeEach(async function () {
     chainProcess = await spinChain(chainPath, 'dev')
     serverProcess = await spinThreshold(serverPath, 'alice', '3001')
@@ -60,12 +65,24 @@ describe('Threshold Tests', () => {
     const evmTransactionRequest: ITransactionRequest = {
       arch: Arch.Evm,
       transaction_request: serializedUnsignedTx,
-      signing_address: alice_address,
     }
+    const encoded = Uint8Array.from(
+      JSON.stringify(evmTransactionRequest),
+      (x) => x.charCodeAt(0)
+    )
+    const wallet = await getWallet(aliceSeed)
+    const serverDHKey = await crypto.parseServerDHKey({
+      x25519PublicKey: x25519_public_key_alice,
+    })
+    const encryptedMessage = await crypto.encryptAndSign(
+      wallet.pair.secretKey,
+      encoded,
+      serverDHKey
+    )
 
     try {
-      await thresholdServer.submitTransactionRequest(evmTransactionRequest, [
-        LOCAL_SERVER,
+      await thresholdServer.submitTransactionRequest([
+        { url: LOCAL_SERVER, encMsg: encryptedMessage },
       ])
     } catch (e: any) {
       // fails due to no transaction in kvdb
@@ -96,7 +113,6 @@ describe('Threshold Tests', () => {
     const evmTransactionRequest: ITransactionRequest = {
       arch: Arch.Evm,
       transaction_request: serializedUnsignedTx,
-      signing_address: alice_address,
     }
     console.info(
       `evmTransactionRequest:\n${JSON.stringify(evmTransactionRequest)}\n`

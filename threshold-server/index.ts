@@ -40,11 +40,12 @@ export class ThresholdServer {
    * @returns {Promise<AxiosResponse<any, any>[]>}
    */
   async submitTransactionRequest(
-    txReq: Array<EncMsg>,
+    txReq: Array<EncMsg>
   ): Promise<AxiosResponse<any, any>[]> {
     return Promise.all(
       txReq.map(
-        async (message) => await sendHttpPost(`http://${message.url}/user/tx`, message.encMsg)
+        async (message) =>
+          await sendHttpPost(`http://${message.url}/user/tx`, message.encMsg)
       )
     )
   }

@@ -175,7 +175,8 @@ export default class Entropy {
         name: 'SignatureRequested',
       }
     )
-    const validatorsInfo: Array<any> = record.event.data.toHuman()[0].validatorsInfo
+    const validatorsInfo: Array<any> = record.event.data.toHuman()[0]
+      .validatorsInfo
     const txRequests: Array<EncMsg> = []
     const evmTransactionRequest: ITransactionRequest = {
       arch: Arch.Evm,
@@ -185,25 +186,23 @@ export default class Entropy {
       const serverDHKey = await this.crypto.parseServerDHKey({
         x25519PublicKey: validatorsInfo[i].x25519PublicKey,
       })
-      // const encoder = new util.TextEncoder()
-      // const encodedTxRequest = encoder.encode(JSON.stringify(evmTransactionRequest))
-      const encoded = Uint8Array.from(JSON.stringify(evmTransactionRequest), x => x.charCodeAt(0))
+      const encoded = Uint8Array.from(
+        JSON.stringify(evmTransactionRequest),
+        (x) => x.charCodeAt(0)
+      )
 
-      console.log(Buffer.from(JSON.stringify(evmTransactionRequest)))
-      console.log({encoded})
       const encryptedMessage = await this.crypto.encryptAndSign(
         this.substrate.signer.pair.secretKey,
         encoded,
         serverDHKey
       )
-      console.log({encryptedMessage})
-      txRequests.push({url: validatorsInfo[i].ipAddress, encMsg: encryptedMessage})
+      txRequests.push({
+        url: validatorsInfo[i].ipAddress,
+        encMsg: encryptedMessage,
+      })
     }
 
-    await this.thresholdServer.pollNodeToStartSigning(
-      txRequests,
-      retries
-    )
+    await this.thresholdServer.pollNodeToStartSigning(txRequests, retries)
 
     const signature: SignatureLike = await this.thresholdServer.pollNodeForSignature(
       sigHash.slice(2),
