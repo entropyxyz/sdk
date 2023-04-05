@@ -104,9 +104,14 @@ export default class Entropy {
 
     // TODO should we run validation here on the amount of keys to send
     // i.e make sure key shares is signing party big and stash keys are key shares -1 size
-    const thresholdAccountsInfo: any = await this.substrate.getThresholdInfo(
-      serverStashKeys
-    )
+    let thresholdAccountsInfo
+    try {
+      thresholdAccountsInfo = await this.substrate.getThresholdInfo(
+        serverStashKeys
+      )
+    } catch (e) {
+      console.log(e, 'error from getThresholdInfo')
+    }
     console.log(serverStashKeys, 'serverStashKeys from module')
     const encryptedMessages: Array<string> = []
     const urls: Array<string> = []

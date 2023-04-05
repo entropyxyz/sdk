@@ -71,6 +71,8 @@ function App() {
               const signature = await entropy.entropy.sign(tx, false, 10)
               console.info('signature passed!', signature)
             } catch (e) {
+              // todo handle error
+              // already registered
               console.error('error', e)
             }
           }}
