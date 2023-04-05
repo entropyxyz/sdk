@@ -169,15 +169,16 @@ export class ThresholdServer {
 async function sendHttpPost(url: string, data: any): Promise<unknown> {
   let response
 
-  console.log(JSON.stringify({ data: [data] }), 'hiiiiiiiiii')
-
+  const rawData = JSON.stringify({ data })
+  const parsedData = JSON.parse(rawData)
+  console.log(parsedData, 'hiiiiiiiiii')
   try {
     const thing = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ data: [data] }),
+      body: parsedData,
     })
 
     if (await !thing.ok) {
