@@ -1,7 +1,6 @@
 import { BigNumber, utils } from 'ethers/lib/ethers'
+import { aliceSeed } from '../../../../testing-utils'
 
-const aliceSeed =
-  '0xe5be9a5092b81bca64be81d212e7f2f9eba183bb7a90954f7b76361f6edb5c0a'
 const aliceStash = '5HpG9w8EBLe5XCrbczpwq5TSXvedjrBGCwqxK1iQ7qUsSWFc'
 export const ALICE = Object.freeze({
   SEED: aliceSeed,

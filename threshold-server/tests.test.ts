@@ -1,5 +1,12 @@
 import { ThresholdServer } from '.'
-import { spinThreshold, spinChain, sleep, removeDB } from '../testing-utils'
+import {
+  spinThreshold,
+  spinChain,
+  sleep,
+  removeDB,
+  aliceSeed,
+  x25519_public_key_alice,
+} from '../testing-utils'
 const { assert } = require('chai')
 import { BigNumber, ethers } from 'ethers'
 import { ITransactionRequest, Arch } from './types'
@@ -24,10 +31,6 @@ describe('Threshold Tests', () => {
   const chainPath = process.cwd() + '/testing-utils/test-binaries/entropy'
   const serverPath = process.cwd() + '/testing-utils/test-binaries/server'
 
-  const x25519_public_key_alice =
-    '0x0ac029f0b853b23bed652d6d0de69b7cc38d94f93732eefc85b5861e90f73a22'
-  const aliceSeed =
-    '0xe5be9a5092b81bca64be81d212e7f2f9eba183bb7a90954f7b76361f6edb5c0a'
   beforeEach(async function () {
     chainProcess = await spinChain(chainPath, 'dev')
     serverProcess = await spinThreshold(serverPath, 'alice', '3001')

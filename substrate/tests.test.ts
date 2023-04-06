@@ -1,14 +1,16 @@
 import { Substrate } from './index'
-import { spinChain, sleep, disconnect } from '../testing-utils'
+import {
+  spinChain,
+  sleep,
+  disconnect,
+  aliceSeed,
+  bobSeed,
+} from '../testing-utils'
 
 const { assert } = require('chai')
 
 describe('Substrate Tests', () => {
   let substrate: Substrate
-  const bobSeed =
-    '0x398f0c28f98885e046333d4a41c19cee4c37368a9832c6502f6cfd182e2aef89' // `subkey inspect //Bob` 'secret seed'
-  const aliceSeed =
-    '0xe5be9a5092b81bca64be81d212e7f2f9eba183bb7a90954f7b76361f6edb5c0a'
   let chainProcess
   beforeEach(async function () {
     const chainPath = process.cwd() + '/testing-utils/test-binaries/entropy'

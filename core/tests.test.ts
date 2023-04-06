@@ -6,6 +6,7 @@ import {
   removeDB,
   disconnect,
   modifyOcwPostEndpoint,
+  aliceSeed,
 } from '../testing-utils'
 import { readKey } from './utils'
 const { assert } = require('chai')
@@ -14,8 +15,7 @@ import { BigNumber, ethers } from 'ethers'
 describe('Core Tests', () => {
   let entropy: Entropy
   let chainProcess1, chainProcess2, serverProcess1, serverProcess2
-  const aliceSeed =
-    '0xe5be9a5092b81bca64be81d212e7f2f9eba183bb7a90954f7b76361f6edb5c0a'
+
   const chainPath = process.cwd() + '/testing-utils/test-binaries/entropy'
   const serverPath = process.cwd() + '/testing-utils/test-binaries/server'
 
