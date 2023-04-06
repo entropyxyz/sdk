@@ -9,5 +9,9 @@ export enum Arch {
 export interface ITransactionRequest {
   arch: Arch
   transaction_request: string
-  signing_address: string
+}
+
+export interface EncMsg {
+  encMsg: string
+  url: string
 }

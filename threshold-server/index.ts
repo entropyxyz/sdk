@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from 'axios'
 import { SignatureLike } from '@ethersproject/bytes'
 import { sleep } from '../core/utils'
-import { ITransactionRequest } from './types'
+import { EncMsg } from './types'
 
 /**
  * Class used for talking to an Entropy validator server
@@ -35,17 +35,17 @@ export class ThresholdServer {
    * Submits the transaction request to the threshold server so its constraints can be validated
    *
    * @async
-   * @param {ITransactionRequest} txReq
+   * @param {Array<EncMsg>} txReq
    * @param {string[]} serversWithPort IP/domain and port of the threshold server, separated by ':'
    * @returns {Promise<AxiosResponse<any, any>[]>}
    */
   async submitTransactionRequest(
-    txReq: ITransactionRequest,
-    serversWithPort: string[]
+    txReq: Array<EncMsg>
   ): Promise<AxiosResponse<any, any>[]> {
     return Promise.all(
-      serversWithPort.map(
-        async (server) => await axios.post(`http://${server}/user/tx`, txReq)
+      txReq.map(
+        async (message) =>
+          await sendHttpPost(`http://${message.url}/user/tx`, message.encMsg)
       )
     )
   }
@@ -99,20 +99,13 @@ export class ThresholdServer {
    * @param {number} retries - number of times to retry
    * @memberof ThresholdServer
    */
-  async pollNodeToStartSigning(
-    evmTransactionRequest: ITransactionRequest,
-    thresholdUrls: string[],
-    retries: number
-  ) {
+  async pollNodeToStartSigning(encMsg: Array<EncMsg>, retries: number) {
     let i = 0
     let status
     let postRequest
     while (status !== 202 && i < retries) {
       try {
-        postRequest = await this.submitTransactionRequest(
-          evmTransactionRequest,
-          thresholdUrls
-        )
+        postRequest = await this.submitTransactionRequest(encMsg)
         status = postRequest.status
       } catch (e: any) {
         await sleep(3000)

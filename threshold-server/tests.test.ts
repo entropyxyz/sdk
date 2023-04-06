@@ -1,11 +1,18 @@
 import { ThresholdServer } from '.'
-import { spinThreshold, spinChain, sleep, removeDB } from '../testing-utils'
+import {
+  spinThreshold,
+  spinChain,
+  sleep,
+  removeDB,
+  aliceSeed,
+  x25519_public_key_alice,
+} from '../testing-utils'
 const { assert } = require('chai')
 import { BigNumber, ethers } from 'ethers'
 import { ITransactionRequest, Arch } from './types'
-
+import { Crypto } from '../crypto'
+import { getWallet } from '../substrate'
 const LOCAL_SERVER = '127.0.0.1:3001'
-const alice_address = '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY'
 // Example of an unsigned transaction
 const exampleUnsignedEvmTx = (): ethers.utils.UnsignedTransaction => {
   return {
@@ -19,6 +26,7 @@ const exampleUnsignedEvmTx = (): ethers.utils.UnsignedTransaction => {
 
 describe('Threshold Tests', () => {
   const thresholdServer = new ThresholdServer()
+  const crypto = new Crypto()
   let serverProcess, chainProcess
   const chainPath = process.cwd() + '/testing-utils/test-binaries/entropy'
   const serverPath = process.cwd() + '/testing-utils/test-binaries/server'
@@ -60,12 +68,24 @@ describe('Threshold Tests', () => {
     const evmTransactionRequest: ITransactionRequest = {
       arch: Arch.Evm,
       transaction_request: serializedUnsignedTx,
-      signing_address: alice_address,
     }
+    const encoded = Uint8Array.from(
+      JSON.stringify(evmTransactionRequest),
+      (x) => x.charCodeAt(0)
+    )
+    const wallet = await getWallet(aliceSeed)
+    const serverDHKey = await crypto.parseServerDHKey({
+      x25519PublicKey: x25519_public_key_alice,
+    })
+    const encryptedMessage = await crypto.encryptAndSign(
+      wallet.pair.secretKey,
+      encoded,
+      serverDHKey
+    )
 
     try {
-      await thresholdServer.submitTransactionRequest(evmTransactionRequest, [
-        LOCAL_SERVER,
+      await thresholdServer.submitTransactionRequest([
+        { url: LOCAL_SERVER, encMsg: encryptedMessage },
       ])
     } catch (e: any) {
       // fails due to no transaction in kvdb
@@ -96,7 +116,6 @@ describe('Threshold Tests', () => {
     const evmTransactionRequest: ITransactionRequest = {
       arch: Arch.Evm,
       transaction_request: serializedUnsignedTx,
-      signing_address: alice_address,
     }
     console.info(
       `evmTransactionRequest:\n${JSON.stringify(evmTransactionRequest)}\n`
