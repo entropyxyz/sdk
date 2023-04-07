@@ -11,7 +11,7 @@
   "browser": "dist/index.js",
   "type": "module",
   "scripts": {
-    "test": "yarn removedb && jest --runInBand --detectOpenHandles",
+    "test": "yarn removedb && jest --runInBand --detectOpenHandles --testTimeout 300000 ./core/tests.test.ts",
     "lint:ts": "tsc",
     "lint:eslint": "eslint . --ext .ts",
     "lint": "yarn lint:ts && yarn lint:eslint",

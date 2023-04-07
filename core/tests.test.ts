@@ -6,11 +6,14 @@ import {
   removeDB,
   disconnect,
   modifyOcwPostEndpoint,
-  aliceSeed,
+  charlieSeed,
+  charlieAddress,
+  charlieStashSeed,
+  charlieStashAddress
 } from '../testing-utils'
 import { readKey } from './utils'
-const { assert } = require('chai')
 import { BigNumber, ethers } from 'ethers'
+const { assert } = require('chai')
 
 describe('Core Tests', () => {
   let entropy: Entropy
@@ -34,7 +37,7 @@ describe('Core Tests', () => {
       'ws://localhost:9945',
       'http://localhost:3002/signer/new_party'
     )
-    entropy = await Entropy.setup(aliceSeed)
+    entropy = await Entropy.setup(charlieSeed)
   })
 
   afterEach(async function () {
@@ -59,8 +62,7 @@ describe('Core Tests', () => {
       // TODO use register() in substrate, not directly
       await entropy.register({
         keyShares: [thresholdKey, thresholdKey2],
-        constraintModificationAccount:
-          '5GNJqTPyNqANBkUVMN1LPPrxXnFouWXoe2wNSmmEoLctxiZY',
+        constraintModificationAccount: charlieStashAddress,
         freeTx: false,
       })
       // constraint mod account is alice stash, ie `subkey inspect //Alice//stash`
@@ -78,6 +80,25 @@ describe('Core Tests', () => {
         ethers.utils.toUtf8Bytes('Created On Entropy')
       ),
     }
+
+    // signing should fail cause we haven't set constraints yet
+    try {
+      await entropy.sign(tx, false, 3);
+      throw new Error("Should have errored")
+    } catch (e: any) {
+      assert.equal(e.message, "Cannot read properties of undefined (reading 'data')")
+    }
+
+    // set user's constraints on-chain
+    const newConstraints = {
+      evmAcl: {
+        addresses: ['0x772b9a9e8aa1c9db861c6611a82d251db4fac990'],
+        kind: 'Allow',
+        allowNullRecipient: false,
+      },
+    }
+    const charlieStashEntropy = await Entropy.setup(charlieStashSeed)
+    await charlieStashEntropy.constraints.updateAccessControlList(newConstraints, charlieAddress)
 
     const signature: any = await entropy.sign(tx, false, 10)
     assert.equal(signature.length, 65)
