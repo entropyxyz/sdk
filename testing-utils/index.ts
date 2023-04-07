@@ -7,4 +7,4 @@ export {
   modifyOcwPostEndpoint,
 } from './spinUp'
 
-export  * from './constants'
+export { x25519_public_key_alice, aliceSeed, bobSeed } from './constants'
