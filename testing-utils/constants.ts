@@ -1,3 +1,5 @@
+import { BigNumber, ethers } from 'ethers'
+
 export const x25519_public_key_alice =
   '0x0ac029f0b853b23bed652d6d0de69b7cc38d94f93732eefc85b5861e90f73a22'
 
@@ -32,3 +34,26 @@ export const eveStashSeed =
   '0x26eda5da160bf8e1810336f97a31d3271fe8b386c4e5b7b4367e55ea33f297d0'
 export const eveStashAddress =
   '5FCfAonRZgTFrTd9HREEyeJjDpT397KMzizE6T3DvebLFE7n'
+
+
+/// A transaction request that satisfies the test whitelisted constraints
+export const whitelisted_tx_req: ethers.utils.UnsignedTransaction = {
+      to: '0x772b9a9e8aa1c9db861c6611a82d251db4fac990',
+      value: BigNumber.from('1'),
+      chainId: 1,
+      nonce: 1,
+      data: ethers.utils.hexlify(
+        ethers.utils.toUtf8Bytes('Created On Entropy')
+      ),
+    }
+
+/// An invalid transaction request that shouldn't satisfy any whitelisted constraints
+export const non_whitelisted_tx_req: ethers.utils.UnsignedTransaction = {
+      to: '0xDFd5293D8e347dFe59E90eFd55b2956a1343963d', // random evm address from etherscan
+      value: BigNumber.from('1'),
+      chainId: 1,
+      nonce: 1,
+      data: ethers.utils.hexlify(
+        ethers.utils.toUtf8Bytes('Created On Entropy')
+      ),
+    }

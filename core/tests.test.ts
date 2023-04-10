@@ -10,9 +10,10 @@ import {
   charlieAddress,
   charlieStashSeed,
   charlieStashAddress,
+  whitelisted_tx_req,
+  non_whitelisted_tx_req,
 } from '../testing-utils'
 import { readKey } from './utils'
-import { BigNumber, ethers } from 'ethers'
 const { assert } = require('chai')
 
 describe('Core Tests', () => {
@@ -50,39 +51,23 @@ describe('Core Tests', () => {
     removeDB()
   })
 
-  it(`registers, sets constraints, then signs`, async () => {
+  it(`registers, sets constraints, tries valid and invalid tx req, and signs`, async () => {
     const root = process.cwd()
     const thresholdKey = await readKey(`${root + '/testing-utils/test-keys/0'}`)
     const thresholdKey2 = await readKey(
       `${root + '/testing-utils/test-keys/1'}`
     )
 
-    // either works or not working from clean state and keys already there, good error, working error
-    try {
-      // TODO use register() in substrate, not directly
-      await entropy.register({
-        keyShares: [thresholdKey, thresholdKey2],
-        constraintModificationAccount: charlieStashAddress,
-        freeTx: false,
-      })
-    } catch (e: any) {
-      console.log(e)
-      assert.equal(e, 'Error: already registered')
-    }
+    // register user on-chain and with threshold servers
+    await entropy.register({
+      keyShares: [thresholdKey, thresholdKey2],
+      constraintModificationAccount: charlieStashAddress,
+      freeTx: false,
+    })
 
-    const tx: ethers.utils.UnsignedTransaction = {
-      to: '0x772b9a9e8aa1c9db861c6611a82d251db4fac990',
-      value: BigNumber.from('1'),
-      chainId: 1,
-      nonce: 1,
-      data: ethers.utils.hexlify(
-        ethers.utils.toUtf8Bytes('Created On Entropy')
-      ),
-    }
-
-    // signing should fail cause we haven't set constraints yet
+    // signing attempts should fail cause we haven't set constraints yet
     try {
-      await entropy.sign(tx, false, 3)
+      await entropy.sign(whitelisted_tx_req, false, 3)
       throw new Error('Should have errored')
     } catch (e: any) {
       assert.equal(
@@ -92,6 +77,7 @@ describe('Core Tests', () => {
     }
 
     // set user's constraints on-chain
+    const charlieStashEntropy = await Entropy.setup(charlieStashSeed)
     const newConstraints = {
       evmAcl: {
         addresses: ['0x772b9a9e8aa1c9db861c6611a82d251db4fac990'],
@@ -99,13 +85,24 @@ describe('Core Tests', () => {
         allowNullRecipient: false,
       },
     }
-    const charlieStashEntropy = await Entropy.setup(charlieStashSeed)
     await charlieStashEntropy.constraints.updateAccessControlList(
       newConstraints,
       charlieAddress
     )
 
-    const signature: any = await entropy.sign(tx, false, 10)
+    // signing should fail with a non-whitelisted tx requests
+    try {
+      await entropy.sign(non_whitelisted_tx_req, false, 3)
+      throw new Error('Should have errored')
+    } catch (e: any) {
+      assert.equal(
+        e.message,
+        "Cannot read properties of undefined (reading 'data')"
+      )
+    }
+
+    // signing should work for whitelisted tx requests
+    const signature: any = await entropy.sign(whitelisted_tx_req, false, 10)
     assert.equal(signature.length, 65)
   })
 })
