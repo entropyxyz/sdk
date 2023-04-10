@@ -1,4 +1,3 @@
-import axios, { AxiosResponse } from 'axios'
 import { SignatureLike } from '@ethersproject/bytes'
 import { sleep } from '../core/utils'
 import { EncMsg } from './types'
@@ -23,7 +22,7 @@ export class ThresholdServer {
   async sendKeys(
     encryptedKeys: Array<string>,
     serversWithPort: Array<string>
-  ): Promise<AxiosResponse<any, any>[]> {
+  ): Promise<any[]> {
     return Promise.all(
       serversWithPort.map(async (server, index) =>
         sendHttpPost(`http://${server}/user/new`, encryptedKeys[index])
@@ -39,9 +38,7 @@ export class ThresholdServer {
    * @param {string[]} serversWithPort IP/domain and port of the threshold server, separated by ':'
    * @returns {Promise<AxiosResponse<any, any>[]>}
    */
-  async submitTransactionRequest(
-    txReq: Array<EncMsg>
-  ): Promise<AxiosResponse<any, any>[]> {
+  async submitTransactionRequest(txReq: Array<EncMsg>): Promise<any[]> {
     return Promise.all(
       txReq.map(
         async (message) =>
@@ -69,26 +66,33 @@ export class ThresholdServer {
     let postRequest
     while (status !== 202 && i < retries) {
       try {
-        postRequest = await axios.post(
-          `http://${thresholdUrl}/signer/signature`,
-          {
-            message: sigHash,
-          }
-        )
+        postRequest = await fetch(`http://${thresholdUrl}/signer/signature`, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          method: 'POST',
+          body: JSON.stringify({ message: sigHash }),
+        })
         status = postRequest.status
       } catch (e) {
         status = 500
-        await sleep(3000)
+
         console.info({
           message: 'repolling for signature soon',
           status,
           i,
-          response: e.response.data,
+          response: postRequest.statusText,
         })
       }
+      await sleep(3000)
       i++
     }
-    return Uint8Array.from(atob(postRequest.data), (c) => c.charCodeAt(0))
+    const result = await postRequest.text()
+    try {
+      return Uint8Array.from(atob(result), (c) => c.charCodeAt(0))
+    } catch (e) {
+      throw new Error(postRequest.statusText)
+    }
   }
 
   /**
@@ -108,7 +112,6 @@ export class ThresholdServer {
         postRequest = await this.submitTransactionRequest(encMsg)
         status = postRequest.status
       } catch (e: any) {
-        await sleep(3000)
         console.info({
           message: 'repolling for signature start soon',
           status,
@@ -116,6 +119,7 @@ export class ThresholdServer {
           i,
         })
       }
+      await sleep(3000)
       i++
     }
   }
@@ -129,14 +133,13 @@ export class ThresholdServer {
  * @param data the data to send in the request body
  * @returns {Promise<AxiosResponse<any, any>>}
  */
-async function sendHttpPost(
-  url: string,
-  data: any
-): Promise<AxiosResponse<any, any>> {
+async function sendHttpPost(url: string, data: any): Promise<any> {
   const headers = {
     'Content-Type': 'application/json',
   }
-  return axios.post(url, data, {
-    headers: headers,
+  return fetch(url, {
+    method: 'POST',
+    headers,
+    body: data,
   })
 }
