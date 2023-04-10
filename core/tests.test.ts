@@ -10,8 +10,9 @@ import {
   charlieAddress,
   charlieStashSeed,
   charlieStashAddress,
-  whitelisted_tx_req,
-  non_whitelisted_tx_req,
+  whitelisted_test_tx_req,
+  non_whitelisted_test_tx_req,
+  whitelisted_test_constraints,
 } from '../testing-utils'
 import { readKey } from './utils'
 const { assert } = require('chai')
@@ -67,7 +68,7 @@ describe('Core Tests', () => {
 
     // signing attempts should fail cause we haven't set constraints yet
     try {
-      await entropy.sign(whitelisted_tx_req, false, 3)
+      await entropy.sign(whitelisted_test_tx_req, false, 3)
       throw new Error('Should have errored')
     } catch (e: any) {
       assert.equal(
@@ -78,21 +79,14 @@ describe('Core Tests', () => {
 
     // set user's constraints on-chain
     const charlieStashEntropy = await Entropy.setup(charlieStashSeed)
-    const newConstraints = {
-      evmAcl: {
-        addresses: ['0x772b9a9e8aa1c9db861c6611a82d251db4fac990'],
-        kind: 'Allow',
-        allowNullRecipient: false,
-      },
-    }
     await charlieStashEntropy.constraints.updateAccessControlList(
-      newConstraints,
+      whitelisted_test_constraints,
       charlieAddress
     )
 
     // signing should fail with a non-whitelisted tx requests
     try {
-      await entropy.sign(non_whitelisted_tx_req, false, 3)
+      await entropy.sign(non_whitelisted_test_tx_req, false, 3)
       throw new Error('Should have errored')
     } catch (e: any) {
       assert.equal(
@@ -102,7 +96,11 @@ describe('Core Tests', () => {
     }
 
     // signing should work for whitelisted tx requests
-    const signature: any = await entropy.sign(whitelisted_tx_req, false, 10)
+    const signature: any = await entropy.sign(
+      whitelisted_test_tx_req,
+      false,
+      10
+    )
     assert.equal(signature.length, 65)
   })
 })

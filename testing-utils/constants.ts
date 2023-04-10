@@ -35,25 +35,33 @@ export const eveStashSeed =
 export const eveStashAddress =
   '5FCfAonRZgTFrTd9HREEyeJjDpT397KMzizE6T3DvebLFE7n'
 
+export const whitelisted_test_evm_address =
+  '0x772b9a9e8aa1c9db861c6611a82d251db4fac990'
+export const non_whitlisted_test_evm_address =
+  '0xDFd5293D8e347dFe59E90eFd55b2956a1343963d'
+
+export const whitelisted_test_constraints = {
+  evmAcl: {
+    addresses: [whitelisted_test_evm_address],
+    kind: 'Allow',
+    allowNullRecipient: false,
+  },
+}
 
 /// A transaction request that satisfies the test whitelisted constraints
-export const whitelisted_tx_req: ethers.utils.UnsignedTransaction = {
-      to: '0x772b9a9e8aa1c9db861c6611a82d251db4fac990',
-      value: BigNumber.from('1'),
-      chainId: 1,
-      nonce: 1,
-      data: ethers.utils.hexlify(
-        ethers.utils.toUtf8Bytes('Created On Entropy')
-      ),
-    }
+export const whitelisted_test_tx_req: ethers.utils.UnsignedTransaction = {
+  to: whitelisted_test_evm_address,
+  value: BigNumber.from('1'),
+  chainId: 1,
+  nonce: 1,
+  data: ethers.utils.hexlify(ethers.utils.toUtf8Bytes('Created On Entropy')),
+}
 
 /// An invalid transaction request that shouldn't satisfy any whitelisted constraints
-export const non_whitelisted_tx_req: ethers.utils.UnsignedTransaction = {
-      to: '0xDFd5293D8e347dFe59E90eFd55b2956a1343963d', // random evm address from etherscan
-      value: BigNumber.from('1'),
-      chainId: 1,
-      nonce: 1,
-      data: ethers.utils.hexlify(
-        ethers.utils.toUtf8Bytes('Created On Entropy')
-      ),
-    }
+export const non_whitelisted_test_tx_req: ethers.utils.UnsignedTransaction = {
+  to: '', // random evm address from etherscan
+  value: BigNumber.from('1'),
+  chainId: 1,
+  nonce: 1,
+  data: ethers.utils.hexlify(ethers.utils.toUtf8Bytes('Created On Entropy')),
+}
