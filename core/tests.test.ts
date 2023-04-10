@@ -71,10 +71,7 @@ describe('Core Tests', () => {
       await entropy.sign(whitelisted_test_tx_req, false, 3)
       throw new Error('Should have errored')
     } catch (e: any) {
-      assert.equal(
-        e.message,
-        "Cannot read properties of undefined (reading 'data')"
-      )
+      assert.equal(e.message, 'Internal Server Error')
     }
 
     // set user's constraints on-chain
@@ -89,10 +86,7 @@ describe('Core Tests', () => {
       await entropy.sign(non_whitelisted_test_tx_req, false, 3)
       throw new Error('Should have errored')
     } catch (e: any) {
-      assert.equal(
-        e.message,
-        "Cannot read properties of undefined (reading 'data')"
-      )
+      assert.equal(e.message, 'Internal Server Error')
     }
 
     // signing should work for whitelisted tx requests
