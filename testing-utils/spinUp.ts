@@ -1,6 +1,6 @@
 import { ApiPromise } from '@polkadot/api'
 import { stringToHex } from '@polkadot/util/string'
-import { spawn, ChildProcessWithoutNullStreams } from 'node:child_process'
+import { spawn, ChildProcessWithoutNullStreams } from 'child_process'
 import rimraf from 'rimraf'
 import { getApi } from '../substrate'
 
