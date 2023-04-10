@@ -102,5 +102,6 @@ describe('Core Tests', () => {
       10
     )
     assert.equal(signature.length, 65)
+    await disconnect(charlieStashEntropy.substrate.api)
   })
 })
