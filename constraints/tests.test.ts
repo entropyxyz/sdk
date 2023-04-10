@@ -1,10 +1,12 @@
 import Entropy from '../core'
-import { spinChain, sleep, disconnect } from '../testing-utils'
+import {
+  spinChain,
+  sleep,
+  disconnect,
+  daveSeed,
+  aliceAddress,
+} from '../testing-utils'
 const { assert } = require('chai')
-
-const aliceAddress = '5DAAnrj7VHTznn2AWBemMuyBwZWs6FNFjdyVXUeYum3PTXFy'
-const daveSeed =
-  '0x868020ae0687dda7d57565093a69090211449845a7e11453612800b663307246' // `subkey inspect //Dave` 'secret seed'
 
 describe('Constraint Tests', () => {
   let entropy: Entropy
