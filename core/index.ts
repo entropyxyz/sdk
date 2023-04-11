@@ -8,6 +8,7 @@ import { Constraints } from '../constraints'
 import { ThresholdServer } from '../threshold-server'
 import { ITransactionRequest, Arch, EncMsg } from '../threshold-server/types'
 import { Crypto } from '../crypto'
+// todo #146 - update the setup pattern to use constructor
 /**
  * Encapsulates all subclasses and exposes functions to make interacting with entropy simple
  */
