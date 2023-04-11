@@ -1,6 +1,79 @@
 # entropy-js
 
-`entropy-js` is a collection of TS packages that allow you to interact with the Entropy network. This is currently in **alpha** release.
+This is currently in **alpha** release expect braking changes :tears:.
+
+## Expectation:
+```js
+import Entropy from '@entropyxyz/sdk(or what ever the fuck)'
+import { generateAccount } from '@entropyxyz/sdk(or what ever the fuck)'
+
+const { keyShares, sigRequestKeyPair, constraintModKeyPair } = generateAccount({ type: 'ECDSA' })
+
+const config: EntropyConfig = {
+  networkUrl: 'http://localhost:3001',
+  account: {keyShare: '', sigRequestKeyPair: {public: '', private: ''}} //base 64
+  freeTxDefault: true || false // default true
+  retryDefaults: true || false
+}
+
+// client checks "localStorage" for existing entropy keys if no keys create keys
+const exntropy: Entropy = new Entropy(config)
+
+
+// if no key and is a new account
+
+// application side
+
+// > {
+// keyShares: [],
+// sigRequestKeyPair: {public: '', private: ''},
+// constraintModKeyPair: {public: '', private: ''}
+// }
+const myKeyShare: string = keyShares.pop()
+
+const evmAddress: string = '0x123...'
+
+const constraints: = {
+  evmAcl: {
+    addresses: [evmAddress], //
+    kind: 'Allow', // 'Denny' black list address
+    allowNullRecipient: false, // default false can be true. allows for contract creation
+  },
+}
+
+entropy.substrate.isRegisterd() // is fully registered
+entropy.substrate.isRegistering() // is waiting for key shares
+const state = entropy.getAccountState() // 'NOT REGISTERED' 'REGISTERING' 'REGISTERED'
+
+if (state === 'NONE') await entropy.register() // returns a promise
+// store and save keyShare
+// submit register transaction -> list of endpoints
+// send each keyshare sent to an endpoint -> high five
+// if register constraint transaction -> transaction hash
+// if contrain transaction is complete resolve register function?
+
+
+// set constraints
+
+await entropy.setConstraint(constraints)
+
+const opts = {
+  retries: 5, // //defaluts to constructor
+  freetx: true //defaluts to constructor
+  // for signTransaction:
+  type: 'ETH' || 'POLKADOT' ||
+}
+
+const signature = await entropy.sign(sigRequest, opts)
+// opinionated serialize
+/*?*/ const transaction = await entropy.signTransaction(sigRequest, opts)
+
+ethProvider.sendRawTransaction(transaction)
+
+```
+### API
+
+
 
 ### Setup
 
