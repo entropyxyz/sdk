@@ -13,7 +13,7 @@ import {
   whitelisted_test_tx_req,
   non_whitelisted_test_tx_req,
   whitelisted_test_constraints,
-} from '../testing-utils'
+} from '../../testing-utils'
 import { readKey } from './utils'
 const { assert } = require('chai')
 

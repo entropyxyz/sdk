@@ -2,7 +2,7 @@ import { ApiPromise } from '@polkadot/api'
 import { stringToHex } from '@polkadot/util/string'
 import { spawn, ChildProcessWithoutNullStreams } from 'child_process'
 import rimraf from 'rimraf'
-import { getApi } from '../substrate'
+import { getApi } from '../src/substrate'
 
 export const modifyOcwPostEndpoint = async (
   endpoint: string,
