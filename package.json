@@ -21,7 +21,7 @@
     "peek": "tsc --build --clean",
     "clean": "rm -Rf node_modules && yarn cache clean --all && yarn install",
     "removedb": "rm -rf .entropy",
-    "bundle": "tsup --dts --format cjs,esm core/index.ts",
+    "bundle": "tsup --dts --format cjs,esm src/core/index.ts",
     "bundle:watch": "tsup --watch",
     "bundle:node": "tsup --platform node ",
     "bundle:browser": "tsup --platform browser",
