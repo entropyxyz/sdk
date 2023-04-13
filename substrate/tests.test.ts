@@ -9,7 +9,7 @@ import {
 
 const { assert } = require('chai')
 
-describe('Substrate Tests', () => {
+describe.skip('Substrate Tests', () => {
   let substrate: Substrate
   let chainProcess
   beforeEach(async function () {

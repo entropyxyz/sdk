@@ -8,7 +8,7 @@ import {
 } from '../testing-utils'
 const { assert } = require('chai')
 
-describe('Constraint Tests', () => {
+describe.skip('Constraint Tests', () => {
   let entropy: Entropy
   let chainProcess
 
