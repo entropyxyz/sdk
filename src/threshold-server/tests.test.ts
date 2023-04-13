@@ -6,7 +6,7 @@ import {
   removeDB,
   aliceSeed,
   x25519_public_key_alice,
-} from '../testing-utils'
+} from '../../testing-utils'
 const { assert } = require('chai')
 import { BigNumber, ethers } from 'ethers'
 import { ITransactionRequest, Arch } from './types'

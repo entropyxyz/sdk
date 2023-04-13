@@ -5,7 +5,7 @@ import {
   disconnect,
   daveSeed,
   aliceAddress,
-} from '../testing-utils'
+} from '../../testing-utils'
 const { assert } = require('chai')
 
 describe('Constraint Tests', () => {
