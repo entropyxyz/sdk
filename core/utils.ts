@@ -52,3 +52,22 @@ export function sleep(delay: number) {
   const start = new Date().getTime()
   while (new Date().getTime() < start + delay);
 }
+
+/**
+ * Sends an HTTP POST request to the specified URL with the given data and headers
+ *
+ * @async
+ * @param url the URL to send the POST request to
+ * @param data the data to send in the request body
+ * @returns {Promise<AxiosResponse<any, any>>}
+ */
+export async function sendHttpPost(url: string, data: any): Promise<any> {
+  const headers = {
+    'Content-Type': 'application/json',
+  }
+  return fetch(url, {
+    method: 'POST',
+    headers,
+    body: data,
+  })
+}

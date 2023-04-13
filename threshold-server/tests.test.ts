@@ -12,6 +12,7 @@ import { BigNumber, ethers } from 'ethers'
 import { ITransactionRequest, Arch } from './types'
 import { Crypto } from '../crypto'
 import { getWallet } from '../substrate'
+import { sendHttpPost } from '../core/utils'
 const LOCAL_SERVER = '127.0.0.1:3001'
 // Example of an unsigned transaction
 const exampleUnsignedEvmTx = (): ethers.utils.UnsignedTransaction => {
@@ -25,7 +26,7 @@ const exampleUnsignedEvmTx = (): ethers.utils.UnsignedTransaction => {
 }
 
 describe('Threshold Tests', () => {
-  const thresholdServer = new ThresholdServer()
+  const thresholdServer = new ThresholdServer(sendHttpPost)
   const crypto = new Crypto()
   let serverProcess, chainProcess
   const chainPath = process.cwd() + '/testing-utils/test-binaries/entropy'
@@ -117,5 +118,36 @@ describe('Threshold Tests', () => {
     console.info(
       `evmTransactionRequest:\n${JSON.stringify(evmTransactionRequest)}\n`
     )
+  })
+})
+
+describe('ThresholdServer', () => {
+  describe('sendKeys', () => {
+    it('should call sendHttpPost with the correct parameters', async () => {
+      // Create a mock implementation of sendHttpPost
+      const sendHttpPost = jest.fn()
+
+      // Instantiate a new ThresholdServer instance, passing the mock implementation of sendHttpPost
+      const server = new ThresholdServer(sendHttpPost)
+
+      // Set up test data, also, fake keys, only testing for alice and bob
+      const encryptedKeys = ['key1', 'key2']
+      const serversWithPort = ['server1:1234', 'server2:5678']
+
+      // Call the sendKeys method
+      await server.sendKeys(encryptedKeys, serversWithPort)
+
+      // Verify that sendHttpPost was called once for each server
+      expect(sendHttpPost).toHaveBeenCalledTimes(serversWithPort.length)
+
+      // Verify that sendHttpPost was called with the correct parameters for each server
+      serversWithPort.forEach((serverWithPort, index) => {
+        expect(sendHttpPost).toHaveBeenNthCalledWith(
+          index + 1,
+          `http://${serverWithPort}/user/new`,
+          encryptedKeys[index]
+        )
+      })
+    })
   })
 })

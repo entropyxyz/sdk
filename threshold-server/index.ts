@@ -6,6 +6,11 @@ import { EncMsg } from './types'
  * Class used for talking to an Entropy validator server
  */
 export class ThresholdServer {
+  private sendHttpPost: (url: string, data: string) => Promise<any>
+
+  constructor(sendHttpPost: (url: string, data: string) => Promise<any>) {
+    this.sendHttpPost = sendHttpPost
+  }
   /**
    * @alpha
    *
@@ -25,7 +30,7 @@ export class ThresholdServer {
   ): Promise<any[]> {
     return Promise.all(
       serversWithPort.map(async (server, index) =>
-        sendHttpPost(`http://${server}/user/new`, encryptedKeys[index])
+        this.sendHttpPost(`http://${server}/user/new`, encryptedKeys[index])
       )
     )
   }
@@ -42,7 +47,10 @@ export class ThresholdServer {
     return Promise.all(
       txReq.map(
         async (message) =>
-          await sendHttpPost(`http://${message.url}/user/tx`, message.encMsg)
+          await this.sendHttpPost(
+            `http://${message.url}/user/tx`,
+            message.encMsg
+          )
       )
     )
   }
@@ -123,23 +131,4 @@ export class ThresholdServer {
       i++
     }
   }
-}
-
-/**
- * Sends an HTTP POST request to the specified URL with the given data and headers
- *
- * @async
- * @param url the URL to send the POST request to
- * @param data the data to send in the request body
- * @returns {Promise<AxiosResponse<any, any>>}
- */
-async function sendHttpPost(url: string, data: any): Promise<any> {
-  const headers = {
-    'Content-Type': 'application/json',
-  }
-  return fetch(url, {
-    method: 'POST',
-    headers,
-    body: data,
-  })
 }

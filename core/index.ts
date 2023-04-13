@@ -2,7 +2,7 @@ import { keyShare } from './types'
 import { AnyJson } from '@polkadot/types-codec/types'
 import { utils } from 'ethers'
 import { SignatureLike } from '@ethersproject/bytes'
-import { isValidSubstrateAddress } from './utils'
+import { isValidSubstrateAddress, sendHttpPost } from './utils'
 import { Substrate } from '../substrate'
 import { Constraints } from '../constraints'
 import { ThresholdServer } from '../threshold-server'
@@ -51,7 +51,7 @@ export default class Entropy {
   static async setup(seed: string, endpoint?: string): Promise<Entropy> {
     const crypto = new Crypto()
     const substrate = await Substrate.setup(seed, endpoint)
-    const thresholdServer = new ThresholdServer()
+    const thresholdServer = new ThresholdServer(sendHttpPost)
     const constraints = new Constraints(substrate.api, substrate.signer)
     return new Entropy(crypto, substrate, thresholdServer, constraints)
   }
