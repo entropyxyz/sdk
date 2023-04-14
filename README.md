@@ -17,17 +17,26 @@ Make sure the project is running on node version 16
 
 Linting is available and can be done by running `yarn eslint`. You can also use the ESLint extension if you're using VSCode.
 
-### Testing
+### Using the SDK
 
-Testing in this repo is done against `entropy-core`, so clone and setup that repo. After that, you can run the tests in this repo.
+The SDK needs a running Entropy node and a running TSS server. To run these, you can use the scripts in `entropy-core`.
 
-- Make sure you build release in `entropy-core` with `cargo build --release`.
 - In **three separate terminals in the `entropy-core` directory**, run:
   - `./scripts/sdk-entropy-node.sh`
   - `./scripts/sdk-alice-tss.sh`
   - `./scripts/sdk-bob-tss.sh`
 
-This will spin up a local blockchain node, and two threshold server nodes.
+### Testing
+
+### Test binaries
+
+Add test binaries to `testing-utils/testing-binaries` folder from `entropy-core/target/release` folder. Move the `entropy` and `server` binaries to the `testing-binaries` folder.
+
+Testing in this repo is done against `entropy-core`, so clone and setup that repo. After that, you can run the tests in this repo.
+
+- Make sure you build release in `entropy-core` with `cargo build --release`.
+- run `yarn test`. The tests will spin up three processes in the background (tss, bob, alice), and then run the tests.
+  This will spin up a local blockchain node, and two threshold server nodes.
 
 Then, in this repo, **fourth terminal**, run `yarn test` in to run the tests.
 
