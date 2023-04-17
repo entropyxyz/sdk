@@ -14,7 +14,7 @@ export class ThresholdServer {
    * Is a method of the {@link ThresholdServer} class
    *
    * @param {Array<string>} emsgs - encrypted messages to be sent to a validator node
-   * @param {Array<string>} serversWithPort - IP/domain and port of the threshold server, seperated by ':'
+   * @param {Array<string>} serversWithPort - IP/domain and port of the threshold server, separated by ':'
    *
    * @returns {Promise<AxiosResponse<any, any>[]>}
    */
@@ -78,7 +78,7 @@ export class ThresholdServer {
         status = 500
 
         console.info({
-          message: 'repolling for signature soon',
+          message: 're-polling for signature soon',
           status,
           i,
           response: postRequest.statusText,
@@ -113,7 +113,7 @@ export class ThresholdServer {
         status = postRequest.status
       } catch (e: any) {
         console.info({
-          message: 'repolling for signature start soon',
+          message: 're-polling for signature start soon',
           status,
           response: e.response.data,
           i,
