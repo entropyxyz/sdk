@@ -8,6 +8,18 @@ import { Constraints } from '../constraints'
 import { ThresholdServer } from '../threshold-server'
 import { ITransactionRequest, Arch, EncMsg } from '../threshold-server/types'
 import { Crypto } from '../crypto'
+
+export type RegisterOptions = {
+  keyShares: keyShare[]
+  constraintModificationAccount: string
+  freeTx: boolean
+  initialConstraints?: string
+}
+export type SignOptions = {
+  tx: utils.UnsignedTransaction
+  freeTx: boolean
+  retries: number
+}
 /**
  * Encapsulates all subclasses and exposes functions to make interacting with entropy simple
  */
@@ -55,7 +67,6 @@ export default class Entropy {
     const constraints = new Constraints(substrate.api, substrate.signer)
     return new Entropy(crypto, substrate, thresholdServer, constraints)
   }
-
   /**
    * @alpha
    *
@@ -70,18 +81,13 @@ export default class Entropy {
    *
    * @return {*}  {Promise<AnyJson>} {@link AnyJson} - A JSON return from the chain which contains a boolean of if the registration was successful
    */
-  async register(props: {
-    keyShares: keyShare[]
-    constraintModificationAccount: string
-    freeTx: boolean
-    initialConstraints?: string
-  }): Promise<AnyJson> {
+  async register(options: RegisterOptions): Promise<AnyJson> {
     const {
       keyShares,
       constraintModificationAccount,
       freeTx,
       initialConstraints,
-    } = props
+    } = options
 
     const isRegistered_check = await this.substrate.api.query.relayer.registered(
       this.substrate.signer.wallet.address

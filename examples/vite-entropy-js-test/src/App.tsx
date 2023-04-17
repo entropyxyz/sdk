@@ -1,12 +1,34 @@
 import reactLogo from './assets/react.svg'
 import './App.css'
 import { useEntropy } from './utils/useEntropy/useEntropy'
-import { ALICE } from './utils/entropy-utils'
+import {
+  ALICE,
+  CHARLIE,
+  non_whitelisted_test_tx_req,
+} from './utils/entropy-utils'
+import { readKey } from './utils/readKey'
 import React from 'react'
+const thresholdKeyPath = './utils/test-keys/0'
+const thresholdKey2Path = './utils/test-keys/1'
 
 function App() {
   const entropy = useEntropy({ seed: ALICE.SEED })
+  const [thresholdKeys, setThresholdKeys] = React.useState<Uint8Array[]>([])
   console.log('entropy', entropy)
+  React.useEffect(() => {
+    async function setup() {
+      try {
+        const thresholdKey = await readKey(thresholdKeyPath)
+        const thresholdKey2 = await readKey(thresholdKey2Path)
+        setThresholdKeys([thresholdKey, thresholdKey2])
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          console.error(error.message)
+        }
+      }
+    }
+    setup()
+  }, [])
   return (
     <div className='App'>
       <div>
@@ -26,6 +48,28 @@ function App() {
       <p className='read-the-docs'>
         Click on the Vite and React logos to learn more
       </p>
+      <button
+        onClick={() => {
+          entropy.register({
+            keyShares: thresholdKeys,
+            constraintModificationAccount: CHARLIE.STASHED_ADDRESS,
+            freeTx: false,
+          })
+        }}
+      >
+        register
+      </button>
+      <button
+        onClick={() => {
+          entropy.sign({
+            tx: non_whitelisted_test_tx_req,
+            freeTx: false,
+            retries: 3,
+          })
+        }}
+      >
+        sign
+      </button>
     </div>
   )
 }

@@ -1,8 +1,8 @@
 import React from 'react'
 // For example app, it makes sense to import from the root of the package
 // At least just to double check for sanity that we didn't break anything
-import Entropy from '../../../../../core'
-
+import Entropy from '../../../../../src/core'
+import type { RegisterOptions, SignOptions } from '../../../../../src/core'
 /**
  * @alpha
  *
@@ -16,7 +16,6 @@ export function useEntropy({ seed }: { seed: string }) {
   const [entropy, setEntropy] = React.useState<Entropy>()
   const [error, setError] = React.useState<string>()
   const [loading, setLoading] = React.useState<boolean>(true)
-
   React.useEffect(() => {
     async function setup() {
       try {
@@ -34,5 +33,37 @@ export function useEntropy({ seed }: { seed: string }) {
     setup()
   }, [])
 
-  return { entropy, error, loading }
+  const register = React.useCallback(
+    async ({
+      keyShares,
+      constraintModificationAccount,
+      initialConstraints,
+      freeTx,
+    }: RegisterOptions) => {
+      if (!entropy) {
+        throw new Error('Entropy not initialized')
+      }
+
+      await entropy.register({
+        keyShares,
+        constraintModificationAccount,
+        initialConstraints,
+        freeTx,
+      })
+    },
+    [entropy]
+  )
+
+  const sign = React.useCallback(
+    async ({ tx, freeTx, retries }: SignOptions) => {
+      if (!entropy) {
+        throw new Error('Entropy not initialized')
+      }
+
+      await entropy.sign(tx, freeTx, retries)
+    },
+    [entropy]
+  )
+
+  return { entropy, error, loading, register, sign }
 }
