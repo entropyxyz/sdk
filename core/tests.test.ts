@@ -17,7 +17,7 @@ import {
 import { readKey } from './utils'
 const { assert } = require('chai')
 
-describe.skip('Core Tests', () => {
+describe('Core Tests', () => {
   let entropy: Entropy
   let chainProcess1, chainProcess2, serverProcess1, serverProcess2
 

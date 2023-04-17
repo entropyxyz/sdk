@@ -3,7 +3,7 @@ import { Crypto } from './index'
 
 const { assert } = require('chai')
 
-describe.skip('Crypto Tests', () => {
+describe('Crypto Tests', () => {
   const crypto = new Crypto()
   const mockData = {
     endpoint: '127.0.0.1:3001',
