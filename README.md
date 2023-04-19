@@ -21,7 +21,7 @@ Linting is available and can be done by running `yarn eslint`. You can also use 
 
 #### Running the SDK Manually
 
-The SDK needs a running Entropy node and a running TSS server. To run these, you can use the scripts in `entropy-core`.
+The SDK needs a running Entropy node and running TSS servers (one for alice, and another for bob). To run these, you can use the scripts in `entropy-core`.
 
 - In **three separate terminals in the `entropy-core` directory**, run:
   - `./scripts/sdk-entropy-node.sh`
