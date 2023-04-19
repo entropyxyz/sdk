@@ -19,6 +19,8 @@ Linting is available and can be done by running `yarn eslint`. You can also use 
 
 ### Using the SDK
 
+#### Running the SDK Manually
+
 The SDK needs a running Entropy node and a running TSS server. To run these, you can use the scripts in `entropy-core`.
 
 - In **three separate terminals in the `entropy-core` directory**, run:
@@ -27,6 +29,10 @@ The SDK needs a running Entropy node and a running TSS server. To run these, you
   - `./scripts/sdk-bob-tss.sh`
 
 ### Testing
+
+#### Running tests
+
+The manual steps listed above are automated in the test suite. To run the test suite, run `yarn test` in the root of the repo. This will spin up a local blockchain node, and two threshold server nodes. Reference the `testing-utils/spinUp.ts` file for more details.
 
 ### Test binaries
 
