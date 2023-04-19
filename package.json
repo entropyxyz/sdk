@@ -12,6 +12,7 @@
   "type": "module",
   "scripts": {
     "test": "yarn removedb && jest --runInBand --detectOpenHandles",
+    "test:log": "yarn removedb && jest --runInBand --detectOpenHandles --silent=false --verbose",
     "lint:ts": "tsc",
     "lint:eslint": "eslint . --ext .ts",
     "lint": "yarn lint:ts && yarn lint:eslint",
