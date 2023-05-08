@@ -41,22 +41,6 @@ To run these tests
 - Go into the target/release and copy over entropy and server binaries
 - Add them to testing-utils/testing-binaries
 
-### Typegen
-
-When the Substrate node in `entropy-core` is updated, you will need to update the type metadata. To do this:
-
-#### in `entropy-core`
-
-- `cargo build --release -p entropy`
-- `./scripts/sdk-entropy-node.sh`
-
-#### in entropy-js
-
-- `cd ./packages/substrate/`
-- `./update-metadata.sh`
-
-`packages/substrate/entropy-metadata.json` should be populated with the latest Entropy node metadata
-
 ### Common Errors running tests
 
 Check if your machine is running any entropy or server processes. If so, kill them. This can happen if tests run, fail and don't kill the spawned processes that was running from the test suite.
