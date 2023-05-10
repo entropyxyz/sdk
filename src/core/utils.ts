@@ -1,6 +1,12 @@
 import { decodeAddress, encodeAddress } from '@polkadot/keyring'
 import { hexToU8a, isHex } from '@polkadot/util'
 
+/**
+ * Read a key from the filesystem
+ * @remarks
+ * Currently only used in tests
+ *
+ */
 export const readKey = async (path: string) => {
   if (!path) {
     throw new Error('Path is required')
@@ -31,6 +37,10 @@ export const readKey = async (path: string) => {
   }
 }
 
+/**
+ * Check whether a given string is a valid hex encoded Substrate address
+ *
+ */
 export const isValidSubstrateAddress = (address: string) => {
   try {
     encodeAddress(isHex(address) ? hexToU8a(address) : decodeAddress(address))

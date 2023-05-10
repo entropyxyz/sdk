@@ -19,7 +19,7 @@ export default class Entropy {
   /**
    * @alpha
    *
-   *
+   * @name Entropy
    * Creates an instance of Entropy.
    * @param {Crypto} crypto - {@link Crypto} The Crypto class from the crypto package
    * @param {Substrate} substrate {@link Substrate} - The Substrate class from the substrate package
@@ -40,8 +40,16 @@ export default class Entropy {
   }
 
   /**
-   * @remarks
    * Launches all sub classes encapsulated by {@link Entropy}  class
+   * @remarks
+   *
+   * ```js
+   * const privateKey =
+   * '0xe5be9a5092b81bca64be81d212e7f2f9eba183bb7a90954f7b76361f6edb5c0a'
+   * const chainEndPoint = 'ws://127.0.0.1:9944'
+   *
+   * const entropy = await Entropy.setup(privateKey, chainEndpoint)
+   * ```
    *
    * @static
    * @param {string} seed - private key of user interacting with entropy
@@ -57,11 +65,12 @@ export default class Entropy {
   }
 
   /**
+   * Registers a user in the entropy blockchain
    * @alpha
    *
    * @remarks
-   * Registers a user in the entropy blockchain
-
+   * This takes entropy key shares, tells the entropy chain that you wish to register and
+   * sends your proper key shards off to the proper validators
    *
    * @param {keyShare[]} keyShares - {@link keyShare} - Entropy threshold keys to be distributed (including your own to be stored)?
    * @param {string} constraintModificationAccount - The account that will be used to modify constraints after registration
@@ -146,8 +155,37 @@ export default class Entropy {
 
   /**
    *
-   * Sign a tx (for ethereum currently) using the entropy blockchain. This will take an unsigned tx and return
-   * a signature, it is up to the user to handle from there
+   * Sign a transaction (currently only for EVM compatible chains) using the Entropy network.
+   *
+   * @remarks
+   * This will take an unsigned transaction and return a signature, it is up to the user to
+   * handle from there.
+   *
+   * ```js
+   * import { BigNumber, ethers } from "ethers";
+   *
+   * const provider = ethers.getDefaultProvider(network)
+   * const tx: ethers.utils.UnsignedTransaction = {
+   * to: "0x772b9a9e8aa1c9db861c6611a82d251db4fac990",
+   * value: BigNumber.from("1"),
+   * chainId: 1,
+   * nonce: 1,
+   * data: ethers.utils.hexlify(ethers.utils.toUtf8Bytes("Created On Entropy")),
+   * };
+   *
+   * const result = await entropy.sign(tx, 10);
+   *
+   * // take sig return and use ethers to serialize the tx and signature
+   * const signed_tx = await ethers.utils.serializeTransaction(tx, signature);
+   *
+   * // send tx off to ethereum
+   * try {
+   *  const tx_send = await provider.sendTransaction(signed_tx);
+   *  console.log("transaction sent successfully", { tx_send });
+   * } catch (e: any) {
+   *  console.log({ failedTransaction: e.transaction, e });
+   * }
+   * ```
    *
    * @param {utils.UnsignedTransaction} tx - {@link UnsignedTransaction} - The transaction to be signed
    * @param {boolean} freeTx - use the free tx pallet

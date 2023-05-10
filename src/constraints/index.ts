@@ -77,7 +77,7 @@ export class Constraints extends Substrate {
   /**
    * @alpha
    * @remarks
-   * This function updates the access control list for a user
+   * This function retrieves the access control list for a user
    *
    * @param {Address} entropyAccount - The Account to check the constraint for
    * @returns {Promise<any>} - A promise that returns the current evm ACL

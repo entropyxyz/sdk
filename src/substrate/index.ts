@@ -68,11 +68,14 @@ class SubstrateRead {
   }
 
   /**
+   * Gets all stash keys split up into signing subgroups from chain
    * @alpha
    *
    * @remarks
    * This function is part of the {@link SubstrateRead} class
-   * Gets all stash keys split up into signing subgroups from chain
+   * This will get all the keys from each subgroup - you can use
+   * {@link selectStashKeys} to select one key from each subgroup.
+   * 'Stash keys' means the Entropy chain account IDs for threshold servers.
    *
    * @returns {*}  {Promise<any>} A promise of non converted stash keys
    * @memberof SubstrateRead

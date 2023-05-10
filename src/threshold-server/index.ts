@@ -13,12 +13,11 @@ export class ThresholdServer {
    * @remarks
    * Is a method of the {@link ThresholdServer} class
    *
-   * @param {Array<string>} emsgs - encrypted messages to be sent to a validator node
+   * @param {Array<string>} encryptedKeys - encrypted messages to be sent to a validator node
    * @param {Array<string>} serversWithPort - IP/domain and port of the threshold server, seperated by ':'
    *
    * @returns {Promise<AxiosResponse<any, any>[]>}
    */
-
   async sendKeys(
     encryptedKeys: Array<string>,
     serversWithPort: Array<string>
@@ -34,8 +33,7 @@ export class ThresholdServer {
    * Submits the transaction request to the threshold server so its constraints can be validated
    *
    * @async
-   * @param {Array<EncMsg>} txReq
-   * @param {string[]} serversWithPort IP/domain and port of the threshold server, separated by ':'
+   * @param {Array<EncMsg>} txReq - transaction request
    * @returns {Promise<AxiosResponse<any, any>[]>}
    */
   async submitTransactionRequest(txReq: Array<EncMsg>): Promise<any[]> {
@@ -98,8 +96,7 @@ export class ThresholdServer {
   /**
    * @deprecated
    *
-   * @param {ITransactionRequest} evmTransactionRequest - evm transaction request to be sent
-   * @param {string} thresholdUrls - urls of the threshold server
+   * @param {Array<EncMsg>} encMsg - transaction request
    * @param {number} retries - number of times to retry
    * @memberof ThresholdServer
    */

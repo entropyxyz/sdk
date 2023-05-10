@@ -7,6 +7,7 @@ export class Crypto {
    * @alpha
    *
    * @remarks
+   * Converts server public encryption key from hex to Uint8Array.
    * TODO: JA give proper type to serverDHInfo
    *
    * @param {*} serverDHInfo - Information on server returned by entropy chain
@@ -32,11 +33,10 @@ export class Crypto {
    * @remarks
    * Encrypts and signs a message to send to a validator
    *
-   *
-   * @param {Uint8Array} secretKey - user's secret key
-   * @param {Uint8Array} thresholdKey - entropy threshold key of user for validator to store
-   * @param {Uint8Array} serverDHKey - threshold key of validator to send to
-   * @return {*}  {Promise<string>}
+   * @param {Uint8Array} secretKey - User's secret key
+   * @param {Uint8Array} message - The message to be encrypted and signed
+   * @param {Uint8Array} serverDHKey - Public encryption key of validator to send to
+   * @return {*}  {Promise<string>} Either an error message or a JSON serialized signed message
    * @memberof Crypto
    */
   async encryptAndSign(
