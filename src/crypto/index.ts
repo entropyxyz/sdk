@@ -41,19 +41,19 @@ export class Crypto {
    */
   async encryptAndSign(
     secretKey: Uint8Array,
-    thresholdKey: Uint8Array,
+    message: Uint8Array,
     serverDHKey: Uint8Array
   ): Promise<string> {
     if (typeof window === 'undefined') {
       const { encrypt_and_sign } = await import(
         '@entropyxyz/x25519-chacha20poly1305-nodejs'
       )
-      return encrypt_and_sign(secretKey, thresholdKey, serverDHKey)
+      return encrypt_and_sign(secretKey, message, serverDHKey)
     } else {
       const { encrypt_and_sign } = await import(
         '@entropyxyz/x25519-chacha20poly1305-web'
       )
-      return encrypt_and_sign(secretKey, thresholdKey, serverDHKey)
+      return encrypt_and_sign(secretKey, message, serverDHKey)
     }
   }
 }
