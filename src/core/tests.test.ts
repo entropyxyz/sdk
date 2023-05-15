@@ -72,7 +72,7 @@ describe('Core Tests', () => {
       await entropy.sign(whitelisted_test_tx_req, false, 3)
       throw new Error('Should have errored')
     } catch (e: any) {
-      assert.equal(e.message, 'Internal Server Error')
+      assert.equal(e.message, 'Not Found')
     }
 
     // set user's constraints on-chain
