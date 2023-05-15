@@ -19,27 +19,19 @@ Linting is available and can be done by running `yarn eslint`. You can also use 
 
 ### Testing
 
-Testing in this repo is done against `entropy-core`, so clone and setup that repo. After that, you can run the tests in this repo.
+Testing in this repo is done against `entropy-core`. The tests expect binaries from that repo to be in `testing-utils/test-binaries`
 
-- Make sure you build release in `entropy-core` with `cargo build --release`.
-- In **three separate terminals in the `entropy-core` directory**, run:
-  - `./scripts/sdk-entropy-node.sh`
-  - `./scripts/sdk-alice-tss.sh`
-  - `./scripts/sdk-bob-tss.sh`
+You either build these binaries yourself by cloning `entropy-core`, running `cargo build --release` and then copying the binaries `server`, and `entropy` from `target/release/` in that repo to `testing-util/test-binaries` in this repo.
 
-This will spin up a local blockchain node, and two threshold server nodes.
+Or you can get pre-built binaries from [testing.entropy.family/releases](https://testing.entropy.family/releases), eg:
 
-Then, in this repo, **fourth terminal**, run `yarn test` in to run the tests.
+`curl 'https://testing.entropy.family/releases/entropy/entropy.tar.zst' -o entropy.tar.zst && tar xvf entropy.tar.zst && mv entropy*/* testing-utils/test-binaries`
 
-### Note on tests
+You may need to install [Zstandard compression](https://facebook.github.io/zstd/) to unpack the archive.
 
-Tests require entropy core to be compiled and in this repo to run.
+Once you have those binaries in the right place, run `yarn test`.
 
-To run these tests
-
-- Go to [core](https://github.com/entropyxyz/entropy-core), compile the repo
-- Go into the target/release and copy over entropy and server binaries
-- Add them to testing-utils/testing-binaries
+The tests will spin up a local blockchain node, and two threshold server nodes.
 
 ### Typegen
 
