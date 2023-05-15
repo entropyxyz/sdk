@@ -8,6 +8,8 @@ import { Constraints } from '../constraints'
 import { ThresholdServer } from '../threshold-server'
 import { ITransactionRequest, Arch, EncMsg } from '../threshold-server/types'
 import { Crypto } from '../crypto'
+import { ThresholdInfo } from '../substrate/types'
+
 /**
  * Encapsulates all subclasses and exposes functions to make interacting with entropy simple
  */
@@ -103,7 +105,7 @@ export default class Entropy {
 
     // TODO should we run validation here on the amount of keys to send
     // i.e make sure key shares is signing party big and stash keys are key shares -1 size
-    const thresholdAccountsInfo: any = await this.substrate.getThresholdInfo(
+    const thresholdAccountsInfo: ThresholdInfo = await this.substrate.getThresholdInfo(
       serverStashKeys
     )
 
@@ -119,6 +121,7 @@ export default class Entropy {
         serverDHKey
       )
       encryptedMessages.push(encryptedMessage)
+      // @ts-expect-error Property 'endpoint' does not exist on type 'Address[]'.ts(2339)
       urls.push(thresholdAccountsInfo[i].endpoint)
     }
 
@@ -175,8 +178,7 @@ export default class Entropy {
         name: 'SignatureRequested',
       }
     )
-    const validatorsInfo: Array<any> = record.event.data.toHuman()[0]
-      .validatorsInfo
+    const validatorsInfo = record.event.data.toHuman()[0].validatorsInfo
     const txRequests: Array<EncMsg> = []
     const evmTransactionRequest: ITransactionRequest = {
       arch: Arch.Evm,
