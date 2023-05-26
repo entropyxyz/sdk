@@ -52,10 +52,10 @@ When the Substrate node in `entropy-core` is updated, you will need to update th
 
 #### in entropy-js
 
-- `cd ./packages/substrate/`
+- `cd ./src/substrate/`
 - `./update-metadata.sh`
 
-`packages/substrate/entropy-metadata.json` should be populated with the latest Entropy node metadata
+`src/substrate/entropy-metadata.json` should be populated with the latest Entropy node metadata
 
 ### Common Errors running tests
 
