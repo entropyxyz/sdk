@@ -8,14 +8,17 @@ import { Constraints } from '../constraints'
 import { ThresholdServer } from '../threshold-server'
 import { ITransactionRequest, Arch, EncMsg } from '../threshold-server/types'
 import { Crypto } from '../crypto'
+import { Adapters } from '../adapters'
+import { Adapter } from '../adapters/types'
 /**
  * Encapsulates all subclasses and exposes functions to make interacting with entropy simple
  */
 export default class Entropy {
   crypto: Crypto
-  substrate: Substrate
+  net: Substrate
   thresholdServer: ThresholdServer
   constraints: Constraints
+  adapters: Adapters
   /**
    * @alpha
    *
@@ -27,16 +30,18 @@ export default class Entropy {
    *
    * @returns {*} {@link Entropy} An Entropy class instance
    */
-  constructor(
-    crypto: Crypto,
-    substrate: Substrate,
-    thresholdServer: ThresholdServer,
-    constraints: Constraints
-  ) {
-    this.crypto = crypto
-    this.substrate = substrate
-    this.thresholdServer = thresholdServer
-    this.constraints = constraints
+  constructor(opts: {
+    crypto: Crypto;
+    substrate: Substrate;
+    thresholdServer: ThresholdServer;
+    constraints: Constraints;
+    customAdapters: Adapter[]
+  }) {
+    this.crypto = opts.crypto
+    this.net = opts.substrate
+    this.thresholdServer = opts.thresholdServer
+    this.constraints = opts.constraints
+    this.adapters = new Adapters({ opts.customAdapters })
   }
 
   /**
@@ -48,12 +53,12 @@ export default class Entropy {
    * @param {string} [endpoint] - an endpoint for the entropy blockchain (will default to localhost:9944)
    * @return {*} - {Promise<Entropy>} - An Entropy class instance {@link Entropy}
    */
-  static async setup(seed: string, endpoint?: string): Promise<Entropy> {
+  static async create({ seed, endpoint, account, customAdapters }: { seed: string, endpoint?: string, account?: any, customAdapters?: Adapter[]}): Promise<Entropy> {
     const crypto = new Crypto()
     const substrate = await Substrate.setup(seed, endpoint)
     const thresholdServer = new ThresholdServer()
-    const constraints = new Constraints(substrate.api, substrate.signer)
-    return new Entropy(crypto, substrate, thresholdServer, constraints)
+    const constraints = new Constraints(substrate.substrate, substrate.signer)
+    return new Entropy({crypto, substrate, thresholdServer, constraints, account, customAdapters})
   }
 
   /**
@@ -70,26 +75,13 @@ export default class Entropy {
    *
    * @return {*}  {Promise<AnyJson>} {@link AnyJson} - A JSON return from the chain which contains a boolean of if the registration was successful
    */
-  async register(props: {
+  async register({ keyShares, constraintModificationAccount, freeTx = true, initialConstraints }: {
     keyShares: keyShare[]
     constraintModificationAccount: string
-    freeTx: boolean
+    freeTx?: boolean
     initialConstraints?: string
   }): Promise<AnyJson> {
-    const {
-      keyShares,
-      constraintModificationAccount,
-      freeTx,
-      initialConstraints,
-    } = props
 
-    const isRegistered_check = await this.substrate.api.query.relayer.registered(
-      this.substrate.signer.wallet.address
-    )
-
-    if (isRegistered_check.toHuman()) {
-      throw new Error('already registered')
-    }
     // TODO after typegen: typed Addresses
     if (!isValidSubstrateAddress(constraintModificationAccount)) {
       throw new Error(
@@ -97,49 +89,51 @@ export default class Entropy {
       )
     }
 
+    const isCurrentlyRegistered = await this.net.isRegistered(
+      this.net.signer.wallet.address
+    )
+    if (isCurrentlyRegistered) throw new Error('already registered')
+
+
     //TODO JA better return type
-    const serverKeys = await this.substrate.getStashKeys()
-    const serverStashKeys = this.substrate.selectStashKeys(serverKeys)
+    const serverKeys = await this.net.getStashKeys()
+    const serverStashKeys = this.net.selectStashKeys(serverKeys)
 
     // TODO should we run validation here on the amount of keys to send
     // i.e make sure key shares is signing party big and stash keys are key shares -1 size
-    const thresholdAccountsInfo: any = await this.substrate.getThresholdInfo(
-      serverStashKeys
-    )
+    const thresholdAccountsInfo: any = await this.net.getThresholdInfo(serverStashKeys)
 
-    const encryptedMessages: Array<string> = []
-    const urls: Array<string> = []
-    for (let i = 0; i < serverStashKeys.length; i++) {
+    const keys: Array<{ encryptedKeys: string; serversWithPort: string; }> = await Promise.all(thresholdAccountsInfo.map(async (thresholdAccountInfo, index) => {
       const serverDHKey = await this.crypto.parseServerDHKey(
-        thresholdAccountsInfo[i]
+        thresholdAccountInfo
       )
-      const encryptedMessage = await this.crypto.encryptAndSign(
-        this.substrate.signer.pair.secretKey,
-        keyShares[i],
+      const encryptedKey = await this.crypto.encryptAndSign(
+        this.net.signer.pair.secretKey,
+        keyShares[index],
         serverDHKey
       )
-      encryptedMessages.push(encryptedMessage)
-      urls.push(thresholdAccountsInfo[i].endpoint)
-    }
+      return { encryptedKey, url }
+    }))
 
-    const registerTx = this.substrate.api.tx.relayer.register(
+    const registerTx = this.net.substrate.tx.relayer.register(
       constraintModificationAccount,
       initialConstraints ? initialConstraints : null
     )
 
-    await this.substrate.sendAndWaitFor(registerTx, freeTx, {
+    await this.net.sendAndWaitFor(registerTx, freeTx, {
       section: 'relayer',
       name: 'SignalRegister',
     })
 
-    await this.substrate.api.query.relayer.registering(
-      this.substrate.signer.wallet.address
+    // @Jesse question: what is the return value of this?
+    await this.net.substrate.query.relayer.registering(
+      this.net.signer.wallet.address
     )
     // TODO: JA handle result, log info? do nothing? assert it is true?
-    await this.thresholdServer.sendKeys(encryptedMessages, urls)
+    await this.thresholdServer.sendKeys(keys)
 
-    const isRegistered = await this.substrate.api.query.relayer.registered(
-      this.substrate.signer.wallet.address
+    const isRegistered = await this.net.substrate.query.relayer.registered(
+      this.net.signer.wallet.address
     )
     return isRegistered.toHuman()
   }
@@ -154,20 +148,17 @@ export default class Entropy {
    * @param {number} retries - To be deprecated when alice signs with the validators, but polling for sig retries
    * @return {*}  {Promise<SignatureLike>} {@link SignatureLike} - A signature to then be included in a transaction
    */
-  async sign(
-    tx: utils.UnsignedTransaction,
-    freeTx: boolean,
-    retries: number
-  ): Promise<SignatureLike> {
-    const serializedTx = await utils.serializeTransaction(tx)
-
-    const sigHash = utils.keccak256(serializedTx)
-    const submitHashOnchain = await this.substrate.api.tx.relayer.prepTransaction(
+  async sign({sigRequest, arch, freeTx = true, retries}:{
+    sigRequestHash: string;
+    freeTx?: boolean;
+    retries?: number;
+  }): Promise<SignatureLike> {
+    const submitHashOnchain = await this.net.substrate.tx.relayer.prepTransaction(
       {
-        sigHash,
+        sigRequestHash,
       }
     )
-    const record = await this.substrate.sendAndWaitFor(
+    const record = await this.net.sendAndWaitFor(
       submitHashOnchain,
       freeTx,
       {
@@ -179,10 +170,11 @@ export default class Entropy {
       .validatorsInfo
     const txRequests: Array<EncMsg> = []
     const evmTransactionRequest: ITransactionRequest = {
-      arch: Arch.Evm,
+      arch,
       transaction_request: serializedTx,
     }
-    for (let i = 0; i < validatorsInfo.length; i++) {
+
+    const txRequests: Array<EncMsg> = await Promise.all(validatorsInfo.map(async (validator) => {
       const serverDHKey = await this.crypto.parseServerDHKey({
         x25519PublicKey: validatorsInfo[i].x25519PublicKey,
       })
@@ -192,15 +184,16 @@ export default class Entropy {
       )
 
       const encryptedMessage = await this.crypto.encryptAndSign(
-        this.substrate.signer.pair.secretKey,
+        this.net.signer.pair.secretKey,
         encoded,
         serverDHKey
       )
-      txRequests.push({
+      return {
         url: validatorsInfo[i].ipAddress,
         encMsg: encryptedMessage,
-      })
-    }
+      }
+    }))
+
 
     await this.thresholdServer.pollNodeToStartSigning(txRequests, retries)
 
@@ -210,5 +203,34 @@ export default class Entropy {
       retries
     )
     return signature
+  }
+
+
+  /**
+   *
+   * Sign a tx (for ethereum currently) using the entropy blockchain. This will take an unsigned tx and return
+   * a signature, it is up to the user to handle from there
+   *
+   * @param {utils.UnsignedTransaction} tx - {@link UnsignedTransaction} - The transaction to be signed
+   * @param {boolean} freeTx - use the free tx pallet
+   * @param {number} retries - To be deprecated when alice signs with the validators, but polling for sig retries
+   * @return {*}  {Promise<SignatureLike>} {@link SignatureLike} - A signature to then be included in a transaction
+   */
+  async signTransation({tx, freeTx = true, retries, type = 'eth'}:{
+    tx: utils.UnsignedTransaction,
+    freeTx?: boolean,
+    retries?: number
+  }): Promise<SignatureLike> {
+    if (!this.adapters[type]) throw new TypeError(`Can not sign transactions for ${type}, unknown transaction type`)
+    if (this.adapters[type].preSign) {
+      const hash = await this.adapters[type].preSign(tx)
+      if (!hash) throw new TypeError(`The ${type} adapter preSign function did not return a hash instead returned ${hash}`)
+      else if (typeof hash !== 'string') throw new TypeError(`Incorrect return type from ${type} adapter preSign function got ${hash} expected a string`)
+      else {
+        const signature = await this.sign(hash)
+        if (this.adapters[type].postSign) return this.adapters[type].postSign(signature)
+        return signature
+      }
+    }
   }
 }

@@ -16,16 +16,16 @@ export class ThresholdServer {
    * @param {Array<string>} emsgs - encrypted messages to be sent to a validator node
    * @param {Array<string>} serversWithPort - IP/domain and port of the threshold server, seperated by ':'
    *
-   * @returns {Promise<AxiosResponse<any, any>[]>}
+   * @returns {Promise<void>}
    */
 
-  async sendKeys(
-    encryptedKeys: Array<string>,
-    serversWithPort: Array<string>
-  ): Promise<any[]> {
-    return Promise.all(
-      serversWithPort.map(async (server, index) =>
-        sendHttpPost(`http://${server}/user/new`, encryptedKeys[index])
+  async sendKeys(keysAndUrls
+    Array<{encryptedKeys: string;
+    url: string;
+  }>): Promise<void> {
+    await Promise.all(
+      keysAndUrls.map(async ({url, encryptedKey}, index) =>
+        sendHttpPost(`http://${url}/user/new`, encryptedKey)
       )
     )
   }
@@ -36,10 +36,10 @@ export class ThresholdServer {
    * @async
    * @param {Array<EncMsg>} txReq
    * @param {string[]} serversWithPort IP/domain and port of the threshold server, separated by ':'
-   * @returns {Promise<AxiosResponse<any, any>[]>}
+   * @returns {Promise<>}
    */
-  async submitTransactionRequest(txReq: Array<EncMsg>): Promise<any[]> {
-    return Promise.all(
+  async submitTransactionRequest(txReq: Array<EncMsg>): Promise<void> {
+    await Promise.all(
       txReq.map(
         async (message) =>
           await sendHttpPost(`http://${message.url}/user/tx`, message.encMsg)
@@ -95,15 +95,14 @@ export class ThresholdServer {
     }
   }
 
+// is a band-aid for core
   /**
-   * @deprecated
-   *
    * @param {ITransactionRequest} evmTransactionRequest - evm transaction request to be sent
    * @param {string} thresholdUrls - urls of the threshold server
    * @param {number} retries - number of times to retry
    * @memberof ThresholdServer
    */
-  async pollNodeToStartSigning(encMsg: Array<EncMsg>, retries: number) {
+  async pollNodeToStartSigning(encMsg: Array<EncMsg>, retries: number): Promise<void> {
     let i = 0
     let status
     let postRequest
