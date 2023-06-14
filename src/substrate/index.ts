@@ -168,7 +168,6 @@ export class Substrate extends SubstrateRead {
     })
   }
 
-  async
 
   /**
    * @alpha

@@ -1,7 +1,7 @@
 import { AnyJson } from '@polkadot/types-codec/types'
 import { getApi } from './utils'
 import { StashKeys, ThresholdInfo, Address } from './types'
-
+import { ServerInfo } from '../types'
 
 /**
  *

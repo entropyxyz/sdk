@@ -1,4 +1,4 @@
-import { keyShare } from './types'
+import { keyShare, UserTransactionRequest } from './types'
 import { AnyJson } from '@polkadot/types-codec/types'
 import { utils } from 'ethers'
 import { SignatureLike } from '@ethersproject/bytes'
@@ -153,33 +153,38 @@ export default class Entropy {
     freeTx?: boolean;
     retries?: number;
   }): Promise<SignatureLike> {
-    const submitHashOnchain = await this.net.substrate.tx.relayer.prepTransaction(
-      {
-        sigRequestHash,
-      }
-    )
-    const record = await this.net.sendAndWaitFor(
-      submitHashOnchain,
-      freeTx,
-      {
-        section: 'relayer',
-        name: 'SignatureRequested',
-      }
-    )
-    const validatorsInfo: Array<any> = record.event.data.toHuman()[0]
-      .validatorsInfo
+    /* this might be a weird thing*/
+    const stashKeysGroups = await this.net.getStashKeys()
+    const stashKeys = stashKeysGroups.reduce((agg, group) => {
+      const index = parseInt(sigRequest, 16) % group.length
+      agg.push(group[index])
+    }, [])
+
+    const validatorsInfo = await Promise.all(stashKeys.map((stashKey) =>{
+      return this.net.substrate.query.stakingExtension.thresholdServers(stashKey)
+    }))
+
     const txRequests: Array<EncMsg> = []
-    const evmTransactionRequest: ITransactionRequest = {
+    const transactionRequest: UserTransactionRequest = {
       arch,
-      transaction_request: serializedTx,
+      transaction_request: sigRequestHash,
+      validator_ips: validatorsInfo.map((validator) => validator.ip_address),
     }
 
     const txRequests: Array<EncMsg> = await Promise.all(validatorsInfo.map(async (validator) => {
+      // use buffere from iunit8 to string 'hex'
       const serverDHKey = await this.crypto.parseServerDHKey({
         x25519PublicKey: validatorsInfo[i].x25519PublicKey,
       })
+
       const encoded = Uint8Array.from(
-        JSON.stringify(evmTransactionRequest),
+
+// FINISH THE FORMAT OF NEW TRANSACTION
+
+
+        JSON.stringify({
+          ...transactionRequest
+        }),
         (x) => x.charCodeAt(0)
       )
 
