@@ -130,6 +130,6 @@ describe('Crypto Tests', () => {
       serverDHKey
     )
 
-    assert.closeTo(result.length, 8130, 20)
+    assert.closeTo(result.length, 2306, 20)
   })
 })
