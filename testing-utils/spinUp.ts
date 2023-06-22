@@ -66,11 +66,9 @@ export const spinThreshold = async (
 ): Promise<ChildProcessWithoutNullStreams> => {
   const args = []
   if (name) {
-    args.push('--' + name)
+    args.push('--' + name, '--threshold-url=127.0.0.1:' + port )
   }
-  const process = spawn(bin, args, {
-    env: { ROCKET_PORT: port, ROCKET_ADDRESS: '127.0.0.1' },
-  })
+  const process = spawn(bin, args)
   // comment in for threshold logging and add verbose to jest
   // process.stderr.on('data', async function (chunk) {
   //   const message = chunk.toString()

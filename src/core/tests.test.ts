@@ -36,7 +36,7 @@ describe('Core Tests', () => {
     }
     await sleep(9000)
     await modifyOcwPostEndpoint(
-      'ws://localhost:9945',
+      'ws://127.0.0.1:9945',
       'http://localhost:3002/signer/new_party'
     )
     entropy = await Entropy.setup(charlieSeed)
