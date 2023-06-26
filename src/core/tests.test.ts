@@ -68,8 +68,12 @@ describe('Core Tests', () => {
     })
 
     // signing attempts should fail cause we haven't set constraints yet
-     const no_constraint: any = await entropy.sign(whitelisted_test_tx_req, false, 3)
-     assert.equal(no_constraint.length, 0)
+    const no_constraint: any = await entropy.sign(
+      whitelisted_test_tx_req,
+      false,
+      3
+    )
+    assert.equal(no_constraint.length, 0)
 
     // set user's constraints on-chain
     const charlieStashEntropy = await Entropy.setup(charlieStashSeed)
@@ -79,7 +83,11 @@ describe('Core Tests', () => {
     )
 
     // signing should fail with a non-whitelisted tx requests
-    const wrong_constraint: any =  await entropy.sign(non_whitelisted_test_tx_req, false, 3)
+    const wrong_constraint: any = await entropy.sign(
+      non_whitelisted_test_tx_req,
+      false,
+      3
+    )
     assert.equal(wrong_constraint.length, 0)
 
     // signing should work for whitelisted tx requests
