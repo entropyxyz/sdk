@@ -25,8 +25,8 @@ jobs:
       - run: sudo swapon /swapfile
       - run: grep Swap /proc/meminfo
       - run: sudo apt update
-      - run: sudo apt install zstd -y
-      - run: curl 'https://testing.entropy.family/releases/entropy/entropy.tar.zst' -o entropy.tar.zst; tar xvf entropy.tar.zst; mkdir -p testing-utils/test-binaries; mv entropy*/* testing-utils/test-binaries
+      - run: curl 'https://github.com/entropyxyz/entropy-core/releases/download/v0.0.5/entropy' -o testing-utils/test-binaries/entropy && chmod a+x testing-utils/test-binaries/entropy
+      - run: curl 'https://github.com/entropyxyz/entropy-core/releases/download/v0.0.5/server' -o testing-utils/test-binaries/server && chmod a+x testing-utils/test-binaries/server
       - run:
           command: yarn run lint
           name: Lint app
