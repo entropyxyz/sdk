@@ -36,7 +36,7 @@ describe('Core Tests', () => {
     }
     await sleep(9000)
     await modifyOcwPostEndpoint(
-      'ws://localhost:9945',
+      'ws://127.0.0.1:9945',
       'http://localhost:3002/signer/new_party'
     )
     entropy = await Entropy.setup(charlieSeed)
@@ -68,12 +68,12 @@ describe('Core Tests', () => {
     })
 
     // signing attempts should fail cause we haven't set constraints yet
-    try {
-      await entropy.sign(whitelisted_test_tx_req, false, 3)
-      throw new Error('Should have errored')
-    } catch (e: any) {
-      assert.equal(e.message, 'Not Found')
-    }
+    const no_constraint: any = await entropy.sign(
+      whitelisted_test_tx_req,
+      false,
+      3
+    )
+    assert.equal(no_constraint.length, 0)
 
     // set user's constraints on-chain
     const charlieStashEntropy = await Entropy.setup(charlieStashSeed)
@@ -83,12 +83,12 @@ describe('Core Tests', () => {
     )
 
     // signing should fail with a non-whitelisted tx requests
-    try {
-      await entropy.sign(non_whitelisted_test_tx_req, false, 3)
-      throw new Error('Should have errored')
-    } catch (e: any) {
-      assert.equal(e.message, 'Not Found')
-    }
+    const wrong_constraint: any = await entropy.sign(
+      non_whitelisted_test_tx_req,
+      false,
+      3
+    )
+    assert.equal(wrong_constraint.length, 0)
 
     // signing should work for whitelisted tx requests
     const signature: any = await entropy.sign(
