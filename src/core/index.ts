@@ -14,11 +14,11 @@ import { Adapter } from '../adapters/types'
  * Encapsulates all subclasses and exposes functions to make interacting with entropy simple
  */
 export default class Entropy {
-  crypto: Crypto
-  net: Substrate
-  thresholdServer: ThresholdServer
-  constraints: Constraints
-  adapters: Adapters
+  crypto: Crypto,
+  net: Substrate,
+  thresholdServer: ThresholdServer,
+  constraints: Constraints,
+  adapters: Adapters,
   /**
    * @alpha
    *

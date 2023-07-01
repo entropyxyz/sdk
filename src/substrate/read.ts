@@ -1,3 +1,4 @@
+import { ApiPromise } from '@polkadot/api'
 import { AnyJson } from '@polkadot/types-codec/types'
 import { getApi } from './utils'
 import { StashKeys, ThresholdInfo, Address } from './types'
@@ -15,7 +16,7 @@ export class SubstrateRead {
    * @type {ApiPromise} the api object for an Entropy chain
    * @memberof SubstrateRead
    */
-  api: ApiPromise
+  substrate: ApiPromise
 
   /**
    * Creates an instance of SubstrateRead.
@@ -123,7 +124,7 @@ export class SubstrateRead {
    * @returns {*}  {Promise<boolean>} An object that contains the account if it was registered
    */
   async isRegistered(address: Address): Promise<boolean> {
-    const result = await this.substrate.query.relayer.registered(addres)
+    const result = await this.substrate.query.relayer.registered(address)
     // check to see if result.toHuman returns an object
     return !!result.toHuman().is_registering
   }

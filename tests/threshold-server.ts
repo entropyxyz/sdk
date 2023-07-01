@@ -1,4 +1,4 @@
-import { ThresholdServer } from '.'
+import { ThresholdServer } from '../src/threshold-server'
 import {
   spinThreshold,
   spinChain,

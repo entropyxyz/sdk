@@ -1,11 +1,11 @@
-import { Substrate } from './index'
+import { Substrate } from '../src/substrate'
 import {
   spinChain,
   sleep,
   disconnect,
   aliceSeed,
   bobSeed,
-} from '../../testing-utils'
+} from '../testing-utils'
 
 const { assert } = require('chai')
 

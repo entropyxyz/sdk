@@ -1,11 +1,11 @@
-import Entropy from '../core'
+import Entropy from '../src/core'
 import {
   spinChain,
   sleep,
   disconnect,
   daveSeed,
   aliceAddress,
-} from '../../testing-utils'
+} from '../testing-utils'
 const { assert } = require('chai')
 
 describe('Constraint Tests', () => {

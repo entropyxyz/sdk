@@ -1,4 +1,4 @@
-import Entropy from '.'
+import Entropy from '../src/core'
 import {
   spinChain,
   spinThreshold,
@@ -13,8 +13,8 @@ import {
   whitelisted_test_tx_req,
   non_whitelisted_test_tx_req,
   whitelisted_test_constraints,
-} from '../../testing-utils'
-import { readKey } from './utils'
+} from '../testing-utils'
+import { readKey } from '../src/core/utils'
 const { assert } = require('chai')
 
 describe('Core Tests', () => {
