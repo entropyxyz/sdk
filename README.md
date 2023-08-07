@@ -5,6 +5,8 @@
 
 ## Usage
 
+### Entropy
+
 ### keys
 ### Registration
 ### Signature requests

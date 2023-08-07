@@ -83,12 +83,16 @@ export default class Entropy {
   }): Promise<AnyJson> {
 
     // TODO after typegen: typed Addresses
+
+    // check the format of the program key
+
+
     if (!isValidSubstrateAddress(constraintModificationAccount)) {
       throw new Error(
         'constraintModificationAccount must be a Substrate address'
       )
     }
-
+    // is it already registered?
     const isCurrentlyRegistered = await this.net.isRegistered(
       this.net.signer.wallet.address
     )
@@ -96,6 +100,8 @@ export default class Entropy {
 
 
     //TODO JA better return type
+
+     // get the server keys toencrypt
     const serverKeys = await this.net.getStashKeys()
     const serverStashKeys = this.net.selectStashKeys(serverKeys)
 
