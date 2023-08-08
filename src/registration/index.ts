@@ -1,6 +1,6 @@
 import { keyShare, StashKeys, ThresholdInfo } from './types'
 import { isLoaded, loadCryptoLib } from './utils/crypto'
-import { isValidSubstrateAddress } from './utils'
+import { isValidSubstrateAddress, sendHttpPost } from './utils'
 import Extrinsic from './extrinsic'
 export interface RegistrationParams {
   keyShares: keyShare[]
@@ -22,11 +22,10 @@ sendAndWaitFor
 const
 
 export default class RegistrationManager extends Extrinsic {
-  constructor ({ substrate, signer, thresholdServer }) {
+  constructor ({ substrate, signer }) {
     super({ signer, substrate })
     this.isCryptoLoaded = isLoaded
     this.crypto = loadCryptoLib()
-    this.thresholdServer = thresholdServer
   }
 
   async register({ keyShares, programModAccount, freeTx = true, initialProgram }: RegistrationParams) {
@@ -78,7 +77,7 @@ export default class RegistrationManager extends Extrinsic {
       this.signer.wallet.address
     )
     // TODO: JA handle result, log info? do nothing? assert it is true?
-    await this.thresholdServer.sendKeys(keys)
+    await this.sendKeys(keys)
 
     const isRegistered = await this.substrate.query.relayer.registered(
       this.signer.wallet.address
@@ -105,5 +104,16 @@ export default class RegistrationManager extends Extrinsic {
       convertedResult ? result.push(convertedResult) : null
     }
     return result
+  }
+
+  async sendKeys(keysAndUrls
+    Array<{encryptedKeys: string;
+    url: string;
+  }>): Promise<void> {
+    await Promise.all(
+      keysAndUrls.map(async ({url, encryptedKey}, index) =>
+        sendHttpPost(`http://${url}/user/new`, encryptedKey)
+      )
+    )
   }
 }

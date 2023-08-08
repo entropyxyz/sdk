@@ -10,6 +10,11 @@ export interface KeyPair {
   private: hexString;
 }
 
+export interface Signer {
+  wallet: KeyringPair
+  pair: Keypair
+}
+
 export interface Account {
   keyShare: string;
   sigRrequestKeyPair;

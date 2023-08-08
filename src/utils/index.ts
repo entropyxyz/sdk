@@ -11,6 +11,19 @@ export const isValidSubstrateAddress = (address: string) => {
   }
 }
 
+export async function sendHttpPost(url: string, data: any): Promise<any> {
+  const headers = {
+    'Content-Type': 'application/json',
+  }
+  return fetch(url, {
+    method: 'POST',
+    headers,
+    body: data,
+  })
+}
+
+
+
 export const readKey = async (path: string) => {
   if (!path) {
     throw new Error('Path is required')

@@ -51,7 +51,7 @@ export async function constructApiGetterFuntion (): (endpoint?: string) => Promi
  * @returns {*}  {@link Signer} - a signer object for the user talking to the Entropy blockchain
  */
 export const getWallet = async (seed: string): Promise<Signer> => {
-  const keyring = new Keyring({ type: 'sr25519' })
+  const keyring = new   ({ type: 'sr25519' })
   await cryptoWaitReady()
   const pair = sr25519PairFromSeed(seed)
   const wallet = keyring.addFromPair(pair)
