@@ -1,7 +1,7 @@
-import { keyShares } from './types'
+import { keyShare, StashKeys, ThresholdInfo } from './types'
 import { isLoaded, loadCryptoLib } from './utils/crypto'
 import { isValidSubstrateAddress } from './utils'
-
+import Extrinsic from './extrinsic'
 export interface RegistrationParams {
   keyShares: keyShare[]
   programModAccount: string

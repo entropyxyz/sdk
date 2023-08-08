@@ -1,3 +1,7 @@
+import { Keypair } from '@polkadot/util-crypto/types'
+import { KeyringPair } from '@polkadot/keyring/types'
+import type { AccountId32 } from '@polkadot/types/interfaces/runtime'
+
 export type base64string = string
 export type hexString = string
 
@@ -41,6 +45,12 @@ export interface Message {
     account: Uint8Array;
     validators_info: ValidatorInfo;
 }
+
+export type Address = AccountId32 | string | Uint8Array
+export type StashKeys = Array<Address>
+export type ThresholdInfo = Array<Array<Address>>
+
+
 /*
 
 return type for isRegistering
