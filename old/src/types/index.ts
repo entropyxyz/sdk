@@ -8,7 +8,7 @@ export interface KeyPair {
 
 export interface Account {
   keyShare: string;
-  sigRrequestKeyPair;
+  sigRrequestKeyPair; // is it type keypair? 
 }
 
 

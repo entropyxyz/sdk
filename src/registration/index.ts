@@ -1,9 +1,11 @@
-import { keyShares } from './types'
-import { isLoaded, loadCryptoLib } from './utils/crypto'
-import { isValidSubstrateAddress } from './utils'
+import { KeyShare } from '../types'
+import { isLoaded, loadCryptoLib } from '../utils/crypto'
+import { isValidSubstrateAddress } from '../utils/validateSubstrateAddress'
+import { ThresholdServer } from '../signing'
+import {Extrinsic} from '../extrinsic'
 
-export interface RegistrationParams {
-  keyShares: keyShare[]
+export interface RegistrationParams  {
+  keyShares: KeyShare[] // account? 
   programModAccount: string
   freeTx?: boolean
   initialProgram?: string
@@ -19,9 +21,14 @@ sendAndWaitFor
 */
 
 
-const
 
 export default class RegistrationManager extends Extrinsic {
+
+  isCryptoLoaded:Promise<boolean>;
+  crypto: any ; // we should type library links? so as not to take strings
+  thresholdServer = ThresholdServer; 
+
+
   constructor ({ substrate, signer, thresholdServer }) {
     super({ signer, substrate })
     this.isCryptoLoaded = isLoaded

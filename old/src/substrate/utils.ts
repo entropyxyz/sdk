@@ -12,7 +12,7 @@ import { sr25519PairFromSeed, cryptoWaitReady } from '@polkadot/util-crypto'
  * @returns {*}  {Promise<ApiPromise>} Promise for interfacing with entropy chain
  */
 
-export  const getApi:(endpoint?: string) => Promise<ApiPromise>  = constructGetApiFuntion()
+export const getApi:(endpoint?: string) => Promise<ApiPromise>  = constructGetApiFuntion() // never gets used 
 
 /**
  * @alpha

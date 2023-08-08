@@ -1,3 +1,5 @@
+import { Key } from "readline";
+
 export type base64string = string
 export type hexString = string
 
@@ -6,13 +8,16 @@ export interface KeyPair {
   private: hexString;
 }
 
-export interface Account {
+// seperated out KeyShare 
+export interface KeyShare {
   keyShare: string;
-  sigRrequestKeyPair;
 }
 
+export interface Account extends KeyShare {
+  sigRrequestKeyPair: KeyPair; // is it type Keypair? 
+}
 
-    /// Information about a threshold server
+/// Information about a threshold server
 export interface ServerInfo {
   tss_account: Uint8Array;
   x25519_public_key: Uint8Array;
@@ -41,6 +46,7 @@ export interface Message {
     account: Uint8Array;
     validators_info: ValidatorInfo;
 }
+
 /*
 
 return type for isRegistering
