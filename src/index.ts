@@ -34,7 +34,7 @@ export default class Entropy {
     this.keys = getWallet(opts.seed)
 
     const wsProvider = new WsProvider(endpoint)
-    const substrate = new ApiPromise({ provider: wsProvider })
+    const substrate = await ApiPromise({ provider: wsProvider })
     substrate.isReady.then(() => {
       this.#ready()
     }).catch((error) => {

@@ -1,8 +1,8 @@
+import { ApiPromise } from '@polkadot/api'
 import { KeyShare, StashKeys, ThresholdInfo } from '../types'
 import { isLoaded, loadCryptoLib } from '../utils/crypto'
 import { isValidSubstrateAddress, sendHttpPost } from '../utils'
 import { Extrinsic } from '../extrinsic'
-import { Substrate } from '../../old/src/substrate'
 import { Signer } from '../types'
 
 export interface RegistrationParams {
@@ -23,12 +23,12 @@ sendAndWaitFor
 
 
 export default class RegistrationManager extends Extrinsic {
-  substrate: Substrate
+  substrate: ApiPromise
   signer: Signer
   isCryptoLoaded: any
   crypto: Promise<boolean>
   
-  constructor ({ substrate, signer }) {
+  constructor ({ substrate, signer }: {substrate: ApiPromise, signer: Signer}) {
     super({ signer, substrate })
     this.isCryptoLoaded = isLoaded
     this.crypto = loadCryptoLib()
