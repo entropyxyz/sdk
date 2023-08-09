@@ -15,11 +15,15 @@ export interface Signer {
   pair: Keypair
 }
 
-export interface Account {
-  keyShare: string;
+export interface KeyShare {
+  keyShare: Uint8Array;
+}
+
+export interface Account extends KeyShare {
   sigRrequestKeyPair;
 }
 
+export type keyShare = Uint8Array
 
     /// Information about a threshold server
 export interface ServerInfo {

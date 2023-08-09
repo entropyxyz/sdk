@@ -1,9 +1,12 @@
-import { keyShare, StashKeys, ThresholdInfo } from './types'
-import { isLoaded, loadCryptoLib } from './utils/crypto'
-import { isValidSubstrateAddress, sendHttpPost } from './utils'
-import Extrinsic from './extrinsic'
+import { KeyShare, StashKeys, ThresholdInfo } from '../types'
+import { isLoaded, loadCryptoLib } from '../utils/crypto'
+import { isValidSubstrateAddress, sendHttpPost } from '../utils'
+import { Extrinsic } from '../extrinsic'
+import { Substrate } from '../../old/src/substrate'
+import { Signer } from '../types'
+
 export interface RegistrationParams {
-  keyShares: keyShare[]
+  keyShares: KeyShare[]
   programModAccount: string
   freeTx?: boolean
   initialProgram?: string
@@ -19,9 +22,12 @@ sendAndWaitFor
 */
 
 
-const
-
 export default class RegistrationManager extends Extrinsic {
+  substrate: Substrate
+  signer: Signer
+  isCryptoLoaded: any
+  crypto: Promise<boolean>
+  
   constructor ({ substrate, signer }) {
     super({ signer, substrate })
     this.isCryptoLoaded = isLoaded
@@ -106,8 +112,8 @@ export default class RegistrationManager extends Extrinsic {
     return result
   }
 
-  async sendKeys(keysAndUrls
-    Array<{encryptedKeys: string;
+  async sendKeys(keysAndUrls)
+    <Array<{encryptedKeys: string;
     url: string;
   }>): Promise<void> {
     await Promise.all(
