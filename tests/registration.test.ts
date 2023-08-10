@@ -2,6 +2,7 @@ import RegistrationManager from '../src/registration'
 import { Signer } from '../src/types'
 import { Keypair } from '@polkadot/util-crypto/types'
 import { Keyring } from '@polkadot/api'
+import { ApiPromise } from '@polkadot/api'
 import { KeyringPair } from '@polkadot/keyring/types'
 import { getWallet } from '../src/keys'
 import { Substrate } from '../src/substrate'
@@ -28,7 +29,7 @@ import { Wallet } from 'ethers'
 const { assert } = require('chai')
 
 describe('Registration Tests', () => {
-  let entropy: Entropy
+  let entropy: RegistrationManager
   let chainProcess1, chainProcess2, serverProcess1, serverProcess2
 
   const chainPath = process.cwd() + 'tests/testing-utils/test-binaries/entropy'
@@ -57,13 +58,15 @@ describe('Registration Tests', () => {
 
   const signer = await getWallet(seed)
 
-  entropy = new RegistrationManager({substrate, signer})
-    
 
+
+ entropy = new RegistrationManager({ substrate: substrate.substrate, signer })
+
+    
   })
 
   afterEach(async function () {
-    await disconnect(this.api)
+    await disconnect(this.substrate)
     await sleep(3000)
     serverProcess1.kill()
     serverProcess2.kill()
@@ -101,6 +104,7 @@ describe('Registration Tests', () => {
     // )
     
     // assert.equal(no_constraint.length, 0) // not sure what this is? 
+
     await disconnect(charlieStashEntropy.substrate.substrate)
   })
 })

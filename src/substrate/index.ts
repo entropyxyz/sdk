@@ -15,6 +15,8 @@ import { getApi, getWallet } from './utils'
  */
 export class Substrate extends SubstrateRead {
   signer: Signer
+  apiInstance: ApiPromise;
+
 
   /**
    * @alpha
@@ -27,6 +29,7 @@ export class Substrate extends SubstrateRead {
    */
   constructor(api: ApiPromise, signer: Signer) {
     super(api)
+    this.apiInstance = api;
     this.signer = signer
   }
 
