@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import { ApiPromise } from '@polkadot/api'
 import { AnyJson } from '@polkadot/types-codec/types'
 import { KeyShare, StashKeys, ThresholdInfo } from '../types'
