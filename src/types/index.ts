@@ -10,11 +10,6 @@ export interface KeyPair {
   private: hexString;
 }
 
-export interface Signer {
-  wallet: KeyringPair
-  pair: Keypair
-}
-
 export interface Account {
   keyShare: string;
   sigRrequestKeyPair;
@@ -27,16 +22,36 @@ export interface ServerInfo {
   x25519_public_key: Uint8Array;
   endpoint: string;
 }
-
+/*
+/// Represents an unparsed, transaction request coming from the client.
+#[cfg_attr(feature = "std", derive(Serialize, Deserialize))]
+#[derive(Debug, Clone, PartialEq)]
+pub struct UserTransactionRequest {
+    /// 'eth', etc.
+    pub arch: String,
+    /// ETH: RLP encoded transaction request
+    pub transaction_request: String,
+    /// Information from the validators in signing party
+    pub validators_info: Vec<ValidatorInfo>,
+}
+*/
 export interface UserTransactionRequest {
     /// 'eth', etc.
-    arch: string,
+    arch: string;
     /// ETH: RLP encoded transaction request
-    transaction_request: string,
-    validator_ips: Uint8Array[],
-    message: Message,
+    transaction_request: string;
+    validators_info: ValidatorInfo;
 }
 
+/*
+#[cfg_attr(feature = "std", derive(Serialize, Deserialize))]
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct ValidatorInfo {
+    pub x25519_public_key: X25519PublicKey,
+    pub ip_address: SocketAddrV4,
+    pub tss_account: AccountId32,
+}
+*/
 export interface ValidatorInfo {
     x25519_public_key: Uint8Array;
     ip_address: Uint8Array;
@@ -55,6 +70,15 @@ export type Address = AccountId32 | string | Uint8Array
 export type StashKeys = Array<Address>
 export type ThresholdInfo = Array<Array<Address>>
 
+export interface Signer {
+  wallet: KeyringPair;
+  pair: Keypair;
+}
+
+export interface EventFilter {
+  section: string;
+  name: string;
+}
 
 /*
 
