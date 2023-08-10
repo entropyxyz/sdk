@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { ApiPromise } from '@polkadot/api'
 import { AnyJson } from '@polkadot/types-codec/types'
 import { KeyShare, StashKeys, ThresholdInfo } from '../types'
@@ -17,12 +18,12 @@ export interface RegistrationParams {
 export default class RegistrationManager extends Extrinsic {
   substrate: ApiPromise
   signer: Signer
-  cryptoLibLoaded: Promise<void> 
-  cryptoLib: any 
-  
+  cryptoLibLoaded: Promise<void>
+  cryptoLib: any
+
   constructor ({ substrate, signer }: {substrate: ApiPromise, signer: Signer}) {
     super({ signer, substrate })
-    this.cryptoLibLoaded = this.loadCrypto(); 
+    this.cryptoLibLoaded = this.loadCrypto();
   }
 
   async loadCrypto() {
@@ -30,7 +31,7 @@ export default class RegistrationManager extends Extrinsic {
   }
 
   async parseServerDHKey(serverDHInfo: any): Promise<Uint8Array> {
-    await this.cryptoLibLoaded; 
+    await this.cryptoLibLoaded;
     const { from_hex } = this.cryptoLib;
     return from_hex(serverDHInfo.x25519PublicKey);
   }
@@ -39,16 +40,16 @@ export default class RegistrationManager extends Extrinsic {
 
   async register({ keyShares, programModAccount, freeTx = true, initialProgram }: RegistrationParams) {
     await this.cryptoLibLoaded;  // Ensure the library is loaded
-  
+
     if (!isValidSubstrateAddress(programModAccount)) {
       throw new Error('programModAccount must be a Substrate address');
     }
-  
+
     const isCurrentlyRegistered = await this.substrate.query.relayer.registered(this.signer.wallet.address);
     if (isCurrentlyRegistered.isSome && isCurrentlyRegistered.unwrap()) {
       throw new Error('already registered');
     }
-  
+
     const serverKeys = await this.substrate.query.stakingExtension.signingGroups.entries();
     const serverStashKeys = serverKeys.reduce((agg, keyInfo) => {
       // TODO: currently picks first stash key in group (second array item is set to 0)
@@ -62,26 +63,26 @@ export default class RegistrationManager extends Extrinsic {
     const thresholdAccountsInfo: any = await this.getThresholdInfo(serverStashKeys)
 
     const keys: Array<{ encryptedKey: string; url: string; }> = await Promise.all(thresholdAccountsInfo.map(async (thresholdAccountInfo, index) => {
-      const serverDHKey = await this.cryptoLib.from_hex(thresholdAccountInfo);  
+      const serverDHKey = await this.cryptoLib.from_hex(thresholdAccountInfo);
       const encryptedKey = await this.cryptoLib.encrypt_and_sign(this.signer.pair.secretKey, keyShares[index], serverDHKey);
-    
-      const url = "url";  
-        
+
+      const url = "url";
+
       return { encryptedKey, url };
   }));
-  
+
   await this.sendKeys(keys);
 
 }
-      
+
   async sendKeys(keysAndUrls: Array<{ encryptedKey: string; url: string; }>): Promise<void> {
       await Promise.all(
           keysAndUrls.map(async ({ url, encryptedKey }, index) =>
               sendHttpPost(`http://${url}/user/new`, encryptedKey)
           )
       );
-  } 
-  
+  }
+
   /**
    * @alpha
    *
@@ -100,7 +101,7 @@ export default class RegistrationManager extends Extrinsic {
       }
       return result;
   }
-  
+
   async checkRegistrationStatus(): Promise<AnyJson> {
       const isRegistered = await this.substrate.query.relayer.registered(this.signer.wallet.address);
       return isRegistered.toHuman();
