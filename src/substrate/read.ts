@@ -1,7 +1,6 @@
 import { ApiPromise } from '@polkadot/api'
 import { AnyJson } from '@polkadot/types-codec/types'
-import { getApi } from './utils'
-import { StashKeys, ThresholdInfo, Address } from './types'
+import { StashKeys, ThresholdInfo, Address } from '../types'
 import { ServerInfo } from '../types'
 
 /**
@@ -39,10 +38,10 @@ export class SubstrateRead {
    * @param {string} [endpoint='ws://127.0.0.1:9944'] web socket address will default to localhost:9944
    * @returns {*}  {Promise<SubstrateRead>} a {@link SubstrateRead} object
    */
-  static async setup(endpoint?: string): Promise<SubstrateRead> {
-    const api = await getApi(endpoint)
-    return new SubstrateRead(api)
-  }
+//   static async setup(endpoint?: string): Promise<SubstrateRead> {
+//     const api = await getApi(endpoint)
+//     return new SubstrateRead(api)
+//   }
 
   /**
    * @alpha
@@ -126,6 +125,6 @@ export class SubstrateRead {
   async isRegistered(address: Address): Promise<boolean> {
     const result = await this.substrate.query.relayer.registered(address)
     // check to see if result.toHuman returns an object
-    return !!result.toHuman().is_registering
+    return !!result.toHuman()
   }
 }

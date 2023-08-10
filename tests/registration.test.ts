@@ -10,7 +10,6 @@ import Entropy from './../src/index'
 import {
   spinChain,
   spinThreshold,
-  sleep,
   removeDB,
   disconnect,
   modifyOcwPostEndpoint,
@@ -22,7 +21,7 @@ import {
   non_whitelisted_test_tx_req,
   whitelisted_test_constraints,
 } from './testing-utils'
-import { readKey } from '../src/utils'
+import { readKey, sleep } from '../src/utils'
 import { KeyShare } from '../src/types'
 import { ThresholdServer } from '../old/src/threshold-server'
 import { Wallet } from 'ethers'

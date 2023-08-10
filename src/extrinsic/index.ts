@@ -1,9 +1,15 @@
-import { ApiPromise } from '@polkadot/api'
+import { ApiPromise, SubmittableResult } from '@polkadot/api'
 import { Signer, EventFilter, Address } from '../types'
+import { EventRecord } from '@polkadot/types/interfaces/types'
+import { SubmittableExtrinsic } from '@polkadot/api/types'
+import { Substrate } from '../substrate'
 
 
 
 export class Extrinsic {
+  substrate: ApiPromise
+  signer: Signer 
+
   constructor ({ substrate, signer }) {
     this.substrate = substrate
     this.signer = signer

@@ -3,9 +3,10 @@ import { AnyJson } from '@polkadot/types-codec/types'
 import { Keyring } from '@polkadot/keyring'
 import { ApiPromise, SubmittableResult } from '@polkadot/api'
 import { EventRecord } from '@polkadot/types/interfaces/types'
-import { Signer, EventFilter } from './types'
+import { Signer, EventFilter } from '../types'
 import { SubstrateRead } from './read'
-import { getApi, getWallet } from './utils'
+import { getWallet } from '../keys';
+import { getApi } from '../utils'
 
 /**
  * @alpha
@@ -44,11 +45,13 @@ export class Substrate extends SubstrateRead {
    * @param {string} [endpoint] - endpoint websocket address, optional will default to localhost:9944
    * @returns {*}  {Promise<Substrate>} - A promise that resolves to a Substrate object
    */
-  static async setup(seed: string, endpoint?: string): Promise<Substrate> {
-    const api = await getApi(endpoint)
-    const wallet = await getWallet(seed)
-    return new Substrate(api, wallet)
-  }
+
+  static async setup(seed: string, endpoint = 'ws://127.0.0.1:9944'): Promise<Substrate> {
+    const apiFactory = await getApi();
+    const api = await apiFactory(endpoint); // Actually get the ApiPromise here.
+    const wallet = await getWallet(seed);
+    return new Substrate(api, wallet);
+}
 
   /**
    * @alpha

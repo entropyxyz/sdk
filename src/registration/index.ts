@@ -5,7 +5,7 @@ import { isLoaded, loadCryptoLib } from '../utils/crypto'
 import { isValidSubstrateAddress, sendHttpPost } from '../utils'
 import { Extrinsic } from '../extrinsic'
 import { Signer } from '../types'
-import { ThresholdServer } from '../../old/src/threshold-server'
+// import { ThresholdServer } from '../../old/src/threshold-server'
 
 export interface RegistrationParams {
   keyShares: KeyShare[]

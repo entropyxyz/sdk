@@ -5,7 +5,7 @@ import { SubmittableResult } from '@polkadot/api'
 import { EventRecord } from '@polkadot/types/interfaces/types'
 import { Signer, EventFilter, Address } from './types'
 import { SubstrateRead } from './read'
-import { getApi, getWallet } from './utils'
+import { getWallet } from './utils'
 
 /**
  * @alpha

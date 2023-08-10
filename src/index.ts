@@ -49,3 +49,4 @@ export default class Entropy {
     return this.registrationManager.register(params);
   }
 }
+
