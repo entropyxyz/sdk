@@ -2,7 +2,7 @@ import { ApiPromise, SubmittableResult } from '@polkadot/api'
 import { Signer, EventFilter, Address } from '../types'
 import { EventRecord } from '@polkadot/types/interfaces/types'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
-import { Substrate } from '../substrate'
+
 
 
 

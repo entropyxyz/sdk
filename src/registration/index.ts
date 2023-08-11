@@ -63,21 +63,11 @@ export default class RegistrationManager extends Extrinsic {
       throw new Error('already registered')
     }
 
-    // Create an instance of SignatureRequestManager
-    const signatureRequestManager = new SignatureRequestManager({
-      signer: this.signer,
-      substrate: this.substrate,
-      adapters: {},
-    }) // Adjust the constructor parameters as required
-
-    // Use getArbitraryValidators method to retrieve the validators info
-    const validatorsInfo = await signatureRequestManager.getArbitraryValidators()
-
     const keys: Array<{
       encryptedKey: string
       url: string
     }> = await Promise.all(
-      validatorsInfo.map(async (validator, index) => {
+      validatorsInfo.map(async (validator, index) => { // fix this 
         const serverDHKey = await this.cryptoLib.from_hex(
           validator.x25519PublicKey
         )

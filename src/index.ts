@@ -1,7 +1,6 @@
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import RegistrationManager, { RegistrationParams } from './registration';
 import { getWallet } from './keys';
-import { Substrate } from './substrate';
 
 export interface EntropyOpts {
   seed?: string;
@@ -16,7 +15,7 @@ export default class Entropy {
   keys?: any;
   registrationManager: RegistrationManager;
 
-  substrate: Substrate;
+  substrate: ApiPromise;
 
   constructor(opts: EntropyOpts) {
     this.ready = new Promise((resolve, reject) => {
@@ -30,7 +29,7 @@ export default class Entropy {
     (async () => {
       try {
         const apiInstance = await ApiPromise.create({ provider: wsProvider });
-        this.substrate = new Substrate(apiInstance, this.keys);
+        this.substrate = new Substrate(apiInstance, this.keys); // we'll have to fix this .. 
 
         this.registrationManager = new RegistrationManager({
           substrate: this.substrate.apiInstance, 
