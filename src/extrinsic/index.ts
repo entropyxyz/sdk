@@ -7,6 +7,8 @@ import { Substrate } from '../substrate'
 
 
 export class Extrinsic {
+  // should it be Api Promise or Substrate lol? 
+  // substrate: Substrate
   substrate: ApiPromise
   signer: Signer 
 
@@ -65,11 +67,11 @@ export class Extrinsic {
    */
 
   async handleFreeTx(call: SubmittableExtrinsic<'promise'>): Promise<SubmittableExtrinsic<'promise'>> {
-    const free_tx_wrapper = this.substrate.tx.freeTx.callUsingElectricity(call)
-    const result = await free_tx_wrapper.dryRun(this.signer.wallet)
+    const freeTxWrapper = this.substrate.tx.freeTx.callUsingElectricity(call)
+    const result = await freeTxWrapper.dryRun(this.signer.wallet)
     if (result.isErr) {
       throw new Error(result.toString())
     }
-    return free_tx_wrapper
+    return freeTxWrapper
   }
 }
