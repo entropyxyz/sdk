@@ -2,6 +2,10 @@ import { ApiPromise, WsProvider } from '@polkadot/api'
 import RegistrationManager, { RegistrationParams } from './registration'
 import { getWallet } from './keys'
 import SignatureRequestManager from './signing'
+import { loadCryptoLib, cryptoIsLoaded} from './utils/crypto'
+
+const crypto = loadCryptoLib();
+
 
 export interface EntropyOpts {
   seed?: string;
@@ -24,7 +28,7 @@ export default class Entropy {
       this.#ready = resolve
       this.#fail = reject
     })
-
+    // ORIGINAL 
     this.keys = getWallet(opts.seed)
     const wsProvider = new WsProvider(opts.endpoint)
 
@@ -37,7 +41,7 @@ export default class Entropy {
     this.signingManager = SignatureRequestManager({
       signer: this.keys,
       substrate,
-      adapters,
+      adapters: opts.adapters,
       crypto
     })
     substrate.isReady.then(() => {
@@ -46,6 +50,32 @@ export default class Entropy {
       this.#fail(error)
     })
   }
+
+  // if we want to make sure cryptoIsLoaded is entered here:
+
+  //   cryptoIsLoaded.then(() => {
+  //     this.keys = getWallet(opts.seed)
+  //     const wsProvider = new WsProvider(opts.endpoint)
+
+  //     const substrate = new ApiPromise({ provider: wsProvider })
+
+  //     this.registrationManager = new RegistrationManager({
+  //       substrate: substrate,
+  //       signer: this.keys,
+  //     })
+  //     this.signingManager = SignatureRequestManager({
+  //       signer: this.keys,
+  //       substrate,
+  //       adapters: opts.adapters,
+  //       crypto
+  //     })
+  //     substrate.isReady.then(() => {
+  //       this.#ready()
+  //     }).catch((error) => {
+  //       this.#fail(error)
+  //     })
+  //   });
+  // }
 
   async register (params: RegistrationParams) {
     await this.ready
