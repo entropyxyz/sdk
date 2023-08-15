@@ -50,9 +50,9 @@ describe('Registration Tests', () => {
       'http://localhost:3002/signer/new_party'
     )
   
-    const seed: string = charlieSeed;
-    const endpoint: string = 'ws://127.0.0.1:9944';
-    const substrate: Substrate = await Substrate.setup(seed, endpoint);
+    const seed: string = charlieSeed
+    const endpoint: string = 'ws://127.0.0.1:9944'
+    const substrate: Substrate = await Substrate.setup(seed, endpoint)
 
 
   const signer = await getWallet(seed)

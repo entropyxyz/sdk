@@ -87,7 +87,7 @@ export default class RegistrationManager extends Extrinsic {
   }
 
   async sendKeys(
-    keysAndUrls: Array<{ encryptedKey: string; url: string }>
+    keysAndUrls: Array<{ encryptedKey: string, url: string }>
   ): Promise<void> {
     await Promise.all(
       keysAndUrls.map(async ({ url, encryptedKey }, index) =>

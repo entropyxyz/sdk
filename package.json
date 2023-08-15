@@ -27,7 +27,6 @@
     "bundle:node": "tsup --platform node ",
     "bundle:browser": "tsup --platform browser",
     "bundle:prod": "tsup --minify",
-    "activeScripts": "ts-node /Users/lreyes/Desktop/Github/entropy-js/src/registration/testingIndex.ts",
     "find-deadcode": "ts-prune",
     "build:generate": "yarn generate:defs && yarn generate:meta",
     "generate:defs": "ts-node --skip-project node_modules/.bin/polkadot-types-from-defs --package types/interfaces --input ./types/interfaces --endpoint ./substrate/entropy-metadata.json",
