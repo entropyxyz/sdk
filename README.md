@@ -28,6 +28,7 @@
   - [ ] delete old PR'S and branches that we no longer need
   - [ ] correctly type `any`s
   - [ ] delete `old` dir
+  - remove unused deps
 
 ## BLOCKERS:
   - [ ] programs integrated into #entropy-core @jakehemmerle
