@@ -16,3 +16,19 @@
 
 
 ## notes
+
+
+### TODOS BEFORE JS DEV LAUNCH:
+
+- [ ] Have functioning entropy lib
+- [ ] documentation of all methods, functions and classes
+- [ ] Passing existing tests (maybe mod them to fit new api)
+- [ ] %80 code coverage also integrated with tests
+- [ ] house cleaning:
+  - [ ] delete old PR'S and branches that we no longer need
+  - [ ] correctly type `any`s
+  - [ ] delete `old` dir
+
+## BLOCKERS:
+  - [ ] programs integrated into #entropy-core @jakehemmerle
+  - [ ] dkg registration @JesseAbram
