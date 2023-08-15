@@ -1,6 +1,6 @@
 let isImported = false
 let crypto
-const res = {}
+const res: any = {}
 
 export const isLoaded = new Promise((resolve) => {
   res.resolve = resolve

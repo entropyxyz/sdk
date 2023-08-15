@@ -12,8 +12,7 @@ import { sr25519PairFromSeed, cryptoWaitReady } from '@polkadot/util-crypto'
  * @returns {*}  {Promise<ApiPromise>} Promise for interfacing with entropy chain
  */
 
-export  const getApi:(endpoint?: string) => Promise<ApiPromise>  = constructGetApiFuntion()
-
+// export  const getApi:(endpoint?: string) => Promise<ApiPromise>  = constructApiGetterFuntion()
 /**
  * @alpha
  *
@@ -24,13 +23,13 @@ export  const getApi:(endpoint?: string) => Promise<ApiPromise>  = constructGetA
  * @returns {*}  {Promise<ApiPromise>} Promise for interfacing with entropy chain
  */
 
-export async function constructApiGetterFuntion (): (endpoint?: string) => Promise<ApiPromise> {
+export async function constructApiGetterFuntion (): Promise<(endpoint?: string) => Promise<ApiPromise>> {
   const apis: {[key:string]: Promise<ApiPromise> } = {}
   return async (
-    endpoint: string = 'ws://127.0.0.1:9944'
+    endpoint = 'ws://127.0.0.1:9944'
   ): Promise<ApiPromise> => {
     if (apis[endpoint]) {
-      await apis[endpoint].isReady
+     (await apis[endpoint]).isReady
       return apis[endpoint]
     }
     const wsProvider = new WsProvider(endpoint)

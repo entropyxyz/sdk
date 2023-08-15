@@ -1,5 +1,7 @@
 import { decodeAddress, encodeAddress } from '@polkadot/keyring'
 import { hexToU8a, isHex } from '@polkadot/util'
+import { ApiPromise, WsProvider } from '@polkadot/api'
+
 
 export const isValidSubstrateAddress = (address: string) => {
   try {
@@ -10,6 +12,34 @@ export const isValidSubstrateAddress = (address: string) => {
     return false
   }
 }
+
+export function sleep(delay: number) {
+  const start = new Date().getTime()
+  while (new Date().getTime() < start + delay);
+}
+
+
+/// changed what used to be constructApiGetterFuntion
+
+type ApiFactory = (endpoint?: string) => Promise<ApiPromise>;
+
+export async function getApi(): Promise<ApiFactory> {
+  const apis: { [key: string]: ApiPromise } = {};
+
+  return async (endpoint = 'ws://127.0.0.1:9944'): Promise<ApiPromise> => {
+    if (apis[endpoint]) {
+      return apis[endpoint];
+    }
+
+    const wsProvider = new WsProvider(endpoint);
+    const api = new ApiPromise({ provider: wsProvider });
+    await api.isReady;  
+
+    apis[endpoint] = api;  
+    return api;
+  };
+}
+
 
 export async function sendHttpPost(url: string, data: any): Promise<any> {
   const headers = {

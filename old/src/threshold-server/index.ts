@@ -19,7 +19,7 @@ export class ThresholdServer {
    * @returns {Promise<void>}
    */
 
-  async sendKeys(keysAndUrls
+  async sendKeys(keysAndUrls)
     Array<{encryptedKeys: string;
     url: string;
   }>): Promise<void> {

@@ -6,21 +6,30 @@ export type base64string = string
 export type hexString = string
 
 export interface KeyPair {
-  public: base64string;
-  private: hexString;
+  public: base64string
+  private: hexString
 }
 
-export interface Account {
-  keyShare: string;
-  sigRrequestKeyPair;
+export interface Signer {
+  wallet: KeyringPair
+  pair: Keypair
 }
 
+export interface KeyShare {
+  keyShare: Uint8Array
+}
+
+export interface Account extends KeyShare {
+  sigRrequestKeyPair
+}
+
+export type keyShare = Uint8Array
 
     /// Information about a threshold server
 export interface ServerInfo {
-  tss_account: Uint8Array;
-  x25519_public_key: Uint8Array;
-  endpoint: string;
+  tss_account: Uint8Array
+  x25519_public_key: Uint8Array
+  endpoint: string
 }
 /*
 /// Represents an unparsed, transaction request coming from the client.
@@ -37,10 +46,10 @@ pub struct UserTransactionRequest {
 */
 export interface UserTransactionRequest {
     /// 'eth', etc.
-    arch: string;
+    arch: string
     /// ETH: RLP encoded transaction request
-    transaction_request: string;
-    validators_info: ValidatorInfo;
+    transaction_request: string
+    validators_info: ValidatorInfo
 }
 
 /*
@@ -53,31 +62,36 @@ pub struct ValidatorInfo {
 }
 */
 export interface ValidatorInfo {
-    x25519_public_key: Uint8Array;
-    ip_address: Uint8Array;
-    tss_account: Uint8Array;
-}
-
-/// The message sent from pallets::propagation::post() to the signing-client.
-export interface Message {
-    sig_request: string;
-    // the users public substrate signing key
-    account: Uint8Array;
-    validators_info: ValidatorInfo;
+    x25519_public_key: Uint8Array
+    ip_address: Uint8Array
+    tss_account: Uint8Array
 }
 
 export type Address = AccountId32 | string | Uint8Array
 export type StashKeys = Array<Address>
 export type ThresholdInfo = Array<Array<Address>>
 
-export interface Signer {
-  wallet: KeyringPair;
-  pair: Keypair;
+export interface EventFilter {
+  section: string
+  name: string
 }
 
-export interface EventFilter {
-  section: string;
-  name: string;
+// This associates an architecture with a transaction request
+export enum Arch {
+  Evm = 'evm',
+  // not supported yet
+  Btc = 'btc',
+}
+
+// ITransactionRequest is what the `/user/tx` endpoint expects to receive
+export interface ITransactionRequest {
+  arch: Arch
+  transaction_request: string
+}
+
+export interface EncMsg {
+  encMsg: string
+  url: string
 }
 
 /*

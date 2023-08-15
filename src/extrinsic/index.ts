@@ -1,9 +1,17 @@
-import { ApiPromise } from '@polkadot/api'
+import { ApiPromise, SubmittableResult } from '@polkadot/api'
 import { Signer, EventFilter, Address } from '../types'
+import { EventRecord } from '@polkadot/types/interfaces/types'
+import { SubmittableExtrinsic } from '@polkadot/api/types'
+
 
 
 
 export class Extrinsic {
+  // should it be Api Promise or Substrate lol? 
+  // substrate: Substrate
+  substrate: ApiPromise
+  signer: Signer 
+
   constructor ({ substrate, signer }) {
     this.substrate = substrate
     this.signer = signer
@@ -59,11 +67,11 @@ export class Extrinsic {
    */
 
   async handleFreeTx(call: SubmittableExtrinsic<'promise'>): Promise<SubmittableExtrinsic<'promise'>> {
-    const free_tx_wrapper = this.substrate.tx.freeTx.callUsingElectricity(call)
-    const result = await free_tx_wrapper.dryRun(this.signer.wallet)
+    const freeTxWrapper = this.substrate.tx.freeTx.callUsingElectricity(call)
+    const result = await freeTxWrapper.dryRun(this.signer.wallet)
     if (result.isErr) {
       throw new Error(result.toString())
     }
-    return free_tx_wrapper
+    return freeTxWrapper
   }
 }
