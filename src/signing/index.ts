@@ -23,79 +23,79 @@ export interface SigOps {
 }
 
 export class SignatureRequestManager extends Extrinsic {
-    adapters: { [key: string | number]: Adapter }
-    crypto: any
-    signer: Signer;
-    constructor({ signer, substrate, adapters, crypto }: Config) {
-        super({ signer, substrate })
-        this.adapters = {
-            ...defaultAdapters,  // Uncomment if you have this defined somewhere
-            ...adapters
-        }
-        this.crypto = crypto
+  adapters: { [key: string | number]: Adapter }
+  crypto: any
+  signer: Signer;
+  constructor ({ signer, substrate, adapters, crypto }: Config) {
+    super({ signer, substrate })
+    this.adapters = {
+      ...defaultAdapters,  // Uncomment if you have this defined somewhere
+      ...adapters
+    }
+    this.crypto = crypto
+  }
+
+  async getArbitraryValidators (sigRequest: string) {
+    const stashKeys = (await this.substrate.query.stakingExtension.signingGroups.entries())
+      .map(group => {
+        const index = parseInt(sigRequest, 16) % group.length
+        return group[index]
+      })
+
+    return Promise.all(stashKeys.map(stashKey => this.substrate.query.stakingExtension.thresholdServers(stashKey)))
+  }
+
+  async sign ({
+    sigRequestHash,
+    arch,
+    type,
+    freeTx = true,
+    retries
+  }: sigOps): Promise<SignatureLike> {
+    const validatorsInfo: Array<ValidatorInfo> = await this.getArbitraryValidators(sigRequestHash)
+
+    const txRequestData = {  // Ensure this type is imported/defined
+      arch,
+      transaction_request: sigRequestHash,
     }
 
-    async getArbitraryValidators(sigRequest: string) {
-        const stashKeys = (await this.substrate.query.stakingExtension.signingGroups.entries())
-            .map(group => {
-                const index = parseInt(sigRequest, 16) % group.length
-                return group[index]
-            })
+    const txRequests: Array<EncMsg> = await Promise.all(validatorsInfo.map(async (validator: ValidatorInfo, i: number) => {
+      const serverDHKey = await this.crypto.parseServerDHKey({
+        x25519PublicKey: validatorsInfo[i].x25519PublicKey,
+      })
 
-        return Promise.all(stashKeys.map(stashKey => this.substrate.query.stakingExtension.thresholdServers(stashKey)))
-    }
+      const encoded = Uint8Array.from(
+        JSON.stringify({ ...txRequestData, validators_info: validator }),
+        (x) => x.charCodeAt(0)
+      )
 
-    async sign({
-        sigRequestHash,
-        arch,
-        type,
-        freeTx = true,
-        retries
-    }: sigOps): Promise<SignatureLike> {
-        const validatorsInfo: Array<ValidatorInfo> = await this.getArbitraryValidators(sigRequestHash)
+      const encryptedMessage = await this.crypto.encryptAndSign(
+        this.signer.pair.secretKey,
+        encoded,
+        serverDHKey
+      )
 
-        const txRequestData = {  // Ensure this type is imported/defined
-            arch,
-            transaction_request: sigRequestHash,
-        }
+      return {
+        url: validatorsInfo[i].ipAddress,
+        encMsg: encryptedMessage,
+      }
+    }))
 
-        const txRequests: Array<EncMsg> = await Promise.all(validatorsInfo.map(async (validator: ValidatorInfo, i: number) => {
-            const serverDHKey = await this.crypto.parseServerDHKey({
-                x25519PublicKey: validatorsInfo[i].x25519PublicKey,
-            })
+    // Assuming sigHash is derived from sigRequestHash or similar
 
-            const encoded = Uint8Array.from(
-                JSON.stringify({ ...txRequestData, validators_info: validator }),
-                (x) => x.charCodeAt(0)
-            )
+    txRequests.forEach((req) => {
+      this.submitTransactionRequest(req)
+    })
 
-            const encryptedMessage = await this.crypto.encryptAndSign(
-                this.signer.pair.secretKey,
-                encoded,
-                serverDHKey
-            )
+    const signature: SignatureLike = await this.pollNodeForSignature(
+      stripHexPrefix(sigRequestHash),
+      validatorsInfo[0].ipAddress,
+      retries,
+    )
+    return signature
+  }
 
-            return {
-                url: validatorsInfo[i].ipAddress,
-                encMsg: encryptedMessage,
-            }
-        }))
-
-        // Assuming sigHash is derived from sigRequestHash or similar
-
-        txRequests.forEach((req) => {
-          const this.submitTransactionRequest(req)
-        })
-
-        const signature: SignatureLike = await this.pollNodeForSignature(
-          stripHexPrefix(sigRequestHash),
-          validatorsInfo[0].ipAddress,
-          retries,
-        )
-        return signature
-    }
-
- /**
+  /**
    * Submits the transaction request to the threshold server so its constraints can be validated
    *
    * @async
@@ -103,7 +103,7 @@ export class SignatureRequestManager extends Extrinsic {
    * @param {string[]} serversWithPort IP/domain and port of the threshold server, separated by ':'
    * @returns {Promise<>}
    */
-  async submitTransactionRequest(txReq: Array<EncMsg>): Promise<void> {
+  async submitTransactionRequest (txReq: Array<EncMsg>): Promise<void> {
     await Promise.all(
       txReq.map(
         async (message) =>
@@ -121,7 +121,7 @@ export class SignatureRequestManager extends Extrinsic {
    * @return {*}  {Promise<SignatureLike>} - {@link ThresholdServer}  signature of the message
    * @memberof ThresholdServer
    */
-  async pollNodeForSignature(
+  async pollNodeForSignature (
     sigHash: string,
     thresholdUrl: string,
     retries: number

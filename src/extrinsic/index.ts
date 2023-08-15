@@ -16,7 +16,7 @@ export class Extrinsic {
     this.substrate = substrate
     this.signer = signer
   }
-    async sendAndWaitFor(
+  async sendAndWaitFor (
     call: SubmittableExtrinsic<'promise'>,
     freeTx: boolean,
     filter: EventFilter
@@ -66,7 +66,7 @@ export class Extrinsic {
    * @returns {*}  {Promise<SubmittableExtrinsic<'promise'>>} - A promise that resolves when the transaction is included in a block.
    */
 
-  async handleFreeTx(call: SubmittableExtrinsic<'promise'>): Promise<SubmittableExtrinsic<'promise'>> {
+  async handleFreeTx (call: SubmittableExtrinsic<'promise'>): Promise<SubmittableExtrinsic<'promise'>> {
     const freeTxWrapper = this.substrate.tx.freeTx.callUsingElectricity(call)
     const result = await freeTxWrapper.dryRun(this.signer.wallet)
     if (result.isErr) {

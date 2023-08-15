@@ -4,7 +4,7 @@ import { Adapter, OptAdapter } from './types'
 
 
 export class Adapters {
-  constructor({ customAdapters }: {customAdapters: Adapter[]; }) {
+  constructor ({ customAdapters }: {customAdapters: Adapter[]; }) {
     this.eth = eth
     const forbidden = ['set', 'update']
     customAdapters.forEach((adapter: Adapter) => {

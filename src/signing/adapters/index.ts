@@ -7,29 +7,29 @@ export class Adapters {
     eth: ethModule
   }
 
-  constructor({ customAdapters }: {customAdapters: Adapter[] }) {
+  constructor ({ customAdapters }: {customAdapters: Adapter[] }) {
     customAdapters.forEach((adapter: Adapter) => {
       this.set(adapter)
     })
   }
 
-  getEth(): typeof ethModule {
+  getEth (): typeof ethModule {
     return this.adapters.eth as typeof ethModule
   }
 
   // A getter for retrieving an adapter
-  getAdapter(type: string): Adapter | typeof ethModule | undefined {
+  getAdapter (type: string): Adapter | typeof ethModule | undefined {
     return this.adapters[type]
   }
 
-  set(adapter: Adapter): void {
+  set (adapter: Adapter): void {
     if (this.forbidden.includes(adapter.type)) {
       throw new Error(`${adapter.type} type name forbidden please choose a different type name`)
     }
     this.adapters[adapter.type] = adapter
   }
 
-  update(adapter: OptAdapter): void {
+  update (adapter: OptAdapter): void {
     const existingAdapter = this.adapters[adapter.type]
     if (!existingAdapter) {
       throw new Error(`Adapter of type ${adapter.type} doesn't exist.`)

@@ -11,17 +11,17 @@ export async function loadCryptoLib () {
   // if node enviroment load node library
   if (typeof window === 'undefined') {
     crypto = await import(
-        '@entropyxyz/x25519-chacha20poly1305-nodejs'
-      )
+      '@entropyxyz/x25519-chacha20poly1305-nodejs'
+    )
     isImported = true
     res.resolve(true)
     return crypto
-    } else {
-      crypto = await import(
-        '@entropyxyz/x25519-chacha20poly1305-web'
-      )
-      isImported = true
-      res.resolve(true)
-      return crypto
-    }
+  } else {
+    crypto = await import(
+      '@entropyxyz/x25519-chacha20poly1305-web'
+    )
+    isImported = true
+    res.resolve(true)
+    return crypto
+  }
 }

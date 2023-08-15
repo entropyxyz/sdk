@@ -21,7 +21,7 @@ export default class RegistrationManager extends Extrinsic {
   cryptoLibLoaded: Promise<void>
   cryptoLib: any
 
-  constructor({
+  constructor ({
     substrate,
     signer,
   }: {
@@ -32,11 +32,11 @@ export default class RegistrationManager extends Extrinsic {
     this.cryptoLibLoaded = this.loadCrypto()
   }
 
-  async loadCrypto() {
+  async loadCrypto () {
     this.cryptoLib = await loadCryptoLib()
   }
 
-  async parseServerDHKey(serverDHInfo: any): Promise<Uint8Array> {
+  async parseServerDHKey (serverDHInfo: any): Promise<Uint8Array> {
     await this.cryptoLibLoaded
     const { from_hex } = this.cryptoLib
     return from_hex(serverDHInfo.x25519PublicKey)
@@ -44,7 +44,7 @@ export default class RegistrationManager extends Extrinsic {
 
   // private thresholdServer: ThresholdServer = new ThresholdServer(); // temporarily importing from /old
 
-  async register({
+  async register ({
     keyShares,
     programModAccount,
     freeTx = true,
@@ -86,7 +86,7 @@ export default class RegistrationManager extends Extrinsic {
     await this.sendKeys(keys)
   }
 
-  async sendKeys(
+  async sendKeys (
     keysAndUrls: Array<{ encryptedKey: string, url: string }>
   ): Promise<void> {
     await Promise.all(
@@ -105,7 +105,7 @@ export default class RegistrationManager extends Extrinsic {
    * @param {StashKeys} stashKeys - An array of stash keys to query
    * @returns {*}  {Promise<ThresholdInfo>} threshold server keys associated with the server
    */
-  async getThresholdInfo(stashKeys: StashKeys): Promise<ThresholdInfo> {
+  async getThresholdInfo (stashKeys: StashKeys): Promise<ThresholdInfo> {
     const promises = stashKeys.map((stashKey) =>
       this.fetchThresholdInfo(stashKey)
     )
@@ -113,7 +113,7 @@ export default class RegistrationManager extends Extrinsic {
     return results.filter(Boolean)
   }
 
-  private async fetchThresholdInfo(stashKey: Address): Promise<Address[]> {
+  private async fetchThresholdInfo (stashKey: Address): Promise<Address[]> {
     const r = await this.substrate.query.stakingExtension.thresholdServers(
       stashKey
     )
@@ -137,7 +137,7 @@ export default class RegistrationManager extends Extrinsic {
     return []
   }
 
-  async checkRegistrationStatus(): Promise<AnyJson> {
+  async checkRegistrationStatus (): Promise<AnyJson> {
     const isRegistered = await this.substrate.query.relayer.registered(
       this.signer.wallet.address
     )

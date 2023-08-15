@@ -19,7 +19,7 @@ export default class Entropy {
 
   substrate: ApiPromise
 
-  constructor(opts: EntropyOpts) {
+  constructor (opts: EntropyOpts) {
     this.ready = new Promise((resolve, reject) => {
       this.#ready = resolve
       this.#fail = reject
@@ -47,9 +47,12 @@ export default class Entropy {
     })
   }
 
-  async register(params: RegistrationParams) {
+  async register (params: RegistrationParams) {
     await this.ready
     return this.registrationManager.register(params)
   }
+
+  async sign ()
+
 }
 

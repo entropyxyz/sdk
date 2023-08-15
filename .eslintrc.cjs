@@ -5,6 +5,8 @@ module.exports = {
   plugins: ['@typescript-eslint'],
   root: true,
   rules: {
+    "indent": ["error", 2],
+    'space-before-function-paren': ['error', 'always'],
     '@typescript-eslint/no-var-requires': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
   },

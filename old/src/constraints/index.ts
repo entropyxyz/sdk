@@ -19,7 +19,7 @@ export class Constraints extends Substrate {
    * @param {ApiPromise} api - The api object for an Entropy blockchain
    * @param {Signer} signer - The signer object for the user interfacing with the Entropy blockchain
    */
-  constructor(api: ApiPromise, signer: Signer) {
+  constructor (api: ApiPromise, signer: Signer) {
     super(api, signer)
     this.api = api
     this.signer = signer
@@ -36,7 +36,7 @@ export class Constraints extends Substrate {
    * @param {string} [endpoint] - endpoint websocket address, optional will default to localhost:9944
    * @returns {*}  {Promise<Constraint>} - A promise that resolves to a Constraint object
    */
-  static async setup(seed: string, endpoint?: string): Promise<Constraints> {
+  static async setup (seed: string, endpoint?: string): Promise<Constraints> {
     const api = await getApi(endpoint)
     const wallet = await getWallet(seed)
     return new Constraints(api, wallet)
@@ -51,7 +51,7 @@ export class Constraints extends Substrate {
    * @param {Address} entropyAccount - The Account to modify the constraint for
    * @returns {*}  {Promise<EventRecord>} - a promise that contains the event that fits the filter
    */
-  async updateAccessControlList(
+  async updateAccessControlList (
     accessControlInfo: any,
     entropyAccount: Address,
     freeTx?: boolean
@@ -83,7 +83,7 @@ export class Constraints extends Substrate {
    * @returns {Promise<any>} - A promise that returns the current evm ACL
    * @TODO generalize for any architecture
    */
-  async getEvmAcl(entropyAccount: Address): Promise<any> {
+  async getEvmAcl (entropyAccount: Address): Promise<any> {
     // TODO JH after typegen, typed Addresses and use new constraints structs
     return this.api.query.constraints.evmAcl(entropyAccount)
   }

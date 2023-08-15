@@ -12,7 +12,7 @@ export class Crypto {
    * @param {*} serverDHInfo - Information on server returned by entropy chain
    * @return {*}  {Promise<Uint8Array>} - converted x25519PublicKey
    */
-  async parseServerDHKey(serverDHInfo: any): Promise<Uint8Array> {
+  async parseServerDHKey (serverDHInfo: any): Promise<Uint8Array> {
     if (typeof window === 'undefined') {
       const { from_hex } = await import(
         '@entropyxyz/x25519-chacha20poly1305-nodejs'
@@ -39,7 +39,7 @@ export class Crypto {
    * @return {*}  {Promise<string>}
    * @memberof Crypto
    */
-  async encryptAndSign(
+  async encryptAndSign (
     secretKey: Uint8Array,
     thresholdKey: Uint8Array,
     serverDHKey: Uint8Array

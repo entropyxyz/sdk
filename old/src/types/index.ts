@@ -12,7 +12,7 @@ export interface Account {
 }
 
 
-    /// Information about a threshold server
+/// Information about a threshold server
 export interface ServerInfo {
   tss_account: Uint8Array;
   x25519_public_key: Uint8Array;

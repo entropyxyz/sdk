@@ -25,7 +25,7 @@ export class Substrate extends SubstrateRead {
    * @param {ApiPromise} api - The api object for an Entropy blockchain
    * @param {Signer} signer - The signer object for the user interfacing with the Entropy blockchain
    */
-  constructor(api: ApiPromise, signer: Signer) {
+  constructor (api: ApiPromise, signer: Signer) {
     super(api)
     this.signer = signer
   }
@@ -41,7 +41,7 @@ export class Substrate extends SubstrateRead {
    * @param {string} [endpoint] - endpoint websocket address, optional will default to localhost:9944
    * @returns {*}  {Promise<Substrate>} - A promise that resolves to a Substrate object
    */
-  static async setup(seed: string, endpoint?: string): Promise<Substrate> {
+  static async setup (seed: string, endpoint?: string): Promise<Substrate> {
     const api = await getApi(endpoint)
     const wallet = await getWallet(seed)
     return new Substrate(api, wallet)
@@ -56,7 +56,7 @@ export class Substrate extends SubstrateRead {
    * @param {SubmittableExtrinsic<'promise'>} call - The extrinsic to send.
    * @returns {*}  {Promise<SubmittableExtrinsic<'promise'>>} - A promise that resolves when the transaction is included in a block.
    */
-  async handleFreeTx(
+  async handleFreeTx (
     call: SubmittableExtrinsic<'promise'>
   ): Promise<SubmittableExtrinsic<'promise'>> {
     const free_tx_wrapper = this.substrate.tx.freeTx.callUsingElectricity(call)
@@ -78,7 +78,7 @@ export class Substrate extends SubstrateRead {
    *
    * @memberof Substrate
    */
-  async sendAndWait(
+  async sendAndWait (
     call: SubmittableExtrinsic<'promise'>,
     freeTx: boolean
   ): Promise<EventRecord> {
@@ -128,7 +128,7 @@ export class Substrate extends SubstrateRead {
    *
    * @memberof Substrate
    */
-  async sendAndWaitFor(
+  async sendAndWaitFor (
     call: SubmittableExtrinsic<'promise'>,
     freeTx: boolean,
     filter: EventFilter
@@ -182,7 +182,7 @@ export class Substrate extends SubstrateRead {
    * @returns {*}  {Promise<AnyJson>} Promise if the account is registered
    *
    */
-  async register(
+  async register (
     constraintModificationAccount: string,
     freeTx: boolean,
     initialConstraints: object = null

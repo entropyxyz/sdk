@@ -29,7 +29,7 @@ export async function constructApiGetterFuntion (): Promise<(endpoint?: string) 
     endpoint = 'ws://127.0.0.1:9944'
   ): Promise<ApiPromise> => {
     if (apis[endpoint]) {
-     (await apis[endpoint]).isReady
+      (await apis[endpoint]).isReady
       return apis[endpoint]
     }
     const wsProvider = new WsProvider(endpoint)

@@ -25,7 +25,7 @@ export class SubstrateRead {
    * This function is part of the {@link SubstrateRead} class does not require a user wallet
    * @param {ApiPromise} api - The {@link ApiPromise} object for an Entropy blockchain
    */
-  constructor(api: ApiPromise) {
+  constructor (api: ApiPromise) {
     this.substrate = api
   }
 
@@ -39,7 +39,7 @@ export class SubstrateRead {
    * @param {string} [endpoint='ws://127.0.0.1:9944'] web socket address will default to localhost:9944
    * @returns {*}  {Promise<SubstrateRead>} a {@link SubstrateRead} object
    */
-  static async setup(endpoint?: string): Promise<SubstrateRead> {
+  static async setup (endpoint?: string): Promise<SubstrateRead> {
     const api = await getApi(endpoint)
     return new SubstrateRead(api)
   }
@@ -53,7 +53,7 @@ export class SubstrateRead {
    * @param {StashKeys} stashKeys - An array of stash keys to query
    * @returns {*}  {Promise<ThresholdInfo>} threshold server keys associated with the server
    */
-  async getThresholdInfo(stashKeys: StashKeys): Promise<ThresholdInfo> {
+  async getThresholdInfo (stashKeys: StashKeys): Promise<ThresholdInfo> {
     const result: ThresholdInfo = []
     for (let i = 0; i < stashKeys.length; i++) {
       const r = await this.substrate.query.stakingExtension.thresholdServers(
@@ -75,7 +75,7 @@ export class SubstrateRead {
    * @returns {*}  {Promise<any[]>} A promise of non converted stash keys
    * @memberof SubstrateRead
    */
-  async getStashKeys(): Promise<any[]> {
+  async getStashKeys (): Promise<any[]> {
     const stashKeys = await this.substrate.query.stakingExtension.signingGroups.entries()
     return stashKeys
   }
@@ -90,7 +90,7 @@ export class SubstrateRead {
    * @param {*} stashKeys - An array of stash keys to query
    * @returns {*}  {StashKeys} An array of stash keys
    */
-  selectStashKeys(stashKeys: any): StashKeys {
+  selectStashKeys (stashKeys: any): StashKeys {
     return stashKeys.reduce((agg, keyInfo) => {
       // TODO: currently picks first stash key in group (second array item is set to 0)
       // create good algorithm for randomly choosing a threshold server
@@ -108,7 +108,7 @@ export class SubstrateRead {
    * @param {Address} address - The address that is being checked if registered
    * @returns {*}  {Promise<AnyJson>} An object that contains the account if it was registered
    */
-  async isRegistering(address: Address): Promise<AnyJson> {
+  async isRegistering (address: Address): Promise<AnyJson> {
     const result = await this.substrate.query.relayer.registering(address)
     return result.toHuman()
   }
@@ -123,7 +123,7 @@ export class SubstrateRead {
    * @param {Address} address - The address that is being checked if registered
    * @returns {*}  {Promise<boolean>} An object that contains the account if it was registered
    */
-  async isRegistered(address: Address): Promise<boolean> {
+  async isRegistered (address: Address): Promise<boolean> {
     const result = await this.substrate.query.relayer.registered(address)
     // check to see if result.toHuman returns an object
     return !!result.toHuman().is_registering

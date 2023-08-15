@@ -42,7 +42,7 @@ export class ThresholdServer {
     await Promise.all(
       txReq.map(
         async (message) =>
-          await sendHttpPost(`http://${message.url}/user/tx`, message.encMsg)
+          await sendHttpPost(`http://${message.url}/user/sign_tx`, message.encMsg)
       )
     )
   }
