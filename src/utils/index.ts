@@ -2,8 +2,12 @@ import { decodeAddress, encodeAddress } from '@polkadot/keyring'
 import { hexToU8a, isHex } from '@polkadot/util'
 import { ApiPromise, WsProvider } from '@polkadot/api'
 
+export function stripHexPrefix (str: string): string {
+  if (str.startWith('0x')) return sigHash.slice(2)
+  return str
+}
 
-export const isValidSubstrateAddress = (address: string) => {
+export function isValidSubstrateAddress (address: string) {
   try {
     encodeAddress(isHex(address) ? hexToU8a(address) : decodeAddress(address))
 
@@ -23,7 +27,7 @@ export function sleep(delay: number) {
 
 type ApiFactory = (endpoint?: string) => Promise<ApiPromise>;
 
-export async function getApi(): Promise<ApiFactory> {
+export async function getApi (): Promise<ApiFactory> {
   const apis: { [key: string]: ApiPromise } = {};
 
   return async (endpoint = 'ws://127.0.0.1:9944'): Promise<ApiPromise> => {
@@ -41,7 +45,7 @@ export async function getApi(): Promise<ApiFactory> {
 }
 
 
-export async function sendHttpPost(url: string, data: any): Promise<any> {
+export async function sendHttpPost (url: string, data: any): Promise<any> {
   const headers = {
     'Content-Type': 'application/json',
   }
@@ -54,7 +58,7 @@ export async function sendHttpPost(url: string, data: any): Promise<any> {
 
 
 
-export const readKey = async (path: string) => {
+export function readKeyasync (path: string) {
   if (!path) {
     throw new Error('Path is required')
   }

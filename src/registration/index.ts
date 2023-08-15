@@ -1,7 +1,7 @@
 import { ApiPromise } from '@polkadot/api'
 import { AnyJson } from '@polkadot/types-codec/types'
 import { KeyShare, StashKeys, ThresholdInfo } from '../types'
-import { isLoaded, loadCryptoLib } from '../utils/crypto'
+import { loadCryptoLib } from '../utils/crypto'
 import { isValidSubstrateAddress, sendHttpPost } from '../utils'
 import { Extrinsic } from '../extrinsic'
 import { Signer, Address } from '../types'

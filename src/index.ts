@@ -1,10 +1,12 @@
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import RegistrationManager, { RegistrationParams } from './registration'
 import { getWallet } from './keys'
+import SignatureRequestManager from './signing'
 
 export interface EntropyOpts {
-  seed?: string
-  endpoint?: string
+  seed?: string;
+  endpoint?: string;
+  adapters?: { [key: string | number]: adapter };
 }
 
 export default class Entropy {
@@ -24,23 +26,25 @@ export default class Entropy {
     })
 
     this.keys = getWallet(opts.seed)
-    const wsProvider = new WsProvider(opts.endpoint);
+    const wsProvider = new WsProvider(opts.endpoint)
 
-    (async () => {
-      try {
-        const apiInstance = await ApiPromise.create({ provider: wsProvider })
-        this.substrate = new Substrate(apiInstance, this.keys) // we'll have to fix this .. 
+    const substrate = new ApiPromise({ provider: wsProvider })
 
-        this.registrationManager = new RegistrationManager({
-          substrate: this.substrate.apiInstance, 
-          signer: this.keys,
-        })
-
-        this.#ready()
-      } catch (error) {
-        this.#fail(error)
-      }
-    })()
+    this.registrationManager = new RegistrationManager({
+      substrate: substrate,
+      signer: this.keys,
+    })
+    this.signingManager = SignatureRequestManager({
+      signer: this.keys,
+      substrate,
+      adapters,
+      crypto
+    })
+    substrate.isReady.then(() => {
+      this.#ready()
+    }).catch((error) => {
+      this.#fail(error)
+    })
   }
 
   async register(params: RegistrationParams) {

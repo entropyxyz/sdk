@@ -2,7 +2,7 @@ let isImported = false
 let crypto
 const res: any = {}
 
-export const isLoaded = new Promise((resolve) => {
+export const cryptoIsLoaded: Promise<void> = new Promise((resolve) => {
   res.resolve = resolve
 })
 
