@@ -1,6 +1,7 @@
 import { Keypair } from '@polkadot/util-crypto/types'
 import { KeyringPair } from '@polkadot/keyring/types'
 import type { AccountId32 } from '@polkadot/types/interfaces/runtime'
+import {U8aFixed} from '@polkadot/types-codec'
 
 export type base64string = string
 export type hexString = string
@@ -65,6 +66,7 @@ export interface ValidatorInfo {
     x25519_public_key: Uint8Array
     ip_address: Uint8Array
     tss_account: Uint8Array
+
 }
 
 export type Address = AccountId32 | string | Uint8Array
@@ -94,6 +96,9 @@ export interface EncMsg {
   url: string
 }
 
+// export interface PublicKey {
+//   x25519PublicKey: U8aFixed | string | Uint8Array
+// }
 /*
 
 return type for isRegistering

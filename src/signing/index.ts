@@ -5,13 +5,12 @@ import { SignatureLike } from '@ethersproject/bytes'
 import { Adapter } from './adapters/types'
 import { UserTransactionRequest, Arch, EncMsg, ValidatorInfo } from '../types'
 import { stripHexPrefix, sendHttpPost } from '../utils'
-import { loadCryptoLib, cryptoIsLoaded } from '../utils/crypto'
+import { loadCryptoLib, cryptoIsLoaded, crypto } from '../utils/crypto'
 
 export interface Config {
-  signer: signer;
+  signer: Signer;
   substrate: ApiPromise;
-  adapters: { [key: string | number]: adapter };
-  crypto: any;
+  adapters: { [key: string | number]: Adapter };
 }
 
 export interface SigOps {
@@ -24,18 +23,19 @@ export interface SigOps {
 
 export class SignatureRequestManager extends Extrinsic {
   adapters: { [key: string | number]: Adapter }
-  crypto: any
   signer: Signer;
-  constructor ({ signer, substrate, adapters, crypto }: Config) {
+
+  constructor ({ signer, substrate, adapters }: Config) {
     super({ signer, substrate })
     this.adapters = {
       ...defaultAdapters,  // Uncomment if you have this defined somewhere
       ...adapters
     }
-    this.crypto = crypto
+    loadCryptoLib() 
   }
 
   async getArbitraryValidators (sigRequest: string) {
+    await cryptoIsLoaded;
     const stashKeys = (await this.substrate.query.stakingExtension.signingGroups.entries())
       .map(group => {
         const index = parseInt(sigRequest, 16) % group.length
@@ -44,6 +44,7 @@ export class SignatureRequestManager extends Extrinsic {
 
     return Promise.all(stashKeys.map(stashKey => this.substrate.query.stakingExtension.thresholdServers(stashKey)))
   }
+  
 
   async sign ({
     sigRequestHash,
@@ -51,7 +52,9 @@ export class SignatureRequestManager extends Extrinsic {
     type,
     freeTx = true,
     retries
-  }: sigOps): Promise<SignatureLike> {
+  }: SigOps): Promise<SignatureLike> {
+
+    await cryptoIsLoaded; 
     const validatorsInfo: Array<ValidatorInfo> = await this.getArbitraryValidators(sigRequestHash)
 
     const txRequestData = {  // Ensure this type is imported/defined
@@ -60,8 +63,8 @@ export class SignatureRequestManager extends Extrinsic {
     }
 
     const txRequests: Array<EncMsg> = await Promise.all(validatorsInfo.map(async (validator: ValidatorInfo, i: number) => {
-      const serverDHKey = await this.crypto.parseServerDHKey({
-        x25519PublicKey: validatorsInfo[i].x25519PublicKey,
+      const serverDHKey = await crypto.parseServerDHKey({
+        x25519PublicKey: validatorsInfo[i].x25519_public_key,
       })
 
       const encoded = Uint8Array.from(
@@ -69,7 +72,7 @@ export class SignatureRequestManager extends Extrinsic {
         (x) => x.charCodeAt(0)
       )
 
-      const encryptedMessage = await this.crypto.encryptAndSign(
+      const encryptedMessage = await crypto.encrypt_and_sign(
         this.signer.pair.secretKey,
         encoded,
         serverDHKey

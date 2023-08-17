@@ -1,14 +1,23 @@
+import { KeyShare, PublicKey } from '../types'
+
 let isImported = false
 let cryptoLib
 const res: any = {}
 loadCryptoLib()
+
+export interface CryptoLib {
+  from_hex: (input: string) => Uint8Array;
+  parseServerDHKey: (serverDHInfo: { x25519PublicKey: PublicKey }) => Promise<Uint8Array>;
+  encrypt_and_sign: (secretKey: Uint8Array, encoded: Uint8Array, serverDHKey: Uint8Array) => Promise<string>;
+
+}
 
 export const cryptoIsLoaded: Promise<void> = new Promise((resolve) => {
   res.resolve = resolve
 })
 
 
-export const crypto = new Proxy({}, {
+export const crypto: CryptoLib = new Proxy({} as CryptoLib, {
   get: (_, key) => {
     return async (...params) => {
       await cryptoIsLoaded

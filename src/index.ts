@@ -2,11 +2,12 @@ import { ApiPromise, WsProvider } from '@polkadot/api'
 import RegistrationManager, { RegistrationParams } from './registration'
 import { getWallet } from './keys'
 import SignatureRequestManager from './signing'
+import { Adapter } from './signing/adapters/types';
 
 export interface EntropyOpts {
   seed?: string;
   endpoint?: string;
-  adapters?: { [key: string | number]: adapter };
+  adapters?: { [key: string | number]: Adapter };
 }
 
 export default class Entropy {
