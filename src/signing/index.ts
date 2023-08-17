@@ -3,7 +3,7 @@ import { Extrinsic } from '../extrinsic'
 import { Signer } from '../types'
 import { SignatureLike } from '@ethersproject/bytes'
 import { Adapter } from './adapters/types'
-import { UserTransactionRequest, Arch, EncMsg, ValidatorInfo } from '../types'
+import { UserTransactionRequest, Arch, EncMsg, ValidatorInfo, x25519PublicKey } from '../types'
 import { stripHexPrefix, sendHttpPost } from '../utils'
 import { loadCryptoLib, cryptoIsLoaded, crypto } from '../utils/crypto'
 
@@ -64,7 +64,7 @@ export class SignatureRequestManager extends Extrinsic {
 
     const txRequests: Array<EncMsg> = await Promise.all(validatorsInfo.map(async (validator: ValidatorInfo, i: number) => {
       const serverDHKey = await crypto.parseServerDHKey({
-        x25519PublicKey: validatorsInfo[i].x25519_public_key,
+        x25519_public_key: validatorsInfo[i].x25519_public_key,
       })
 
       const encoded = Uint8Array.from(

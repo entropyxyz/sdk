@@ -16,6 +16,8 @@ export interface Signer {
   pair: Keypair
 }
 
+
+
 export interface KeyShare {
   keyShare: Uint8Array
 }
@@ -69,6 +71,10 @@ export interface ValidatorInfo {
 
 }
 
+export interface x25519PublicKey {
+x25519PublicKey: U8aFixed | string | Uint8Array
+}
+
 export type Address = AccountId32 | string | Uint8Array
 export type StashKeys = Array<Address>
 export type ThresholdInfo = Array<Array<Address>>
@@ -96,9 +102,6 @@ export interface EncMsg {
   url: string
 }
 
-// export interface PublicKey {
-//   x25519PublicKey: U8aFixed | string | Uint8Array
-// }
 /*
 
 return type for isRegistering
