@@ -1,7 +1,8 @@
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import RegistrationManager, { RegistrationParams } from './registration'
 import { getWallet } from './keys'
-import SignatureRequestManager from './signing'
+import { SignatureRequestManager } from './signing'
+import {  crypto } from './utils/crypto' 
 import { Adapter } from './signing/adapters/types';
 import { Signer } from './types';
 
@@ -21,7 +22,7 @@ export default class Entropy {
 
   substrate: ApiPromise
 
-  async init(opts: EntropyOpts) {
+  async init (opts: EntropyOpts) {
     this.keys = await getWallet(opts.seed);
     const wsProvider = new WsProvider(opts.endpoint);
   

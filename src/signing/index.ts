@@ -5,12 +5,13 @@ import { SignatureLike } from '@ethersproject/bytes'
 import { Adapter } from './adapters/types'
 import { UserTransactionRequest, Arch, EncMsg, ValidatorInfo, x25519PublicKey } from '../types'
 import { stripHexPrefix, sendHttpPost } from '../utils'
-import { loadCryptoLib, cryptoIsLoaded, crypto } from '../utils/crypto'
+import { loadCryptoLib, cryptoIsLoaded, crypto, CryptoLib } from '../utils/crypto'
 
 export interface Config {
   signer: Signer;
   substrate: ApiPromise;
   adapters: { [key: string | number]: Adapter };
+  crypto: CryptoLib;
 }
 
 export interface SigOps {
@@ -24,9 +25,11 @@ export interface SigOps {
 export class SignatureRequestManager extends Extrinsic {
   adapters: { [key: string | number]: Adapter }
   signer: Signer;
+  crypto
 
-  constructor ({ signer, substrate, adapters }: Config) {
+  constructor ({ signer, substrate, adapters, crypto}: Config) {
     super({ signer, substrate })
+    this.crypto = crypto;
     this.adapters = {
       ...defaultAdapters,  // Uncomment if you have this defined somewhere
       ...adapters
@@ -54,7 +57,8 @@ export class SignatureRequestManager extends Extrinsic {
     retries
   }: SigOps): Promise<SignatureLike> {
 
-    await cryptoIsLoaded; 
+    await cryptoIsLoaded;
+
     const validatorsInfo: Array<ValidatorInfo> = await this.getArbitraryValidators(sigRequestHash)
 
     const txRequestData = {  // Ensure this type is imported/defined

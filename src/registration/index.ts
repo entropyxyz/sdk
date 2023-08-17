@@ -1,6 +1,6 @@
 import { AnyJson } from '@polkadot/types-codec/types'
-import { KeyShare, StashKeys, ThresholdInfo } from '../types'
-import { loadCryptoLib, cryptoIsLoaded, crypto } from '../utils/crypto' // Importing the necessary utilities
+import { KeyShare, StashKeys, ThresholdInfo, ValidatorInfo } from '../types'
+import { loadCryptoLib, cryptoIsLoaded, crypto } from '../utils/crypto' 
 import { isValidSubstrateAddress, sendHttpPost } from '../utils'
 import { Extrinsic } from '../extrinsic'
 import { Signer, Address } from '../types'
