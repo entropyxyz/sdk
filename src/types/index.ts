@@ -17,7 +17,9 @@ export interface Signer {
   pair: Keypair
 }
 
-
+export interface ServerDHInfo {
+  x25519_public_key: Uint8Array | string | U8aFixed
+}
 
 export interface KeyShare {
   keyShare: Uint8Array
@@ -30,9 +32,8 @@ export interface Account extends KeyShare {
 export type keyShare = Uint8Array
 
 /// Information about a threshold server
-export interface ServerInfo {
+export interface ServerInfo extends ServerDHInfo{
   tss_account: Uint8Array
-  x25519_public_key: Uint8Array
   endpoint: string
 }
 /*
@@ -70,10 +71,6 @@ export interface ValidatorInfo {
     ip_address: Uint8Array
     tss_account: Uint8Array
 
-}
-
-export interface x25519PublicKey {
-x25519PublicKey: U8aFixed | string | Uint8Array
 }
 
 export type Address = AccountId32 | string | Uint8Array

@@ -1,9 +1,9 @@
 import { AnyJson } from '@polkadot/types-codec/types'
-import { KeyShare, StashKeys, ThresholdInfo, ValidatorInfo } from '../types'
+import { KeyShare, ServerDHInfo, StashKeys, ThresholdInfo, ValidatorInfo } from '../types'
 import { loadCryptoLib, cryptoIsLoaded, crypto } from '../utils/crypto' 
 import { isValidSubstrateAddress, sendHttpPost } from '../utils'
 import { Extrinsic } from '../extrinsic'
-import { Signer, Address } from '../types'
+import { Signer, Address,x25519PublicKey  } from '../types'
 import { ApiPromise } from '@polkadot/api'
 import { SignatureRequestManager } from '../signing'
 
@@ -18,12 +18,17 @@ export default class RegistrationManager extends Extrinsic {
   substrate: ApiPromise
   signer: Signer
 
+
+
   constructor ({
     substrate,
     signer,
+   
+
   }: {
     substrate: ApiPromise
     signer: Signer
+
   }) {
     super({ signer, substrate })
     loadCryptoLib() 
@@ -31,7 +36,7 @@ export default class RegistrationManager extends Extrinsic {
 
   async parseServerDHKey (serverDHInfo: any): Promise<Uint8Array> {
     await cryptoIsLoaded
-    return crypto.from_hex(serverDHInfo.x25519PublicKey)
+    return crypto.from_hex(serverDHInfo.x25519_public_key) // we might need to name this something else.
   }
 
   async register ({
@@ -53,19 +58,20 @@ export default class RegistrationManager extends Extrinsic {
       throw new Error('already registered')
     }
 
+
     const keys: Array<{
-      encryptedKey: string
-      url: string
+      encryptedKey: string;
+      url: string; // string  
     }> = await Promise.all(
-      validatorsInfo.map(async (validator, index) => {
-        const serverDHKey = await crypto.from_hex(validator.x25519PublicKey)
+      this.validatorsInfo.map(async (validator, index) => {
+        const serverDHKey = crypto.from_hex(validator.x25519_public_key);
         const encryptedKey = await crypto.encrypt_and_sign(
           this.signer.pair.secretKey,
           keyShares[index],
           serverDHKey
         )
 
-        const url = validator.ipAddress
+        const url = validator.ip_address
 
         return { encryptedKey, url }
       })

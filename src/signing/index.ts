@@ -22,7 +22,7 @@ export interface SigOps {
   retries?: number;
 }
 
-export class SignatureRequestManager extends Extrinsic {
+export default class SignatureRequestManager extends Extrinsic {
   adapters: { [key: string | number]: Adapter }
   signer: Signer;
   crypto
@@ -83,7 +83,7 @@ export class SignatureRequestManager extends Extrinsic {
       )
 
       return {
-        url: validatorsInfo[i].ipAddress,
+        url: validatorsInfo[i].ip_address,
         encMsg: encryptedMessage,
       }
     }))
@@ -96,7 +96,7 @@ export class SignatureRequestManager extends Extrinsic {
 
     const signature: SignatureLike = await this.pollNodeForSignature(
       stripHexPrefix(sigRequestHash),
-      validatorsInfo[0].ipAddress,
+      validatorsInfo[0].ip_address,
       retries,
     )
     return signature
