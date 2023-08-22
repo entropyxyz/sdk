@@ -1,15 +1,14 @@
-import { ApiPromise } from '@polkadot/api'
 import { AnyJson } from '@polkadot/types-codec/types'
-import { KeyShare, StashKeys, ThresholdInfo } from '../types'
-import { loadCryptoLib } from '../utils/crypto'
+import { KeyShare, ServerDHInfo, StashKeys, ThresholdInfo, ValidatorInfo } from '../types'
+import { loadCryptoLib, cryptoIsLoaded, crypto } from '../utils/crypto' 
 import { isValidSubstrateAddress, sendHttpPost } from '../utils'
 import { Extrinsic } from '../extrinsic'
-import { Signer, Address } from '../types'
+import { Signer, Address, x25519PublicKey } from '../types'
+import { ApiPromise } from '@polkadot/api'
 import { SignatureRequestManager } from '../signing'
-// import { ThresholdServer } from '../../old/src/threshold-server'
 
 export interface RegistrationParams {
-  keyShares: KeyShare[]
+  keyShares: KeyShare
   programModAccount: string
   freeTx?: boolean
   initialProgram?: string
@@ -18,31 +17,27 @@ export interface RegistrationParams {
 export default class RegistrationManager extends Extrinsic {
   substrate: ApiPromise
   signer: Signer
-  cryptoLibLoaded: Promise<void>
-  cryptoLib: any
+
+
 
   constructor ({
     substrate,
     signer,
+   
+
   }: {
     substrate: ApiPromise
     signer: Signer
+
   }) {
     super({ signer, substrate })
-    this.cryptoLibLoaded = this.loadCrypto()
-  }
-
-  async loadCrypto () {
-    this.cryptoLib = await loadCryptoLib()
+    loadCryptoLib() 
   }
 
   async parseServerDHKey (serverDHInfo: any): Promise<Uint8Array> {
-    await this.cryptoLibLoaded
-    const { from_hex } = this.cryptoLib
-    return from_hex(serverDHInfo.x25519PublicKey)
+    await cryptoIsLoaded
+    return crypto.from_hex(serverDHInfo.x25519_public_key) // we might need to name this something else.
   }
-
-  // private thresholdServer: ThresholdServer = new ThresholdServer(); // temporarily importing from /old
 
   async register ({
     keyShares,
@@ -50,7 +45,7 @@ export default class RegistrationManager extends Extrinsic {
     freeTx = true,
     initialProgram,
   }: RegistrationParams) {
-    await this.cryptoLibLoaded // Ensure the library is loaded
+    await cryptoIsLoaded // Ensure the library is loaded
 
     if (!isValidSubstrateAddress(programModAccount)) {
       throw new Error('programModAccount must be a Substrate address')
@@ -63,21 +58,20 @@ export default class RegistrationManager extends Extrinsic {
       throw new Error('already registered')
     }
 
+
     const keys: Array<{
-      encryptedKey: string
-      url: string
+      encryptedKey: string;
+      url: string; // string  
     }> = await Promise.all(
-      validatorsInfo.map(async (validator, index) => { // fix this 
-        const serverDHKey = await this.cryptoLib.from_hex(
-          validator.x25519PublicKey
-        )
-        const encryptedKey = await this.cryptoLib.encrypt_and_sign(
+      this.validatorsInfo.map(async (validator, index) => {
+        const serverDHKey = crypto.from_hex(validator.x25519_public_key);
+        const encryptedKey = await crypto.encrypt_and_sign(
           this.signer.pair.secretKey,
           keyShares[index],
           serverDHKey
         )
 
-        const url = validator.ipAddress // extracting the URL from the validator info is this is how we should do it?
+        const url = validator.ip_address
 
         return { encryptedKey, url }
       })

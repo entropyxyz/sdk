@@ -7,12 +7,5 @@ export async function preSign (tx): Promise<string> {
   return sigHash
 }
 
-
-// post sign 
-
-export async function postSign (): {
-
-}
-
 export const type = 'eth'
 export const arch = type

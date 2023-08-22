@@ -1,6 +1,8 @@
 import { Keypair } from '@polkadot/util-crypto/types'
 import { KeyringPair } from '@polkadot/keyring/types'
 import type { AccountId32 } from '@polkadot/types/interfaces/runtime'
+import {U8aFixed} from '@polkadot/types-codec'
+import { Codec } from '@polkadot/types-codec/types'
 
 export type base64string = string
 export type hexString = string
@@ -15,6 +17,10 @@ export interface Signer {
   pair: Keypair
 }
 
+export interface ServerDHInfo {
+  x25519_public_key: Uint8Array | string | U8aFixed
+}
+
 export interface KeyShare {
   keyShare: Uint8Array
 }
@@ -26,9 +32,8 @@ export interface Account extends KeyShare {
 export type keyShare = Uint8Array
 
 /// Information about a threshold server
-export interface ServerInfo {
+export interface ServerInfo extends ServerDHInfo{
   tss_account: Uint8Array
-  x25519_public_key: Uint8Array
   endpoint: string
 }
 /*
@@ -63,8 +68,9 @@ pub struct ValidatorInfo {
 */
 export interface ValidatorInfo {
     x25519_public_key: Uint8Array
-    ip_address: Uint8Array
+    ip_address: string
     tss_account: Uint8Array
+
 }
 
 export type Address = AccountId32 | string | Uint8Array

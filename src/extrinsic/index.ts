@@ -2,11 +2,16 @@ import { ApiPromise, SubmittableResult } from '@polkadot/api'
 import { Signer, EventFilter, Address } from '../types'
 import { EventRecord } from '@polkadot/types/interfaces/types'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
+import { RegistryError } from '@polkadot/types-codec/types'
 
 
+interface Decoded extends RegistryError {
+  name: string
+  docs: string[]
+  section: string
+}
 
-
-export class Extrinsic {
+export default class Extrinsic {
   // should it be Api Promise or Substrate lol? 
   // substrate: Substrate
   substrate: ApiPromise
@@ -30,7 +35,7 @@ export class Extrinsic {
           if (dispatchError) {
             if (dispatchError.isModule) {
               // for module errors, we have the section indexed, lookup
-              const decoded: any = this.substrate.registry.findMetaError(
+              const decoded: Decoded = this.substrate.registry.findMetaError(
                 dispatchError.asModule
               )
               const { docs, name, section } = decoded

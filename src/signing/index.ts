@@ -2,37 +2,50 @@ import { ApiPromise } from '@polkadot/api'
 import { Extrinsic } from '../extrinsic'
 import { Signer } from '../types'
 import { SignatureLike } from '@ethersproject/bytes'
+import { defaultAdapters } from './adapters/default'
 import { Adapter } from './adapters/types'
-import { UserTransactionRequest, Arch, EncMsg, ValidatorInfo } from '../types'
-import { stripHexPrefix, sendHttpPost } from '../utils'
-import { loadCryptoLib, cryptoIsLoaded } from '../utils/crypto'
+import { UserTransactionRequest, Arch, EncMsg, ValidatorInfo, x25519PublicKey } from '../types'
+import { stripHexPrefix, sendHttpPost, sleep } from '../utils'
+import { crypto, CryptoLib } from '../utils/crypto'
 
 export interface Config {
-  signer: signer;
+  signer: Signer;
   substrate: ApiPromise;
-  adapters: { [key: string | number]: adapter };
-  crypto: any;
+  adapters: { [key: string | number]: Adapter };
+  crypto: CryptoLib;
 }
 
-export interface SigOps {
-  sigRequestHash: string;
-  arch: Arch;
-  type: string;
+export interface TxParams {
+  [key: string]: any;
+}
+
+export interface SigTxOps {
+  txParams: TxParams
+  type?: string;
   freeTx?: boolean;
   retries?: number;
 }
 
-export class SignatureRequestManager extends Extrinsic {
+export interface SigOps {
+  sigRequestHash: string;
+  arch?: Arch;
+  type?: string;
+  freeTx?: boolean;
+  retries?: number;
+}
+
+export default class SignatureRequestManager extends Extrinsic {
   adapters: { [key: string | number]: Adapter }
-  crypto: any
   signer: Signer;
-  constructor ({ signer, substrate, adapters, crypto }: Config) {
+  crypto
+
+  constructor ({ signer, substrate, adapters, crypto}: Config) {
     super({ signer, substrate })
+    this.crypto = crypto;
     this.adapters = {
       ...defaultAdapters,  // Uncomment if you have this defined somewhere
       ...adapters
     }
-    this.crypto = crypto
   }
 
   async getArbitraryValidators (sigRequest: string) {
@@ -44,6 +57,38 @@ export class SignatureRequestManager extends Extrinsic {
 
     return Promise.all(stashKeys.map(stashKey => this.substrate.query.stakingExtension.thresholdServers(stashKey)))
   }
+  
+
+
+  async signTransaction ({ txParams, type, freeTx = true, retries }: SigTxOps) : Promise<SignatureLike> {
+    if (!this.adapters[type]) throw new Error(`No transaction adapter for type: ${type} submit as hash`)
+    if (!this.adapters[type].preSign) throw new Error(`Adapter for type: ${type} has no preSign function. Adapters must have a preSign function`)
+
+    const sigRequestHash = await this.adapters[type]
+    const signature = await this.sign({
+      sigRequestHash,
+      type,
+      arch: this.adapters[type].arch || type,
+      freeTx,
+      retries,
+
+    })
+    if (this.adapters[type].postSign) {
+      return await this.adapters[type].postSign(signature)
+    }
+
+    return signature
+  }
+  /**
+   *
+   * Sign a tx (for ethereum currently) using the entropy blockchain. This will take an unsigned tx and return
+   * a signature, it is up to the user to handle from there
+   *
+   * @param {utils.UnsignedTransaction} tx - {@link UnsignedTransaction} - The transaction to be signed
+   * @param {boolean} freeTx - use the free tx pallet
+   * @param {number} retries - To be deprecated when alice signs with the validators, but polling for sig retries
+   * @return {*}  {Promise<SignatureLike>} {@link SignatureLike} - A signature to then be included in a transaction
+   */
 
   async sign ({
     sigRequestHash,
@@ -51,7 +96,8 @@ export class SignatureRequestManager extends Extrinsic {
     type,
     freeTx = true,
     retries
-  }: sigOps): Promise<SignatureLike> {
+  }: SigOps): Promise<SignatureLike> {
+
     const validatorsInfo: Array<ValidatorInfo> = await this.getArbitraryValidators(sigRequestHash)
 
     const txRequestData = {  // Ensure this type is imported/defined
@@ -59,9 +105,9 @@ export class SignatureRequestManager extends Extrinsic {
       transaction_request: sigRequestHash,
     }
 
-    const txRequests: Array<EncMsg> = await Promise.all(validatorsInfo.map(async (validator: ValidatorInfo, i: number) => {
-      const serverDHKey = await this.crypto.parseServerDHKey({
-        x25519PublicKey: validatorsInfo[i].x25519PublicKey,
+    const txRequests: Array<EncMsg> = await Promise.all(validatorsInfo.map(async (validator: ValidatorInfo, i: number): Promise<EncMsg> => {
+      const serverDHKey = await crypto.parseServerDHKey({
+        x25519_public_key: validatorsInfo[i].x25519_public_key,
       })
 
       const encoded = Uint8Array.from(
@@ -69,14 +115,14 @@ export class SignatureRequestManager extends Extrinsic {
         (x) => x.charCodeAt(0)
       )
 
-      const encryptedMessage = await this.crypto.encryptAndSign(
+      const encryptedMessage = await crypto.encrypt_and_sign(
         this.signer.pair.secretKey,
         encoded,
         serverDHKey
       )
 
       return {
-        url: validatorsInfo[i].ipAddress,
+        url: validatorsInfo[i].ip_address,
         encMsg: encryptedMessage,
       }
     }))
@@ -89,7 +135,7 @@ export class SignatureRequestManager extends Extrinsic {
 
     const signature: SignatureLike = await this.pollNodeForSignature(
       stripHexPrefix(sigRequestHash),
-      validatorsInfo[0].ipAddress,
+      validatorsInfo[0].ip_address,
       retries,
     )
     return signature
@@ -142,6 +188,8 @@ export class SignatureRequestManager extends Extrinsic {
       } catch (e) {
         status = 500
       }
+      // TODO: DONT USE SLEEP maybe uses blocks from substrate as a timer?
+      // or something a little less arbitrary
       await sleep(3000)
       i++
     }
