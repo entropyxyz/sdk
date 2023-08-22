@@ -3,7 +3,7 @@ import { KeyShare, ServerDHInfo, StashKeys, ThresholdInfo, ValidatorInfo } from 
 import { loadCryptoLib, cryptoIsLoaded, crypto } from '../utils/crypto' 
 import { isValidSubstrateAddress, sendHttpPost } from '../utils'
 import { Extrinsic } from '../extrinsic'
-import { Signer, Address,x25519PublicKey  } from '../types'
+import { Signer, Address, x25519PublicKey } from '../types'
 import { ApiPromise } from '@polkadot/api'
 import { SignatureRequestManager } from '../signing'
 
