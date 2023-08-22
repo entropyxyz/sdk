@@ -2,10 +2,11 @@ import { ApiPromise } from '@polkadot/api'
 import { Extrinsic } from '../extrinsic'
 import { Signer } from '../types'
 import { SignatureLike } from '@ethersproject/bytes'
+import { defaultAdapters } from './adapters/default'
 import { Adapter } from './adapters/types'
 import { UserTransactionRequest, Arch, EncMsg, ValidatorInfo, x25519PublicKey } from '../types'
-import { stripHexPrefix, sendHttpPost } from '../utils'
-import { loadCryptoLib, cryptoIsLoaded, crypto, CryptoLib } from '../utils/crypto'
+import { stripHexPrefix, sendHttpPost, sleep } from '../utils'
+import { crypto, CryptoLib } from '../utils/crypto'
 
 export interface Config {
   signer: Signer;
@@ -14,10 +15,21 @@ export interface Config {
   crypto: CryptoLib;
 }
 
+export interface TxParams {
+  [key: string]: any;
+}
+
+export interface SigTxOps {
+  txParams: TxParams
+  type?: string;
+  freeTx?: boolean;
+  retries?: number;
+}
+
 export interface SigOps {
   sigRequestHash: string;
-  arch: Arch;
-  type: string;
+  arch?: Arch;
+  type?: string;
   freeTx?: boolean;
   retries?: number;
 }
@@ -34,11 +46,9 @@ export default class SignatureRequestManager extends Extrinsic {
       ...defaultAdapters,  // Uncomment if you have this defined somewhere
       ...adapters
     }
-    loadCryptoLib() 
   }
 
   async getArbitraryValidators (sigRequest: string) {
-    await cryptoIsLoaded;
     const stashKeys = (await this.substrate.query.stakingExtension.signingGroups.entries())
       .map(group => {
         const index = parseInt(sigRequest, 16) % group.length
@@ -49,6 +59,37 @@ export default class SignatureRequestManager extends Extrinsic {
   }
   
 
+
+  async signTransaction ({ txParams, type, freeTx = true, retries }: SigTxOps) : Promise<SignatureLike> {
+    if (!this.adapters[type]) throw new Error(`No transaction adapter for type: ${type} submit as hash`)
+    if (!this.adapters[type].preSign) throw new Error(`Adapter for type: ${type} has no preSign function. Adapters must have a preSign function`)
+
+    const sigRequestHash = await this.adapters[type]
+    const signature = await this.sign({
+      sigRequestHash,
+      type,
+      arch: this.adapters[type].arch || type,
+      freeTx,
+      retries,
+
+    })
+    if (this.adapters[type].postSign) {
+      return await this.adapters[type].postSign(signature)
+    }
+
+    return signature
+  }
+  /**
+   *
+   * Sign a tx (for ethereum currently) using the entropy blockchain. This will take an unsigned tx and return
+   * a signature, it is up to the user to handle from there
+   *
+   * @param {utils.UnsignedTransaction} tx - {@link UnsignedTransaction} - The transaction to be signed
+   * @param {boolean} freeTx - use the free tx pallet
+   * @param {number} retries - To be deprecated when alice signs with the validators, but polling for sig retries
+   * @return {*}  {Promise<SignatureLike>} {@link SignatureLike} - A signature to then be included in a transaction
+   */
+
   async sign ({
     sigRequestHash,
     arch,
@@ -57,8 +98,6 @@ export default class SignatureRequestManager extends Extrinsic {
     retries
   }: SigOps): Promise<SignatureLike> {
 
-    await cryptoIsLoaded;
-
     const validatorsInfo: Array<ValidatorInfo> = await this.getArbitraryValidators(sigRequestHash)
 
     const txRequestData = {  // Ensure this type is imported/defined
@@ -66,7 +105,7 @@ export default class SignatureRequestManager extends Extrinsic {
       transaction_request: sigRequestHash,
     }
 
-    const txRequests: Array<EncMsg> = await Promise.all(validatorsInfo.map(async (validator: ValidatorInfo, i: number) => {
+    const txRequests: Array<EncMsg> = await Promise.all(validatorsInfo.map(async (validator: ValidatorInfo, i: number): Promise<EncMsg> => {
       const serverDHKey = await crypto.parseServerDHKey({
         x25519_public_key: validatorsInfo[i].x25519_public_key,
       })
@@ -149,6 +188,8 @@ export default class SignatureRequestManager extends Extrinsic {
       } catch (e) {
         status = 500
       }
+      // TODO: DONT USE SLEEP maybe uses blocks from substrate as a timer?
+      // or something a little less arbitrary
       await sleep(3000)
       i++
     }

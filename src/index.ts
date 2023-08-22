@@ -1,10 +1,11 @@
 import { ApiPromise, WsProvider } from '@polkadot/api'
+import { SignatureLike } from '@ethersproject/bytes'
 import RegistrationManager, { RegistrationParams } from './registration'
 import { getWallet } from './keys'
-import { SignatureRequestManager } from './signing'
+import SignatureRequestManager, { SigOps, SigTxOps }  from './signing'
 import {  crypto } from './utils/crypto' 
-import { Adapter } from './signing/adapters/types';
-import { Signer } from './types';
+import { Adapter } from './signing/adapters/types'
+import { Signer } from './types'
 
 export interface EntropyOpts {
   seed?: string;
@@ -44,13 +45,13 @@ export default class Entropy {
 
   constructor(opts: EntropyOpts) {
     this.ready = new Promise((resolve, reject) => {
-      this.#ready = resolve;
-      this.#fail = reject;
-    });
+      this.#ready = resolve
+      this.#fail = reject
+    })
   
     this.init(opts).catch((error) => {
       this.#fail(error);
-    });
+    })
   }
 
   async register (params: RegistrationParams) {
@@ -58,7 +59,15 @@ export default class Entropy {
     return this.registrationManager.register(params)
   }
 
-  async sign ()
+  async signTransaction (params: SigTxOps): Promise<SignatureLike> {
+    await this.ready
+    return this.signingManager.signTransaction(params)
+  }
+
+  async sign (params: SigOps): Promise<SignatureLike> {
+    await this.ready
+    return this.signingManager.sign(params)
+  }
 
 }
 
