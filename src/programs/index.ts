@@ -2,7 +2,9 @@ import Extrinsic from "../extrinsic";
 import { ApiPromise } from '@polkadot/api'
 import { Address } from "../types";
 import { Signer} from '../types'
+import { getWallet } from '../keys'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
+import { getApi } from "../utils";
 
 
 /**
@@ -31,6 +33,13 @@ export default class ProgramManager extends Extrinsic {
     this.signer = signer
   }
 
+  static async setup (seed: string, endpoint?: string): Promise<ProgramManager> {
+    const apiFactory = await getApi();
+    const substrate = await apiFactory(endpoint);
+    const signer = await getWallet(seed);
+    return new ProgramManager({ substrate, signer });
+  }
+
   async getPrograms (entropyAccount: Address): Promise<any> {
 
     return this.substrate.query.constraints.programs(entropyAccount);
@@ -50,4 +59,15 @@ export default class ProgramManager extends Extrinsic {
     return this.substrate.query.constraints.evmAcl(entropyAccount)
   }
 
-}
+  async updateAccessControlList (
+    accessControlInfo: any,
+    entropyAccount: Address,
+    freeTx?: boolean
+  ): Promise<any> {
+    const tx: SubmittableExtrinsic<'promise'> = this.substrate.tx.constraints.updateConstraints(entropyAccount, accessControlInfo);
+    return this.sendAndWaitFor(tx, freeTx || false, {
+      section: 'programs',
+      name: 'ProgramsUpdated',
+    });
+
+  }}
