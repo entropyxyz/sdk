@@ -6,13 +6,15 @@ import { getWallet } from '../keys'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
 import { getApi } from "../utils";
 import { EventRecord } from "@polkadot/types/interfaces";
+import { Codec, AnyJson } from "@polkadot/types-codec/types";
+import { decodeVecU8ToArrayBuffer, decodeArrayBufferToString} from '../utils'
 
 
 /**
  * @alpha
  * @remarks
  * This is the {@link ProgramManager} class
- * A class for interfacing with the V1 Entropy Constraints system
+ * A class for interfacing with the V2 Entropy Constraints system
  */
 export default class ProgramManager extends Extrinsic {
   /**
@@ -41,34 +43,30 @@ export default class ProgramManager extends Extrinsic {
     return new ProgramManager({ substrate, signer });
   }
 
-  async getPrograms (entropyAccount: Address): Promise<any> {
+  // double check Jake's gets/sets. programs arent implemented in threshold so these methods are not valid yet. more relevant when programs running threshold
 
-    return this.substrate.query.constraints.programs(entropyAccount);
+  async getProgram (entropyAccount: Address): Promise<ArrayBuffer> {
+    const response = await this.substrate.query.constraints.v2_bytecode(entropyAccount);
+    if (!response) {
+      throw new Error("No program defined for the given account.");
+    }
+    const program: ArrayBuffer = decodeVecU8ToArrayBuffer(response);
+    return program;
   }
 
-  async setPrograms (entropyAccount: Address, programs: any): Promise<void> {
+  async setProgram (entropyAccount: Address, program: ArrayBuffer): Promise<void> {
+    try {
+      const tx: SubmittableExtrinsic<'promise'> = this.substrate.tx.constraints.v2_bytecode(entropyAccount, program);
+      
+      // Send the transaction and wait for the confirmation event.
+      await this.sendAndWaitFor(tx, true, {
+        section: 'Programs',
+        name: 'ProgramSet' 
+      });
 
-    const tx: SubmittableExtrinsic<'promise'> = this.substrate.tx.constraints.setPrograms(entropyAccount, programs);
-
-    await this.sendAndWaitFor(tx, true, {
-      section: 'Programs',
-      name: 'ProgramSet' 
-    });
-  }
-  
-  async getEvmAcl (entropyAccount: Address): Promise<any> {
-    return this.substrate.query.constraints.evmAcl(entropyAccount)
-  }
-
-  async updateAccessControlList (
-    accessControlInfo: any,
-    entropyAccount: Address,
-    freeTx?: boolean
-  ): Promise<EventRecord> {
-    const tx: SubmittableExtrinsic<'promise'> = this.substrate.tx.constraints.updateConstraints(entropyAccount, accessControlInfo);
-    return this.sendAndWaitFor(tx, freeTx || false, {
-      section: 'Programs',
-      name: 'ProgramsUpdated',
-    });
-
-  }}    
+    } catch (error) {
+      console.error("Error setting program:", error);
+      throw error;
+    }
+  } 
+}
