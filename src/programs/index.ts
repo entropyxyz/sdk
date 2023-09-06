@@ -1,13 +1,10 @@
 import Extrinsic from "../extrinsic";
 import { ApiPromise } from '@polkadot/api'
-import { Address } from "../types";
 import { Signer} from '../types'
 import { getWallet } from '../keys'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
 import { getApi } from "../utils";
-import { EventRecord } from "@polkadot/types/interfaces";
-import { Codec, AnyJson } from "@polkadot/types-codec/types";
-import { decodeVecU8ToArrayBuffer, decodeArrayBufferToString} from '../utils'
+import { decodeVecU8ToArrayBuffer} from '../utils'
 
 
 /**
@@ -36,27 +33,25 @@ export default class ProgramManager extends Extrinsic {
     this.signer = signer
   }
 
-  static async setup (seed: string, endpoint?: string): Promise<ProgramManager> {
-    const apiFactory = await getApi();
-    const substrate = await apiFactory(endpoint);
-    const signer = await getWallet(seed);
-    return new ProgramManager({ substrate, signer });
-  }
+
+  // set up functions in entropy class 
 
   // double check Jake's gets/sets. programs arent implemented in threshold so these methods are not valid yet. more relevant when programs running threshold
+  // signer is one key pair. we can assume that its the key that we're setting it too. we're only setting one user gets one program. 
 
-  async getProgram (entropyAccount: Address): Promise<ArrayBuffer> {
-    const response = await this.substrate.query.constraints.v2_bytecode(entropyAccount);
+  async get (): Promise<ArrayBuffer> {
+    const deployKey = this.signer.wallet // double check this. 
+    const response = await this.substrate.query.constraints.v2_bytecode();
     if (!response) {
-      throw new Error("No program defined for the given account.");
+      throw new Error("No program defined for the given account."); 
     }
-    const program: ArrayBuffer = decodeVecU8ToArrayBuffer(response);
-    return program;
+    return decodeVecU8ToArrayBuffer(response);
   }
 
-  async setProgram (entropyAccount: Address, program: ArrayBuffer): Promise<void> {
+  // we're assuming/inferring entropy account/key 
+  async set (program: ArrayBuffer): Promise<void> {
     try {
-      const tx: SubmittableExtrinsic<'promise'> = this.substrate.tx.constraints.v2_bytecode(entropyAccount, program);
+      const tx: SubmittableExtrinsic<'promise'> = this.substrate.tx.constraints.v2_bytecode(program);
       
       // Send the transaction and wait for the confirmation event.
       await this.sendAndWaitFor(tx, true, {
