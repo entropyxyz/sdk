@@ -6,6 +6,7 @@ import SignatureRequestManager, { SigOps, SigTxOps }  from './signing'
 import {  crypto } from './utils/crypto' 
 import { Adapter } from './signing/adapters/types'
 import { Signer } from './types'
+import ProgramManager from './programs'
 
 export interface EntropyOpts {
   seed?: string;
@@ -20,6 +21,8 @@ export default class Entropy {
 
   keys?: Signer
   registrationManager: RegistrationManager
+  programs: ProgramManager
+  signingManager: SignatureRequestManager
 
   substrate: ApiPromise
 
@@ -32,6 +35,7 @@ export default class Entropy {
     this.registrationManager = new RegistrationManager({
       substrate: substrate,
       signer: this.keys,
+      program: this.programs,
     });
     this.signingManager = new SignatureRequestManager({
       signer: this.keys,
@@ -39,11 +43,15 @@ export default class Entropy {
       adapters,
       crypto
     });
+    this.programs = new ProgramManager({ 
+      substrate: substrate,
+      signer: this.keys,
+    });
     await substrate.isReady;
     this.#ready();
   }
 
-  constructor(opts: EntropyOpts) {
+  constructor (opts: EntropyOpts) {
     this.ready = new Promise((resolve, reject) => {
       this.#ready = resolve
       this.#fail = reject

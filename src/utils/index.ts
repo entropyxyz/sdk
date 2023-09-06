@@ -87,3 +87,19 @@ export function readKeyasync (path: string) {
     return result
   }
 }
+
+export function u8ArrayToString(array: Uint8Array): string {
+  return new TextDecoder().decode(array);
+}
+
+export function stringToU8Array(str: string): Uint8Array {
+  return new TextEncoder().encode(str);
+}
+
+export function decodeVecU8ToArrayBuffer (data: any): Uint8Array {
+  return new Uint8Array(data);
+}
+
+export function decodeArrayBufferToString(buf: ArrayBuffer): string {
+  return new TextDecoder().decode(new Uint8Array(buf));
+}
