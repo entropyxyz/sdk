@@ -1,9 +1,7 @@
 import Extrinsic from "../extrinsic";
 import { ApiPromise } from '@polkadot/api'
 import { Signer} from '../types'
-import { getWallet } from '../keys'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
-import { getApi } from "../utils";
 import { decodeVecU8ToArrayBuffer} from '../utils'
 
 
@@ -36,7 +34,6 @@ export default class ProgramManager extends Extrinsic {
 
   // set up functions in entropy class 
 
-  // double check Jake's gets/sets. programs arent implemented in threshold so these methods are not valid yet. more relevant when programs running threshold
   // signer is one key pair. we can assume that its the key that we're setting it too. we're only setting one user gets one program. 
 
   async get (): Promise<ArrayBuffer> {
@@ -48,7 +45,7 @@ export default class ProgramManager extends Extrinsic {
     return decodeVecU8ToArrayBuffer(response);
   }
 
-  // we're assuming/inferring entropy account/key 
+  // we're assuming/inferring account/key 
   async set (program: ArrayBuffer): Promise<void> {
     try {
       const tx: SubmittableExtrinsic<'promise'> = this.substrate.tx.constraints.v2_bytecode(program);
