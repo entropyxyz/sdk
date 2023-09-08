@@ -1,12 +1,14 @@
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import { SignatureLike } from '@ethersproject/bytes'
+import { isValidSubstrateAddress } from './utils'
 import RegistrationManager, { RegistrationParams } from './registration'
 import { getWallet } from './keys'
 import SignatureRequestManager, { SigOps, SigTxOps }  from './signing'
 import {  crypto } from './utils/crypto' 
 import { Adapter } from './signing/adapters/types'
-import { Signer } from './types'
+import { Signer, Address } from './types'
 import ProgramManager from './programs'
+
 
 export interface EntropyOpts {
   seed?: string;
@@ -18,9 +20,9 @@ export default class Entropy {
   #ready?: (value?: any) => void
   #fail?: (reason?: any) => void
   ready: Promise<void>
-
-  keys?: Signer
-  registrationManager: RegistrationManager
+  isRegistered: (address: Address) => Promise<boolean>;
+  keys?: Signer;
+  registrationManager: RegistrationManager;
   programs: ProgramManager
   signingManager: SignatureRequestManager
 
@@ -48,7 +50,9 @@ export default class Entropy {
       signer: this.keys,
     });
     await substrate.isReady;
-    this.#ready();
+    this.#ready()
+    this.isRegistered = this.registrationManager.checkRegistrationStatus.bind(this.registrationManager)
+
   }
 
   constructor (opts: EntropyOpts) {
@@ -64,6 +68,11 @@ export default class Entropy {
 
   async register (params: RegistrationParams) {
     await this.ready
+    if (params.address) {
+      if (!isValidSubstrateAddress(params.address)) {
+        throw new TypeError('Incompatible address type')
+      }
+    }
     return this.registrationManager.register(params)
   }
 

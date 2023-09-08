@@ -1,140 +1,75 @@
-import { AnyJson } from '@polkadot/types-codec/types'
-import { KeyShare, ServerDHInfo, StashKeys, ThresholdInfo, ValidatorInfo } from '../types'
-import { loadCryptoLib, cryptoIsLoaded, crypto } from '../utils/crypto' 
-import { isValidSubstrateAddress, sendHttpPost } from '../utils'
+import { crypto } from '../utils/crypto'
 import { Extrinsic } from '../extrinsic'
-import { Signer, Address, x25519PublicKey } from '../types'
+import { Signer, Address } from '../types'
 import { ApiPromise } from '@polkadot/api'
-import { SignatureRequestManager } from '../signing'
 
 export interface RegistrationParams {
-  keyShares: KeyShare
-  programModAccount: string
-  freeTx?: boolean
-  initialProgram?: string
+  freeTx?: boolean;
+  initialProgram?: string;
 }
 
 export default class RegistrationManager extends Extrinsic {
   substrate: ApiPromise
   signer: Signer
 
-
-
-  constructor ({
-    substrate,
-    signer,
-   
-
-  }: {
+  constructor ({ substrate, signer,}: {
     substrate: ApiPromise
     signer: Signer
-
   }) {
     super({ signer, substrate })
-    loadCryptoLib() 
-  }
-
-  async parseServerDHKey (serverDHInfo: any): Promise<Uint8Array> {
-    await cryptoIsLoaded
-    return crypto.from_hex(serverDHInfo.x25519_public_key) // we might need to name this something else.
   }
 
   async register ({
-    keyShares,
-    programModAccount,
     freeTx = true,
     initialProgram,
   }: RegistrationParams) {
-    await cryptoIsLoaded // Ensure the library is loaded
+    // this is sloppy
+    // TODO: store multiple signers via address. and respond accordingly
+     // however it should be handled in extrinsic class and not here
+    const address = this.signer.wallet.address
 
-    if (!isValidSubstrateAddress(programModAccount)) {
-      throw new Error('programModAccount must be a Substrate address')
-    }
-
-    const isCurrentlyRegistered = await this.substrate.query.relayer.registered(
-      this.signer.wallet.address
-    )
-    if (isCurrentlyRegistered.isSome && isCurrentlyRegistered.unwrap()) {
+    const isCurrentlyRegistered = await this.checkRegistrationStatus(address)
+    if (isCurrentlyRegistered) {
       throw new Error('already registered')
     }
 
+    // subcribe to new blocks
+    //then for every new block query events
+    // fgilter through events for accountregistartion :P vom
+    // this.substrate.events.relayer.AccountRegistered
+    // unsubcribes from blocks once event has been found
+    const registered = new Promise((resolve, reject) => {
+      try {
+        const unsub = this.substrate.rpc.chain.subscribeNewHeads(async () => {
+          const registered = await this.checkRegistrationStatus(this.signer.wallet.address)
+          if (registered) {
+            unsub()
+            resolve()
+          }
+        })
+      } catch (e) {
+        reject(e)
+      }
+    })
 
-    const keys: Array<{
-      encryptedKey: string;
-      url: string; // string  
-    }> = await Promise.all(
-      this.validatorsInfo.map(async (validator, index) => {
-        const serverDHKey = crypto.from_hex(validator.x25519_public_key);
-        const encryptedKey = await crypto.encrypt_and_sign(
-          this.signer.pair.secretKey,
-          keyShares[index],
-          serverDHKey
-        )
-
-        const url = validator.ip_address
-
-        return { encryptedKey, url }
-      })
+    const registerTx = this.substrate.tx.relayer.register(
+      address,
+      initialProgram ? initialProgram : null
     )
 
-    await this.sendKeys(keys)
+    await this.sendAndWaitFor(registerTx, freeTx, {
+      section: 'relayer',
+      name: 'SignalRegister',
+    })
+
+    return registered
   }
 
-  async sendKeys (
-    keysAndUrls: Array<{ encryptedKey: string, url: string }>
-  ): Promise<void> {
-    await Promise.all(
-      keysAndUrls.map(async ({ url, encryptedKey }, index) =>
-        sendHttpPost(`http://${url}/user/new`, encryptedKey)
-      )
-    )
-  }
-
-  /**
-   * @alpha
-   *
-   * @remarks
-   * This function is part of the {@link SubstrateRead} class
-   *
-   * @param {StashKeys} stashKeys - An array of stash keys to query
-   * @returns {*}  {Promise<ThresholdInfo>} threshold server keys associated with the server
-   */
-  async getThresholdInfo (stashKeys: StashKeys): Promise<ThresholdInfo> {
-    const promises = stashKeys.map((stashKey) =>
-      this.fetchThresholdInfo(stashKey)
-    )
-    const results = await Promise.all(promises)
-    return results.filter(Boolean)
-  }
-
-  private async fetchThresholdInfo (stashKey: Address): Promise<Address[]> {
-    const r = await this.substrate.query.stakingExtension.thresholdServers(
-      stashKey
-    )
-    const convertedResult = r.toHuman()
-
-    // If it's undefined, return an empty array.
-    if (convertedResult === undefined) {
-      return []
-    }
-
-    // If it's an array and the first element is of type Address, return it.
-    if (
-      Array.isArray(convertedResult) &&
-      (typeof convertedResult[0] === 'string' ||
-        convertedResult[0] instanceof Uint8Array)
-    ) {
-      return convertedResult as Address[]
-    }
-
-    // Otherwise, return an empty array.
-    return []
-  }
-
-  async checkRegistrationStatus (): Promise<AnyJson> {
+  async checkRegistrationStatus (address: Address): Promise<boolean> {
     const isRegistered = await this.substrate.query.relayer.registered(
-      this.signer.wallet.address
+      address
     )
-    return isRegistered.toHuman()
+
+    return !!isRegistered.unwrapOr(false)
   }
 }
