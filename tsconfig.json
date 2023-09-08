@@ -9,5 +9,5 @@
     "tsBuildInfoFile": ".tsbuildinfo",
     "module": "Node16"
   },
-  "exclude": ["node_modules", "dist", "build", "examples"]
+  "exclude": ["node_modules", "dist", "build", "examples", "old"]
 }
