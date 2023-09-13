@@ -3,7 +3,7 @@ import { hexToU8a, isHex } from '@polkadot/util'
 import { ApiPromise, WsProvider } from '@polkadot/api'
 
 export function stripHexPrefix (str: string): string {
-  if (str.startWith('0x')) return sigHash.slice(2)
+  if (str.startsWith('0x')) return str.slice(2)
   return str
 }
 
@@ -58,7 +58,7 @@ export async function sendHttpPost (url: string, data: any): Promise<any> {
 
 
 
-export function readKeyasync (path: string) {
+export async function readKey (path: string) {
   if (!path) {
     throw new Error('Path is required')
   }
