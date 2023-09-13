@@ -48,18 +48,6 @@ export default class SignatureRequestManager extends Extrinsic {
     }
   }
 
-  async getArbitraryValidators (sigRequest: string) {
-    const stashKeys = (await this.substrate.query.stakingExtension.signingGroups.entries())
-      .map(group => {
-        const index = parseInt(sigRequest, 16) % group.length
-        return group[index]
-      })
-
-    return Promise.all(stashKeys.map(stashKey => this.substrate.query.stakingExtension.thresholdServers(stashKey)))
-  }
-  
-
-
   async signTransaction ({ txParams, type, freeTx = true, retries }: SigTxOps) : Promise<SignatureLike> {
     if (!this.adapters[type]) throw new Error(`No transaction adapter for type: ${type} submit as hash`)
     if (!this.adapters[type].preSign) throw new Error(`Adapter for type: ${type} has no preSign function. Adapters must have a preSign function`)
@@ -155,6 +143,21 @@ export default class SignatureRequestManager extends Extrinsic {
       )
     )
   }
+
+  async getArbitraryValidators (sigRequest: string): Promise<ValidatorInfo[]> {
+    const stashKeys = (await this.substrate.query.stakingExtension.signingGroups.entries())
+      .map(group => {
+        const index = parseInt(sigRequest, 16) % group.length
+        return group[index]
+      })
+
+    const rawValidatorInfo = await Promise.all(stashKeys.map(stashKey => this.substrate.query.stakingExtension.thresholdServers(stashKey)))
+    const validatorsInfo: Array<ValidatorInfo> = rawValidatorInfo.map((validator) => {
+      const { x25519_public_key, ip_address, tss_account } = validator.toHuman()
+      return { x25519_public_key, ip_address, tss_account }
+    })
+  }
+
 
   /**
    * @deprecated
