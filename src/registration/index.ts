@@ -1,5 +1,5 @@
 import { crypto } from '../utils/crypto'
-import { Extrinsic } from '../extrinsic'
+import Extrinsic from '../extrinsic'
 import { Signer, Address } from '../types'
 import { ApiPromise } from '@polkadot/api'
 
@@ -25,7 +25,7 @@ export default class RegistrationManager extends Extrinsic {
   }: RegistrationParams) {
     // this is sloppy
     // TODO: store multiple signers via address. and respond accordingly
-     // however it should be handled in extrinsic class and not here
+    // however it should be handled in extrinsic class and not here
     const address = this.signer.wallet.address
 
     const isCurrentlyRegistered = await this.checkRegistrationStatus(address)
@@ -38,19 +38,19 @@ export default class RegistrationManager extends Extrinsic {
     // fgilter through events for accountregistartion :P vom
     // this.substrate.events.relayer.AccountRegistered
     // unsubcribes from blocks once event has been found
-    const registered = new Promise((resolve, reject) => {
-      try {
-        const unsub = this.substrate.rpc.chain.subscribeNewHeads(async () => {
-          const registered = await this.checkRegistrationStatus(this.signer.wallet.address)
-          if (registered) {
-            unsub()
-            resolve()
-          }
-        })
-      } catch (e) {
-        reject(e)
-      }
-    })
+    // const registered = new Promise((resolve, reject) => {
+    //   try {
+    //     const unsub = this.substrate.rpc.chain.subscribeNewHeads(async () => {
+    //       const registered = await this.checkRegistrationStatus(this.signer.wallet.address)
+    //       if (registered) {
+    //         unsub()
+    //         resolve()
+    //       }
+    //     })
+    //   } catch (e) {
+    //     reject(e)
+    //   }
+    // })
 
     const registerTx = this.substrate.tx.relayer.register(
       address,

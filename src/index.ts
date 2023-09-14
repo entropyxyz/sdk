@@ -37,12 +37,12 @@ export default class Entropy {
     this.registrationManager = new RegistrationManager({
       substrate: substrate,
       signer: this.keys,
-      program: this.programs,
+
     });
     this.signingManager = new SignatureRequestManager({
       signer: this.keys,
       substrate,
-      adapters,
+      adapters: opts.adapters,
       crypto
     });
     this.programs = new ProgramManager({ 
@@ -64,16 +64,30 @@ export default class Entropy {
     this.init(opts).catch((error) => {
       this.#fail(error);
     })
-  }
+  } 
+
+  // params.address is producing an error. since address is derived from 
+  // this.keys.wallet.address i changed it up a bit
+  
+  // async register (params: RegistrationParams) {
+  //   await this.ready
+  //   if (params.address) {
+  //     if (!isValidSubstrateAddress(params.address)) {
+  //       throw new TypeError('Incompatible address type')
+  //     }
+  //   }
+  //   return this.registrationManager.register(params)
+  // }
 
   async register (params: RegistrationParams) {
-    await this.ready
-    if (params.address) {
-      if (!isValidSubstrateAddress(params.address)) {
-        throw new TypeError('Incompatible address type')
-      }
+    await this.ready;
+    
+    const address = this.keys?.wallet.address;
+    if (address && !isValidSubstrateAddress(address)) {
+      throw new TypeError('Incompatible address type');
     }
-    return this.registrationManager.register(params)
+    
+    return this.registrationManager.register(params);
   }
 
   async signTransaction (params: SigTxOps): Promise<SignatureLike> {
