@@ -37,12 +37,11 @@ export default class Entropy {
     this.registrationManager = new RegistrationManager({
       substrate: substrate,
       signer: this.keys,
-      program: this.programs,
     });
     this.signingManager = new SignatureRequestManager({
       signer: this.keys,
       substrate,
-      adapters,
+      adapters: opts.adapters,
       crypto
     });
     this.programs = new ProgramManager({ 

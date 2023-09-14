@@ -1,10 +1,10 @@
 import { ApiPromise } from '@polkadot/api'
-import  Extrinsic  from '../extrinsic'
+import  ExtrinsicBaseClass  from '../extrinsic'
 import { Signer } from '../types'
 import { SignatureLike } from '@ethersproject/bytes'
 import { defaultAdapters } from './adapters/default'
 import { Adapter } from './adapters/types'
-import { UserTransactionRequest, Arch, EncMsg, ValidatorInfo, x25519PublicKey } from '../types'
+import { Arch, EncMsg, ValidatorInfo } from '../types'
 import { stripHexPrefix, sendHttpPost, sleep } from '../utils'
 import { crypto, CryptoLib } from '../utils/crypto'
 
@@ -34,7 +34,7 @@ export interface SigOps {
   retries?: number;
 }
 
-export default class SignatureRequestManager extends Extrinsic {
+export default class SignatureRequestManager extends ExtrinsicBaseClass {
   adapters: { [key: string | number]: Adapter }
   signer: Signer;
   crypto
@@ -81,7 +81,6 @@ export default class SignatureRequestManager extends Extrinsic {
   async sign ({
     sigRequestHash,
     arch,
-    type,
     freeTx = true,
     retries
   }: SigOps): Promise<SignatureLike> {
@@ -91,6 +90,8 @@ export default class SignatureRequestManager extends Extrinsic {
     const txRequestData = {  // Ensure this type is imported/defined
       arch,
       transaction_request: sigRequestHash,
+      // TODO: ask jesse if this is correct
+      free_tx: freeTx,
     }
 
     const txRequests: Array<EncMsg> = await Promise.all(validatorsInfo.map(async (validator: ValidatorInfo, i: number): Promise<EncMsg> => {
@@ -153,9 +154,13 @@ export default class SignatureRequestManager extends Extrinsic {
 
     const rawValidatorInfo = await Promise.all(stashKeys.map(stashKey => this.substrate.query.stakingExtension.thresholdServers(stashKey)))
     const validatorsInfo: Array<ValidatorInfo> = rawValidatorInfo.map((validator) => {
-      const { x25519_public_key, ip_address, tss_account } = validator.toHuman()
-      return { x25519_public_key, ip_address, tss_account }
+      // @ts-ignore: next line
+      const { x25519PublicKey, endpoint, tssAccount } = validator.toHuman()
+      // fuck me
+      return { x25519_public_key: x25519PublicKey, ip_address: endpoint, tss_account: tssAccount }
     })
+
+    return validatorsInfo
   }
 
 

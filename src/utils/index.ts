@@ -7,7 +7,7 @@ export function stripHexPrefix (str: string): string {
   return str
 }
 
-export function isValidSubstrateAddress (address: string) {
+export function isValidSubstrateAddress (address: any) {
   try {
     encodeAddress(isHex(address) ? hexToU8a(address) : decodeAddress(address))
 
@@ -88,11 +88,11 @@ export async function readKey (path: string) {
   }
 }
 
-export function u8ArrayToString(array: Uint8Array): string {
+export function u8ArrayToString (array: Uint8Array): string {
   return new TextDecoder().decode(array);
 }
 
-export function stringToU8Array(str: string): Uint8Array {
+export function stringToU8Array (str: string): Uint8Array {
   return new TextEncoder().encode(str);
 }
 
@@ -100,6 +100,6 @@ export function decodeVecU8ToArrayBuffer (data: any): Uint8Array {
   return new Uint8Array(data);
 }
 
-export function decodeArrayBufferToString(buf: ArrayBuffer): string {
+export function decodeArrayBufferToString (buf: ArrayBuffer): string {
   return new TextDecoder().decode(new Uint8Array(buf));
 }
