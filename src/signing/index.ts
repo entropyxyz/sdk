@@ -154,9 +154,14 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
 
     const rawValidatorInfo = await Promise.all(stashKeys.map(stashKey => this.substrate.query.stakingExtension.thresholdServers(stashKey)))
     const validatorsInfo: Array<ValidatorInfo> = rawValidatorInfo.map((validator) => {
-      // @ts-ignore: next line
+      /*
+        fuck me, i'm sorry frankie i know this looks bad and you're right
+        it does but this is going to require a destruction of polkadotjs as a dependency
+        or parsing the return types are selves? but if we do that we might as well not use polkadot js
+      */
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       const { x25519PublicKey, endpoint, tssAccount } = validator.toHuman()
-      // fuck me
       return { x25519_public_key: x25519PublicKey, ip_address: endpoint, tss_account: tssAccount }
     })
 
