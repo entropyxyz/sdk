@@ -38,7 +38,7 @@ export default class ProgramManager extends ExtrinsicBaseClass {
 
   async get (deployKey = this.signer.wallet.address): Promise<ArrayBuffer> {
     // TODO: Check with jake on this
-    const response = await this.substrate.query.constraints.v2_bytecode(deployKey);
+    const response = await this.substrate.query.constraints.v2Bytecode(deployKey);
     if (!response) {
       throw new Error("No program defined for the given account."); 
     }
@@ -48,7 +48,7 @@ export default class ProgramManager extends ExtrinsicBaseClass {
   // we're assuming/inferring account/key 
   async set (program: ArrayBuffer): Promise<void> {
     try {
-      const tx: SubmittableExtrinsic<'promise'> = this.substrate.tx.constraints.v2_bytecode(program);
+      const tx: SubmittableExtrinsic<'promise'> = this.substrate.tx.constraints.v2Bytecode(program);
       
       // Send the transaction and wait for the confirmation event.
       await this.sendAndWaitFor(tx, true, {
