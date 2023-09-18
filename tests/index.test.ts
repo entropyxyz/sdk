@@ -1,4 +1,3 @@
-// LUIS THIS IS THE TEST THAT NEEDS TO PASS
 import Entropy from '../src'
 import {
   spinChain,
@@ -15,7 +14,6 @@ import {
   non_whitelisted_test_tx_req,
   whitelisted_test_constraints }
   from'./testing-utils'
-import { SigOps} from '../src/signing'
 const { assert } = require('chai')
 import { ethers } from 'ethers';
 import { keccak256 } from 'ethers/lib/utils';
