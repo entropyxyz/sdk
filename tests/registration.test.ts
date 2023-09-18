@@ -1,11 +1,5 @@
 import RegistrationManager from '../src/registration'
-import { Signer } from '../src/types'
-import { Keypair } from '@polkadot/util-crypto/types'
-import { Keyring } from '@polkadot/api'
-import { ApiPromise } from '@polkadot/api'
-import { KeyringPair } from '@polkadot/keyring/types'
 import { getWallet } from '../src/keys'
-import { Substrate } from '../src/substrate'
 import Entropy from './../src/index'
 import {
   spinChain,
@@ -21,8 +15,11 @@ import {
   non_whitelisted_test_tx_req,
   whitelisted_test_constraints,
 } from './testing-utils'
-import { readKey, sleep } from '../src/utils'
+import { sleep } from '../src/utils'
+import { WsProvider } from '@polkadot/api';
+
 import { KeyShare } from '../src/types'
+import { ApiPromise } from '@polkadot/api'
 import { ThresholdServer } from '../old/src/threshold-server'
 import { Wallet } from 'ethers'
 const { assert } = require('chai')
@@ -52,15 +49,13 @@ describe('Registration Tests', () => {
   
     const seed: string = charlieSeed
     const endpoint: string = 'ws://127.0.0.1:9944'
-    const substrate: Substrate = await Substrate.setup(seed, endpoint)
+    const wsProvider = new WsProvider(endpoint)
+    const substrate: ApiPromise = await ApiPromise.create({ provider: wsProvider })
 
 
   const signer = await getWallet(seed)
 
-
-
- entropy = new RegistrationManager({ substrate: substrate.substrate, signer })
-
+  entropy = new RegistrationManager({ substrate, signer })
     
   })
 
@@ -75,24 +70,14 @@ describe('Registration Tests', () => {
     removeDB()
   })
 
-  it(`registers, sets constraints, tries valid and invalid tx req, and signs`, async () => {
-    const root = process.cwd()
-    const thresholdKey = await readKey(`${root + 'tests/testing-utils/test-keys/0'}`)
-    const thresholdKey2 = await readKey(
-      `${root + 'tests/testing-utils/test-keys/1'}`
-    )
-
+  it('should perform registration', async () => {
     // register user on-chain and with threshold servers
     const charlieStashEntropy = new Entropy({
       seed: charlieSeed,
       endpoint: 'ws://127.0.0.1:9944',
     })
     await entropy.register({
-      keyShares: [
-        { keyShare: thresholdKey },
-        { keyShare: thresholdKey2 }
-      ],
-      programModAccount: charlieStashAddress,
+      initialProgram: charlieStashAddress,
       freeTx: false,
     })
 
@@ -104,6 +89,6 @@ describe('Registration Tests', () => {
     
     // assert.equal(no_constraint.length, 0) // not sure what this is? 
 
-    await disconnect(charlieStashEntropy.substrate.substrate)
+    await disconnect(charlieStashEntropy.substrate)
   })
 })
