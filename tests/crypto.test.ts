@@ -1,12 +1,14 @@
 
-import { crypto } from "../src/utils/crypto"
+import { crypto, cryptoIsLoaded } from "../src/utils/crypto"
 import { hexToU8a } from '@polkadot/util'
-import { readKey } from "../old/src/core/utils"
-
-const { assert } = require('chai')
+import { readKey } from "../src/utils"
 
 
 describe('Crypto Tests', () => {
+  beforeAll(async () => {
+    await cryptoIsLoaded; 
+
+});
   const mockData = {
     endpoint: '127.0.0.1:3001',
     tssAccount: '5H8qc7f4mXFY16NBWSB9qkc6pTks98HdVuoQTs1aova5fRtN',
@@ -51,7 +53,7 @@ describe('Crypto Tests', () => {
     ]
 
     const result = await crypto.parseServerDHKey(mockData)
-    assert.deepEqual(result.toString(), mockReturn.toString())
+    expect(result.toString()).toBe(mockReturn.toString());
   })
   it(`encrypts and signs`, async () => {
     const aliceSecretKey: Uint8Array = new Uint8Array([
@@ -120,6 +122,7 @@ describe('Crypto Tests', () => {
       96,
       17,
     ])
+  
     const serverDHKey = await crypto.parseServerDHKey(mockData)
     const root = process.cwd()
 
@@ -133,7 +136,7 @@ describe('Crypto Tests', () => {
       serverDHKey
     )
 
-    assert.closeTo(result.length, 2122, 20)
+    expect(result.length).toBeCloseTo(2122, 20);
   })
 })
 

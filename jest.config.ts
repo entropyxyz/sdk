@@ -7,7 +7,7 @@ const config: Config = {
   testEnvironment: 'node',
   testTimeout: 200000,
   modulePathIgnorePatterns: [],
-  verbose: false,
+  verbose: true,
   forceExit: true,
   silent: true,
 }

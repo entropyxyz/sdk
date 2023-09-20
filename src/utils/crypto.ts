@@ -19,29 +19,30 @@ export const cryptoIsLoaded: Promise<void> = new Promise((resolve) => {
 export const crypto: CryptoLib = new Proxy({} as CryptoLib, {
   get: (_, key) => {
     return async (...params) => {
-      await cryptoIsLoaded
-      return cryptoLib[key](...params)
-    }
+      await cryptoIsLoaded;  
+      
+      if (!cryptoLib || !cryptoLib[key]) {
+        throw new Error(`Function "${key as string}" is not available in the crypto library`);
+      }
+      
+      return cryptoLib[key](...params);
+    };
   }
-})
-
+});
 
 export async function loadCryptoLib () {
-  if (isImported) return cryptoLib
-  // if node enviroment load node library
+  console.log(isImported, cryptoLib)
+  if (isImported) return cryptoLib;
+
   if (typeof window === 'undefined') {
-    cryptoLib = await import(
-      '@entropyxyz/x25519-chacha20poly1305-nodejs'
-    )
-    isImported = true
-    res.resolve(true)
-    return cryptoLib
+    cryptoLib = await import('@entropyxyz/x25519-chacha20poly1305-nodejs');
   } else {
-    cryptoLib = await import(
-      '@entropyxyz/x25519-chacha20poly1305-web'
-    )
-    isImported = true
-    res.resolve(true)
-    return cryptoLib
+    cryptoLib = await import('@entropyxyz/x25519-chacha20poly1305-web');
   }
+
+  console.log("Loaded cryptoLib:", cryptoLib);  
+
+  isImported = true;
+  res.resolve(true);
+  return cryptoLib;
 }
