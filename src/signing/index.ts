@@ -1,10 +1,10 @@
 import { ApiPromise } from '@polkadot/api'
-import { Extrinsic } from '../extrinsic'
+import  ExtrinsicBaseClass  from '../extrinsic'
 import { Signer } from '../types'
 import { SignatureLike } from '@ethersproject/bytes'
 import { defaultAdapters } from './adapters/default'
 import { Adapter } from './adapters/types'
-import { UserTransactionRequest, Arch, EncMsg, ValidatorInfo, x25519PublicKey } from '../types'
+import { Arch, EncMsg, ValidatorInfo } from '../types'
 import { stripHexPrefix, sendHttpPost, sleep } from '../utils'
 import { crypto, CryptoLib } from '../utils/crypto'
 
@@ -34,7 +34,7 @@ export interface SigOps {
   retries?: number;
 }
 
-export default class SignatureRequestManager extends Extrinsic {
+export default class SignatureRequestManager extends ExtrinsicBaseClass {
   adapters: { [key: string | number]: Adapter }
   signer: Signer;
   crypto
@@ -48,27 +48,15 @@ export default class SignatureRequestManager extends Extrinsic {
     }
   }
 
-  async getArbitraryValidators (sigRequest: string) {
-    const stashKeys = (await this.substrate.query.stakingExtension.signingGroups.entries())
-      .map(group => {
-        const index = parseInt(sigRequest, 16) % group.length
-        return group[index]
-      })
-
-    return Promise.all(stashKeys.map(stashKey => this.substrate.query.stakingExtension.thresholdServers(stashKey)))
-  }
-  
-
-
   async signTransaction ({ txParams, type, freeTx = true, retries }: SigTxOps) : Promise<SignatureLike> {
     if (!this.adapters[type]) throw new Error(`No transaction adapter for type: ${type} submit as hash`)
     if (!this.adapters[type].preSign) throw new Error(`Adapter for type: ${type} has no preSign function. Adapters must have a preSign function`)
 
-    const sigRequestHash = await this.adapters[type]
+    const sigRequestHash = await this.adapters[type].preSign(txParams)
     const signature = await this.sign({
       sigRequestHash,
       type,
-      arch: this.adapters[type].arch || type,
+      arch: this.adapters[type].arch,
       freeTx,
       retries,
 
@@ -93,7 +81,6 @@ export default class SignatureRequestManager extends Extrinsic {
   async sign ({
     sigRequestHash,
     arch,
-    type,
     freeTx = true,
     retries
   }: SigOps): Promise<SignatureLike> {
@@ -103,6 +90,8 @@ export default class SignatureRequestManager extends Extrinsic {
     const txRequestData = {  // Ensure this type is imported/defined
       arch,
       transaction_request: sigRequestHash,
+      // TODO: ask jesse if this is correct
+      free_tx: freeTx,
     }
 
     const txRequests: Array<EncMsg> = await Promise.all(validatorsInfo.map(async (validator: ValidatorInfo, i: number): Promise<EncMsg> => {
@@ -129,9 +118,7 @@ export default class SignatureRequestManager extends Extrinsic {
 
     // Assuming sigHash is derived from sigRequestHash or similar
 
-    txRequests.forEach((req) => {
-      this.submitTransactionRequest(req)
-    })
+    this.submitTransactionRequest(txRequests)
 
     const signature: SignatureLike = await this.pollNodeForSignature(
       stripHexPrefix(sigRequestHash),
@@ -157,6 +144,30 @@ export default class SignatureRequestManager extends Extrinsic {
       )
     )
   }
+
+  async getArbitraryValidators (sigRequest: string): Promise<ValidatorInfo[]> {
+    const stashKeys = (await this.substrate.query.stakingExtension.signingGroups.entries())
+      .map(group => {
+        const index = parseInt(sigRequest, 16) % group.length
+        return group[index]
+      })
+
+    const rawValidatorInfo = await Promise.all(stashKeys.map(stashKey => this.substrate.query.stakingExtension.thresholdServers(stashKey)))
+    const validatorsInfo: Array<ValidatorInfo> = rawValidatorInfo.map((validator) => {
+      /*
+        fuck me, i'm sorry frankie i know this looks bad and you're right
+        it does but this is going to require a destruction of polkadotjs as a dependency
+        or parsing the return types are selves? but if we do that we might as well not use polkadot js
+      */
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      const { x25519PublicKey, endpoint, tssAccount } = validator.toHuman()
+      return { x25519_public_key: x25519PublicKey, ip_address: endpoint, tss_account: tssAccount }
+    })
+
+    return validatorsInfo
+  }
+
 
   /**
    * @deprecated

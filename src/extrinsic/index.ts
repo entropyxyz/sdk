@@ -1,5 +1,5 @@
 import { ApiPromise, SubmittableResult } from '@polkadot/api'
-import { Signer, EventFilter, Address } from '../types'
+import { Signer, EventFilter } from '../types'
 import { EventRecord } from '@polkadot/types/interfaces/types'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
 import { RegistryError } from '@polkadot/types-codec/types'
@@ -11,9 +11,7 @@ interface Decoded extends RegistryError {
   section: string
 }
 
-export default class Extrinsic {
-  // should it be Api Promise or Substrate lol? 
-  // substrate: Substrate
+export default class ExtrinsicBaseClass {
   substrate: ApiPromise
   signer: Signer 
 
@@ -23,7 +21,7 @@ export default class Extrinsic {
   }
   async sendAndWaitFor (
     call: SubmittableExtrinsic<'promise'>,
-    freeTx: boolean,
+    freeTx = true,
     filter: EventFilter
   ): Promise<EventRecord> {
     const newCall = freeTx ? await this.handleFreeTx(call) : call

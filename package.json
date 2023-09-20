@@ -9,7 +9,6 @@
   "types": "dist/index.d.ts",
   "module": "dist/index.cjs",
   "browser": "dist/index.js",
-  "type": "module",
   "scripts": {
     "test": "yarn removedb && jest --runInBand --detectOpenHandles",
     "test:log": "yarn removedb && jest --runInBand --detectOpenHandles --silent=false --verbose",
@@ -29,8 +28,8 @@
     "bundle:prod": "tsup --minify",
     "find-deadcode": "ts-prune",
     "build:generate": "yarn generate:defs && yarn generate:meta",
-    "generate:defs": "ts-node --skip-project node_modules/.bin/polkadot-types-from-defs --package types/interfaces --input ./types/interfaces --endpoint ./substrate/entropy-metadata.json",
-    "generate:meta": "ts-node --skip-project node_modules/.bin/polkadot-types-from-chain --package types/interfaces --endpoint ./substrate/entropy-metadata.json --output ./types/interfaces"
+    "generate:defs": "ts-node --skip-project node_modules/.bin/polkadot-types-from-defs --package types/interfaces --input ./types/interfaces --endpoint ./entropy-metadata.json",
+    "generate:meta": "ts-node --skip-project node_modules/.bin/polkadot-types-from-chain --package types/interfaces --endpoint ./entropy-metadata.json --output ./types/interfaces"
   },
   "repository": {
     "type": "git",
