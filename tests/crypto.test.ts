@@ -52,7 +52,7 @@ describe('Crypto Tests', () => {
       34,
     ]
 
-    const result = await crypto.parseServerDHKey(mockData)
+    const result = await crypto.from_hex(mockData.x25519_public_key)
     expect(result.toString()).toBe(mockReturn.toString());
   })
   it(`encrypts and signs`, async () => {
@@ -123,7 +123,7 @@ describe('Crypto Tests', () => {
       17,
     ])
   
-    const serverDHKey = await crypto.parseServerDHKey(mockData)
+    const serverDHKey = await crypto.from_hex(mockData.x25519_public_key)
     const root = process.cwd()
 
     const thresholdKey = (await readKey(

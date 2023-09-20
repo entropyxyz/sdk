@@ -95,9 +95,8 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
     }
 
     const txRequests: Array<EncMsg> = await Promise.all(validatorsInfo.map(async (validator: ValidatorInfo, i: number): Promise<EncMsg> => {
-      const serverDHKey = await crypto.parseServerDHKey({
-        x25519_public_key: validatorsInfo[i].x25519_public_key,
-      })
+      // parse key
+      const serverDHKey = await crypto.from_hex(validatorsInfo[i].x25519_public_key)
 
       const encoded = Uint8Array.from(
         JSON.stringify({ ...txRequestData, validators_info: validator }),
