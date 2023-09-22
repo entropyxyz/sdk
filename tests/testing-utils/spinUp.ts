@@ -68,7 +68,7 @@ export const spinThreshold = async (
 ): Promise<ChildProcessWithoutNullStreams> => {
   const args = []
   if (name) {
-    args.push('--' + name, '--threshold-url=127.0.0.1:' + port)
+    args.push('--' + name, '--threshold-url=127.0.0.1:' + port + '--rpc-external')
   }
   const process = spawn(bin, args)
   // comment in for threshold logging and add verbose to jest

@@ -7,6 +7,7 @@ import { Adapter } from './adapters/types'
 import { Arch, EncMsg, ValidatorInfo } from '../types'
 import { stripHexPrefix, sendHttpPost, sleep } from '../utils'
 import { crypto, CryptoLib } from '../utils/crypto'
+import { u8ArrayToString } from '../utils'
 
 export interface Config {
   signer: Signer;
@@ -43,7 +44,7 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
     super({ signer, substrate })
     this.crypto = crypto;
     this.adapters = {
-      ...defaultAdapters,  // Uncomment if you have this defined somewhere
+      ...defaultAdapters, 
       ...adapters
     }
   }
@@ -96,7 +97,7 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
 
     const txRequests: Array<EncMsg> = await Promise.all(validatorsInfo.map(async (validator: ValidatorInfo, i: number): Promise<EncMsg> => {
       // parse key
-      const serverDHKey = await crypto.from_hex(validatorsInfo[i].x25519_public_key)
+      const serverDHKey = await crypto.from_hex(u8ArrayToString(validatorsInfo[i].x25519_public_key))
 
       const encoded = Uint8Array.from(
         JSON.stringify({ ...txRequestData, validators_info: validator }),
