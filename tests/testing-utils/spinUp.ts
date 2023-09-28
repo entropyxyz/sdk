@@ -27,7 +27,7 @@ export const spinChain = async (
   name: string,
   port?: string
 ): Promise<ChildProcessWithoutNullStreams> => {
-  console.log(`Spinning up chain with binary: ${bin}, name: ${name}, port: ${port}`);
+  console.log(`Spinning up chain with binary: ${bin}, name: ${name}, port: ${port}`)
   let args = []
   if (name == 'dev') {
     args = ['--dev']
@@ -61,12 +61,12 @@ export const spinChain = async (
     console.log({message})
   })
   process.on('error', (error) => {
-      console.error(`Error in spinChain process: ${error.message}`);
+      console.error(`Error in spinChain process: ${error.message}`)
   })
   process.on('exit', (code) => {
-      console.log(`spinChain process exited with code: ${code}`);
+      console.log(`spinChain process exited with code: ${code}`)
   })
-  return process;
+  return process
 }
 
 export const spinThreshold = async (
@@ -74,7 +74,7 @@ export const spinThreshold = async (
   name: string,
   port: string
 ): Promise<ChildProcessWithoutNullStreams> => {
-  console.log(`Spinning up threshold with binary: ${bin}, name: ${name}, port: ${port}`);
+  console.log(`Spinning up threshold with binary: ${bin}, name: ${name}, port: ${port}`)
   const args = []
   if (name) {
     args.push('--' + name, '--threshold-url=127.0.0.1:' + port + '--rpc-external')
@@ -87,12 +87,12 @@ export const spinThreshold = async (
   })
   await sleep(1000)
   process.on('error', (error) => {
-    console.error(`Error in spinThreshold process: ${error.message}`);
+    console.error(`Error in spinThreshold process: ${error.message}`)
 })
 process.on('exit', (code) => {
-    console.log(`spinThreshold process exited with code: ${code}`);
+    console.log(`spinThreshold process exited with code: ${code}`)
 })
-return process;
+return process
 }
 
 export const removeDB = () => {
