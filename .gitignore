@@ -188,3 +188,5 @@ prepTests.sh
 
 *.sublime-project
 *.sublime-workspace
+
+tests/testing-utils/test-binaries
