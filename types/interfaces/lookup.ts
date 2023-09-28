@@ -2928,7 +2928,11 @@ export default {
    * Lookup331: entropy_shared::types::KeyVisibility
    **/
   EntropySharedKeyVisibility: {
-    _enum: ['Public', 'Permissioned', 'Private']
+    _enum: {
+      Public: 'Null',
+      Permissioned: 'Null',
+      Private: '[u8;32]'
+    }
   },
   /**
    * Lookup334: pallet_slashing::pallet::Call<T>

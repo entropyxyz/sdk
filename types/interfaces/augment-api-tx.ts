@@ -1965,7 +1965,7 @@ declare module '@polkadot/api-base/types/submittable' {
        * This should be called by the signature-request account, and specify the initial
        * constraint-modification `AccountId` that can set constraints.
        **/
-      register: AugmentedSubmittable<(constraintAccount: AccountId32 | string | Uint8Array, keyVisibility: EntropySharedKeyVisibility | 'Public' | 'Permissioned' | 'Private' | number | Uint8Array, initialConstraints: Option<EntropySharedConstraints> | null | Uint8Array | EntropySharedConstraints | { evmAcl?: any; btcAcl?: any } | string) => SubmittableExtrinsic<ApiType>, [AccountId32, EntropySharedKeyVisibility, Option<EntropySharedConstraints>]>;
+      register: AugmentedSubmittable<(constraintAccount: AccountId32 | string | Uint8Array, keyVisibility: EntropySharedKeyVisibility | { Public: any } | { Permissioned: any } | { Private: any } | string | Uint8Array, initialConstraints: Option<EntropySharedConstraints> | null | Uint8Array | EntropySharedConstraints | { evmAcl?: any; btcAcl?: any } | string) => SubmittableExtrinsic<ApiType>, [AccountId32, EntropySharedKeyVisibility, Option<EntropySharedConstraints>]>;
       /**
        * Generic tx
        **/

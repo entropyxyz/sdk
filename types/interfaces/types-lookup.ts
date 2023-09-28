@@ -3125,6 +3125,7 @@ declare module '@polkadot/types/lookup' {
     readonly isPublic: boolean;
     readonly isPermissioned: boolean;
     readonly isPrivate: boolean;
+    readonly asPrivate: U8aFixed;
     readonly type: 'Public' | 'Permissioned' | 'Private';
   }
 
