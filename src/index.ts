@@ -33,7 +33,7 @@ export default class Entropy {
     const wsProvider = new WsProvider(opts.endpoint);
   
     const substrate = new ApiPromise({ provider: wsProvider });
-  
+    this.substrate = substrate
     this.registrationManager = new RegistrationManager({
       substrate: substrate,
       signer: this.keys,
