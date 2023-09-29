@@ -33,7 +33,6 @@ export const crypto: CryptoLib = new Proxy({} as CryptoLib, {
 })
 
 export async function loadCryptoLib () {
-  console.log(isImported, cryptoLib)
   if (isImported) return cryptoLib
 
   if (typeof window === 'undefined') {
@@ -41,9 +40,6 @@ export async function loadCryptoLib () {
   } else {
     cryptoLib = await import('@entropyxyz/x25519-chacha20poly1305-web')
   }
-
-  console.log("Loaded cryptoLib:", cryptoLib)
-
   isImported = true
   res.resolve(true)
   return cryptoLib
