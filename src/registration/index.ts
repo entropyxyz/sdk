@@ -43,8 +43,9 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
     const registered: Promise<undefined> = new Promise((resolve, reject) => {
       try {
         const unsubPromise = this.substrate.rpc.chain.subscribeNewHeads(async () => {
-          const registered = await this.checkRegistrationStatus(this.signer.wallet.address)
-          if (registered) {
+          const registeredCheck = await this.checkRegistrationStatus(this.signer.wallet.address)
+          console.log('new heads check:', registeredCheck)
+          if (registeredCheck) {
             const unsub = await unsubPromise
             unsub()
             resolve(undefined)
@@ -60,11 +61,12 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
       keyVisibility,
       initialProgram ? initialProgram : null
     )
-
-    await this.sendAndWaitFor(registerTx, freeTx, {
+    console.log('im about to submit a tx')
+    const registerTxRecord = await this.sendAndWaitFor(registerTx, freeTx, {
       section: 'relayer',
       name: 'SignalRegister',
     })
+    console.log('ive submited a tx', registerTxRecord.toHuman())
 
     return registered
   }
@@ -73,7 +75,7 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
     const isRegistered = await this.substrate.query.relayer.registered(
       address
     )
-
+    console.log('isRegistered::', isRegistered.toHuman())
     return !!isRegistered.unwrapOr(false)
   }
 }

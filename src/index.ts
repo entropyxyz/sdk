@@ -67,11 +67,13 @@ export default class Entropy {
 
   async register (params: RegistrationParams) {
     await this.ready
+    console.log('I AM READY!!!!')
     if (params.address) {
       if (!isValidSubstrateAddress(params.address)) {
         throw new TypeError('Incompatible address type')
       }
     }
+    console.log('im goint to register')
     return this.registrationManager.register(params)
   }
 

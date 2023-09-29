@@ -29,39 +29,41 @@ export const spinChain = async (
 ): Promise<ChildProcessWithoutNullStreams> => {
   console.log(`Spinning up chain with binary: ${bin}, name: ${name}, port: ${port}`)
   let args = []
-  if (name == 'dev') {
-    args = ['--dev']
-  } else {
-    args = [
-      `--base-path=.entropy/${name}`,
-      '--chain=local',
+  args = [
+    // '--dev',
+    `--base-path=.entropy/${name}`,
 //  TODO: Talk to jesse about why this isnt a option
-      '--rpc-port',
-      port,
-      `--${name}`,
-      '--validator',
-    ]
+    '--rpc-port',
+    port,
+    `--${name}`,
+    '--validator',
+  ]
 
-    if (name != 'alice') {
-      args.push(
-        '--bootnodes=/ip4/127.0.0.1/tcp/30333/p2p/12D3KooWEyoppNCUx8Yx66oV9fJnriXwCcXwDDUA2kj6vnc6iDEp'
-      )
-    }
+  if (name != 'alice') {
+    args.push(
+      '--bootnodes=/ip4/127.0.0.1/tcp/30333/p2p/12D3KooWEyoppNCUx8Yx66oV9fJnriXwCcXwDDUA2kj6vnc6iDEp'
+    )
+  }
 
-    if (name == 'alice') {
-      args.push(
-        '--node-key=0000000000000000000000000000000000000000000000000000000000000001'
-      )
-    }
+  if (name == 'alice') {
+    args.push(
+      '--node-key=0000000000000000000000000000000000000000000000000000000000000001'
+    )
   }
 
   const process = spawn(bin, args)
-  process.on('error', (error) => {
-      console.error(`Error in spinChain process: ${error.message}`)
-  })
-  process.on('exit', (code) => {
-      console.log(`spinChain process exited with code: ${code}`)
-  })
+  // comment in for chain logging and add verbose to jest
+  // process.stderr.on('data', async function (chunk) {
+  //   const message = chunk.toString()
+  //   console.log(name, ': ', {message})
+  // })
+
+  // process.on('error', (error) => {
+  //     console.error(`Error in spinChain process: ${error.message}`)
+  // })
+  // process.on('exit', (code) => {
+  //     console.log(`spinChain process exited with code: ${code}`)
+  // })
   return process
 }
 
@@ -73,13 +75,13 @@ export const spinThreshold = async (
   console.log(`Spinning up threshold with binary: ${bin}, name: ${name}, port: ${port}`)
   const args = []
   if (name) {
-    args.push('--' + name, '--threshold-url=127.0.0.1:' + port + '--rpc-external')
+    args.push('--' + name, '--threshold-url=127.0.0.1:' + port)
   }
   const process = spawn(bin, args)
   // comment in for threshold logging and add verbose to jest
-  process.stderr.on('data', async function (chunk) {
+  process.stdout.on('data', async function (chunk) {
     const message = chunk.toString()
-    console.log(message)
+    console.log('Threshold chain data for ', name, ':', message)
   })
   await sleep(1000)
     process.on('error', (error) => {

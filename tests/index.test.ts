@@ -17,7 +17,7 @@ import {
 import { ethers } from 'ethers'
 import { keccak256 } from 'ethers/lib/utils'
 
-describe('Core Tests', () => {
+describe('Core Tests',() => {
   let entropy: Entropy
   let chainProcess1, chainProcess2, serverProcess1, serverProcess2
 
@@ -67,11 +67,13 @@ describe('Core Tests', () => {
   })
 
   it('should handle registration, program management, and signing', async () => {
+    console.log('pre registration')
     await entropy.register({
       address: charlieStashAddress,
       keyVisibility: 'Permissioned',
       freeTx: false,
     })
+    console.log('post registration')
 
   
     expect(await entropy.registrationManager.checkRegistrationStatus(charlieStashAddress)).toBeTruthy()
@@ -113,6 +115,7 @@ describe('Core Tests', () => {
     })
     expect(signature.length).toBe(65)
     await disconnect(charlieStashEntropy.substrate)
-  })
+  // set test time out for a minute
+  }/*, 1000 * 60*/)
 
 })
