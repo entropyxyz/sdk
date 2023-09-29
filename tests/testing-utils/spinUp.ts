@@ -7,7 +7,7 @@ import { getApi } from '../../src/utils'
 export const modifyOcwPostEndpoint = async (endpoint: string, new_url: string) => {
   try {
       console.log(`Connecting to endpoint: ${endpoint}`)
-      const apiFactory = await getApi()     
+      const apiFactory = await getApi()
       const api = await apiFactory(endpoint)
 
       const key = 'propagation'
@@ -35,7 +35,8 @@ export const spinChain = async (
     args = [
       `--base-path=.entropy/${name}`,
       '--chain=local',
-      '--ws-port',
+//  TODO: Talk to jesse about why this isnt a option
+      '--rpc-port',
       port,
       `--${name}`,
       '--validator',
@@ -55,11 +56,6 @@ export const spinChain = async (
   }
 
   const process = spawn(bin, args)
-  // comment in for chain logging and add verbose to jest
-  process.stderr.on('data', async function (chunk) {
-    const message = chunk.toString()
-    console.log({message})
-  })
   process.on('error', (error) => {
       console.error(`Error in spinChain process: ${error.message}`)
   })
@@ -86,12 +82,12 @@ export const spinThreshold = async (
     console.log(message)
   })
   await sleep(1000)
-  process.on('error', (error) => {
-    console.error(`Error in spinThreshold process: ${error.message}`)
-})
-process.on('exit', (code) => {
-    console.log(`spinThreshold process exited with code: ${code}`)
-})
+    process.on('error', (error) => {
+      console.error(`Error in spinThreshold process: ${error.message}`)
+  })
+  process.on('exit', (code) => {
+      console.log(`spinThreshold process exited with code: ${code}`)
+  })
 return process
 }
 
