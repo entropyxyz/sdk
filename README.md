@@ -25,7 +25,7 @@ build:generate
 The `Entropy` class provides a high-level interface for interacting with Entropy.
 
 ```typescript
-const entropy = new Entropy({ seed: 'YOUR_SEED', endpoint: 'YOUR_ENDPOINT' });
+const entropy = new Entropy({ seed: 'YOUR_SEED', endpoint: 'YOUR_ENDPOINT' })
 ```
 
 ### ExtrinsicBaseClass
@@ -54,7 +54,7 @@ const registrationManager = new RegistrationManager({ substrate: apiInstance, si
 The `SignatureRequestManager` class manages signature requests on Entropy.
 
 ```typescript
-const signatureManager = new SignatureRequestManager({ signer: signerInstance, substrate: apiInstance, adapters: yourAdapters, crypto: CryptoLib });
+const signatureManager = new SignatureRequestManager({ signer: signerInstance, substrate: apiInstance, adapters: yourAdapters, crypto: CryptoLib })
 ```
 
 
