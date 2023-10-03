@@ -42,11 +42,11 @@ export default class ProgramManager extends ExtrinsicBaseClass {
    */
 
   async get (deployKey = this.signer.wallet.address): Promise<ArrayBuffer> {
-    const response = await this.substrate.query.constraints.v2Bytecode(deployKey);
+    const response = await this.substrate.query.constraints.v2Bytecode(deployKey)
     if (!response) {
-      throw new Error("No program defined for the given account."); 
+      throw new Error("No program defined for the given account.");
     }
-    return decodeVecU8ToArrayBuffer(response);
+    return decodeVecU8ToArrayBuffer(response)
   }
 
   /**
@@ -58,7 +58,7 @@ export default class ProgramManager extends ExtrinsicBaseClass {
 
   async set (program: ArrayBuffer): Promise<void> {
     try {
-      const tx: SubmittableExtrinsic<'promise'> = this.substrate.tx.constraints.v2Bytecode(program);
+      const tx: SubmittableExtrinsic<'promise'> = this.substrate.tx.constraints.v2Bytecode(program)
     
       await this.sendAndWaitFor(tx, true, {
         section: 'Programs',
@@ -66,8 +66,8 @@ export default class ProgramManager extends ExtrinsicBaseClass {
       });
 
     } catch (error) {
-      console.error("Error setting program:", error);
-      throw error;
+      console.error("Error setting program:", error)
+      throw error
     }
   } 
 }

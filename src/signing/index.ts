@@ -22,29 +22,29 @@ import { u8ArrayToString } from '../utils'
  */
 
 export interface Config {
-  signer: Signer;
-  substrate: ApiPromise;
-  adapters: { [key: string | number]: Adapter };
-  crypto: CryptoLib;
+  signer: Signer
+  substrate: ApiPromise
+  adapters: { [key: string | number]: Adapter }
+  crypto: CryptoLib
 }
 
 export interface TxParams {
-  [key: string]: any;
+  [key: string]: any
 }
 
 export interface SigTxOps {
   txParams: TxParams
-  type?: string;
-  freeTx?: boolean;
-  retries?: number;
+  type?: string
+  freeTx?: boolean
+  retries?: number
 }
 
 export interface SigOps {
-  sigRequestHash: string;
-  arch?: Arch;
-  type?: string;
-  freeTx?: boolean;
-  retries?: number;
+  sigRequestHash: string
+  arch?: Arch
+  type?: string
+  freeTx?: boolean
+  retries?: number
 }
 
 /**
@@ -56,12 +56,12 @@ export interface SigOps {
 
 export default class SignatureRequestManager extends ExtrinsicBaseClass {
   adapters: { [key: string | number]: Adapter }
-  signer: Signer;
+  signer: Signer
   crypto
 
   constructor ({ signer, substrate, adapters, crypto}: Config) {
     super({ signer, substrate })
-    this.crypto = crypto;
+    this.crypto = crypto
     this.adapters = {
       ...defaultAdapters, 
       ...adapters

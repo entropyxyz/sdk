@@ -3,10 +3,10 @@ import { Signer, Address } from '../types'
 import { ApiPromise } from '@polkadot/api'
 
 export interface RegistrationParams {
-  freeTx?: boolean;
-  initialProgram?: string;
-  keyVisibility?: 'Public' | 'Permissioned' | 'Private';
-  address: Address;
+  freeTx?: boolean
+  initialProgram?: string
+  keyVisibility?: 'Public' | 'Permissioned' | 'Private'
+  address: Address
 }
 
 /**

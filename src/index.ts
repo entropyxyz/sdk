@@ -34,18 +34,18 @@ import ProgramManager from './programs'
  */
 
 export interface EntropyOpts {
-  seed?: string;
-  endpoint?: string;
-  adapters?: { [key: string | number]: Adapter };
+  seed?: string
+  endpoint?: string
+  adapters?: { [key: string | number]: Adapter }
 }
 
 export default class Entropy {
   #ready?: (value?: any) => void
   #fail?: (reason?: any) => void
   ready: Promise<void>
-  isRegistered: (address: Address) => Promise<boolean>;
-  keys?: Signer;
-  registrationManager: RegistrationManager;
+  isRegistered: (address: Address) => Promise<boolean>
+  keys?: Signer
+  registrationManager: RegistrationManager
   programs: ProgramManager
   signingManager: SignatureRequestManager
 
@@ -60,26 +60,26 @@ export default class Entropy {
    */
 
   async init (opts: EntropyOpts) {
-    this.keys = await getWallet(opts.seed);
-    const wsProvider = new WsProvider(opts.endpoint);
+    this.keys = await getWallet(opts.seed)
+    const wsProvider = new WsProvider(opts.endpoint)
   
-    const substrate = new ApiPromise({ provider: wsProvider });
+    const substrate = new ApiPromise({ provider: wsProvider })
     this.substrate = substrate
     this.registrationManager = new RegistrationManager({
       substrate: substrate,
       signer: this.keys,
-    });
+    })
     this.signingManager = new SignatureRequestManager({
       signer: this.keys,
       substrate,
       adapters: opts.adapters,
       crypto
-    });
+    })
     this.programs = new ProgramManager({ 
       substrate: substrate,
       signer: this.keys,
-    });
-    await substrate.isReady;
+    })
+    await substrate.isReady
     this.#ready()
     this.isRegistered = this.registrationManager.checkRegistrationStatus.bind(this.registrationManager)
 
@@ -100,7 +100,7 @@ export default class Entropy {
 
 
     this.init(opts).catch((error) => {
-      this.#fail(error);
+      this.#fail(error)
     })
   }
 
