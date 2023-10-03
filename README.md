@@ -30,7 +30,7 @@ const entropy = new Entropy({ seed: 'YOUR_SEED', endpoint: 'YOUR_ENDPOINT' });
 
 ### ExtrinsicBaseClass
 
-The `ExtrinsicBaseClass` is a foundational class that provides methods to send extrinsics to the Substrate blockchain.
+The `ExtrinsicBaseClass` is a foundational class that provides methods to send extrinsics to Substrate.
 
 
 ### ProgramManager
@@ -43,7 +43,7 @@ const programManager = new ProgramManager({ substrate: apiInstance, signer: sign
 
 ### RegistrationManager
 
-The `RegistrationManager` class manages user registration on Entropy .
+The `RegistrationManager` class manages user registration on Entropy.
 
 ```typescript
 const registrationManager = new RegistrationManager({ substrate: apiInstance, signer: signerInstance });
