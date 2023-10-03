@@ -15,10 +15,28 @@ export default class ExtrinsicBaseClass {
   substrate: ApiPromise
   signer: Signer 
 
+  /**
+   * Creates an instance of ExtrinsicBaseClass.
+   * 
+   * @param {object} params - Constructor parameters.
+   * @param {ApiPromise} params.substrate - Polkadot API instance for interacting with Substrate.
+   * @param {Signer} params.signer -  Signer object responsible for signing transactions.
+   */
+
   constructor ({ substrate, signer }) {
     this.substrate = substrate
     this.signer = signer
   }
+
+  /**
+   * Sends an extrinsic to the Substrate blockchain and waits for a specific event to occur.
+   * 
+   * @param {SubmittableExtrinsic<'promise'>} call - The extrinsic to send.
+   * @param {boolean} [freeTx=true] - Whether the transaction should be free or not.
+   * @param {EventFilter} filter - A Substrate filter used for finding the desired event.
+   * @returns {Promise<EventRecord>} - A promise that resolves to the event record when the desired event is found.
+   */
+
   async sendAndWaitFor (
     call: SubmittableExtrinsic<'promise'>,
     freeTx = true,
@@ -60,13 +78,10 @@ export default class ExtrinsicBaseClass {
   }
 
   /**
-   * @alpha
-   *
-   * @remarks
-   * This function is part of the {@link Substrate} class
-   *
+   * @alpha Handles free transactions. This method is in an alpha stage and may change in future versions.
+   * 
    * @param {SubmittableExtrinsic<'promise'>} call - The extrinsic to send.
-   * @returns {*}  {Promise<SubmittableExtrinsic<'promise'>>} - A promise that resolves when the transaction is included in a block.
+   * @returns {Promise<SubmittableExtrinsic<'promise'>>} - A promise that resolves when the transaction is included in a block.
    */
 
   async handleFreeTx (call: SubmittableExtrinsic<'promise'>): Promise<SubmittableExtrinsic<'promise'>> {

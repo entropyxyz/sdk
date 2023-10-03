@@ -9,6 +9,15 @@ export interface RegistrationParams {
   address: Address;
 }
 
+/**
+ * @typedef RegistrationParams
+ * 
+ * @property {boolean} [freeTx=true] - Indicates if the transaction should be free.
+ * @property {string} [initialProgram] - Represents the initial program.
+ * @property {('Public' | 'Permissioned' | 'Private')} [keyVisibility='Permissioned'] - Indicates the visibility of the key.
+ * @property {Address} address - The address of the user.
+ */
+
 export default class RegistrationManager extends ExtrinsicBaseClass {
   substrate: ApiPromise
   signer: Signer
@@ -20,15 +29,29 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
     super({ signer, substrate })
   }
 
+  /**
+   * Registers a user w. Entropy.
+   * 
+   * @param {RegistrationParams} params - Registration parameters.
+   * @returns {Promise<undefined>}
+   * @throws Will throw an error if the user is already registered.
+   */
+
   async register ({
     freeTx = true,
     initialProgram,
     keyVisibility = 'Permissioned',
     address = this.signer.wallet.address,
   }: RegistrationParams): Promise<undefined> {
-    // this is sloppy
-    // TODO: store multiple signers via address. and respond accordingly
-    // however it should be handled in extrinsic class and not here
+
+    /**
+   * Checks if a given address is already registered on Entropy.
+   * 
+   * @async
+   * @function checkRegistrationStatus
+   * @param {Address} address - The address of the user to check registration status for.
+   * @returns {Promise<boolean>}
+   */
 
     const isCurrentlyRegistered = await this.checkRegistrationStatus(address)
     if (isCurrentlyRegistered) {
@@ -37,9 +60,10 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
 
     // subcribe to new blocks
     //then for every new block query events
-    // fgilter through events for accountregistartion :P vom
+    // filter through events for accountregistartion :P vom
     // this.substrate.events.relayer.AccountRegistered
     // unsubcribes from blocks once event has been found
+
     const registered: Promise<undefined> = new Promise((resolve, reject) => {
       try {
         const unsubPromise = this.substrate.rpc.chain.subscribeNewHeads(async () => {
@@ -70,6 +94,13 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
 
     return registered
   }
+
+  /**
+   * Checks if a given address is already registered on Entropy.
+   * 
+   * @param {Address} address - The address of the user to check registration status for.
+   * @returns {Promise<boolean>}
+   */
 
   async checkRegistrationStatus (address: Address): Promise<boolean> {
     const isRegistered = await this.substrate.query.relayer.registered(

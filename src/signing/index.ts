@@ -9,6 +9,18 @@ import { stripHexPrefix, sendHttpPost, sleep } from '../utils'
 import { crypto, CryptoLib } from '../utils/crypto'
 import { u8ArrayToString } from '../utils'
 
+/**
+ * @class SignatureRequestManager
+ * @extends ExtrinsicBaseClass
+ * 
+ * @description
+ * The `SignatureRequestManager` class is responsible for managing signature requests on Entropy.
+ * 
+ * @property {Object} adapters - A collection of adapters for different signature types i.e Ethereum (ECDSA).
+ * @property {Signer} signer - Represents the user who will be interacting with the blockchain.
+ * @property {CryptoLib} crypto - An instance of the crypto library for cryptographic operations reference utils/crypto.ts
+ */
+
 export interface Config {
   signer: Signer;
   substrate: ApiPromise;
@@ -35,6 +47,13 @@ export interface SigOps {
   retries?: number;
 }
 
+/**
+ * Manages signature requests on the Entropy blockchain.
+ * 
+ * @class SignatureRequestManager
+ * @extends ExtrinsicBaseClass
+ */
+
 export default class SignatureRequestManager extends ExtrinsicBaseClass {
   adapters: { [key: string | number]: Adapter }
   signer: Signer;
@@ -48,6 +67,17 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
       ...adapters
     }
   }
+
+  /**
+   * Signs a transaction using the Entropy blockchain.
+   * 
+   * @async
+   * @function signTransaction
+   * @param {SigTxOps} options - Options for signing the transaction.
+   * @returns {Promise<SignatureLike>}
+   * 
+   * @throws Will throw an error if there's no adapter for the given type or if the adapter lacks a preSign function.
+   */
 
   async signTransaction ({ txParams, type, freeTx = true, retries }: SigTxOps) : Promise<SignatureLike> {
     if (!this.adapters[type]) throw new Error(`No transaction adapter for type: ${type} submit as hash`)
@@ -74,7 +104,7 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
    * a signature, it is up to the user to handle from there
    *
    * @param {utils.UnsignedTransaction} tx - {@link UnsignedTransaction} - The transaction to be signed
-   * @param {boolean} freeTx - use the free tx pallet
+   * @param {boolean} freeTx - use the free tx pallet. Specifies if a transaction is free or not. 
    * @param {number} retries - To be deprecated when alice signs with the validators, but polling for sig retries
    * @return {*}  {Promise<SignatureLike>} {@link SignatureLike} - A signature to then be included in a transaction
    */

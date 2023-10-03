@@ -6,24 +6,26 @@ import { decodeVecU8ToArrayBuffer} from '../utils'
 
 
 /**
- * @alpha
- * @remarks
- * This is the {@link ProgramManager} class
- * A class for interfacing with the V2 Entropy Constraints system
+ * This module provides utility functions for managing programs in the Entropy ecosystem.
  */
-export default class ProgramManager extends ExtrinsicBaseClass {
-  /**
-   * @alpha
-   * @remarks
-   * This function is part of the {@link ProgramManager} class
-   * Creates an instance of ProgramManager.
-   *
-   * @param {ApiPromise} substrate - The api object for an Entropy blockchain
-   * @param {Signer} signer - The signer object for the user interfacing with the Entropy blockchain
-   */
 
+/**
+ * A class for interfacing with the V2 Entropy Constraints system.
+ * 
+ * @class ProgramManager
+ * @extends ExtrinsicBaseClass
+ */
+
+export default class ProgramManager extends ExtrinsicBaseClass {
   substrate: ApiPromise
   signer: Signer 
+
+  /**
+   * Creates an instance of ProgramManager.
+   *
+   * @param {ApiPromise} substrate - The API object for Substrate.
+   * @param {Signer} signer - The signer object for the user interfacing with Entropy.
+   */
 
   constructor ({ substrate, signer }) {
     super({substrate, signer})
@@ -31,13 +33,15 @@ export default class ProgramManager extends ExtrinsicBaseClass {
     this.signer = signer
   }
 
-
-  // set up functions in entropy class 
-
-  // signer is one key pair. we can assume that its the key that we're setting it too. we're only setting one user gets one program. 
+  /**
+   * Retrieves the program associated with a given deploy key.
+   * 
+   * @param {string} [deployKey=this.signer.wallet.address] - The deploy key (address) associated with the program.
+   * @returns {Promise<ArrayBuffer>} - A promise that resolves to the program's bytecode.
+   * @throws Will throw an error if no program is defined for the given account.
+   */
 
   async get (deployKey = this.signer.wallet.address): Promise<ArrayBuffer> {
-    // TODO: Check with jake on this
     const response = await this.substrate.query.constraints.v2Bytecode(deployKey);
     if (!response) {
       throw new Error("No program defined for the given account."); 
@@ -45,12 +49,17 @@ export default class ProgramManager extends ExtrinsicBaseClass {
     return decodeVecU8ToArrayBuffer(response);
   }
 
-  // we're assuming/inferring account/key 
+  /**
+   * Sets a program for the associated signer's account.
+   * 
+   * @param {ArrayBuffer} program - The program's bytecode.
+   * @throws Will throw an error if unable to set the program.
+   */
+
   async set (program: ArrayBuffer): Promise<void> {
     try {
       const tx: SubmittableExtrinsic<'promise'> = this.substrate.tx.constraints.v2Bytecode(program);
-      
-      // Send the transaction and wait for the confirmation event.
+    
       await this.sendAndWaitFor(tx, true, {
         section: 'Programs',
         name: 'ProgramSet' 

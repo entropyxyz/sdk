@@ -9,6 +9,29 @@ import { Adapter } from './signing/adapters/types'
 import { Signer, Address } from './types'
 import ProgramManager from './programs'
 
+/**
+ * Configuration parameters for initializing the Entropy instance.
+ * 
+ * @typedef EntropyOpts
+ * 
+ * @property {string} [seed] - The seed for generating the user's keys.
+ * @property {string} [endpoint] - The endpoint for connecting to Entropy validators.
+ * @property {Object} [adapters] - A collection of adapters for different signature types. i.e ethereum (ECDSA).
+ */
+
+/**
+ * The `Entropy` class provides an interface for interacting with Entropy.
+ * 
+ * @class Entropy
+ * 
+ * @property {Promise<void>} ready - A promise that resolves when the instance is fully initialized.
+ * @property {Function} isRegistered - A function to check if an address is registered with Entropy.
+ * @property {Signer} keys - Represents the user's keys for interacting with Entropy.
+ * @property {RegistrationManager} registrationManager - Manages registration-related operations.
+ * @property {ProgramManager} programs - Manages program-related operations. 
+ * @property {SignatureRequestManager} signingManager - Manages signature request operations.
+ * @property {ApiPromise} substrate - An instance of `ApiPromise` which provides methods to interact with Entropy.
+ */
 
 export interface EntropyOpts {
   seed?: string;
@@ -27,6 +50,14 @@ export default class Entropy {
   signingManager: SignatureRequestManager
 
   substrate: ApiPromise
+
+  /**
+   * Initializes the Entropy instance.
+   * 
+   * @async
+   * @private
+   * @param {EntropyOpts} opts - Configuration parameters.
+   */
 
   async init (opts: EntropyOpts) {
     this.keys = await getWallet(opts.seed);
@@ -54,16 +85,34 @@ export default class Entropy {
 
   }
 
+  /**
+   * Creates an instance of the Entropy class.
+   * 
+   * @constructor
+   * @param {EntropyOpts} opts - Configuration parameters for initializing the Entropy instance.
+   */
+
   constructor (opts: EntropyOpts) {
     this.ready = new Promise((resolve, reject) => {
       this.#ready = resolve
       this.#fail = reject
     })
-  
+
+
     this.init(opts).catch((error) => {
       this.#fail(error);
     })
   }
+
+  /**
+   * Registers a user w/ Entropy.
+   * 
+   * @async
+   * @param {RegistrationParams} params - Registration parameters.
+   * @returns {Promise<void>}
+   * 
+   * @throws Will throw an error if the provided address is a not valid Substrate address.
+   */
 
   async register (params: RegistrationParams) {
     await this.ready
@@ -77,15 +126,30 @@ export default class Entropy {
     return this.registrationManager.register(params)
   }
 
+  /**
+   * Signs a transaction using Entropy.
+   * 
+   * @async
+   * @param {SigTxOps} params - Parameters for signing the transaction.
+   * @returns {Promise<SignatureLike>}
+   */
+
   async signTransaction (params: SigTxOps): Promise<SignatureLike> {
     await this.ready
     return this.signingManager.signTransaction(params)
   }
 
+  /**
+   * Signs a request using Entropy.
+   * 
+   * @async
+   * @param {SigOps} params - Parameters for signing the request.
+   * @returns {Promise<SignatureLike>}
+   */
+
   async sign (params: SigOps): Promise<SignatureLike> {
     await this.ready
     return this.signingManager.sign(params)
   }
-
 }
 
