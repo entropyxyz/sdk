@@ -26,8 +26,8 @@ The `Entropy` class provides a high-level interface for interacting with Entropy
 
 ```typescript
 const entropyConfig: EntropyOpts = {
-  seed: 'YOUR_SEED_STRING', // Replace with your seed string
-  endpoint: 'wss://YOUR_SUBSTRATE_ENDPOINT', // Replace with your Substrate endpoint
+  seed: 'SEED_STRING', // Replace with your seed string
+  endpoint: 'wss://SUBSTRATE_ENDPOINT', // Replace with your Substrate endpoint
   adapters: {
     // For example: ethereum: yourEthereumAdapterInstance
     // refer to signing/adapters/eth.ts for an example
@@ -43,12 +43,12 @@ const entropyInstance = new Entropy(entropyConfig)
 The `ExtrinsicBaseClass` is a foundational class that provides methods to send extrinsics to Substrate.
 
 ```typescript
-const substrate = new ApiPromise({ provider: new WsProvider('wss://YOUR_SUBSTRATE_ENDPOINT') })
+const substrate = new ApiPromise({ provider: new WsProvider('wss://SUBSTRATE_ENDPOINT') })
 await substrate.isReady
 
 const signer: Signer = {
   // Define your signer properties and methods here
-  wallet: 'YOUR_WALLET_INSTANCE', // Replace with your wallet instance or relevant signer properties
+  wallet: 'WALLET_INSTANCE', // Replace with your wallet instance or relevant signer properties
   // ... other signer properties and methods
 }
 
@@ -92,7 +92,7 @@ const registrationManager = new RegistrationManager({ substrate, signer })
 
 const registrationParams: RegistrationParams = {
   freeTx: true,
-  initialProgram: 'YOUR_INITIAL_PROGRAM', // Replace with your initial program
+  initialProgram: 'INITIAL_PROGRAM', // Replace with your initial program
   keyVisibility: 'Permissioned',
   address: 'USER_ADDRESS' // Replace with the user's address
 }
@@ -135,7 +135,7 @@ const txParams: TxParams = {
 
 const sigTxOps: SigTxOps = {
   txParams,
-  type: 'YOUR_TYPE', // Replace with your type
+  type: 'TYPE', // Replace with your type
   freeTx: true,
   retries: 3
 }
