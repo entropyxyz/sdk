@@ -6,7 +6,11 @@ import { decodeVecU8ToArrayBuffer} from '../utils'
 
 
 /**
- * This module provides utility functions for managing programs in the Entropy ecosystem.
+ * This module provides utility functions for managing programs in the Entropy ecosystem. 
+ * Entropy Programs are simply WebAssembly Programs that evaluate to a true or false state.
+ * If true, the network signs the associated message using the program's associated threshold key
+
+
  */
 
 /**
