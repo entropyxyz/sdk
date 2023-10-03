@@ -1,17 +1,4 @@
-# Entropy Blockchain Interaction Library
-
-This library provides a set of classes and utilities to interact with Entropy. It covers functionalities like registration, program management, signature requests, and more.
-
-## Table of Contents
-
-- [Installation](#installation)
-- [Usage](#usage)
-  - [Entropy](#entropy)
-  - [ExtrinsicBaseClass](#extrinsicbaseclass)
-  - [ProgramManager](#programmanager)
-  - [RegistrationManager](#registrationmanager)
-  - [SignatureRequestManager](#signaturerequestmanager)
-
+# Entropy SDK 
 
 ## Metadata 
 
