@@ -38,7 +38,7 @@ The `ExtrinsicBaseClass` is a foundational class that provides methods to send e
 The `ProgramManager` class interfaces with the V2 Entropy Constraints system (programs).
 
 ```typescript
-const programManager = new ProgramManager({ substrate: apiInstance, signer: signerInstance });
+const programManager = new ProgramManager({ substrate: apiInstance, signer: signerInstance })
 ```
 
 ### RegistrationManager
@@ -46,7 +46,7 @@ const programManager = new ProgramManager({ substrate: apiInstance, signer: sign
 The `RegistrationManager` class manages user registration on Entropy.
 
 ```typescript
-const registrationManager = new RegistrationManager({ substrate: apiInstance, signer: signerInstance });
+const registrationManager = new RegistrationManager({ substrate: apiInstance, signer: signerInstance })
 ```
 
 ### SignatureRequestManager
