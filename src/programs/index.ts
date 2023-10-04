@@ -54,8 +54,8 @@ export default class ProgramManager extends ExtrinsicBaseClass {
       
       // Send the transaction and wait for the confirmation event.
       await this.sendAndWaitFor(tx, false, {
-        section: 'Programs',
-        name: 'ProgramSet' 
+        section: 'constraints',
+        name: 'ConstraintsV2Updated'
       });
 
     } catch (error) {
