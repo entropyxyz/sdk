@@ -36,12 +36,12 @@ describe('Core Tests',() => {
       chainProcess2 = await spinChain(chainPath, 'bob', '9945')
 
       // Handle process errors
-      const processes = [serverProcess1, serverProcess2, chainProcess1, chainProcess2];
+      const processes = [serverProcess1, serverProcess2, chainProcess1, chainProcess2]
       processes.forEach(proc => {
         proc.on('error', (error) => {
-          console.error('Error in process:', error);
+          console.error('Error in process:', error)
         })
-      });
+      })
 
     } catch (e) {
       console.log(e)
@@ -88,8 +88,12 @@ describe('Core Tests',() => {
 
     // Retrieve the program and compare
     const fetchedProgram = await entropy.programs.get()
-    console.log("FETCH", buf2hex(fetchedProgram), fetchedProgram, fetchedProgram.byteLength )
-    expect(buf2hex(fetchedProgram)).toEqual(hex2buf(dummyProgram))
+    console.log("FETCHPROGRAMBYTE", fetchedProgram.byteLength)
+    console.log("DUMMYPROGRAMBYTE", dummyProgram.byteLength)
+    console.log(fetchedProgram.slice(0, 10), fetchedProgram.slice(-10))
+    console.log(dummyProgram.slice(0, 10), dummyProgram.slice(-10))
+
+    expect(fetchedProgram).toEqual(buf2hex(dummyProgram))
 
     // signing attempts should fail cause we haven't set constraints yet
     const no_constraint: any = await entropy.sign({
