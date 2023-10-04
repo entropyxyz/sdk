@@ -147,13 +147,17 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
 
   async getArbitraryValidators (sigRequest: string): Promise<ValidatorInfo[]> {
     const stashKeys = (await this.substrate.query.stakingExtension.signingGroups.entries())
-      .map(group => {
-        const index = parseInt(sigRequest, 16) % group.length
-        return group[index]
+    .map(([{ args: [group] }, stashKeys]) => {
+      const index = parseInt(sigRequest, 16) % stashKeys.unwrap().length
+      console.log({group: group.toHuman(), stashKeys: stashKeys.unwrap()[0].toHuman(), lenght: stashKeys.unwrap().length, index})
+        return stashKeys.unwrap()[index]
       })
 
+    console.log({stashKeys: stashKeys})
     const rawValidatorInfo = await Promise.all(stashKeys.map(stashKey => this.substrate.query.stakingExtension.thresholdServers(stashKey)))
+
     const validatorsInfo: Array<ValidatorInfo> = rawValidatorInfo.map((validator) => {
+      console.log({validator: validator.toHuman()})
       /*
         fuck me, i'm sorry frankie i know this looks bad and you're right
         it does but this is going to require a destruction of polkadotjs as a dependency
