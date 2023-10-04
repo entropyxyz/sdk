@@ -53,17 +53,17 @@ export const spinChain = async (
 
   const process = spawn(bin, args)
   // comment in for chain logging and add verbose to jest
-  // process.stderr.on('data', async function (chunk) {
-  //   const message = chunk.toString()
-  //   console.log(name, ': ', {message})
-  // })
+  process.stderr.on('data', async function (chunk) {
+    const message = chunk.toString()
+    console.log(name, ': ', {message})
+  })
 
-  // process.on('error', (error) => {
-  //     console.error(`Error in spinChain process: ${error.message}`)
-  // })
-  // process.on('exit', (code) => {
-  //     console.log(`spinChain process exited with code: ${code}`)
-  // })
+  process.on('error', (error) => {
+      console.error(`chain for ${name} Error in spinChain process: ${error.message}`)
+  })
+  process.on('exit', (code) => {
+      console.log(`spinChain process exited with code: ${code}`)
+  })
   return process
 }
 
@@ -77,19 +77,19 @@ export const spinThreshold = async (
   if (name) {
     args.push('--' + name, '--threshold-url=127.0.0.1:' + port)
   }
-  const process = spawn(bin, args)
-  // comment in for threshold logging and add verbose to jest
-  process.stdout.on('data', async function (chunk) {
-    const message = chunk.toString()
-    console.log('Threshold chain data for ', name, ':', message)
-  })
   await sleep(1000)
-    process.on('error', (error) => {
-      console.error(`Error in spinThreshold process: ${error.message}`)
-  })
-  process.on('exit', (code) => {
-      console.log(`spinThreshold process exited with code: ${code}`)
-  })
+  const process = spawn(bin, args)
+  // // comment in for threshold logging and add verbose to jest
+  // process.stdout.on('data', async function (chunk) {
+  //   const message = chunk.toString()
+  //   console.log('Threshold chain data for ', name, ':', message)
+  // })
+  //   process.on('error', (error) => {
+  //     console.error(`Error in spinThreshold process: ${error.message}`)
+  // })
+  // process.on('exit', (code) => {
+  //     console.log(`spinThreshold process exited with code: ${code}`)
+  // })
 return process
 }
 

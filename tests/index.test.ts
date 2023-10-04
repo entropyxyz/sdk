@@ -1,3 +1,4 @@
+import { readFileSync } from 'fs'
 import Entropy from '../src'
 import {
   spinChain,
@@ -46,10 +47,10 @@ describe('Core Tests',() => {
     await sleep(9000)
     await modifyOcwPostEndpoint(
       'ws://127.0.0.1:9945',
-      'http://localhost:3002/user/new'
+      'http://localhost:3002/user/new',
     )
     entropy = new Entropy({
-      seed: charlieSeed
+      seed: charlieStashSeed
     })
 
     // Wait for the entropy instance to be ready
@@ -75,11 +76,12 @@ describe('Core Tests',() => {
     })
     console.log('post registration')
 
-  
+    expect(entropy.keys.wallet.address).toBe(charlieStashAddress)
+
     expect(await entropy.registrationManager.checkRegistrationStatus(charlieStashAddress)).toBeTruthy()
 
     // Set a program for the user
-    const dummyProgram = new ArrayBuffer(8)
+    const dummyProgram = readFileSync('./tests/testing-utils/template_barebones.wasm')
     await entropy.programs.set(dummyProgram)
 
     // Retrieve the program and compare

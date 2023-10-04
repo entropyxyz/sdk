@@ -48,10 +48,12 @@ export default class ProgramManager extends ExtrinsicBaseClass {
   // we're assuming/inferring account/key 
   async set (program: ArrayBuffer): Promise<void> {
     try {
-      const tx: SubmittableExtrinsic<'promise'> = this.substrate.tx.constraints.v2Bytecode(program);
+      console.log(this.signer.wallet.address, `this is the key!!!`)
+      // ts-ignore
+      const tx: SubmittableExtrinsic<'promise'> = this.substrate.tx.constraints.updateV2Constraints(this.signer.wallet.address, new Uint8Array(program));
       
       // Send the transaction and wait for the confirmation event.
-      await this.sendAndWaitFor(tx, true, {
+      await this.sendAndWaitFor(tx, false, {
         section: 'Programs',
         name: 'ProgramSet' 
       });
