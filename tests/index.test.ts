@@ -17,6 +17,8 @@ import {
 } from './testing-utils'
 import { ethers } from 'ethers'
 import { keccak256 } from 'ethers/lib/utils'
+import { buf2hex, hex2buf } from '../src/utils'
+import { hexString } from '../src/types'
 
 describe('Core Tests',() => {
   let entropy: Entropy
@@ -58,12 +60,12 @@ describe('Core Tests',() => {
   })
   afterEach(async () => {
     await disconnect(entropy.substrate)
-    await sleep(3000)
+    await sleep(6000)
     serverProcess1.kill()
     serverProcess2.kill()
     chainProcess1.kill()
     chainProcess2.kill()
-    await sleep(3000)
+    await sleep(6000)
     removeDB()
   })
 
@@ -81,12 +83,13 @@ describe('Core Tests',() => {
     expect(await entropy.registrationManager.checkRegistrationStatus(charlieStashAddress)).toBeTruthy()
 
     // Set a program for the user
-    const dummyProgram = readFileSync('./tests/testing-utils/template_barebones.wasm')
+    const dummyProgram: any = readFileSync('./tests/testing-utils/template_barebones.wasm')
     await entropy.programs.set(dummyProgram)
 
     // Retrieve the program and compare
     const fetchedProgram = await entropy.programs.get()
-    expect(fetchedProgram).toEqual(dummyProgram)
+    console.log("FETCH", buf2hex(fetchedProgram), fetchedProgram, fetchedProgram.byteLength )
+    expect(buf2hex(fetchedProgram)).toEqual(hex2buf(dummyProgram))
 
     // signing attempts should fail cause we haven't set constraints yet
     const no_constraint: any = await entropy.sign({
@@ -117,7 +120,8 @@ describe('Core Tests',() => {
     })
     expect(signature.length).toBe(65)
     await disconnect(charlieStashEntropy.substrate)
+
   // set test time out for a minute
-  }/*, 1000 * 60*/)
+  },)
 
 })

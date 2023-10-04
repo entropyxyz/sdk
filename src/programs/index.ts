@@ -1,8 +1,9 @@
 import ExtrinsicBaseClass from '../extrinsic'
 import { ApiPromise } from '@polkadot/api'
-import { Signer} from '../types'
+import { Signer, hexString} from '../types'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
 import { decodeVecU8ToArrayBuffer} from '../utils'
+import { buf2hex, hex2buf } from '../utils'
 
 
 /**
@@ -34,33 +35,34 @@ export default class ProgramManager extends ExtrinsicBaseClass {
 
   // set up functions in entropy class 
 
-  // signer is one key pair. we can assume that its the key that we're setting it too. we're only setting one user gets one program. 
-
   async get (deployKey = this.signer.wallet.address): Promise<ArrayBuffer> {
-    // TODO: Check with jake on this
-    const response = await this.substrate.query.constraints.v2Bytecode(deployKey);
-    if (!response) {
-      throw new Error("No program defined for the given account."); 
+    const responseHexOption = await this.substrate.query.constraints.v2Bytecode(deployKey)
+    if (responseHexOption.isEmpty) {
+      throw new Error("No program defined for the given account.")
     }
-    return decodeVecU8ToArrayBuffer(response);
+
+    const responseHex = responseHexOption.unwrap().toHex() // Convert Bytes to hex string
+    return hex2buf(responseHex) // Convert hex string to ArrayBuffer
   }
 
   // we're assuming/inferring account/key 
   async set (program: ArrayBuffer): Promise<void> {
     try {
       console.log(this.signer.wallet.address, `this is the key!!!`)
+      const hexProgram = buf2hex(program) 
+
       // ts-ignore
-      const tx: SubmittableExtrinsic<'promise'> = this.substrate.tx.constraints.updateV2Constraints(this.signer.wallet.address, new Uint8Array(program));
+      const tx: SubmittableExtrinsic<'promise'> = this.substrate.tx.constraints.updateV2Constraints(this.signer.wallet.address, hexProgram)
       
       // Send the transaction and wait for the confirmation event.
       await this.sendAndWaitFor(tx, false, {
         section: 'constraints',
         name: 'ConstraintsV2Updated'
-      });
+      })
 
     } catch (error) {
-      console.error("Error setting program:", error);
-      throw error;
+      console.error("Error setting program:", error)
+      throw error
     }
   } 
 }
