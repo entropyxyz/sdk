@@ -2,12 +2,12 @@ import { decodeAddress, encodeAddress } from '@polkadot/keyring'
 import { hexToU8a, isHex } from '@polkadot/util'
 import { ApiPromise, WsProvider } from '@polkadot/api'
 
-export function stripHexPrefix(str: string): string {
+export function stripHexPrefix (str: string): string {
   if (str.startsWith('0x')) return str.slice(2)
   return str
 }
 
-export function isValidSubstrateAddress(address: any) {
+export function isValidSubstrateAddress (address: any) {
   try {
     encodeAddress(isHex(address) ? hexToU8a(address) : decodeAddress(address))
 
@@ -17,7 +17,7 @@ export function isValidSubstrateAddress(address: any) {
   }
 }
 
-export function sleep(delay: number) {
+export function sleep (delay: number) {
   const start = new Date().getTime()
   while (new Date().getTime() < start + delay);
 }
@@ -26,7 +26,7 @@ export function sleep(delay: number) {
 
 type ApiFactory = (endpoint?: string) => Promise<ApiPromise>
 
-export async function getApi(): Promise<ApiFactory> {
+export async function getApi (): Promise<ApiFactory> {
   const apis: { [key: string]: ApiPromise } = {}
 
   return async (endpoint = 'ws://127.0.0.1:9944'): Promise<ApiPromise> => {
@@ -43,7 +43,7 @@ export async function getApi(): Promise<ApiFactory> {
   }
 }
 
-export async function sendHttpPost(url: string, data: any): Promise<any> {
+export async function sendHttpPost (url: string, data: any): Promise<any> {
   const headers = {
     'Content-Type': 'application/json',
   }
@@ -54,7 +54,7 @@ export async function sendHttpPost(url: string, data: any): Promise<any> {
   })
 }
 
-export async function readKey(path: string) {
+export async function readKey (path: string) {
   if (!path) {
     throw new Error('Path is required')
   }
@@ -84,19 +84,19 @@ export async function readKey(path: string) {
   }
 }
 
-export function u8ArrayToString(array: Uint8Array): string {
+export function u8ArrayToString (array: Uint8Array): string {
   return new TextDecoder().decode(array)
 }
 
-export function stringToU8Array(str: string): Uint8Array {
+export function stringToU8Array (str: string): Uint8Array {
   return new TextEncoder().encode(str)
 }
 
-export function decodeVecU8ToArrayBuffer(data: any): Uint8Array {
+export function decodeVecU8ToArrayBuffer (data: any): Uint8Array {
   return new Uint8Array(data)
 }
 
-export function decodeArrayBufferToString(buf: ArrayBuffer): string {
+export function decodeArrayBufferToString (buf: ArrayBuffer): string {
   return new TextDecoder().decode(new Uint8Array(buf))
 }
 
