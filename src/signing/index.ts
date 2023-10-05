@@ -1,5 +1,5 @@
 import { ApiPromise } from '@polkadot/api'
-import  ExtrinsicBaseClass  from '../extrinsic'
+import ExtrinsicBaseClass from '../extrinsic'
 import { Signer } from '../types'
 import { SignatureLike } from '@ethersproject/bytes'
 import { defaultAdapters } from './adapters/default'
@@ -10,48 +10,57 @@ import { crypto, CryptoLib } from '../utils/crypto'
 import { u8ArrayToString } from '../utils'
 
 export interface Config {
-  signer: Signer;
-  substrate: ApiPromise;
-  adapters: { [key: string | number]: Adapter };
-  crypto: CryptoLib;
+  signer: Signer
+  substrate: ApiPromise
+  adapters: { [key: string | number]: Adapter }
+  crypto: CryptoLib
 }
 
 export interface TxParams {
-  [key: string]: any;
+  [key: string]: any
 }
 
 export interface SigTxOps {
   txParams: TxParams
-  type?: string;
-  freeTx?: boolean;
-  retries?: number;
+  type?: string
+  freeTx?: boolean
+  retries?: number
 }
 
 export interface SigOps {
-  sigRequestHash: string;
-  arch?: Arch;
-  type?: string;
-  freeTx?: boolean;
-  retries?: number;
+  sigRequestHash: string
+  arch?: Arch
+  type?: string
+  freeTx?: boolean
+  retries?: number
 }
 
 export default class SignatureRequestManager extends ExtrinsicBaseClass {
   adapters: { [key: string | number]: Adapter }
-  signer: Signer;
+  signer: Signer
   crypto
 
-  constructor ({ signer, substrate, adapters, crypto}: Config) {
+  constructor ({ signer, substrate, adapters, crypto }: Config) {
     super({ signer, substrate })
-    this.crypto = crypto;
+    this.crypto = crypto
     this.adapters = {
-      ...defaultAdapters, 
-      ...adapters
+      ...defaultAdapters,
+      ...adapters,
     }
   }
 
-  async signTransaction ({ txParams, type, freeTx = true, retries }: SigTxOps) : Promise<SignatureLike> {
-    if (!this.adapters[type]) throw new Error(`No transaction adapter for type: ${type} submit as hash`)
-    if (!this.adapters[type].preSign) throw new Error(`Adapter for type: ${type} has no preSign function. Adapters must have a preSign function`)
+  async signTransaction ({
+    txParams,
+    type,
+    freeTx = true,
+    retries,
+  }: SigTxOps): Promise<SignatureLike> {
+    if (!this.adapters[type])
+      throw new Error(`No transaction adapter for type: ${type} submit as hash`)
+    if (!this.adapters[type].preSign)
+      throw new Error(
+        `Adapter for type: ${type} has no preSign function. Adapters must have a preSign function`
+      )
 
     const sigRequestHash = await this.adapters[type].preSign(txParams)
     const signature = await this.sign({
@@ -60,7 +69,6 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
       arch: this.adapters[type].arch,
       freeTx,
       retries,
-
     })
     if (this.adapters[type].postSign) {
       return await this.adapters[type].postSign(signature)
@@ -83,38 +91,46 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
     sigRequestHash,
     arch,
     freeTx = true,
-    retries
+    retries,
   }: SigOps): Promise<SignatureLike> {
+    const validatorsInfo: Array<ValidatorInfo> = await this.getArbitraryValidators(
+      sigRequestHash
+    )
 
-    const validatorsInfo: Array<ValidatorInfo> = await this.getArbitraryValidators(sigRequestHash)
-
-    const txRequestData = {  // Ensure this type is imported/defined
+    const txRequestData = {
+      // Ensure this type is imported/defined
       arch,
       transaction_request: sigRequestHash,
       // TODO: ask jesse if this is correct
       free_tx: freeTx,
     }
 
-    const txRequests: Array<EncMsg> = await Promise.all(validatorsInfo.map(async (validator: ValidatorInfo, i: number): Promise<EncMsg> => {
-      // parse key
-      const serverDHKey = await crypto.from_hex(u8ArrayToString(validatorsInfo[i].x25519_public_key))
+    const txRequests: Array<EncMsg> = await Promise.all(
+      validatorsInfo.map(
+        async (validator: ValidatorInfo, i: number): Promise<EncMsg> => {
+          // parse key
+          const serverDHKey = await crypto.from_hex(
+            u8ArrayToString(validatorsInfo[i].x25519_public_key)
+          )
 
-      const encoded = Uint8Array.from(
-        JSON.stringify({ ...txRequestData, validators_info: validator }),
-        (x) => x.charCodeAt(0)
+          const encoded = Uint8Array.from(
+            JSON.stringify({ ...txRequestData, validators_info: validator }),
+            (x) => x.charCodeAt(0)
+          )
+
+          const encryptedMessage = await crypto.encrypt_and_sign(
+            this.signer.pair.secretKey,
+            encoded,
+            serverDHKey
+          )
+
+          return {
+            url: validatorsInfo[i].ip_address,
+            encMsg: encryptedMessage,
+          }
+        }
       )
-
-      const encryptedMessage = await crypto.encrypt_and_sign(
-        this.signer.pair.secretKey,
-        encoded,
-        serverDHKey
-      )
-
-      return {
-        url: validatorsInfo[i].ip_address,
-        encMsg: encryptedMessage,
-      }
-    }))
+    )
 
     // Assuming sigHash is derived from sigRequestHash or similar
 
@@ -123,7 +139,7 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
     const signature: SignatureLike = await this.pollNodeForSignature(
       stripHexPrefix(sigRequestHash),
       validatorsInfo[0].ip_address,
-      retries,
+      retries
     )
     return signature
   }
@@ -140,38 +156,63 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
     await Promise.all(
       txReq.map(
         async (message) =>
-          await sendHttpPost(`http://${message.url}/user/sign_tx`, message.encMsg)
+          await sendHttpPost(
+            `http://${message.url}/user/sign_tx`,
+            message.encMsg
+          )
       )
     )
   }
 
   async getArbitraryValidators (sigRequest: string): Promise<ValidatorInfo[]> {
-    const stashKeys = (await this.substrate.query.stakingExtension.signingGroups.entries())
-    .map(([{ args: [group] }, stashKeys]) => {
-      const index = parseInt(sigRequest, 16) % stashKeys.unwrap().length
-      console.log({group: group.toHuman(), stashKeys: stashKeys.unwrap()[0].toHuman(), lenght: stashKeys.unwrap().length, index})
+    const stashKeys = (
+      await this.substrate.query.stakingExtension.signingGroups.entries()
+    ).map(
+      ([
+        {
+          args: [group],
+        },
+        stashKeys,
+      ]) => {
+        const index = parseInt(sigRequest, 16) % stashKeys.unwrap().length
+        console.log({
+          group: group.toHuman(),
+          stashKeys: stashKeys.unwrap()[0].toHuman(),
+          lenght: stashKeys.unwrap().length,
+          index,
+        })
         return stashKeys.unwrap()[index]
-      })
+      }
+    )
 
-    console.log({stashKeys: stashKeys})
-    const rawValidatorInfo = await Promise.all(stashKeys.map(stashKey => this.substrate.query.stakingExtension.thresholdServers(stashKey)))
+    console.log({ stashKeys: stashKeys })
+    const rawValidatorInfo = await Promise.all(
+      stashKeys.map((stashKey) =>
+        this.substrate.query.stakingExtension.thresholdServers(stashKey)
+      )
+    )
 
-    const validatorsInfo: Array<ValidatorInfo> = rawValidatorInfo.map((validator) => {
-      console.log({validator: validator.toHuman()})
-      /*
+    const validatorsInfo: Array<ValidatorInfo> = rawValidatorInfo.map(
+      (validator) => {
+        console.log({ validator: validator.toHuman() })
+        /*
         fuck me, i'm sorry frankie i know this looks bad and you're right
         it does but this is going to require a destruction of polkadotjs as a dependency
         or parsing the return types are selves? but if we do that we might as well not use polkadot js
       */
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      const { x25519PublicKey, endpoint, tssAccount } = validator.toHuman()
-      return { x25519_public_key: x25519PublicKey, ip_address: endpoint, tss_account: tssAccount }
-    })
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        const { x25519PublicKey, endpoint, tssAccount } = validator.toHuman()
+        return {
+          x25519_public_key: x25519PublicKey,
+          ip_address: endpoint,
+          tss_account: tssAccount,
+        }
+      }
+    )
 
     return validatorsInfo
   }
-
 
   /**
    * @deprecated
