@@ -493,7 +493,7 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
       )
     )
 
-    this.submitTransactionRequest(txRequests)
+    await this.submitTransactionRequest(txRequests)
 
     const signature: SignatureLike = await this.pollNodeForSignature(
       stripHexPrefix(sigRequestHash),
@@ -612,7 +612,7 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
 
     while (status !== 202 && i < retries) {
       try {
-        postRequest = await fetch(`http://${thresholdUrl}/user/sign_tx`, {
+        postRequest = await fetch(`http://${thresholdUrl}/sign/signature`, {
           headers: {
             'Content-Type': 'application/json',
           },

@@ -59,24 +59,23 @@ export async function getApi (): Promise<ApiFactory> {
 export async function sendHttpPost (url: string, data: any): Promise<any> {
   const headers = {
     'Content-Type': 'application/json',
-  };
-
-  let response;
-  try {
-    response = await fetch(url, {
-      method: 'POST',
-      headers,
-      body: data,
-    });
-  
-    console.log('Inside sendHttpPost - Received a response');
-    console.log(`\x1b[33m data: ${data} fetch ${url}: ${JSON.stringify(response)} \x1b[0m`);
-  } catch (error) {
-    console.error('Error inside sendHttpPost:', error.message);
-    throw error; 
   }
+
+  const response = await fetch(url, {
+    method: 'POST',
+    headers,
+    body: data,
+  } )
+  
+  console.log('Inside sendHttpPost - Received a response')
+  console.log(`\x1b[33m data: ${data} fetch ${url}: ${JSON.stringify(response)} \x1b[0m`)
+  if (!response.ok) {
+    throw new Error(`request failed ${response.status}, ${response.statusText} fetch: ${url} FULLRESPONSE: ${JSON.stringify(response)}`)
+  } 
+
   return response;
 }
+
 
 
 export async function readKey (path: string) {
