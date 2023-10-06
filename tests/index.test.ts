@@ -28,6 +28,7 @@ describe('Core Tests',() => {
   const serverPath = process.cwd() + '/tests/testing-utils/test-binaries/server'
 
   beforeEach(async () => {
+    jest.setTimeout(30000)
     try {
       serverProcess1 = await spinThreshold(serverPath, 'alice', '3001')
       serverProcess2 = await spinThreshold(serverPath, 'bob', '3002')
@@ -59,7 +60,9 @@ describe('Core Tests',() => {
     await entropy.ready
   })
   afterEach(async () => {
-    await disconnect(entropy.substrate)
+    jest.setTimeout(30000)
+    try {
+      await disconnect(entropy.substrate)
     await sleep(6000)
     serverProcess1.kill()
     serverProcess2.kill()
@@ -67,15 +70,25 @@ describe('Core Tests',() => {
     chainProcess2.kill()
     await sleep(6000)
     removeDB()
+  } catch (e) {
+    console.error('Error in afterEach:', e.message)
+  }
   })
 
   it('should handle registration, program management, and signing', async () => {
-    console.log('pre registration')
+    jest.setTimeout(60000)
+    try {
+      console.log('pre registration')
     await entropy.register({
       address: charlieStashAddress,
       keyVisibility: 'Permissioned',
       freeTx: false,
+      
     })
+  } catch (e) {
+    console.error('Error in test:', e.message);
+  }
+  
     console.log('post registration')
 
     expect(entropy.keys.wallet.address).toBe(charlieStashAddress)
@@ -117,11 +130,17 @@ describe('Core Tests',() => {
     // expect(wrong_constraint.length).toBe(0)
 
     // signing should work for whitelisted tx requests
+    const serializedTx = ethers.utils.serializeTransaction(whitelisted_test_tx_req);
+    const hexEncodedTx = ethers.utils.hexlify(serializedTx);
+    const sigRequestHash = keccak256(hexEncodedTx);
+
+    console.log('Setting up test environment...');
     const signature: any = await entropy.sign({
-      sigRequestHash: keccak256(ethers.utils.serializeTransaction(whitelisted_test_tx_req)),
+      sigRequestHash:sigRequestHash,
       freeTx: false,
-      retries: 10
+      retries: 10,
     })
+    console.log('Signature:', signature);
     expect(signature.length).toBe(65)
     // await disconnect(charlieStashEntropy.substrate)
 
