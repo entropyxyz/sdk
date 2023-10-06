@@ -8,7 +8,8 @@ loadCryptoLib()
 export interface CryptoLib {
   from_hex: (input: string) => Uint8Array
   encrypt_and_sign: (secretKey: Uint8Array, encoded: Uint8Array, serverDHKey: Uint8Array) => Promise<string>
-  decrypt_and_verify:  (secretKey: Uint8Array, decoded: Uint8Array, serverDHKey: Uint8Array) => Promise<string>
+  decrypt_and_verify:  (secretKey: Uint8Array, msg: string) => Promise<string>
+  public_key_from_secret: (secretKey: Uint8Array) => Promise<Uint8Array>
 }
 
 export const cryptoIsLoaded: Promise<void> = new Promise((resolve) => {

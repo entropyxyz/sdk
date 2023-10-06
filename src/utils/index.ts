@@ -47,11 +47,13 @@ export async function sendHttpPost (url: string, data: any): Promise<any> {
   const headers = {
     'Content-Type': 'application/json',
   }
-  return fetch(url, {
+  const response = await fetch(url, {
     method: 'POST',
     headers,
     body: data,
   })
+  console.log(`\x1b[33m data: ${data} fetch ${url}: ${JSON.stringify(response)} \x1b[0m`)
+  return response
 }
 
 export async function readKey (path: string) {

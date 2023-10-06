@@ -7,7 +7,6 @@ import { Adapter } from './adapters/types'
 import { Arch, EncMsg, ValidatorInfo } from '../types'
 import { stripHexPrefix, sendHttpPost, sleep } from '../utils'
 import { crypto, CryptoLib } from '../utils/crypto'
-import { u8ArrayToString } from '../utils'
 
 export interface Config {
   signer: Signer
@@ -109,9 +108,7 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
       validatorsInfo.map(
         async (validator: ValidatorInfo, i: number): Promise<EncMsg> => {
           // parse key
-          const serverDHKey = await crypto.from_hex(
-            u8ArrayToString(validatorsInfo[i].x25519_public_key)
-          )
+          const serverDHKey = await crypto.from_hex(validatorsInfo[i].x25519_public_key)
 
           const encoded = Uint8Array.from(
             JSON.stringify({ ...txRequestData, validators_info: validator }),
@@ -175,17 +172,10 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
         stashKeys,
       ]) => {
         const index = parseInt(sigRequest, 16) % stashKeys.unwrap().length
-        console.log({
-          group: group.toHuman(),
-          stashKeys: stashKeys.unwrap()[0].toHuman(),
-          lenght: stashKeys.unwrap().length,
-          index,
-        })
         return stashKeys.unwrap()[index]
       }
     )
 
-    console.log({ stashKeys: stashKeys })
     const rawValidatorInfo = await Promise.all(
       stashKeys.map((stashKey) =>
         this.substrate.query.stakingExtension.thresholdServers(stashKey)
@@ -194,7 +184,6 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
 
     const validatorsInfo: Array<ValidatorInfo> = rawValidatorInfo.map(
       (validator) => {
-        console.log({ validator: validator.toHuman() })
         /*
         fuck me, i'm sorry frankie i know this looks bad and you're right
         it does but this is going to require a destruction of polkadotjs as a dependency
@@ -243,7 +232,9 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
         status = postRequest.status
       } catch (e) {
         status = 500
+        console.error(e)
       }
+      console.log(`\x1b[33m STATUS: ${status} \x1b[0m`)
       // TODO: DONT USE SLEEP maybe uses blocks from substrate as a timer?
       // or something a little less arbitrary
       await sleep(3000)

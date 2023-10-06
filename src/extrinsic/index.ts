@@ -43,7 +43,6 @@ export default class ExtrinsicBaseClass {
             }
           }
           if (status.isInBlock || status.isFinalized) {
-            events.forEach((event) => console.log(event.toJSON()))
             events
               .filter(({ event }) =>
                 // @ts-ignore: next line
@@ -53,7 +52,6 @@ export default class ExtrinsicBaseClass {
               // we know that data for system.ExtrinsicFailed is
               // (DispatchError, DispatchInfo)
               .forEach(({ event: { data: [error, info] } }) => {
-                console.log('event data:', error, info)
                 // @ts-ignore: next line
                 if (error.isModule) {
                   // for module errors, we have the section indexed, lookup
@@ -61,16 +59,13 @@ export default class ExtrinsicBaseClass {
                   const decoded = this.substrate.registry.findMetaError(error.asModule)
                   const { docs, method, section } = decoded
 
-                  console.log(`${section}.${method}: ${docs.join(' ')}`)
                 } else {
                   // Other, CannotLookup, BadOrigin, no extra info
-                  console.log(error.toString())
                 }
               })
           }
           if (status.isInBlock || status.isFinalized) {
             const record = res.findRecord(filter.section, filter.name)
-            console.log('status:', status.isInBlock, status.isFinalized)
             if (record) {
               resolve(record)
             } else {

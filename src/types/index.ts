@@ -66,9 +66,9 @@ pub struct ValidatorInfo {
 }
 */
 export interface ValidatorInfo {
-    x25519_public_key: Uint8Array
+    x25519_public_key: string
     ip_address: string
-    tss_account: Uint8Array
+    tss_account: string
 
 }
 

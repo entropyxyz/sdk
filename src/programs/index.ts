@@ -48,7 +48,8 @@ export default class ProgramManager extends ExtrinsicBaseClass {
   // we're assuming/inferring account/key 
   async set (program: ArrayBuffer): Promise<void> {
     try {
-      console.log(this.signer.wallet.address, `this is the key!!!`)
+      // note for later
+      // https://github.com/entropyxyz/x25519-chacha20poly1305/blob/main/pkg/x25519_chacha20poly1305.js#L73
       const hexProgram = buf2hex(program) 
 
       // ts-ignore
