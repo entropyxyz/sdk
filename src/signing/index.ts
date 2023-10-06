@@ -193,22 +193,22 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
     
     await Promise.all(
       txReq.map(async (message) => {
-        console.log(`URL: http://${message.url}/user/sign_tx`);
+        console.log(`URL: http://${message.url}/user/sign_tx`)
 
-        let parsedMsg;
+        let parsedMsg
         try {
-          parsedMsg = JSON.parse(message.encMsg);
+          parsedMsg = JSON.parse(message.encMsg)
         } catch (error) {
-          console.error('Failed to parse encMsg as JSON:', error);
-          return;  // Exit early on error
+          console.error('Failed to parse encMsg as JSON:', error)
+          return
         }
 
-        console.log('Parsed Message:', parsedMsg);  // Log the parsed message
+        console.log('Parsed Message:', parsedMsg)  
 
         // extract fields from parsedMsg
-        const { msg, sig, pk, recip, a, nonce } = parsedMsg;
+        const { msg, sig, pk, recip, a, nonce } = parsedMsg
 
-        // Convert arrays to hexadecimal strings as needed
+    
         const hexMsg = this.arrayToHex(parsedMsg.msg)
         const hexSig = this.arrayToHex(parsedMsg.sig)
         const hexPk = this.arrayToHex(parsedMsg.pk)
@@ -228,11 +228,11 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
 
         console.log('Payload!!!!!!:', JSON.stringify(payload))
 
-        const expectedProps = ['msg', 'sig', 'pk', 'recip', 'a', 'nonce'];
+        const expectedProps = ['msg', 'sig', 'pk', 'recip', 'a', 'nonce']
         for (const prop of expectedProps) {
           if (!Object.prototype.hasOwnProperty.call(parsedMsg, prop)) {
-            console.error(`parsedMsg is missing property: ${prop}`);
-            return;  
+            console.error(`parsedMsg is missing property: ${prop}`)
+            return
           }
         }
         await sendHttpPost(

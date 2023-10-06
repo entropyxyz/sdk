@@ -86,7 +86,7 @@ describe('Core Tests',() => {
       
     })
   } catch (e) {
-    console.error('Error in test:', e.message);
+    console.error('Error in test:', e.message)
   }
   
     console.log('post registration')
@@ -130,17 +130,17 @@ describe('Core Tests',() => {
     // expect(wrong_constraint.length).toBe(0)
 
     // signing should work for whitelisted tx requests
-    const serializedTx = ethers.utils.serializeTransaction(whitelisted_test_tx_req);
-    const hexEncodedTx = ethers.utils.hexlify(serializedTx);
-    const sigRequestHash = keccak256(hexEncodedTx);
+    const serializedTx = ethers.utils.serializeTransaction(whitelisted_test_tx_req)
+    const hexEncodedTx = ethers.utils.hexlify(serializedTx)
+    const sigRequestHash = keccak256(hexEncodedTx)
 
-    console.log('Setting up test environment...');
+    console.log('Setting up test environment...')
     const signature: any = await entropy.sign({
       sigRequestHash:sigRequestHash,
       freeTx: false,
       retries: 10,
     })
-    console.log('Signature:', signature);
+    console.log('Signature:', signature)
     expect(signature.length).toBe(65)
     // await disconnect(charlieStashEntropy.substrate)
 
