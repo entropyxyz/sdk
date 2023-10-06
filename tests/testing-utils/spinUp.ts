@@ -6,7 +6,7 @@ import { getApi } from '../../src/utils'
 
 export const modifyOcwPostEndpoint = async (endpoint: string, new_url: string) => {
   try {
-      console.log(`Connecting to endpoint: ${endpoint}`)
+      // console.log(`Connecting to endpoint: ${endpoint}`)
       const apiFactory = await getApi()
       const api = await apiFactory(endpoint)
 
@@ -14,8 +14,8 @@ export const modifyOcwPostEndpoint = async (endpoint: string, new_url: string) =
       const value = stringToHex(new_url)
       const keyValue = stringToHex(key)
       await api.rpc.offchain.localStorageSet('PERSISTENT', keyValue, value)
-      console.log(`Set Feed to ${new_url} successfully.`)
-      console.log('Inserted keys successfully.')
+      // console.log(`Set Feed to ${new_url} successfully.`)
+      // console.log('Inserted keys successfully.')
       await disconnect(api)
   } catch (error) {
       console.error(`Error in modifyOcwPostEndpoint: ${error.message}`)
@@ -27,7 +27,7 @@ export const spinChain = async (
   name: string,
   port?: string
 ): Promise<ChildProcessWithoutNullStreams> => {
-  console.log(`Spinning up chain with binary: ${bin}, name: ${name}, port: ${port}`)
+  // console.log(`Spinning up chain with binary: ${bin}, name: ${name}, port: ${port}`)
   let args = []
   args = [
     // '--dev',
@@ -79,17 +79,17 @@ export const spinThreshold = async (
   }
   await sleep(1000)
   const process = spawn(bin, args)
-  // // comment in for threshold logging and add verbose to jest
-  // process.stdout.on('data', async function (chunk) {
-  //   const message = chunk.toString()
-  //   console.log('Threshold chain data for ', name, ':', message)
-  // })
-  //   process.on('error', (error) => {
-  //     console.error(`Error in spinThreshold process: ${error.message}`)
-  // })
-  // process.on('exit', (code) => {
-  //     console.log(`spinThreshold process exited with code: ${code}`)
-  // })
+  // comment in for threshold logging and add verbose to jest
+  process.stdout.on('data', async function (chunk) {
+    const message = chunk.toString()
+    console.log('Threshold chain data for ', name, ':', message)
+  })
+    process.on('error', (error) => {
+      console.error(`Error in spinThreshold process: ${error.message}`)
+  })
+  process.on('exit', (code) => {
+      console.log(`spinThreshold process exited with code: ${code}`)
+  })
 return process
 }
 

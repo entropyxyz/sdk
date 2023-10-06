@@ -127,8 +127,7 @@ function stripHexPrefix(str: string): string {
       17,
     ])
   
-    // test is failing, we are passing the correct inputs, but now we're having a precision error. 
-    // TODO: ASK JESSE ABOUT TEST CREATION // RECEIVED DIFFERENCE IS ALWAYS CHANGING EACH TEST
+    const alicePublicKey = await crypto.public_key_from_secret(aliceSecretKey)
 
     const serverDHKey = await crypto.from_hex(mockData.x25519_public_key)
     const root = process.cwd()
@@ -140,10 +139,10 @@ function stripHexPrefix(str: string): string {
     const result = await crypto.encrypt_and_sign(
       aliceSecretKey,
       thresholdKey,
-      serverDHKey
+      alicePublicKey
     )
 
-    expect(result.length).toBeCloseTo(2122, 20);
+    expect(await crypto.decrypt_and_verify(aliceSecretKey, result)).toStrictEqual(thresholdKey);
   })
 })
 
