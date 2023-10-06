@@ -189,6 +189,16 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
    * @param {string[]} serversWithPort IP/domain and port of the threshold server, separated by ':'
    * @returns {Promise<>}
    */
+
+
+
+  private arrayToHex (array) {
+    return array.reduce(
+      (str, byte) => str + byte.toString(16).padStart(2, '0'),
+      '0x'
+    );
+  } 
+
   async submitTransactionRequest (txReq: Array<EncMsg>): Promise<void> {
     
     await Promise.all(
@@ -204,10 +214,6 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
         }
 
         console.log('Parsed Message:', parsedMsg)  
-
-        // extract fields from parsedMsg
-        const { msg, sig, pk, recip, a, nonce } = parsedMsg
-
     
         const hexMsg = this.arrayToHex(parsedMsg.msg)
         const hexSig = this.arrayToHex(parsedMsg.sig)
@@ -243,12 +249,8 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
     )
   }
 
-  private arrayToHex (array: number[]): string {
-    return array.reduce(
-      (str, byte) => str + byte.toString(16).padStart(2, '0'),
-      '0x'
-    )
-  }
+
+
   async getArbitraryValidators (sigRequest: string): Promise<ValidatorInfo[]> {
     const stashKeys = (
       await this.substrate.query.stakingExtension.signingGroups.entries()
@@ -313,6 +315,9 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
     let status
     let postRequest
 
+    const requestBody = JSON.stringify({ msg: sigHash })
+    console.log('Request body!!!!!:', requestBody)
+
 
     while (status !== 204 && i < retries) {
       console.log('Entering pollNodeForSignature')
@@ -323,7 +328,7 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
             'Content-Type': 'application/json',
           },
           method: 'POST',
-          body: JSON.stringify({ sig: sigHash}), 
+          body: JSON.stringify({ data: sigHash}), 
         })
 
         status = postRequest.status
