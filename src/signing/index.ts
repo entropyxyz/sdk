@@ -508,11 +508,9 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
   async submitTransactionRequest (txReq: Array<EncMsg>): Promise<void> {
     await Promise.all(
       txReq.map(async (message) => {
-        console.log("MESSAGE", message, "ENC", message.encMsg)
         console.log('Preparing to call sendHttpPost');
         let parsedMsg
         try {
-          console.log('message.encMsg:', message.encMsg);
           parsedMsg = JSON.parse(message.encMsg)
         } catch (error) {
           console.error('Failed to parse encMsg as JSON:', error)
@@ -523,9 +521,9 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
           msg: hexToBase64(parsedMsg.msg),
           sig: parsedMsg.sig,
           pk: parsedMsg.pk,
-          recip: hexToU8a(parsedMsg.recip),
-          a: hexToU8a(parsedMsg.a),
-          nonce: hexToU8a(parsedMsg.nonce),
+          recip: parsedMsg.recip,
+          a: parsedMsg.a,
+          nonce: parsedMsg.nonce,
         }
 
         const response = await sendHttpPost(
