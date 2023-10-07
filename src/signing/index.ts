@@ -387,6 +387,7 @@ import { Arch, EncMsg, ValidatorInfo } from '../types'
 import { stripHexPrefix, sendHttpPost, sleep } from '../utils'
 import { crypto, CryptoLib } from '../utils/crypto'
 import { hexToBase64 } from '../utils'
+import { hexToU8a, isHex } from '@polkadot/util'
 
 export interface Config {
   signer: Signer
@@ -522,9 +523,9 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
           msg: hexToBase64(parsedMsg.msg),
           sig: parsedMsg.sig,
           pk: parsedMsg.pk,
-          recip: parsedMsg.recip,
-          a: parsedMsg.a,
-          nonce: parsedMsg.nonce,
+          recip: hexToU8a(parsedMsg.recip),
+          a: hexToU8a(parsedMsg.a),
+          nonce: hexToU8a(parsedMsg.nonce),
         }
 
         const response = await sendHttpPost(
