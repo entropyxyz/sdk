@@ -137,3 +137,12 @@ export function hex2buf (hex: string): ArrayBuffer {
   }
   return bytes.buffer
 }
+
+export function hexToBase64 (str: string): string {
+  if (str.startsWith('0x')) return str.slice(2)
+
+  
+  const bytes = Buffer.from(str.substring(2), 'hex');
+  
+  return bytes.toString('base64');
+}

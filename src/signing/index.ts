@@ -386,6 +386,7 @@ import { Adapter } from './adapters/types'
 import { Arch, EncMsg, ValidatorInfo } from '../types'
 import { stripHexPrefix, sendHttpPost, sleep } from '../utils'
 import { crypto, CryptoLib } from '../utils/crypto'
+import { hexToBase64 } from '../utils'
 
 export interface Config {
   signer: Signer
@@ -503,19 +504,10 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
     return signature
   }
 
-  private arrayToHex (array: number[]): string {
-    if (!Array.isArray(array)) {
-      throw new Error('Expected an array, but received a non-array value');
-    }
-    return array.reduce(
-      (str, byte) => str + byte.toString(16).padStart(2, '0'),
-      '0x'
-    );
-  }
-
   async submitTransactionRequest (txReq: Array<EncMsg>): Promise<void> {
     await Promise.all(
       txReq.map(async (message) => {
+        console.log("MESSAGE", message, "ENC", message.encMsg)
         console.log('Preparing to call sendHttpPost');
         let parsedMsg
         try {
@@ -526,30 +518,17 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
           return
         }
 
-        if (!parsedMsg.msg || !Array.isArray(parsedMsg.msg)) {
-          console.error('parsedMsg.msg is not an array:', parsedMsg.msg);
-          return;
-        }
-
-        console.log('Parsed Message:', parsedMsg)  
-        const hexMsg = this.arrayToHex(parsedMsg.msg)
-        const hexSig = this.arrayToHex(parsedMsg.sig)
-        const hexPk = this.arrayToHex(parsedMsg.pk)
-        const hexRecip = this.arrayToHex(parsedMsg.recip)
-        const hexA = this.arrayToHex(parsedMsg.a)
-        const hexNonce = this.arrayToHex(parsedMsg.nonce)
-
         const payload = {
-          msg: hexMsg,
-          sig: hexSig,
-          pk: hexPk,
-          recip: hexRecip,
-          a: hexA,
-          nonce: hexNonce,
+          msg: hexToBase64(parsedMsg.msg),
+          sig: parsedMsg.sig,
+          pk: parsedMsg.pk,
+          recip: parsedMsg.recip,
+          a: parsedMsg.a,
+          nonce: parsedMsg.nonce,
         }
 
         const response = await sendHttpPost(
-          `http://${message.url}/user/sign_tx`,
+          `http://${message.url}/user/sign_tyx`,
           JSON.stringify(payload)
         );
         if (response.status === 422) {
@@ -612,7 +591,7 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
 
     while (status !== 202 && i < retries) {
       try {
-        postRequest = await fetch(`http://${thresholdUrl}/sign/signature`, {
+        postRequest = await fetch(`http://${thresholdUrl}/sign/sign_tx`, {
           headers: {
             'Content-Type': 'application/json',
           },
