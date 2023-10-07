@@ -389,6 +389,7 @@ import { crypto, CryptoLib } from '../utils/crypto'
 import { hexToBase64 } from '../utils'
 import { hexToU8a, isHex } from '@polkadot/util'
 
+
 export interface Config {
   signer: Signer
   substrate: ApiPromise

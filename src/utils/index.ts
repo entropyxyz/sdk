@@ -144,10 +144,10 @@ export function hex2buf (hex: string): ArrayBuffer {
 }
 
 export function hexToBase64 (str: string): string {
-  if (str.startsWith('0x')) return str.slice(2)
+  // Remove '0x' prefix if it exists
+  const cleanedStr = str.startsWith('0x') ? str.slice(2) : str;
 
-  
-  const bytes = Buffer.from(str.substring(2), 'hex')
-  
+  // Convert the cleaned hex string to a base64 string
+  const bytes = Buffer.from(cleanedStr, 'hex');
   return bytes.toString('base64');
 }
