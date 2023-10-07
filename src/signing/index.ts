@@ -528,7 +528,7 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
         }
 
         const response = await sendHttpPost(
-          `http://${message.url}/user/sign_tyx`,
+          `http://${message.url}/user/sign_tx`,
           JSON.stringify(payload)
         );
         if (response.status === 422) {

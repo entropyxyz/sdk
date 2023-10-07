@@ -68,7 +68,12 @@ export async function sendHttpPost (url: string, data: any): Promise<any> {
   } )
   
   console.log('Inside sendHttpPost - Received a response')
-  console.log(`\x1b[33m data: ${data} fetch ${url}: ${JSON.stringify(response)} \x1b[0m`)
+  console.log(`\x1b[33m data:
+    curl -X POST -H "Content-Type: application/json" \\
+    -d '${data}' \\
+    -H "Accept: application/json" \\
+    ${url}
+    \x1b[0m`)
   if (!response.ok) {
     throw new Error(`request failed ${response.status}, ${response.statusText} fetch: ${url} FULLRESPONSE: ${JSON.stringify(response)}`)
   } 
@@ -142,7 +147,7 @@ export function hexToBase64 (str: string): string {
   if (str.startsWith('0x')) return str.slice(2)
 
   
-  const bytes = Buffer.from(str.substring(2), 'hex');
+  const bytes = Buffer.from(str.substring(2), 'hex')
   
   return bytes.toString('base64');
 }
