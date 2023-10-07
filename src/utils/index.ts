@@ -143,11 +143,16 @@ export function hex2buf (hex: string): ArrayBuffer {
   return bytes.buffer
 }
 
-export function hexToBase64 (str: string): string {
+export function hexToBase64remove (str: string): string {
   // Remove '0x' prefix if it exists
   const cleanedStr = str.startsWith('0x') ? str.slice(2) : str;
 
   // Convert the cleaned hex string to a base64 string
   const bytes = Buffer.from(cleanedStr, 'hex');
+  return bytes.toString('base64');
+}
+
+export function hexToBase64 (str: string): string {
+  const bytes = Buffer.from(str, 'hex');
   return bytes.toString('base64');
 }
