@@ -66,7 +66,7 @@ pub struct ValidatorInfo {
 }
 */
 export interface ValidatorInfo {
-    x25519_public_key: string
+    x25519_public_key: number[] // changed from string
     ip_address: string
     tss_account: string
 
@@ -95,7 +95,7 @@ export interface ITransactionRequest {
 }
 
 export interface EncMsg {
-  encMsg: string
+  msg: string
   url: string
 }
 

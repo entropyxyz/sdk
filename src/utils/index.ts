@@ -1,6 +1,7 @@
 import { decodeAddress, encodeAddress } from '@polkadot/keyring'
 import { hexToU8a, isHex } from '@polkadot/util'
 import { ApiPromise, WsProvider } from '@polkadot/api'
+import Entropy from '..'
 
 export function stripHexPrefix (str: string): string {
   if (str.startsWith('0x')) return str.slice(2)
@@ -60,7 +61,6 @@ export async function sendHttpPost (url: string, data: any): Promise<any> {
   const headers = {
     'Content-Type': 'application/json',
   }
-
   const response = await fetch(url, {
     method: 'POST',
     headers,
@@ -155,4 +155,12 @@ export function hexToBase64remove (str: string): string {
 export function hexToBase64 (str: string): string {
   const bytes = Buffer.from(str, 'hex');
   return bytes.toString('base64');
+}
+
+export function hexStringToIntArray (hexString: string): number[] {
+  const arr = [];
+  for (let i = 2; i < hexString.length; i += 2) {
+    arr.push(parseInt(hexString.substr(i, 2), 16));
+  }
+  return arr;
 }

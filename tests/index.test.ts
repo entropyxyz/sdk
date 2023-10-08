@@ -17,8 +17,8 @@ import {
 } from './testing-utils'
 import { ethers } from 'ethers'
 import { keccak256 } from 'ethers/lib/utils'
-import { buf2hex, hex2buf } from '../src/utils'
-import { hexString } from '../src/types'
+
+
 
 describe('Core Tests',() => {
   let entropy: Entropy
@@ -77,6 +77,7 @@ describe('Core Tests',() => {
 
   it('should handle registration, program management, and signing', async () => {
     jest.setTimeout(60000)
+
     try {
       console.log('pre registration')
     await entropy.register({
