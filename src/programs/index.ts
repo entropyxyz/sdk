@@ -50,10 +50,9 @@ export default class ProgramManager extends ExtrinsicBaseClass {
     try {
       // note for later
       // https://github.com/entropyxyz/x25519-chacha20poly1305/blob/main/pkg/x25519_chacha20poly1305.js#L73
-      const hexProgram = buf2hex(program) 
 
       // ts-ignore
-      const tx: SubmittableExtrinsic<'promise'> = this.substrate.tx.constraints.updateV2Constraints(this.signer.wallet.address, hexProgram)
+      const tx: SubmittableExtrinsic<'promise'> = this.substrate.tx.constraints.updateV2Constraints(this.signer.wallet.address, Unit8Array.from(program))
       
       // Send the transaction and wait for the confirmation event.
       await this.sendAndWaitFor(tx, false, {
