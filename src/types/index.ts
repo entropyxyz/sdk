@@ -66,7 +66,7 @@ pub struct ValidatorInfo {
 }
 */
 export interface ValidatorInfo {
-    x25519_public_key: number[] // changed from string
+    x25519_public_key: string
     ip_address: string
     tss_account: string
 

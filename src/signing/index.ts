@@ -119,19 +119,23 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
       timestamp: timestamp
     };
 
-    console.log("TXREQUEST", JSON.stringify( txRequestData))
-
     const txRequests: Array<EncMsg> = await Promise.all(
       validatorsInfo.map(
         async (validator: ValidatorInfo): Promise<EncMsg> => {
-          //change
-          const hexString = validator.x25519_public_key.map(byte => byte.toString(16).padStart(2, '0')).join('');
-          //change
-          const serverDHKey = await crypto.from_hex(hexString);
+          const serverDHKey = await crypto.from_hex(validator.x25519_public_key)
           const encoded = Uint8Array.from(
-            JSON.stringify({ ...txRequestData, validators_info: validator }),
+            JSON.stringify({ ...txRequestData, validators_info: {
+              ...validator,
+              x25519_public_key: Array.from(serverDHKey),
+            } }),
             (x) => x.charCodeAt(0)
           )
+        console.log("TXREQUEST", JSON.stringify({ ...txRequestData, validators_info: {
+              ...validator,
+              x25519_public_key: Array.from(serverDHKey),
+            } }))
+
+
           const encryptedMessage = await crypto.encrypt_and_sign(
             this.signer.pair.secretKey,
             encoded,
@@ -219,10 +223,9 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
         // @ts-ignore
         const { x25519PublicKey, endpoint, tssAccount } = validator.toHuman()
         //test 
-        const x25519PublicKeyArray = hexStringToIntArray(x25519PublicKey);
 
         return {
-          x25519_public_key: x25519PublicKeyArray,
+          x25519_public_key: x25519PublicKey,
           ip_address: endpoint,
           tss_account: tssAccount,
         }
