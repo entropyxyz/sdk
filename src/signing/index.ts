@@ -93,35 +93,33 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
       sigRequestHash
     )
 
-    // const timestampInMilliseconds = new Date(Date.now())
+    const txRequests: Array<EncMsg> = await this.formatTxRequests({validatorsInfo, sigRequestHash})
+    const sigs = await this.submitTransactionRequest(txRequests)
+    const sig = sigs[0]
+    console.log('Signature: ', sig)
+    return sig
+  }
 
-    // const secs_since_epoch = Math.floor(timestampInMilliseconds / 1000)
-    // const nanos_since_epoch = (timestampInMilliseconds % 1000) * 1_000_000
-
-    // const timestampData = {
-    //   secs_since_epoch: secs_since_epoch,
-    //   nanos_since_epoch: nanos_since_epoch
-    // }
-
+  getTimeStamp () {
     const timestampInMilliseconds = Date.now()
-
     const secs_since_epoch = Math.floor(timestampInMilliseconds / 1000)
     const nanos_since_epoch = (timestampInMilliseconds % 1000) * 1_000_000
 
-    const timestamp = {
+    return {
       secs_since_epoch: secs_since_epoch,
       nanos_since_epoch: nanos_since_epoch,
     }
-    
-    const txRequestData = {
-      transaction_request: stripHexPrefix(sigRequestHash),  
-      validators_info: validatorsInfo,  
-      timestamp: timestamp
-    }
+  }
 
-    const txRequests: Array<EncMsg> = await Promise.all(
+  async formatTxRequests ({ sigRequestHash, validatorsInfo }: { sigRequestHash: string, validatorsInfo: Array<ValidatorInfo> }): Promise<EncMsg[]> {
+    return await Promise.all(
       validatorsInfo.map(
         async (validator: ValidatorInfo): Promise<EncMsg> => {
+          const txRequestData = {
+            transaction_request: stripHexPrefix(sigRequestHash),
+            validators_info: validatorsInfo,
+            timestamp: this.getTimeStamp()
+          }
 
           const serverDHKey = await crypto.from_hex(validator.x25519_public_key)
 
@@ -149,45 +147,54 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
         }
       )
     )
-
-    const sigs = await this.submitTransactionRequest(txRequests)
-    const sig = sigs[0]
-    console.log('Signature: ', sig)
-    return sig
   }
 
   async submitTransactionRequest (txReq: Array<EncMsg>): Promise<SignatureLike[]> {
-    const message = txReq[0]
-    let parsedMsg
-    try {
-      parsedMsg = JSON.parse(message.msg)
-    } catch (error) {
-      throw new Error('Failed to parse encMsg as JSON:' + error.message)
-    }
+    return Promise.all(txReq.map(async (message: EncMsg) => {
+      let parsedMsg
+      try {
+        parsedMsg = JSON.parse(message.msg)
+      } catch (error) {
+        throw new Error('Failed to parse encMsg as JSON:' + error.message)
+      }
 
-    const payload = {
-      ...parsedMsg,
-      msg: stripHexPrefix(parsedMsg.msg), 
-    }
+      const payload = {
+        ...parsedMsg,
+        msg: stripHexPrefix(parsedMsg.msg),
+      }
 
-    const response = await sendHttpPost(
-      `http://${message.url}/user/sign_tx`,
-      JSON.stringify(payload)
-    )
+      const response = await sendHttpPost(
+        `http://${message.url}/user/sign_tx`,
+        JSON.stringify(payload)
+      )
 
-    if (!response.ok) {
-      console.error('HTTP Error:', response.status, response.statusText)
-      throw new Error('HTTP request failed: ' + response.statusText)
-    }
+      const reader = response.body.getReader()
+      const start = (controller) => {
+        async function pump () {
+          const { done, value } = await reader.read()
+          if (done) {
+            controller.close()
+            return
+          }
+          controller.enqueue(value)
+          return pump()
+        }
+        return pump()
+      }
+      const stream = new ReadableStream({ start })
+      const streamResponse = new Response(await stream)
+      if (!streamResponse.ok) {
+        throw new Error(`request failed ${streamResponse.status}, ${streamResponse.statusText} FULLRESPONSE: ${await streamResponse.text()}`)
+      }
 
-    const responseBody = JSON.parse(await response.text())
+      const sig = await streamResponse.text()
+      console.log(`\x1b[33m
+          this is the response:
+          ${sig}
+      \x1b[0m`)
 
-    console.log(`\x1b[33m
-        this is the response:
-        ${JSON.stringify(responseBody, null, 2)}
-    \x1b[0m`)
-
-    return [responseBody]
+      return sig
+    }))
   }
 
 
