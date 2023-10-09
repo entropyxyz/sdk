@@ -17,6 +17,8 @@ import {
 } from './testing-utils'
 import { ethers } from 'ethers'
 import { keccak256 } from 'ethers/lib/utils'
+import{ u8aToHex} from '@polkadot/util'
+import { buf2hex,stripHexPrefix } from '../src/utils'
 
 
 
@@ -101,34 +103,32 @@ describe('Core Tests',() => {
     await entropy.programs.set(dummyProgram)
 
     // Retrieve the program and compare
-    const fetchedProgram = await entropy.programs.get()
-    console.log("FETCHPROGRAMBYTE", fetchedProgram.byteLength)
-    console.log("DUMMYPROGRAMBYTE", dummyProgram.byteLength)
-    console.log(fetchedProgram.slice(0, 10), fetchedProgram.slice(-10))
-    console.log(dummyProgram.slice(0, 10), dummyProgram.slice(-10))
+    const fetchedProgram: ArrayBuffer = await entropy.programs.get()
+    const trimmedBuffer = fetchedProgram.slice(1)
+    console.log("fetched!!!!!", buf2hex(fetchedProgram))
+    expect(buf2hex(trimmedBuffer)).toEqual(buf2hex(dummyProgram))
 
-    // expect(fetchedProgram).toEqual(buf2hex(dummyProgram))
 
     // signing attempts should fail cause we haven't set constraints yet
-    // const no_constraint: any = await entropy.sign({
-    //   sigRequestHash: keccak256(ethers.utils.serializeTransaction(whitelisted_test_tx_req)),
-    //   freeTx: false,
-    //   retries: 3
-    // })
-    // expect(no_constraint.length).toBe(0)
+    const no_constraint: any = await entropy.sign({
+      sigRequestHash: keccak256(ethers.utils.serializeTransaction(whitelisted_test_tx_req)),
+      freeTx: false,
+      retries: 3
+    })
+    expect(no_constraint.length).toBe(0)
 
     // set user's constraints on-chain
-    // const charlieStashEntropy = new Entropy({
-    //   seed: charlieStashSeed
-    // })
+    const charlieStashEntropy = new Entropy({
+      seed: charlieStashSeed
+    })
 
     // signing should fail with a non-whitelisted tx requests
-    // const wrong_constraint: any = await entropy.sign({
-    //   sigRequestHash: keccak256(ethers.utils.serializeTransaction(non_whitelisted_test_tx_req)),
-    //   freeTx: false,
-    //   retries: 3
-    // })
-    // expect(wrong_constraint.length).toBe(0)
+    const wrong_constraint: any = await entropy.sign({
+      sigRequestHash: keccak256(ethers.utils.serializeTransaction(non_whitelisted_test_tx_req)),
+      freeTx: false,
+      retries: 3
+    })
+    expect(wrong_constraint.length).toBe(0)
 
     // signing should work for whitelisted tx requests
     const serializedTx = ethers.utils.serializeTransaction(whitelisted_test_tx_req)
@@ -145,7 +145,6 @@ describe('Core Tests',() => {
     expect(signature.length).toBe(65)
     // await disconnect(charlieStashEntropy.substrate)
 
-  // set test time out for a minute
   },)
 
 })

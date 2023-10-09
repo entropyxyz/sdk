@@ -133,7 +133,7 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
             JSON.stringify({ ...txRequestData, validators_info: formattedValidators}),
             (x) => x.charCodeAt(0)
           )
-        console.log("TXREQUEST", JSON.stringify({ ...txRequestData, validators_info: formattedValidators}))
+          console.log("TXREQUEST", JSON.stringify({ ...txRequestData, validators_info: formattedValidators}))
 
 
           const encryptedMessage = await crypto.encrypt_and_sign(
