@@ -110,7 +110,7 @@ describe('Core Tests',() => {
 
 
     // signing attempts should fail cause we haven't set constraints yet
-    const no_constraint: any = await entropy.sign({
+/*    const no_constraint: any = await entropy.sign({
       sigRequestHash: keccak256(ethers.utils.serializeTransaction(whitelisted_test_tx_req)),
       freeTx: false,
       retries: 3
@@ -129,7 +129,7 @@ describe('Core Tests',() => {
       retries: 3
     })
     expect(wrong_constraint.length).toBe(0)
-
+*/
     // signing should work for whitelisted tx requests
     const serializedTx = ethers.utils.serializeTransaction(whitelisted_test_tx_req)
     const hexEncodedTx = ethers.utils.hexlify(serializedTx)

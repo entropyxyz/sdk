@@ -79,7 +79,7 @@ export async function sendHttpPost (url: string, data: any): Promise<any> {
     throw new Error(`request failed ${response.status}, ${response.statusText} fetch: ${url} FULLRESPONSE: ${await response.text()}`)
   } 
 
-  return response;
+  return response
 }
 
 

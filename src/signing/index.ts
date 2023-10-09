@@ -150,48 +150,39 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
       )
     )
 
-    await this.submitTransactionRequest(txRequests)
-
-    const signature: SignatureLike = await this.pollNodeForSignature(
-      stripHexPrefix(sigRequestHash),
-      validatorsInfo[0].ip_address,
-      retries
-    )
-    return signature
+    const sigs = await this.submitTransactionRequest(txRequests)
+    const sig = sigs.pop()
+    console.log('Signature: ', sig)
+    return sig
   }
 
-  async submitTransactionRequest (txReq: Array<EncMsg>): Promise<void> {
-    await Promise.all(
+  async submitTransactionRequest (txReq: Array<EncMsg>): Promise<SignatureLike[]> {
+    return await Promise.all(
       txReq.map(async (message) => {
-        console.log('Preparing to call sendHttpPost');
         let parsedMsg
         try {
           parsedMsg = JSON.parse(message.msg)
         } catch (error) {
-          console.error('Failed to parse encMsg as JSON:', error)
-          return
+          throw new Error('Failed to parse encMsg as JSON:' + error.message)
         }
 
         const payload = {
+          ...parsedMsg,
           msg: stripHexPrefix(parsedMsg.msg), 
-          sig: parsedMsg.sig, 
-          pk: parsedMsg.pk,
-          recip: parsedMsg.recip,
-          a:  parsedMsg.a ,
-          nonce: parsedMsg.nonce,
-        };
+        }
 
         const response = await sendHttpPost(
           `http://${message.url}/user/sign_tx`,
           JSON.stringify(payload)
-        );
-        if (response.status === 422) {
-          const responseBody = await response.text();
-          console.error('Error from the server:', responseBody);
-        }
-        console.log('Finished calling sendHttpPost')
-      })
+        )
 
+  console.log(`\x1b[33m
+    this is the response:
+    ${await response.text()}
+\x1b[0m`)
+
+        return response
+      })
     )
   }
 
@@ -265,7 +256,7 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
     const result = await postRequest.text();
     if (!postRequest.ok) {
       console.error('Server responded with:', result);
-      throw new Error(postRequest.statusText);
+      throw new Error(await result);
     }
 
     try {
