@@ -117,7 +117,7 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
       transaction_request: stripHexPrefix(sigRequestHash),  
       validators_info: validatorsInfo,  
       timestamp: timestamp
-    };
+    }
 
     const txRequests: Array<EncMsg> = await Promise.all(
       validatorsInfo.map(
@@ -151,40 +151,45 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
     )
 
     const sigs = await this.submitTransactionRequest(txRequests)
-    const sig = sigs.pop()
+    const sig = sigs[0]
     console.log('Signature: ', sig)
     return sig
   }
 
   async submitTransactionRequest (txReq: Array<EncMsg>): Promise<SignatureLike[]> {
-    return await Promise.all(
-      txReq.map(async (message) => {
-        let parsedMsg
-        try {
-          parsedMsg = JSON.parse(message.msg)
-        } catch (error) {
-          throw new Error('Failed to parse encMsg as JSON:' + error.message)
-        }
+    const message = txReq[0]
+    let parsedMsg
+    try {
+      parsedMsg = JSON.parse(message.msg)
+    } catch (error) {
+      throw new Error('Failed to parse encMsg as JSON:' + error.message)
+    }
 
-        const payload = {
-          ...parsedMsg,
-          msg: stripHexPrefix(parsedMsg.msg), 
-        }
+    const payload = {
+      ...parsedMsg,
+      msg: stripHexPrefix(parsedMsg.msg), 
+    }
 
-        const response = await sendHttpPost(
-          `http://${message.url}/user/sign_tx`,
-          JSON.stringify(payload)
-        )
-
-  console.log(`\x1b[33m
-    this is the response:
-    ${await response.text()}
-\x1b[0m`)
-
-        return response
-      })
+    const response = await sendHttpPost(
+      `http://${message.url}/user/sign_tx`,
+      JSON.stringify(payload)
     )
+
+    if (!response.ok) {
+      console.error('HTTP Error:', response.status, response.statusText)
+      throw new Error('HTTP request failed: ' + response.statusText)
+    }
+
+    const responseBody = JSON.parse(await response.text())
+
+    console.log(`\x1b[33m
+        this is the response:
+        ${JSON.stringify(responseBody, null, 2)}
+    \x1b[0m`)
+
+    return [responseBody]
   }
+
 
   async getArbitraryValidators (sigRequest: string): Promise<ValidatorInfo[]> {
     const stashKeys = (
@@ -226,43 +231,43 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
     return validatorsInfo
   }
 
-  async pollNodeForSignature (
-    sigHash: string,
-    thresholdUrl: string,
-    retries: number
-  ): Promise<SignatureLike> {
-    let i = 0
-    let status
-    let postRequest
+  // async pollNodeForSignature (
+  //   sigHash: string,
+  //   thresholdUrl: string,
+  //   retries: number
+  // ): Promise<SignatureLike> {
+  //   let i = 0
+  //   let status
+  //   let postRequest
 
 
-    while (status !== 202 && i < retries) {
-      try {
-        postRequest = await fetch(`http://${thresholdUrl}/sign/sign_tx`, {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          method: 'POST',
-          body: JSON.stringify({ message: sigHash }),
-        })
-        status = postRequest.status
-      } catch (e) {
-        status = 500
-        console.error(e)
-      }
-      await sleep(3000)
-      i++
-    }
-    const result = await postRequest.text();
-    if (!postRequest.ok) {
-      console.error('Server responded with:', result);
-      throw new Error(await result);
-    }
+  //   while (status !== 202 && i < retries) {
+  //     try {
+  //       postRequest = await fetch(`http://${thresholdUrl}/sign/sign_tx`, {
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //         },
+  //         method: 'POST',
+  //         body: JSON.stringify({ message: sigHash }),
+  //       })
+  //       status = postRequest.status
+  //     } catch (e) {
+  //       status = 500
+  //       console.error(e)
+  //     }
+  //     await sleep(3000)
+  //     i++
+  //   }
+  //   const result = await postRequest.text()
+  //   if (!postRequest.ok) {
+  //     console.error('Server responded with:', result)
+  //     throw new Error(await result)
+  //   }
 
-    try {
-      return Uint8Array.from(atob(result), (c) => c.charCodeAt(0))
-    } catch (e) {
-      throw new Error(postRequest.statusText)
-    }
-  }
+  //   try {
+  //     return Uint8Array.from(atob(result), (c) => c.charCodeAt(0))
+  //   } catch (e) {
+  //     throw new Error(postRequest.statusText)
+  //   }
+  // }
 }

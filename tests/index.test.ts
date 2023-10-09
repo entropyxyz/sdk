@@ -141,7 +141,7 @@ describe('Core Tests',() => {
       freeTx: false,
       retries: 10,
     })
-    console.log('Signature:', signature)
+    // console.log('Signature:', signature)
     expect(signature.length).toBe(65)
     // await disconnect(charlieStashEntropy.substrate)
 
