@@ -134,38 +134,59 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
           console.log("TXREQUEST", JSON.stringify({ ...txRequestData, validators_info: formattedValidators}))
 
 
-          const encryptedMessage = await crypto.encrypt_and_sign(
+          const encryptedMessage = JSON.parse(await crypto.encrypt_and_sign(
             this.signer.pair.secretKey,
             encoded,
             serverDHKey
-          )
+          ))
+
+          const formatedMsg = {
+            ...encryptedMessage,
+            msg: stripHexPrefix(encryptedMessage.msg),
+          }
 
           return {
             url: validator.ip_address,
-            msg: encryptedMessage,
+            msg: JSON.stringify(formatedMsg),
           }
         }
       )
     )
   }
 
+  async createTestSignCurlsForSign ({
+    sigRequestHash,
+    arch,
+    freeTx = true,
+    retries,
+  }: SigOps): Promise<void> {
+    const validatorsInfo: Array<ValidatorInfo> = await this.getArbitraryValidators(
+      sigRequestHash
+    )
+
+    const txRequests: Array<EncMsg> = await this.formatTxRequests({validatorsInfo, sigRequestHash})
+
+    const v1 = txRequests[0]
+    const v2 = txRequests[1]
+
+    console.log(`\x1b[33m
+    curl -X POST -H "Content-Type: application/json" \\
+    -d '${v1.msg}' \\
+    -H "Accept: application/json" \\
+    ${`http://${v1.url}/user/sign_tx`} > v1.txt &
+    curl -X POST -H "Content-Type: application/json" \\
+    -d '${v2.msg}' \\
+    -H "Accept: application/json" \\
+    ${`http://${v2.url}/user/sign_tx`} > v2.txt
+    \x1b[0m`)
+
+  }
+
   async submitTransactionRequest (txReq: Array<EncMsg>): Promise<SignatureLike[]> {
     return Promise.all(txReq.map(async (message: EncMsg) => {
-      let parsedMsg
-      try {
-        parsedMsg = JSON.parse(message.msg)
-      } catch (error) {
-        throw new Error('Failed to parse encMsg as JSON:' + error.message)
-      }
-
-      const payload = {
-        ...parsedMsg,
-        msg: stripHexPrefix(parsedMsg.msg),
-      }
-
       const response = await sendHttpPost(
         `http://${message.url}/user/sign_tx`,
-        JSON.stringify(payload)
+        JSON.stringify(message.msg)
       )
 
       const reader = response.body.getReader()
