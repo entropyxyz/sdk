@@ -136,12 +136,6 @@ describe('Core Tests',() => {
 */
     // signing should work for whitelisted tx requests
     const serializedTx = ethers.utils.serializeTransaction(whitelisted_test_tx_req)
-    // const hexEncodedTx = ethers.utils.hexlify(serializedTx)
-    const sigRequestHash = keccak256(serializedTx)
-
-    const strippedsigRequestHashDOS = stripHexPrefix(sigRequestHash)
-
-    console.log("SIG2", strippedsigRequestHashDOS)
 
     console.log('Setting up test environment...')
     const signature: any = await entropy.sign({
