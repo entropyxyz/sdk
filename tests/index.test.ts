@@ -53,7 +53,6 @@ describe('Core Tests',() => {
     } catch (e) {
       console.log(e)
     }
-    await sleep(9000)
     await modifyOcwPostEndpoint(
       'ws://127.0.0.1:9945',
       'http://localhost:3002/user/new',
@@ -144,7 +143,9 @@ describe('Core Tests',() => {
 
   
     console.log('Signature:', signature)
-    expect(signature.length).toBe(65)
+    // encoding signature
+
+    expect(signature.length).toBe(88)
     // await disconnect(charlieStashEntropy.substrate)
 
   },)
