@@ -10,6 +10,7 @@ import { Signer, Address } from './types'
 import ProgramManager from './programs'
 
 
+
 export interface EntropyOpts {
   seed?: string
   endpoint?: string

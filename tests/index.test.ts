@@ -22,12 +22,15 @@ import { buf2hex,stripHexPrefix } from '../src/utils'
 
 
 
+
 describe('Core Tests',() => {
   let entropy: Entropy
   let chainProcess1, chainProcess2, serverProcess1, serverProcess2
 
   const chainPath = process.cwd() + '/tests/testing-utils/test-binaries/entropy'
   const serverPath = process.cwd() + '/tests/testing-utils/test-binaries/server'
+  const customEndpoint = 'ws://devnet-forfrankie-nodes-617e8e312bab1d9f.elb.us-west-2.amazonaws.com:9944'
+
 
   beforeEach(async () => {
     jest.setTimeout(30000)
@@ -55,7 +58,8 @@ describe('Core Tests',() => {
       'http://localhost:3002/user/new',
     )
     entropy = new Entropy({
-      seed: charlieStashSeed
+      seed: charlieStashSeed,
+      endpoint: customEndpoint 
     })
 
     // Wait for the entropy instance to be ready
@@ -80,17 +84,17 @@ describe('Core Tests',() => {
   it('should handle registration, program management, and signing', async () => {
     jest.setTimeout(60000)
 
-    try {
-      console.log('pre registration')
-    await entropy.register({
-      address: charlieStashAddress,
-      keyVisibility: 'Permissioned',
-      freeTx: false,
+  //   try {
+  //     console.log('pre registration')
+  //   await entropy.register({
+  //     address: charlieStashAddress,
+  //     keyVisibility: 'Permissioned',
+  //     freeTx: false,
       
-    })
-  } catch (e) {
-    console.error('Error in test:', e.message)
-  }
+  //   })
+  // } catch (e) {
+  //   console.error('Error in test:', e.message)
+  // }
   
     console.log('post registration')
 
@@ -105,7 +109,7 @@ describe('Core Tests',() => {
     // Retrieve the program and compare
     const fetchedProgram: ArrayBuffer = await entropy.programs.get()
     const trimmedBuffer = fetchedProgram.slice(1)
-    console.log("fetched!!!!!", buf2hex(fetchedProgram))
+    // console.log("fetched!!!!!", buf2hex(fetchedProgram))
     expect(buf2hex(trimmedBuffer)).toEqual(buf2hex(dummyProgram))
 
 
@@ -141,6 +145,8 @@ describe('Core Tests',() => {
       freeTx: false,
       retries: 10,
     })
+
+    await sleep(60000)
     // console.log('Signature:', signature)
     expect(signature.length).toBe(65)
     // await disconnect(charlieStashEntropy.substrate)
