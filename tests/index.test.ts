@@ -84,17 +84,17 @@ describe('Core Tests',() => {
   it('should handle registration, program management, and signing', async () => {
     jest.setTimeout(60000)
 
-  //   try {
-  //     console.log('pre registration')
-  //   await entropy.register({
-  //     address: charlieStashAddress,
-  //     keyVisibility: 'Permissioned',
-  //     freeTx: false,
+    try {
+      console.log('pre registration')
+    await entropy.register({
+      address: charlieStashAddress,
+      keyVisibility: 'Permissioned',
+      freeTx: false,
       
-  //   })
-  // } catch (e) {
-  //   console.error('Error in test:', e.message)
-  // }
+    })
+  } catch (e) {
+    console.error('Error in test:', e.message)
+  }
   
     console.log('post registration')
 
@@ -136,18 +136,21 @@ describe('Core Tests',() => {
 */
     // signing should work for whitelisted tx requests
     const serializedTx = ethers.utils.serializeTransaction(whitelisted_test_tx_req)
-    const hexEncodedTx = ethers.utils.hexlify(serializedTx)
-    const sigRequestHash = keccak256(hexEncodedTx)
+    // const hexEncodedTx = ethers.utils.hexlify(serializedTx)
+    const sigRequestHash = keccak256(serializedTx)
+
+    const strippedsigRequestHashDOS = stripHexPrefix(sigRequestHash)
+
+    console.log("SIG2", strippedsigRequestHashDOS)
 
     console.log('Setting up test environment...')
     const signature: any = await entropy.sign({
-      sigRequestHash:sigRequestHash,
-      freeTx: false,
+      sigRequestHash: serializedTx,
       retries: 10,
     })
 
-    await sleep(60000)
-    // console.log('Signature:', signature)
+  
+    console.log('Signature:', signature)
     expect(signature.length).toBe(65)
     // await disconnect(charlieStashEntropy.substrate)
 
