@@ -44,18 +44,6 @@ export async function getApi (): Promise<ApiFactory> {
   }
 }
 
-// export async function sendHttpPost (url: string, data: any): Promise<any> {
-//   const headers = {
-//     'Content-Type': 'application/json',
-//   }
-//   const response = await fetch(url, {
-//     method: 'POST',
-//     headers,
-//     body: data,
-//   })
-//   console.log(`\x1b[33m data: ${data} fetch ${url}: ${JSON.stringify(response)} \x1b[0m`)
-//   return response
-// }
 
 export async function sendHttpPost (url: string, data: any): Promise<any> {
   const headers = {
@@ -79,7 +67,25 @@ export async function sendHttpPost (url: string, data: any): Promise<any> {
     throw new Error(`request failed ${response.status}, ${response.statusText} fetch: ${url} FULLRESPONSE: ${await response.text()}`)
   } 
 
-  return response
+  const reader = response.body.getReader()
+  const start = (controller) => {
+    async function pump () {
+      const { done, value } = await reader.read()
+      if (done) {
+        controller.close()
+        return
+      }
+      controller.enqueue(value)
+      return pump()
+    }
+    return pump()
+  }
+  const stream = new ReadableStream({ start })
+  const streamResponse = new Response(await stream)
+  if (!streamResponse.ok) {
+    throw new Error(`request failed ${streamResponse.status}, ${streamResponse.statusText} FULLRESPONSE: ${await streamResponse.text()}`)
+  }
+  return (await streamResponse.json()).Ok
 }
 
 

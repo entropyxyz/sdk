@@ -10,8 +10,6 @@ import { crypto, CryptoLib } from '../utils/crypto'
 import { serializeTransaction } from 'ethers/lib/utils'
 import { hexToBase64,hexToBase64remove, u8ArrayToString, hexStringToIntArray } from '../utils'
 import { hexToU8a, isHex } from '@polkadot/util'
-import { BigNumber } from 'ethers'
-import bigInt from "big-integer"
 
 
 
@@ -154,49 +152,22 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
 
   async submitTransactionRequest (txReq: Array<EncMsg>): Promise<SignatureLike[]> {
     return Promise.all(txReq.map(async (message: EncMsg) => {
-      let parsedMsg
-      try {
-        parsedMsg = JSON.parse(message.msg)
-      } catch (error) {
-        throw new Error('Failed to parse encMsg as JSON:' + error.message)
-      }
-
+      let parsedMsg = JSON.parse(message.msg)
       const payload = {
         ...parsedMsg,
         msg: stripHexPrefix(parsedMsg.msg),
       }
 
-      const response = await sendHttpPost(
+      const sig = await sendHttpPost(
         `http://${message.url}/user/sign_tx`,
         JSON.stringify(payload)
       )
-
-      const reader = response.body.getReader()
-      const start = (controller) => {
-        async function pump () {
-          const { done, value } = await reader.read()
-          if (done) {
-            controller.close()
-            return
-          }
-          controller.enqueue(value)
-          return pump()
-        }
-        return pump()
-      }
-      const stream = new ReadableStream({ start })
-      const streamResponse = new Response(await stream)
-      if (!streamResponse.ok) {
-        throw new Error(`request failed ${streamResponse.status}, ${streamResponse.statusText} FULLRESPONSE: ${await streamResponse.text()}`)
-      }
-
-      const sig = await streamResponse.text()
       console.log(`\x1b[33m
           this is the response:
-          ${sig}
+          ${JSON.stringify(sig)}
       \x1b[0m`)
 
-      return sig
+      return sig[0]
     }))
   }
 
