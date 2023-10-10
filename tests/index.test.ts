@@ -29,7 +29,8 @@ describe('Core Tests',() => {
 
   const chainPath = process.cwd() + '/tests/testing-utils/test-binaries/entropy'
   const serverPath = process.cwd() + '/tests/testing-utils/test-binaries/server'
-  const customEndpoint = 'ws://devnet-forfrankie-nodes-617e8e312bab1d9f.elb.us-west-2.amazonaws.com:9944'
+  // devnet endpoint. providing no endpoint defaults to local chain spinup
+  // const customEndpoint = 'ws://devnet-forfrankie-nodes-617e8e312bab1d9f.elb.us-west-2.amazonaws.com:9944'
 
 
   beforeEach(async () => {
@@ -38,8 +39,8 @@ describe('Core Tests',() => {
       serverProcess1 = await spinThreshold(serverPath, 'alice', '3001')
       serverProcess2 = await spinThreshold(serverPath, 'bob', '3002')
       chainProcess1 = await spinChain(chainPath, 'alice', '9944')
-      await sleep(3000)
       chainProcess2 = await spinChain(chainPath, 'bob', '9945')
+      await sleep(3000)
 
       // Handle process errors
       const processes = [serverProcess1, serverProcess2, chainProcess1, chainProcess2]
@@ -58,8 +59,9 @@ describe('Core Tests',() => {
       'http://localhost:3002/user/new',
     )
     entropy = new Entropy({
-      seed: charlieStashSeed,
-      endpoint: customEndpoint 
+      seed: charlieStashSeed
+      // devnet endpoint
+      // endpoint: customEndpoint 
     })
 
     // Wait for the entropy instance to be ready
@@ -85,7 +87,6 @@ describe('Core Tests',() => {
     jest.setTimeout(60000)
 
     try {
-      console.log('pre registration')
     await entropy.register({
       address: charlieStashAddress,
       keyVisibility: 'Permissioned',
@@ -96,7 +97,6 @@ describe('Core Tests',() => {
     console.error('Error in test:', e.message)
   }
   
-    console.log('post registration')
 
     expect(entropy.keys.wallet.address).toBe(charlieStashAddress)
 
@@ -109,7 +109,7 @@ describe('Core Tests',() => {
     // Retrieve the program and compare
     const fetchedProgram: ArrayBuffer = await entropy.programs.get()
     const trimmedBuffer = fetchedProgram.slice(1)
-    // console.log("fetched!!!!!", buf2hex(fetchedProgram))
+
     expect(buf2hex(trimmedBuffer)).toEqual(buf2hex(dummyProgram))
 
 
@@ -137,7 +137,6 @@ describe('Core Tests',() => {
     // signing should work for whitelisted tx requests
     const serializedTx = ethers.utils.serializeTransaction(whitelisted_test_tx_req)
 
-    console.log('Setting up test environment...')
     const signature: any = await entropy.sign({
       sigRequestHash: serializedTx,
       retries: 10,

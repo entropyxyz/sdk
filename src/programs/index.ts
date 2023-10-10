@@ -36,15 +36,6 @@ export default class ProgramManager extends ExtrinsicBaseClass {
 
   // set up functions in entropy class 
 
-  // async get (deployKey = this.signer.wallet.address): Promise<ArrayBuffer> {
-  //   const responseHexOption = await this.substrate.query.constraints.v2Bytecode(deployKey)
-  //   if (responseHexOption.isEmpty) {
-  //     throw new Error("No program defined for the given account.")
-  //   }
-
-  //   const responseHex = responseHexOption.unwrap().toHex() // Convert Bytes to hex string
-  //   return hex2buf(responseHex) // Convert hex string to ArrayBuffer
-  // }
   async get (deployKey = this.signer.wallet.address): Promise<ArrayBuffer> {
     const responseHexOption = await this.substrate.query.constraints.v2Bytecode(deployKey)
     if (responseHexOption.isEmpty) {
@@ -76,8 +67,10 @@ export default class ProgramManager extends ExtrinsicBaseClass {
   //     throw error
   //   }
   // } 
+
   async set (program: ArrayBuffer): Promise<void> {
     try {
+      
       // Convert ArrayBuffer to Uint8Array and then to Hex
       const programHex = u8aToHex(new Uint8Array(program))
         

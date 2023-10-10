@@ -92,12 +92,10 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
       strippedsigRequestHash
     )
 
-    console.log("SIG!!!", strippedsigRequestHash)
 
     const txRequests: Array<EncMsg> = await this.formatTxRequests({validatorsInfo: validatorsInfo.reverse(), strippedsigRequestHash})
     const sigs = await this.submitTransactionRequest(txRequests)
     const sig = sigs[0]
-    console.log('Signature: ', sig)
     return sig
   }
 
@@ -132,8 +130,6 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
             JSON.stringify({ ...txRequestData, validators_info: formattedValidators}),
             (x) => x.charCodeAt(0)
           )
-          console.log("TXREQUEST", JSON.stringify({ ...txRequestData, validators_info: formattedValidators}))
-
 
           const encryptedMessage = await crypto.encrypt_and_sign(
             this.signer.pair.secretKey,
@@ -152,7 +148,7 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
 
   async submitTransactionRequest (txReq: Array<EncMsg>): Promise<SignatureLike[]> {
     return Promise.all(txReq.map(async (message: EncMsg) => {
-      let parsedMsg = JSON.parse(message.msg)
+      const parsedMsg = JSON.parse(message.msg)
       const payload = {
         ...parsedMsg,
         msg: stripHexPrefix(parsedMsg.msg),
@@ -162,11 +158,6 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
         `http://${message.url}/user/sign_tx`,
         JSON.stringify(payload)
       )
-      console.log(`\x1b[33m
-          this is the response:
-          ${JSON.stringify(sig)}
-      \x1b[0m`)
-
       return sig[0]
     }))
   }
@@ -177,10 +168,7 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
       await this.substrate.query.stakingExtension.signingGroups.entries()
     ).map(
       ([{ args: [group] }, stashKeys]) => {
-        console.log("GROUP", group, "STASHKEYS", stashKeys.unwrap().toHuman())
         const index = parseInt(sigRequest, 16) % stashKeys.unwrap().length
-
-        console.log("index", index)
 
         return stashKeys.unwrap()[index]
       }
@@ -211,7 +199,6 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
       }
     )
 
-    console.log("VALIDATORS", [validatorsInfo])
     return validatorsInfo
   }
 

@@ -45,7 +45,7 @@ export default class ExtrinsicBaseClass {
           if (status.isInBlock || status.isFinalized) {
             events
               .filter(({ event }) =>
-                // @ts-ignore: next line
+              // @ts-ignore: next line
 
                 this.substrate.events.system.ExtrinsicFailed.is(event)
               )

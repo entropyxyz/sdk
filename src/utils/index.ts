@@ -55,13 +55,6 @@ export async function sendHttpPost (url: string, data: any): Promise<any> {
     body: data,
   } )
   
-  console.log('Inside sendHttpPost - Received a response')
-  console.log(`\x1b[33m data:
-    curl -X POST -H "Content-Type: application/json" \\
-    -d '${data}' \\
-    -H "Accept: application/json" \\
-    ${url}
-    \x1b[0m`)
   if (!response.ok) {
 
     throw new Error(`request failed ${response.status}, ${response.statusText} fetch: ${url} FULLRESPONSE: ${await response.text()}`)
