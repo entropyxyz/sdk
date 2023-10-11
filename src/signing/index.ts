@@ -96,7 +96,7 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
     const txRequests: Array<EncMsg> = await this.formatTxRequests({validatorsInfo: validatorsInfo.reverse(), strippedsigRequestHash})
     const sigs = await this.submitTransactionRequest(txRequests)
     const sig = sigs[0]
-    return sig
+    return Uint8Array.from(atob(sig), (c) => c.charCodeAt(0))
   }
 
   getTimeStamp () {
@@ -146,7 +146,7 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
     )
   }
 
-  async submitTransactionRequest (txReq: Array<EncMsg>): Promise<SignatureLike[]> {
+  async submitTransactionRequest (txReq: Array<EncMsg>): Promise<string[]> {
     return Promise.all(txReq.map(async (message: EncMsg) => {
       const parsedMsg = JSON.parse(message.msg)
       const payload = {

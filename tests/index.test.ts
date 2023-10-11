@@ -83,8 +83,6 @@ describe('Core Tests',() => {
   })
 
   it('should handle registration, program management, and signing', async () => {
-    jest.setTimeout(60000)
-
     try {
     await entropy.register({
       address: charlieStashAddress,
@@ -142,10 +140,9 @@ describe('Core Tests',() => {
     })
 
   
-    console.log('Signature:', signature)
     // encoding signature
 
-    expect(signature.length).toBe(88)
+    expect(signature.length).toBe(65)
     // await disconnect(charlieStashEntropy.substrate)
 
   },)
