@@ -36,7 +36,7 @@ export const crypto: CryptoLib = new Proxy({} as CryptoLib, {
   },
 })
 
-export async function loadCryptoLib() {
+export async function loadCryptoLib () {
   if (isImported) return cryptoLib
 
   if (typeof window === 'undefined') {

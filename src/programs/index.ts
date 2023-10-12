@@ -25,7 +25,7 @@ export default class ProgramManager extends ExtrinsicBaseClass {
   substrate: ApiPromise
   signer: Signer
 
-  constructor({ substrate, signer }) {
+  constructor ({ substrate, signer }) {
     super({ substrate, signer })
     this.substrate = substrate
     this.signer = signer
@@ -33,7 +33,7 @@ export default class ProgramManager extends ExtrinsicBaseClass {
 
   // set up functions in entropy class
 
-  async get(deployKey = this.signer.wallet.address): Promise<ArrayBuffer> {
+  async get (deployKey = this.signer.wallet.address): Promise<ArrayBuffer> {
     const responseHexOption = await this.substrate.query.constraints.v2Bytecode(
       deployKey
     )
@@ -67,7 +67,7 @@ export default class ProgramManager extends ExtrinsicBaseClass {
   //   }
   // }
 
-  async set(program: ArrayBuffer): Promise<void> {
+  async set (program: ArrayBuffer): Promise<void> {
     try {
       // Convert ArrayBuffer to Uint8Array and then to Hex
       const programHex = util.u8aToHex(new Uint8Array(program))

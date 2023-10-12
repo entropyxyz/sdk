@@ -14,11 +14,11 @@ export default class ExtrinsicBaseClass {
   substrate: ApiPromise
   signer: Signer
 
-  constructor({ substrate, signer }) {
+  constructor ({ substrate, signer }) {
     this.substrate = substrate
     this.signer = signer
   }
-  async sendAndWaitFor(
+  async sendAndWaitFor (
     call: SubmittableExtrinsic<'promise'>,
     freeTx = true,
     filter: EventFilter
@@ -66,7 +66,7 @@ export default class ExtrinsicBaseClass {
    * @returns {*}  {Promise<SubmittableExtrinsic<'promise'>>} - A promise that resolves when the transaction is included in a block.
    */
 
-  async handleFreeTx(
+  async handleFreeTx (
     call: SubmittableExtrinsic<'promise'>
   ): Promise<SubmittableExtrinsic<'promise'>> {
     const freeTxWrapper = this.substrate.tx.freeTx.callUsingElectricity(call)

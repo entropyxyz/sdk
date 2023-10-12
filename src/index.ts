@@ -27,7 +27,7 @@ export default class Entropy {
 
   substrate: ApiPromise
 
-  async init(opts: EntropyOpts) {
+  async init (opts: EntropyOpts) {
     this.keys = await getWallet(opts.seed)
     const wsProvider = new WsProvider(opts.endpoint)
 
@@ -54,7 +54,7 @@ export default class Entropy {
     )
   }
 
-  constructor(opts: EntropyOpts) {
+  constructor (opts: EntropyOpts) {
     this.ready = new Promise((resolve, reject) => {
       this.#ready = resolve
       this.#fail = reject
@@ -65,7 +65,7 @@ export default class Entropy {
     })
   }
 
-  async register(params: RegistrationParams) {
+  async register (params: RegistrationParams) {
     await this.ready
     if (params.address) {
       if (!isValidSubstrateAddress(params.address)) {
@@ -75,12 +75,12 @@ export default class Entropy {
     return this.registrationManager.register(params)
   }
 
-  async signTransaction(params: SigTxOps): Promise<SignatureLike> {
+  async signTransaction (params: SigTxOps): Promise<SignatureLike> {
     await this.ready
     return this.signingManager.signTransaction(params)
   }
 
-  async sign(params: SigOps): Promise<SignatureLike> {
+  async sign (params: SigOps): Promise<SignatureLike> {
     await this.ready
     return this.signingManager.sign(params)
   }

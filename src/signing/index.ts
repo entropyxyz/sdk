@@ -34,7 +34,7 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
   signer: Signer
   crypto: CryptoLib
 
-  constructor({ signer, substrate, adapters, crypto }: Config) {
+  constructor ({ signer, substrate, adapters, crypto }: Config) {
     super({ signer, substrate })
     this.crypto = crypto
     this.adapters = {
@@ -43,7 +43,7 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
     }
   }
 
-  async signTransaction({ txParams, type }: SigTxOps): Promise<SignatureLike> {
+  async signTransaction ({ txParams, type }: SigTxOps): Promise<SignatureLike> {
     if (!this.adapters[type])
       throw new Error(`No transaction adapter for type: ${type} submit as hash`)
     if (!this.adapters[type].preSign)
@@ -63,7 +63,7 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
     return signature
   }
 
-  async sign({ sigRequestHash }: SigOps): Promise<SignatureLike> {
+  async sign ({ sigRequestHash }: SigOps): Promise<SignatureLike> {
     const strippedsigRequestHash = stripHexPrefix(sigRequestHash)
     const validatorsInfo: Array<ValidatorInfo> = await this.getArbitraryValidators(
       strippedsigRequestHash
@@ -78,7 +78,7 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
     return Uint8Array.from(atob(sig), (c) => c.charCodeAt(0))
   }
 
-  getTimeStamp() {
+  getTimeStamp () {
     const timestampInMilliseconds = Date.now()
     const secs_since_epoch = Math.floor(timestampInMilliseconds / 1000)
     const nanos_since_epoch = (timestampInMilliseconds % 1000) * 1_000_000
@@ -89,7 +89,7 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
     }
   }
 
-  async formatTxRequests({
+  async formatTxRequests ({
     strippedsigRequestHash,
     validatorsInfo,
   }: {
@@ -141,7 +141,7 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
     )
   }
 
-  async submitTransactionRequest(txReq: Array<EncMsg>): Promise<string[]> {
+  async submitTransactionRequest (txReq: Array<EncMsg>): Promise<string[]> {
     return Promise.all(
       txReq.map(async (message: EncMsg) => {
         const parsedMsg = JSON.parse(message.msg)
@@ -159,7 +159,7 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
     )
   }
 
-  async getArbitraryValidators(sigRequest: string): Promise<ValidatorInfo[]> {
+  async getArbitraryValidators (sigRequest: string): Promise<ValidatorInfo[]> {
     const stashKeys = (
       await this.substrate.query.stakingExtension.signingGroups.entries()
     ).map((group) => {

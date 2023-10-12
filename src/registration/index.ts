@@ -13,7 +13,7 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
   substrate: ApiPromise
   signer: Signer
 
-  constructor({
+  constructor ({
     substrate,
     signer,
   }: {
@@ -23,7 +23,7 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
     super({ signer, substrate })
   }
 
-  async register({
+  async register ({
     freeTx = true,
     initialProgram,
     keyVisibility = 'Permissioned',
@@ -75,7 +75,7 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
     return registered
   }
 
-  async checkRegistrationStatus(address: Address): Promise<boolean> {
+  async checkRegistrationStatus (address: Address): Promise<boolean> {
     const isRegistered = await this.substrate.query.relayer.registered(address)
     return !!isRegistered.unwrapOr(false)
   }
