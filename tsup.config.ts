@@ -7,7 +7,7 @@ export default defineConfig((options) => {
     entry: [path],
     replaceNodeEnv: true,
     format: ['esm'],
-    external: ['dotenv', 'node:fs', 'fs', '**/*.test.ts', 'core/utils.ts'],
+    external: ['dotenv', 'node:fs', 'fs', '**/*.test.ts', 'src/utils/index.ts'],
     dts: true,
     sourcemap: true,
     clean: true,

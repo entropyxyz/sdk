@@ -1,6 +1,6 @@
 // import RegistrationManager from '../src/registration'
 // import { getWallet } from '../src/keys'
-// import Entropy from './../src/index'
+// import Entropy from './../src'
 // import {
 //   spinChain,
 //   spinThreshold,

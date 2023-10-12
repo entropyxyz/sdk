@@ -4,10 +4,11 @@ import { isValidSubstrateAddress } from './utils'
 import RegistrationManager, { RegistrationParams } from './registration'
 import { getWallet } from './keys'
 import SignatureRequestManager, { SigOps, SigTxOps }  from './signing'
-import {  crypto } from './utils/crypto' 
+import {  crypto } from './utils/crypto'
 import { Adapter } from './signing/adapters/types'
 import { Signer, Address } from './types'
 import ProgramManager from './programs'
+
 
 
 export interface EntropyOpts {
@@ -17,8 +18,8 @@ export interface EntropyOpts {
 }
 
 export default class Entropy {
-  #ready?: (value?: any) => void
-  #fail?: (reason?: any) => void
+  #ready?: (value?: unknown) => void
+  #fail?: (reason?: unknown) => void
   ready: Promise<void>
   isRegistered: (address: Address) => Promise<boolean>
   keys?: Signer

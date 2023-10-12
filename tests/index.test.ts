@@ -17,8 +17,10 @@ import {
 } from './testing-utils'
 import { ethers } from 'ethers'
 import { keccak256 } from 'ethers/lib/utils'
-import { buf2hex, hex2buf } from '../src/utils'
-import { hexString } from '../src/types'
+import { buf2hex,stripHexPrefix } from '../src/utils'
+
+
+
 
 describe('Core Tests',() => {
   let entropy: Entropy
@@ -26,14 +28,18 @@ describe('Core Tests',() => {
 
   const chainPath = process.cwd() + '/tests/testing-utils/test-binaries/entropy'
   const serverPath = process.cwd() + '/tests/testing-utils/test-binaries/server'
+  // devnet endpoint. providing no endpoint defaults to local chain spinup
+  // const customEndpoint = 'ws://devnet-forfrankie-nodes-617e8e312bab1d9f.elb.us-west-2.amazonaws.com:9944'
+
 
   beforeEach(async () => {
+    jest.setTimeout(30000)
     try {
       serverProcess1 = await spinThreshold(serverPath, 'alice', '3001')
       serverProcess2 = await spinThreshold(serverPath, 'bob', '3002')
       chainProcess1 = await spinChain(chainPath, 'alice', '9944')
-      await sleep(3000)
       chainProcess2 = await spinChain(chainPath, 'bob', '9945')
+      await sleep(3000)
 
       // Handle process errors
       const processes = [serverProcess1, serverProcess2, chainProcess1, chainProcess2]
@@ -46,20 +52,23 @@ describe('Core Tests',() => {
     } catch (e) {
       console.log(e)
     }
-    await sleep(9000)
     await modifyOcwPostEndpoint(
       'ws://127.0.0.1:9945',
       'http://localhost:3002/user/new',
     )
     entropy = new Entropy({
       seed: charlieStashSeed
+      // devnet endpoint
+      // endpoint: customEndpoint 
     })
 
     // Wait for the entropy instance to be ready
     await entropy.ready
   })
   afterEach(async () => {
-    await disconnect(entropy.substrate)
+    jest.setTimeout(30000)
+    try {
+      await disconnect(entropy.substrate)
     await sleep(6000)
     serverProcess1.kill()
     serverProcess2.kill()
@@ -67,65 +76,78 @@ describe('Core Tests',() => {
     chainProcess2.kill()
     await sleep(6000)
     removeDB()
+  } catch (e) {
+    console.error('Error in afterEach:', e.message)
+  }
   })
 
   it('should handle registration, program management, and signing', async () => {
-    console.log('pre registration')
-    await entropy.register({
-      address: charlieStashAddress,
-      keyVisibility: 'Permissioned',
-      freeTx: false,
-    })
-    console.log('post registration')
+    jest.setTimeout(60000)
+
+
+    try {
+      await entropy.register({
+        address: charlieStashAddress,
+        keyVisibility: 'Permissioned',
+        freeTx: false,
+
+      })
+    } catch (e) {
+      console.error('Error in test:', e.message)
+    }
+  
 
     expect(entropy.keys.wallet.address).toBe(charlieStashAddress)
-
+    console.log('pre registration')
     expect(await entropy.registrationManager.checkRegistrationStatus(charlieStashAddress)).toBeTruthy()
+    console.log('post registration')
 
     // Set a program for the user
     const dummyProgram: any = readFileSync('./tests/testing-utils/template_barebones.wasm')
     await entropy.programs.set(dummyProgram)
-
+    console.log('set program')
     // Retrieve the program and compare
-    const fetchedProgram = await entropy.programs.get()
-    console.log("FETCHPROGRAMBYTE", fetchedProgram.byteLength)
-    console.log("DUMMYPROGRAMBYTE", dummyProgram.byteLength)
-    console.log(fetchedProgram.slice(0, 10), fetchedProgram.slice(-10))
-    console.log(dummyProgram.slice(0, 10), dummyProgram.slice(-10))
+    const fetchedProgram: ArrayBuffer = await entropy.programs.get()
+    const trimmedBuffer = fetchedProgram.slice(1)
 
-    // expect(fetchedProgram).toEqual(buf2hex(dummyProgram))
+    expect(buf2hex(trimmedBuffer)).toEqual(buf2hex(dummyProgram))
+
 
     // signing attempts should fail cause we haven't set constraints yet
-    // const no_constraint: any = await entropy.sign({
-    //   sigRequestHash: keccak256(ethers.utils.serializeTransaction(whitelisted_test_tx_req)),
-    //   freeTx: false,
-    //   retries: 3
-    // })
-    // expect(no_constraint.length).toBe(0)
-
-    // set user's constraints on-chain
-    // const charlieStashEntropy = new Entropy({
-    //   seed: charlieStashSeed
-    // })
-
-    // signing should fail with a non-whitelisted tx requests
-    // const wrong_constraint: any = await entropy.sign({
-    //   sigRequestHash: keccak256(ethers.utils.serializeTransaction(non_whitelisted_test_tx_req)),
-    //   freeTx: false,
-    //   retries: 3
-    // })
-    // expect(wrong_constraint.length).toBe(0)
-
-    // signing should work for whitelisted tx requests
-    const signature: any = await entropy.sign({
+/*    const no_constraint: any = await entropy.sign({
       sigRequestHash: keccak256(ethers.utils.serializeTransaction(whitelisted_test_tx_req)),
       freeTx: false,
-      retries: 10
+      retries: 3
     })
+    expect(no_constraint.length).toBe(0)
+
+    // set user's constraints on-chain
+    const charlieStashEntropy = new Entropy({
+      seed: charlieStashSeed
+    })
+
+    // signing should fail with a non-whitelisted tx requests
+    const wrong_constraint: any = await entropy.sign({
+      sigRequestHash: keccak256(ethers.utils.serializeTransaction(non_whitelisted_test_tx_req)),
+      freeTx: false,
+      retries: 3
+    })
+    expect(wrong_constraint.length).toBe(0)
+*/
+    // signing should work for whitelisted tx requests
+    const serializedTx = ethers.utils.serializeTransaction(whitelisted_test_tx_req)
+
+    const signature: any = await entropy.sign({
+      sigRequestHash: serializedTx,
+    })
+
+  
+    // encoding signature
+    console.log('pre signature')
     expect(signature.length).toBe(65)
+    console.log('post signature')
     // await disconnect(charlieStashEntropy.substrate)
 
-  // set test time out for a minute
   },)
 
 })

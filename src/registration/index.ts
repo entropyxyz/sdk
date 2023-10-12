@@ -60,7 +60,7 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
       keyVisibility,
       initialProgram ? initialProgram : null
     )
-    const registerTxRecord = await this.sendAndWaitFor(registerTx, freeTx, {
+    await this.sendAndWaitFor(registerTx, freeTx, {
       section: 'relayer',
       name: 'SignalRegister',
     })

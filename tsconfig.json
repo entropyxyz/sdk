@@ -5,9 +5,12 @@
     "noEmit": true,
     "incremental": true,
     "typeRoots": ["node_modules/@types", "@types/"],
-    "moduleResolution": "node",
     "tsBuildInfoFile": ".tsbuildinfo",
+    "moduleResolution": "node",
     "module": "Node16"
   },
-  "exclude": ["node_modules", "dist", "build", "examples", "old"]
+  "exclude": ["node_modules", "dist", "build", "examples", "old"],
+  "ts-node": {
+    "experimentalSpecifierResolution": "node"
+  }
 }

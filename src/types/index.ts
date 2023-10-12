@@ -95,7 +95,7 @@ export interface ITransactionRequest {
 }
 
 export interface EncMsg {
-  encMsg: string
+  msg: string
   url: string
 }
 
