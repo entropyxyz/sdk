@@ -135,7 +135,6 @@ describe('Core Tests',() => {
 
     const signature: any = await entropy.sign({
       sigRequestHash: serializedTx,
-      retries: 10,
     })
 
   

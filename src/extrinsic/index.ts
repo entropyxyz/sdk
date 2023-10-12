@@ -28,7 +28,7 @@ export default class ExtrinsicBaseClass {
     return new Promise<EventRecord>((resolve, reject) => {
       newCall
         .signAndSend(this.signer.wallet, (res: SubmittableResult) => {
-          const { dispatchError, status, events } = res
+          const { dispatchError, status } = res
           if (dispatchError) {
             if (dispatchError.isModule) {
               // for module errors, we have the section indexed, lookup
@@ -41,28 +41,6 @@ export default class ExtrinsicBaseClass {
             } else {
               reject(Error(dispatchError.toString()))
             }
-          }
-          if (status.isInBlock || status.isFinalized) {
-            events
-              .filter(({ event }) =>
-              // @ts-ignore: next line
-
-                this.substrate.events.system.ExtrinsicFailed.is(event)
-              )
-              // we know that data for system.ExtrinsicFailed is
-              // (DispatchError, DispatchInfo)
-              .forEach(({ event: { data: [error, info] } }) => {
-                // @ts-ignore: next line
-                if (error.isModule) {
-                  // for module errors, we have the section indexed, lookup
-                // @ts-ignore: next line
-                  const decoded = this.substrate.registry.findMetaError(error.asModule)
-                  const { docs, method, section } = decoded
-
-                } else {
-                  // Other, CannotLookup, BadOrigin, no extra info
-                }
-              })
           }
           if (status.isInBlock || status.isFinalized) {
             const record = res.findRecord(filter.section, filter.name)

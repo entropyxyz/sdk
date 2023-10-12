@@ -18,8 +18,8 @@ export interface EntropyOpts {
 }
 
 export default class Entropy {
-  #ready?: (value?: any) => void
-  #fail?: (reason?: any) => void
+  #ready?: (value?: unknown) => void
+  #fail?: (reason?: unknown) => void
   ready: Promise<void>
   isRegistered: (address: Address) => Promise<boolean>
   keys?: Signer
