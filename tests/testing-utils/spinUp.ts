@@ -80,8 +80,8 @@ export const spinThreshold = async (
   if (name) {
     args.push('--' + name, '--threshold-url=127.0.0.1:' + port)
   }
-  await sleep(1000)
   const process = spawn(bin, args)
+  await sleep(1000)
   // comment in for threshold logging and add verbose to jest
   // process.stdout.on('data', async function (chunk) {
   //   const message = chunk.toString()
