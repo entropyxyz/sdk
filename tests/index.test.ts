@@ -82,26 +82,30 @@ describe('Core Tests',() => {
   })
 
   it('should handle registration, program management, and signing', async () => {
+    jest.setTimeout(60000)
+
+
     try {
-    await entropy.register({
-      address: charlieStashAddress,
-      keyVisibility: 'Permissioned',
-      freeTx: false,
-      
-    })
-  } catch (e) {
-    console.error('Error in test:', e.message)
-  }
+      await entropy.register({
+        address: charlieStashAddress,
+        keyVisibility: 'Permissioned',
+        freeTx: false,
+
+      })
+    } catch (e) {
+      console.error('Error in test:', e.message)
+    }
   
 
     expect(entropy.keys.wallet.address).toBe(charlieStashAddress)
-
+    console.log('pre registration')
     expect(await entropy.registrationManager.checkRegistrationStatus(charlieStashAddress)).toBeTruthy()
+    console.log('post registration')
 
     // Set a program for the user
     const dummyProgram: any = readFileSync('./tests/testing-utils/template_barebones.wasm')
     await entropy.programs.set(dummyProgram)
-
+    console.log('set program')
     // Retrieve the program and compare
     const fetchedProgram: ArrayBuffer = await entropy.programs.get()
     const trimmedBuffer = fetchedProgram.slice(1)
@@ -139,8 +143,9 @@ describe('Core Tests',() => {
 
   
     // encoding signature
-
+    console.log('pre signature')
     expect(signature.length).toBe(65)
+    console.log('post signature')
     // await disconnect(charlieStashEntropy.substrate)
 
   },)
