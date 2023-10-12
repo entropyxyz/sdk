@@ -4,7 +4,7 @@ import { Signer, hexString} from '../types'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
 import { decodeVecU8ToArrayBuffer} from '../utils'
 import { buf2hex, hex2buf } from '../utils'
-import { u8aToHex} from '@polkadot/util'
+import * as util from '@polkadot/util'
 
 
 /**
@@ -72,7 +72,7 @@ export default class ProgramManager extends ExtrinsicBaseClass {
     try {
       
       // Convert ArrayBuffer to Uint8Array and then to Hex
-      const programHex = u8aToHex(new Uint8Array(program))
+      const programHex = util.u8aToHex(new Uint8Array(program))
         
       // Create the transaction
       const tx: SubmittableExtrinsic<'promise'> = this.substrate.tx.constraints.updateV2Constraints(this.signer.wallet.address, programHex)

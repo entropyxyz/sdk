@@ -17,7 +17,6 @@ import {
 } from './testing-utils'
 import { ethers } from 'ethers'
 import { keccak256 } from 'ethers/lib/utils'
-import{ u8aToHex} from '@polkadot/util'
 import { buf2hex,stripHexPrefix } from '../src/utils'
 
 
