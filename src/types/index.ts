@@ -1,7 +1,7 @@
 import { Keypair } from '@polkadot/util-crypto/types'
 import { KeyringPair } from '@polkadot/keyring/types'
 import type { AccountId32 } from '@polkadot/types/interfaces/runtime'
-import {U8aFixed} from '@polkadot/types-codec'
+import { U8aFixed } from '@polkadot/types-codec'
 
 export type base64string = string
 export type hexString = string
@@ -31,7 +31,7 @@ export interface Account extends KeyShare {
 export type keyShare = Uint8Array
 
 /// Information about a threshold server
-export interface ServerInfo extends ServerDHInfo{
+export interface ServerInfo extends ServerDHInfo {
   tss_account: Uint8Array
   endpoint: string
 }
@@ -49,11 +49,11 @@ pub struct UserTransactionRequest {
 }
 */
 export interface UserTransactionRequest {
-    /// 'eth', etc.
-    arch: Arch
-    /// ETH: RLP encoded transaction request
-    transaction_request: string
-    validators_info: ValidatorInfo
+  /// 'eth', etc.
+  arch: Arch
+  /// ETH: RLP encoded transaction request
+  transaction_request: string
+  validators_info: ValidatorInfo
 }
 
 /*
@@ -66,10 +66,9 @@ pub struct ValidatorInfo {
 }
 */
 export interface ValidatorInfo {
-    x25519_public_key: string
-    ip_address: string
-    tss_account: string
-
+  x25519_public_key: string
+  ip_address: string
+  tss_account: string
 }
 
 export type Address = AccountId32 | string | Uint8Array

@@ -8,8 +8,6 @@ import { EncMsg, ValidatorInfo } from '../types'
 import { stripHexPrefix, sendHttpPost } from '../utils'
 import { crypto, CryptoLib } from '../utils/crypto'
 
-
-
 export interface Config {
   signer: Signer
   substrate: ApiPromise
@@ -36,7 +34,7 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
   signer: Signer
   crypto: CryptoLib
 
-  constructor ({ signer, substrate, adapters, crypto }: Config) {
+  constructor({ signer, substrate, adapters, crypto }: Config) {
     super({ signer, substrate })
     this.crypto = crypto
     this.adapters = {
@@ -45,10 +43,7 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
     }
   }
 
-  async signTransaction ({
-    txParams,
-    type,
-  }: SigTxOps): Promise<SignatureLike> {
+  async signTransaction({ txParams, type }: SigTxOps): Promise<SignatureLike> {
     if (!this.adapters[type])
       throw new Error(`No transaction adapter for type: ${type} submit as hash`)
     if (!this.adapters[type].preSign)
@@ -68,22 +63,22 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
     return signature
   }
 
-  async sign ({
-    sigRequestHash,
-  }: SigOps): Promise<SignatureLike> {
+  async sign({ sigRequestHash }: SigOps): Promise<SignatureLike> {
     const strippedsigRequestHash = stripHexPrefix(sigRequestHash)
     const validatorsInfo: Array<ValidatorInfo> = await this.getArbitraryValidators(
       strippedsigRequestHash
     )
 
-
-    const txRequests: Array<EncMsg> = await this.formatTxRequests({validatorsInfo: validatorsInfo.reverse(), strippedsigRequestHash})
+    const txRequests: Array<EncMsg> = await this.formatTxRequests({
+      validatorsInfo: validatorsInfo.reverse(),
+      strippedsigRequestHash,
+    })
     const sigs = await this.submitTransactionRequest(txRequests)
     const sig = sigs[0]
     return Uint8Array.from(atob(sig), (c) => c.charCodeAt(0))
   }
 
-  getTimeStamp () {
+  getTimeStamp() {
     const timestampInMilliseconds = Date.now()
     const secs_since_epoch = Math.floor(timestampInMilliseconds / 1000)
     const nanos_since_epoch = (timestampInMilliseconds % 1000) * 1_000_000
@@ -94,24 +89,40 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
     }
   }
 
-  async formatTxRequests ({ strippedsigRequestHash, validatorsInfo }: { strippedsigRequestHash: string, validatorsInfo: Array<ValidatorInfo> }): Promise<EncMsg[]> {
+  async formatTxRequests({
+    strippedsigRequestHash,
+    validatorsInfo,
+  }: {
+    strippedsigRequestHash: string
+    validatorsInfo: Array<ValidatorInfo>
+  }): Promise<EncMsg[]> {
     return await Promise.all(
       validatorsInfo.map(
         async (validator: ValidatorInfo): Promise<EncMsg> => {
           const txRequestData = {
             transaction_request: stripHexPrefix(strippedsigRequestHash),
             validators_info: validatorsInfo,
-            timestamp: this.getTimeStamp()
+            timestamp: this.getTimeStamp(),
           }
 
           const serverDHKey = await crypto.from_hex(validator.x25519_public_key)
 
-          const formattedValidators = await Promise.all(validatorsInfo.map(async (v) => {
-            return { ...v, x25519_public_key: Array.from(await crypto.from_hex(v.x25519_public_key)) }
-          }))
+          const formattedValidators = await Promise.all(
+            validatorsInfo.map(async (v) => {
+              return {
+                ...v,
+                x25519_public_key: Array.from(
+                  await crypto.from_hex(v.x25519_public_key)
+                ),
+              }
+            })
+          )
 
           const encoded = Uint8Array.from(
-            JSON.stringify({ ...txRequestData, validators_info: formattedValidators}),
+            JSON.stringify({
+              ...txRequestData,
+              validators_info: formattedValidators,
+            }),
             (x) => x.charCodeAt(0)
           )
 
@@ -130,35 +141,34 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
     )
   }
 
-  async submitTransactionRequest (txReq: Array<EncMsg>): Promise<string[]> {
-    return Promise.all(txReq.map(async (message: EncMsg) => {
-      const parsedMsg = JSON.parse(message.msg)
-      const payload = {
-        ...parsedMsg,
-        msg: stripHexPrefix(parsedMsg.msg),
-      }
+  async submitTransactionRequest(txReq: Array<EncMsg>): Promise<string[]> {
+    return Promise.all(
+      txReq.map(async (message: EncMsg) => {
+        const parsedMsg = JSON.parse(message.msg)
+        const payload = {
+          ...parsedMsg,
+          msg: stripHexPrefix(parsedMsg.msg),
+        }
 
-      const sig = await sendHttpPost(
-        `http://${message.url}/user/sign_tx`,
-        JSON.stringify(payload)
-      )
-      return sig[0]
-    }))
+        const sig = await sendHttpPost(
+          `http://${message.url}/user/sign_tx`,
+          JSON.stringify(payload)
+        )
+        return sig[0]
+      })
+    )
   }
 
-
-  async getArbitraryValidators (sigRequest: string): Promise<ValidatorInfo[]> {
+  async getArbitraryValidators(sigRequest: string): Promise<ValidatorInfo[]> {
     const stashKeys = (
       await this.substrate.query.stakingExtension.signingGroups.entries()
-    ).map(
-      (group) => {
-        const stashKeys = group[1]
-        const index = parseInt(sigRequest, 16) % stashKeys.unwrap().length
+    ).map((group) => {
+      const stashKeys = group[1]
+      const index = parseInt(sigRequest, 16) % stashKeys.unwrap().length
 
-        return stashKeys.unwrap()[index]
-      }
-    ) 
-  
+      return stashKeys.unwrap()[index]
+    })
+
     const rawValidatorInfo = await Promise.all(
       stashKeys.map((stashKey) =>
         this.substrate.query.stakingExtension.thresholdServers(stashKey)
@@ -174,7 +184,7 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         const { x25519PublicKey, endpoint, tssAccount } = validator.toHuman()
-        //test 
+        //test
 
         return {
           x25519_public_key: x25519PublicKey,
@@ -186,5 +196,4 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
 
     return validatorsInfo
   }
-
 }

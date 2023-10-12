@@ -4,21 +4,24 @@ import { spawn, ChildProcessWithoutNullStreams } from 'child_process'
 import rimraf from 'rimraf'
 import { getApi } from '../../src/utils'
 
-export const modifyOcwPostEndpoint = async (endpoint: string, new_url: string) => {
+export const modifyOcwPostEndpoint = async (
+  endpoint: string,
+  new_url: string
+) => {
   try {
-      // console.log(`Connecting to endpoint: ${endpoint}`)
-      const apiFactory = await getApi()
-      const api = await apiFactory(endpoint)
+    // console.log(`Connecting to endpoint: ${endpoint}`)
+    const apiFactory = await getApi()
+    const api = await apiFactory(endpoint)
 
-      const key = 'propagation'
-      const value = stringToHex(new_url)
-      const keyValue = stringToHex(key)
-      await api.rpc.offchain.localStorageSet('PERSISTENT', keyValue, value)
-      // console.log(`Set Feed to ${new_url} successfully.`)
-      // console.log('Inserted keys successfully.')
-      await disconnect(api)
+    const key = 'propagation'
+    const value = stringToHex(new_url)
+    const keyValue = stringToHex(key)
+    await api.rpc.offchain.localStorageSet('PERSISTENT', keyValue, value)
+    // console.log(`Set Feed to ${new_url} successfully.`)
+    // console.log('Inserted keys successfully.')
+    await disconnect(api)
   } catch (error) {
-      console.error(`Error in modifyOcwPostEndpoint: ${error.message}`)
+    console.error(`Error in modifyOcwPostEndpoint: ${error.message}`)
   }
 }
 
@@ -32,7 +35,7 @@ export const spinChain = async (
   args = [
     // '--dev',
     `--base-path=.entropy/${name}`,
-//  TODO: Talk to jesse about why this isnt a option
+    //  TODO: Talk to jesse about why this isnt a option
     '--rpc-port',
     port,
     `--${name}`,
@@ -82,7 +85,7 @@ export const spinThreshold = async (
   // comment in for threshold logging and add verbose to jest
   // process.stdout.on('data', async function (chunk) {
   //   const message = chunk.toString()
-    // console.log('Threshold chain data for ', name, ':', message)
+  // console.log('Threshold chain data for ', name, ':', message)
   // })
   //   process.on('error', (error) => {
   //     console.error(`Error in spinThreshold process: ${error.message}`)
@@ -90,7 +93,7 @@ export const spinThreshold = async (
   // process.on('exit', (code) => {
   //     console.log(`spinThreshold process exited with code: ${code}`)
   // })
-return process
+  return process
 }
 
 export const removeDB = () => {
@@ -104,13 +107,13 @@ export const sleep = (durationInMs: number) => {
 export const disconnect = async (api: ApiPromise) => {
   console.log('Attempting to disconnect...')
   if (api.isConnected) {
-      try {
-          await api.disconnect()
-          console.log('Disconnected successfully.')
-      } catch (error) {
-          console.error(`Error while disconnecting: ${error.message}`)
-      }
+    try {
+      await api.disconnect()
+      console.log('Disconnected successfully.')
+    } catch (error) {
+      console.error(`Error while disconnecting: ${error.message}`)
+    }
   } else {
-      console.log('API is already disconnected.')
+    console.log('API is already disconnected.')
   }
 }

@@ -2,21 +2,21 @@
 
 `entropy-js` is a collection of TS packages that allow you to interact with the Entropy network. This is currently in **alpha** release.
 
-
 ## Usage
 
 ### Entropy
 
 ### keys
+
 ### Registration
+
 ### Signature requests
+
 ### Entropy Programs
 
 ## Development
 
-
 ## notes
-
 
 ### TODOS BEFORE JS DEV LAUNCH:
 
@@ -31,5 +31,6 @@
   - remove unused deps
 
 ## BLOCKERS:
-  - [ ] programs integrated into #entropy-core @jakehemmerle
-  - [ ] dkg registration @JesseAbram
+
+- [ ] programs integrated into #entropy-core @jakehemmerle
+- [ ] dkg registration @JesseAbram

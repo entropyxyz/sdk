@@ -4,7 +4,6 @@ import { EventRecord } from '@polkadot/types/interfaces/types'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
 import { RegistryError } from '@polkadot/types-codec/types'
 
-
 interface Decoded extends RegistryError {
   name: string
   docs: string[]
@@ -13,13 +12,13 @@ interface Decoded extends RegistryError {
 
 export default class ExtrinsicBaseClass {
   substrate: ApiPromise
-  signer: Signer 
+  signer: Signer
 
-  constructor ({ substrate, signer }) {
+  constructor({ substrate, signer }) {
     this.substrate = substrate
     this.signer = signer
   }
-  async sendAndWaitFor (
+  async sendAndWaitFor(
     call: SubmittableExtrinsic<'promise'>,
     freeTx = true,
     filter: EventFilter
@@ -67,7 +66,9 @@ export default class ExtrinsicBaseClass {
    * @returns {*}  {Promise<SubmittableExtrinsic<'promise'>>} - A promise that resolves when the transaction is included in a block.
    */
 
-  async handleFreeTx (call: SubmittableExtrinsic<'promise'>): Promise<SubmittableExtrinsic<'promise'>> {
+  async handleFreeTx(
+    call: SubmittableExtrinsic<'promise'>
+  ): Promise<SubmittableExtrinsic<'promise'>> {
     const freeTxWrapper = this.substrate.tx.freeTx.callUsingElectricity(call)
     const result = await freeTxWrapper.dryRun(this.signer.wallet)
     if (result.isErr) {

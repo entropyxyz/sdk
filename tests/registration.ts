@@ -52,7 +52,6 @@
 //     const wsProvider = new WsProvider(endpoint)
 //     const substrate: ApiPromise = await ApiPromise.create({ provider: wsProvider })
 
-
 // //   const signer = await getWallet(seed)
 
 //   entropy = new RegistrationManager({ substrate, signer })

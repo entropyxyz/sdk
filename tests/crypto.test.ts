@@ -1,23 +1,22 @@
-
-import { crypto, cryptoIsLoaded } from "../src/utils/crypto"
+import { crypto, cryptoIsLoaded } from '../src/utils/crypto'
 import { hexToU8a } from '@polkadot/util'
-import { readKey } from "../src/utils"
-
+import { readKey } from '../src/utils'
 
 describe('Crypto Tests', () => {
   beforeAll(async () => {
-    await cryptoIsLoaded; 
+    await cryptoIsLoaded
+  })
 
-});
-
-function stripHexPrefix(str: string): string {
-  return str.startsWith('0x') ? str.slice(2) : str;
-}
+  function stripHexPrefix(str: string): string {
+    return str.startsWith('0x') ? str.slice(2) : str
+  }
 
   const mockData = {
     endpoint: '127.0.0.1:3001',
     tssAccount: '5H8qc7f4mXFY16NBWSB9qkc6pTks98HdVuoQTs1aova5fRtN',
-    x25519_public_key: stripHexPrefix('0x0ac029f0b853b23bed652d6d0de69b7cc38d94f93732eefc85b5861e90f73a22'),
+    x25519_public_key: stripHexPrefix(
+      '0x0ac029f0b853b23bed652d6d0de69b7cc38d94f93732eefc85b5861e90f73a22'
+    ),
   }
 
   it(`parses server threshold info`, async () => {
@@ -57,7 +56,7 @@ function stripHexPrefix(str: string): string {
     ]
 
     const result = await crypto.from_hex(mockData.x25519_public_key)
-    expect(result.toString()).toBe(mockReturn.toString());
+    expect(result.toString()).toBe(mockReturn.toString())
   })
   it(`encrypts and signs`, async () => {
     const aliceSecretKey: Uint8Array = new Uint8Array([
@@ -126,7 +125,7 @@ function stripHexPrefix(str: string): string {
       96,
       17,
     ])
-  
+
     const alicePublicKey = await crypto.public_key_from_secret(aliceSecretKey)
 
     const serverDHKey = await crypto.from_hex(mockData.x25519_public_key)
@@ -142,7 +141,9 @@ function stripHexPrefix(str: string): string {
       alicePublicKey
     )
 
-    expect(await crypto.decrypt_and_verify(aliceSecretKey, result)).toStrictEqual(thresholdKey);
+    expect(
+      await crypto.decrypt_and_verify(aliceSecretKey, result)
+    ).toStrictEqual(thresholdKey)
   })
 })
 
