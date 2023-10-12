@@ -31,28 +31,25 @@ export const spinChain = async (
   port?: string
 ): Promise<ChildProcessWithoutNullStreams> => {
   // console.log(`Spinning up chain with binary: ${bin}, name: ${name}, port: ${port}`)
-  let args = []
-  args = [
-    // '--dev',
+  const args = [
     `--base-path=.entropy/${name}`,
-    //  TODO: Talk to jesse about why this isnt a option
     '--rpc-port',
     port,
     `--${name}`,
     '--validator',
   ]
-
-  if (name != 'alice') {
+  if (name === 'dev') {
+    args.push('--dev')
+  } else if (name === 'alice') {
+    args.push(
+      '--node-key=0000000000000000000000000000000000000000000000000000000000000001'
+    )
+  } else {
     args.push(
       '--bootnodes=/ip4/127.0.0.1/tcp/30333/p2p/12D3KooWEyoppNCUx8Yx66oV9fJnriXwCcXwDDUA2kj6vnc6iDEp'
     )
   }
 
-  if (name == 'alice') {
-    args.push(
-      '--node-key=0000000000000000000000000000000000000000000000000000000000000001'
-    )
-  }
 
   const process = spawn(bin, args)
   // comment in for chain logging and add verbose to jest
