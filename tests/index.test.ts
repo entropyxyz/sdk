@@ -67,21 +67,29 @@ describe('Core Tests', () => {
     // Wait for the entropy instance to be ready
     await entropy.ready
   })
-  afterEach(async () => {
+afterEach(async () => {
     jest.setTimeout(30000)
     try {
-      await disconnect(entropy.substrate)
-      await sleep(6000)
-      serverProcess1.kill()
-      serverProcess2.kill()
-      chainProcess1.kill()
-      chainProcess2.kill()
-      await sleep(6000)
-      removeDB()
+        await disconnect(entropy.substrate)
+        await sleep(2000)
+        if (serverProcess1 && !serverProcess1.killed) {
+            serverProcess1.kill()
+        }
+        if (serverProcess2 && !serverProcess2.killed) {
+            serverProcess2.kill()
+        }
+        if (chainProcess1 && !chainProcess1.killed) {
+            chainProcess1.kill()
+        }
+        if (chainProcess2 && !chainProcess2.killed) {
+            chainProcess2.kill()
+        }
+        await sleep(6000)
+        removeDB()
     } catch (e) {
-      console.error('Error in afterEach:', e.message)
+        console.error('Error in afterEach:', e.message)
     }
-  })
+})
 
   it('should handle registration, program management, and signing', async () => {
     jest.setTimeout(60000)
