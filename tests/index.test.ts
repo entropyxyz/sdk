@@ -31,9 +31,10 @@ describe('Core Tests', () => {
   beforeEach(async () => {
     jest.setTimeout(30000)
     try {
-      serverProcess1 = await spinThreshold(serverPath, 'alice', '3001')
+     serverProcess1 = await spinThreshold(serverPath, 'alice', '3001')
       serverProcess2 = await spinThreshold(serverPath, 'bob', '3002')
       chainProcess1 = await spinChain(chainPath, 'alice', '9944')
+      await sleep(3000)
       chainProcess2 = await spinChain(chainPath, 'bob', '9945')
       await sleep(3000)
 
@@ -52,6 +53,7 @@ describe('Core Tests', () => {
     } catch (e) {
       console.log(e)
     }
+    await sleep(9000)
     await modifyOcwPostEndpoint(
       'ws://127.0.0.1:9945',
       'http://localhost:3002/user/new'
