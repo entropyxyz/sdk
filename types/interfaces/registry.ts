@@ -6,18 +6,19 @@
 import '@polkadot/types/types/registry'
 
 import type {
+  EntropyRuntimeHoldReason,
   EntropyRuntimeNposSolution16,
   EntropyRuntimeOriginCaller,
   EntropyRuntimeProxyType,
   EntropyRuntimeRuntime,
   EntropyRuntimeSessionKeys,
   EntropySharedConstraints,
+  EntropySharedConstraintsAcl,
   EntropySharedConstraintsAclAclKind,
-  EntropySharedConstraintsAclH160,
-  EntropySharedConstraintsAclH256,
   EntropySharedConstraintsArch,
-  EntropySharedMessage,
-  EntropySharedSigRequest,
+  EntropySharedKeyVisibility,
+  EntropySharedOcwMessage,
+  EntropySharedValidatorInfo,
   FinalityGrandpaEquivocationPrecommit,
   FinalityGrandpaEquivocationPrevote,
   FinalityGrandpaPrecommit,
@@ -30,8 +31,7 @@ import type {
   FrameSupportDispatchPerDispatchClassWeightsPerClass,
   FrameSupportDispatchRawOrigin,
   FrameSupportPalletId,
-  FrameSupportScheduleLookupError,
-  FrameSupportScheduleMaybeHashed,
+  FrameSupportPreimagesBounded,
   FrameSupportTokensMiscBalanceStatus,
   FrameSystemAccountInfo,
   FrameSystemCall,
@@ -48,9 +48,6 @@ import type {
   FrameSystemLimitsBlockWeights,
   FrameSystemLimitsWeightsPerClass,
   FrameSystemPhase,
-  PalletAuthorshipCall,
-  PalletAuthorshipError,
-  PalletAuthorshipUncleEntryItem,
   PalletBabeCall,
   PalletBabeError,
   PalletBagsListCall,
@@ -64,8 +61,8 @@ import type {
   PalletBalancesCall,
   PalletBalancesError,
   PalletBalancesEvent,
+  PalletBalancesIdAmount,
   PalletBalancesReasons,
-  PalletBalancesReleases,
   PalletBalancesReserveData,
   PalletBountiesBounty,
   PalletBountiesBountyStatus,
@@ -85,10 +82,9 @@ import type {
   PalletDemocracyDelegations,
   PalletDemocracyError,
   PalletDemocracyEvent,
-  PalletDemocracyPreimageStatus,
+  PalletDemocracyMetadataOwner,
   PalletDemocracyReferendumInfo,
   PalletDemocracyReferendumStatus,
-  PalletDemocracyReleases,
   PalletDemocracyTally,
   PalletDemocracyVoteAccountVote,
   PalletDemocracyVotePriorLock,
@@ -151,7 +147,11 @@ import type {
   PalletNominationPoolsBondExtra,
   PalletNominationPoolsBondedPoolInner,
   PalletNominationPoolsCall,
+  PalletNominationPoolsClaimPermission,
+  PalletNominationPoolsCommission,
+  PalletNominationPoolsCommissionChangeRate,
   PalletNominationPoolsConfigOpAccountId32,
+  PalletNominationPoolsConfigOpPerbill,
   PalletNominationPoolsConfigOpU128,
   PalletNominationPoolsConfigOpU32,
   PalletNominationPoolsDefensiveError,
@@ -183,11 +183,13 @@ import type {
   PalletRelayerCall,
   PalletRelayerError,
   PalletRelayerEvent,
+  PalletRelayerRegisteredInfo,
   PalletRelayerRegisteringDetails,
+  PalletRelayerValidateConfirmRegistered,
   PalletSchedulerCall,
   PalletSchedulerError,
   PalletSchedulerEvent,
-  PalletSchedulerScheduledV3,
+  PalletSchedulerScheduled,
   PalletSessionCall,
   PalletSessionError,
   PalletSessionEvent,
@@ -218,7 +220,6 @@ import type {
   PalletStakingPalletConfigOpU32,
   PalletStakingPalletError,
   PalletStakingPalletEvent,
-  PalletStakingReleases,
   PalletStakingRewardDestination,
   PalletStakingSlashingSlashingSpans,
   PalletStakingSlashingSpanRecord,
@@ -256,6 +257,7 @@ import type {
   PalletVestingEvent,
   PalletVestingReleases,
   PalletVestingVestingInfo,
+  SpArithmeticArithmeticError,
   SpAuthorityDiscoveryAppPublic,
   SpConsensusBabeAllowedSlots,
   SpConsensusBabeAppPublic,
@@ -265,6 +267,10 @@ import type {
   SpConsensusBabeDigestsPrimaryPreDigest,
   SpConsensusBabeDigestsSecondaryPlainPreDigest,
   SpConsensusBabeDigestsSecondaryVRFPreDigest,
+  SpConsensusGrandpaAppPublic,
+  SpConsensusGrandpaAppSignature,
+  SpConsensusGrandpaEquivocation,
+  SpConsensusGrandpaEquivocationProof,
   SpConsensusSlotsEquivocationProof,
   SpCoreCryptoKeyTypeId,
   SpCoreEcdsaSignature,
@@ -273,14 +279,10 @@ import type {
   SpCoreOffchainOpaqueNetworkState,
   SpCoreSr25519Public,
   SpCoreSr25519Signature,
+  SpCoreSr25519VrfVrfSignature,
   SpCoreVoid,
-  SpFinalityGrandpaAppPublic,
-  SpFinalityGrandpaAppSignature,
-  SpFinalityGrandpaEquivocation,
-  SpFinalityGrandpaEquivocationProof,
   SpNposElectionsElectionScore,
   SpNposElectionsSupport,
-  SpRuntimeArithmeticError,
   SpRuntimeBlakeTwo256,
   SpRuntimeDigest,
   SpRuntimeDigestDigestItem,
@@ -295,22 +297,24 @@ import type {
   SpTransactionStorageProofTransactionStorageProof,
   SpVersionRuntimeVersion,
   SpWeightsRuntimeDbWeight,
+  SpWeightsWeightV2Weight,
 } from '@polkadot/types/lookup'
 
 declare module '@polkadot/types/types/registry' {
   interface InterfaceTypes {
+    EntropyRuntimeHoldReason: EntropyRuntimeHoldReason
     EntropyRuntimeNposSolution16: EntropyRuntimeNposSolution16
     EntropyRuntimeOriginCaller: EntropyRuntimeOriginCaller
     EntropyRuntimeProxyType: EntropyRuntimeProxyType
     EntropyRuntimeRuntime: EntropyRuntimeRuntime
     EntropyRuntimeSessionKeys: EntropyRuntimeSessionKeys
     EntropySharedConstraints: EntropySharedConstraints
+    EntropySharedConstraintsAcl: EntropySharedConstraintsAcl
     EntropySharedConstraintsAclAclKind: EntropySharedConstraintsAclAclKind
-    EntropySharedConstraintsAclH160: EntropySharedConstraintsAclH160
-    EntropySharedConstraintsAclH256: EntropySharedConstraintsAclH256
     EntropySharedConstraintsArch: EntropySharedConstraintsArch
-    EntropySharedMessage: EntropySharedMessage
-    EntropySharedSigRequest: EntropySharedSigRequest
+    EntropySharedKeyVisibility: EntropySharedKeyVisibility
+    EntropySharedOcwMessage: EntropySharedOcwMessage
+    EntropySharedValidatorInfo: EntropySharedValidatorInfo
     FinalityGrandpaEquivocationPrecommit: FinalityGrandpaEquivocationPrecommit
     FinalityGrandpaEquivocationPrevote: FinalityGrandpaEquivocationPrevote
     FinalityGrandpaPrecommit: FinalityGrandpaPrecommit
@@ -323,8 +327,7 @@ declare module '@polkadot/types/types/registry' {
     FrameSupportDispatchPerDispatchClassWeightsPerClass: FrameSupportDispatchPerDispatchClassWeightsPerClass
     FrameSupportDispatchRawOrigin: FrameSupportDispatchRawOrigin
     FrameSupportPalletId: FrameSupportPalletId
-    FrameSupportScheduleLookupError: FrameSupportScheduleLookupError
-    FrameSupportScheduleMaybeHashed: FrameSupportScheduleMaybeHashed
+    FrameSupportPreimagesBounded: FrameSupportPreimagesBounded
     FrameSupportTokensMiscBalanceStatus: FrameSupportTokensMiscBalanceStatus
     FrameSystemAccountInfo: FrameSystemAccountInfo
     FrameSystemCall: FrameSystemCall
@@ -341,9 +344,6 @@ declare module '@polkadot/types/types/registry' {
     FrameSystemLimitsBlockWeights: FrameSystemLimitsBlockWeights
     FrameSystemLimitsWeightsPerClass: FrameSystemLimitsWeightsPerClass
     FrameSystemPhase: FrameSystemPhase
-    PalletAuthorshipCall: PalletAuthorshipCall
-    PalletAuthorshipError: PalletAuthorshipError
-    PalletAuthorshipUncleEntryItem: PalletAuthorshipUncleEntryItem
     PalletBabeCall: PalletBabeCall
     PalletBabeError: PalletBabeError
     PalletBagsListCall: PalletBagsListCall
@@ -357,8 +357,8 @@ declare module '@polkadot/types/types/registry' {
     PalletBalancesCall: PalletBalancesCall
     PalletBalancesError: PalletBalancesError
     PalletBalancesEvent: PalletBalancesEvent
+    PalletBalancesIdAmount: PalletBalancesIdAmount
     PalletBalancesReasons: PalletBalancesReasons
-    PalletBalancesReleases: PalletBalancesReleases
     PalletBalancesReserveData: PalletBalancesReserveData
     PalletBountiesBounty: PalletBountiesBounty
     PalletBountiesBountyStatus: PalletBountiesBountyStatus
@@ -378,10 +378,9 @@ declare module '@polkadot/types/types/registry' {
     PalletDemocracyDelegations: PalletDemocracyDelegations
     PalletDemocracyError: PalletDemocracyError
     PalletDemocracyEvent: PalletDemocracyEvent
-    PalletDemocracyPreimageStatus: PalletDemocracyPreimageStatus
+    PalletDemocracyMetadataOwner: PalletDemocracyMetadataOwner
     PalletDemocracyReferendumInfo: PalletDemocracyReferendumInfo
     PalletDemocracyReferendumStatus: PalletDemocracyReferendumStatus
-    PalletDemocracyReleases: PalletDemocracyReleases
     PalletDemocracyTally: PalletDemocracyTally
     PalletDemocracyVoteAccountVote: PalletDemocracyVoteAccountVote
     PalletDemocracyVotePriorLock: PalletDemocracyVotePriorLock
@@ -444,7 +443,11 @@ declare module '@polkadot/types/types/registry' {
     PalletNominationPoolsBondExtra: PalletNominationPoolsBondExtra
     PalletNominationPoolsBondedPoolInner: PalletNominationPoolsBondedPoolInner
     PalletNominationPoolsCall: PalletNominationPoolsCall
+    PalletNominationPoolsClaimPermission: PalletNominationPoolsClaimPermission
+    PalletNominationPoolsCommission: PalletNominationPoolsCommission
+    PalletNominationPoolsCommissionChangeRate: PalletNominationPoolsCommissionChangeRate
     PalletNominationPoolsConfigOpAccountId32: PalletNominationPoolsConfigOpAccountId32
+    PalletNominationPoolsConfigOpPerbill: PalletNominationPoolsConfigOpPerbill
     PalletNominationPoolsConfigOpU128: PalletNominationPoolsConfigOpU128
     PalletNominationPoolsConfigOpU32: PalletNominationPoolsConfigOpU32
     PalletNominationPoolsDefensiveError: PalletNominationPoolsDefensiveError
@@ -476,11 +479,13 @@ declare module '@polkadot/types/types/registry' {
     PalletRelayerCall: PalletRelayerCall
     PalletRelayerError: PalletRelayerError
     PalletRelayerEvent: PalletRelayerEvent
+    PalletRelayerRegisteredInfo: PalletRelayerRegisteredInfo
     PalletRelayerRegisteringDetails: PalletRelayerRegisteringDetails
+    PalletRelayerValidateConfirmRegistered: PalletRelayerValidateConfirmRegistered
     PalletSchedulerCall: PalletSchedulerCall
     PalletSchedulerError: PalletSchedulerError
     PalletSchedulerEvent: PalletSchedulerEvent
-    PalletSchedulerScheduledV3: PalletSchedulerScheduledV3
+    PalletSchedulerScheduled: PalletSchedulerScheduled
     PalletSessionCall: PalletSessionCall
     PalletSessionError: PalletSessionError
     PalletSessionEvent: PalletSessionEvent
@@ -511,7 +516,6 @@ declare module '@polkadot/types/types/registry' {
     PalletStakingPalletConfigOpU32: PalletStakingPalletConfigOpU32
     PalletStakingPalletError: PalletStakingPalletError
     PalletStakingPalletEvent: PalletStakingPalletEvent
-    PalletStakingReleases: PalletStakingReleases
     PalletStakingRewardDestination: PalletStakingRewardDestination
     PalletStakingSlashingSlashingSpans: PalletStakingSlashingSlashingSpans
     PalletStakingSlashingSpanRecord: PalletStakingSlashingSpanRecord
@@ -549,6 +553,7 @@ declare module '@polkadot/types/types/registry' {
     PalletVestingEvent: PalletVestingEvent
     PalletVestingReleases: PalletVestingReleases
     PalletVestingVestingInfo: PalletVestingVestingInfo
+    SpArithmeticArithmeticError: SpArithmeticArithmeticError
     SpAuthorityDiscoveryAppPublic: SpAuthorityDiscoveryAppPublic
     SpConsensusBabeAllowedSlots: SpConsensusBabeAllowedSlots
     SpConsensusBabeAppPublic: SpConsensusBabeAppPublic
@@ -558,6 +563,10 @@ declare module '@polkadot/types/types/registry' {
     SpConsensusBabeDigestsPrimaryPreDigest: SpConsensusBabeDigestsPrimaryPreDigest
     SpConsensusBabeDigestsSecondaryPlainPreDigest: SpConsensusBabeDigestsSecondaryPlainPreDigest
     SpConsensusBabeDigestsSecondaryVRFPreDigest: SpConsensusBabeDigestsSecondaryVRFPreDigest
+    SpConsensusGrandpaAppPublic: SpConsensusGrandpaAppPublic
+    SpConsensusGrandpaAppSignature: SpConsensusGrandpaAppSignature
+    SpConsensusGrandpaEquivocation: SpConsensusGrandpaEquivocation
+    SpConsensusGrandpaEquivocationProof: SpConsensusGrandpaEquivocationProof
     SpConsensusSlotsEquivocationProof: SpConsensusSlotsEquivocationProof
     SpCoreCryptoKeyTypeId: SpCoreCryptoKeyTypeId
     SpCoreEcdsaSignature: SpCoreEcdsaSignature
@@ -566,14 +575,10 @@ declare module '@polkadot/types/types/registry' {
     SpCoreOffchainOpaqueNetworkState: SpCoreOffchainOpaqueNetworkState
     SpCoreSr25519Public: SpCoreSr25519Public
     SpCoreSr25519Signature: SpCoreSr25519Signature
+    SpCoreSr25519VrfVrfSignature: SpCoreSr25519VrfVrfSignature
     SpCoreVoid: SpCoreVoid
-    SpFinalityGrandpaAppPublic: SpFinalityGrandpaAppPublic
-    SpFinalityGrandpaAppSignature: SpFinalityGrandpaAppSignature
-    SpFinalityGrandpaEquivocation: SpFinalityGrandpaEquivocation
-    SpFinalityGrandpaEquivocationProof: SpFinalityGrandpaEquivocationProof
     SpNposElectionsElectionScore: SpNposElectionsElectionScore
     SpNposElectionsSupport: SpNposElectionsSupport
-    SpRuntimeArithmeticError: SpRuntimeArithmeticError
     SpRuntimeBlakeTwo256: SpRuntimeBlakeTwo256
     SpRuntimeDigest: SpRuntimeDigest
     SpRuntimeDigestDigestItem: SpRuntimeDigestDigestItem
@@ -588,5 +593,6 @@ declare module '@polkadot/types/types/registry' {
     SpTransactionStorageProofTransactionStorageProof: SpTransactionStorageProofTransactionStorageProof
     SpVersionRuntimeVersion: SpVersionRuntimeVersion
     SpWeightsRuntimeDbWeight: SpWeightsRuntimeDbWeight
+    SpWeightsWeightV2Weight: SpWeightsWeightV2Weight
   } // InterfaceTypes
 } // declare module

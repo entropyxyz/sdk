@@ -4,10 +4,10 @@ export default defineConfig((options) => {
   let path = `src/index.ts`
   if (process.env.BUILD) path = `src/${process.env.BUILD}/index.ts`
   return {
-    entry: ['src/index.ts'],
+    entry: [path],
     replaceNodeEnv: true,
     format: ['esm'],
-    external: ['dotenv', 'node:fs', 'fs', '**/*.test.ts', 'core/utils.ts'],
+    external: ['dotenv', 'node:fs', 'fs', '**/*.test.ts', 'src/utils/index.ts'],
     dts: true,
     sourcemap: true,
     clean: true,

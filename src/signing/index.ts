@@ -1,77 +1,59 @@
 import { ApiPromise } from '@polkadot/api'
-import { Extrinsic } from '../extrinsic'
+import ExtrinsicBaseClass from '../extrinsic'
 import { Signer } from '../types'
 import { SignatureLike } from '@ethersproject/bytes'
 import { defaultAdapters } from './adapters/default'
 import { Adapter } from './adapters/types'
-import { UserTransactionRequest, Arch, EncMsg, ValidatorInfo, x25519PublicKey } from '../types'
-import { stripHexPrefix, sendHttpPost, sleep } from '../utils'
+import { EncMsg, ValidatorInfo } from '../types'
+import { stripHexPrefix, sendHttpPost } from '../utils'
 import { crypto, CryptoLib } from '../utils/crypto'
 
 export interface Config {
-  signer: Signer;
-  substrate: ApiPromise;
-  adapters: { [key: string | number]: Adapter };
-  crypto: CryptoLib;
+  signer: Signer
+  substrate: ApiPromise
+  adapters: { [key: string | number]: Adapter }
+  crypto: CryptoLib
 }
 
 export interface TxParams {
-  [key: string]: any;
+  [key: string]: any
 }
 
 export interface SigTxOps {
   txParams: TxParams
-  type?: string;
-  freeTx?: boolean;
-  retries?: number;
+  type?: string
 }
 
 export interface SigOps {
-  sigRequestHash: string;
-  arch?: Arch;
-  type?: string;
-  freeTx?: boolean;
-  retries?: number;
+  sigRequestHash: string
+  type?: string
 }
 
-export default class SignatureRequestManager extends Extrinsic {
+export default class SignatureRequestManager extends ExtrinsicBaseClass {
   adapters: { [key: string | number]: Adapter }
-  signer: Signer;
-  crypto
+  crypto: CryptoLib
 
-  constructor ({ signer, substrate, adapters, crypto}: Config) {
+  constructor ({ signer, substrate, adapters, crypto }: Config) {
     super({ signer, substrate })
-    this.crypto = crypto;
+    this.crypto = crypto
     this.adapters = {
-      ...defaultAdapters,  // Uncomment if you have this defined somewhere
-      ...adapters
+      ...defaultAdapters,
+      ...adapters,
     }
   }
 
-  async getArbitraryValidators (sigRequest: string) {
-    const stashKeys = (await this.substrate.query.stakingExtension.signingGroups.entries())
-      .map(group => {
-        const index = parseInt(sigRequest, 16) % group.length
-        return group[index]
-      })
+  async signTransaction ({ txParams, type }: SigTxOps): Promise<SignatureLike> {
+    if (!this.adapters[type])
+      throw new Error(`No transaction adapter for type: ${type} submit as hash`)
+    if (!this.adapters[type].preSign)
+      throw new Error(
+        `Adapter for type: ${type} has no preSign function. Adapters must have a preSign function`
+      )
 
-    return Promise.all(stashKeys.map(stashKey => this.substrate.query.stakingExtension.thresholdServers(stashKey)))
-  }
-  
-
-
-  async signTransaction ({ txParams, type, freeTx = true, retries }: SigTxOps) : Promise<SignatureLike> {
-    if (!this.adapters[type]) throw new Error(`No transaction adapter for type: ${type} submit as hash`)
-    if (!this.adapters[type].preSign) throw new Error(`Adapter for type: ${type} has no preSign function. Adapters must have a preSign function`)
-
-    const sigRequestHash = await this.adapters[type]
+    const sigRequestHash = await this.adapters[type].preSign(txParams)
     const signature = await this.sign({
       sigRequestHash,
       type,
-      arch: this.adapters[type].arch || type,
-      freeTx,
-      retries,
-
     })
     if (this.adapters[type].postSign) {
       return await this.adapters[type].postSign(signature)
@@ -79,125 +61,141 @@ export default class SignatureRequestManager extends Extrinsic {
 
     return signature
   }
-  /**
-   *
-   * Sign a tx (for ethereum currently) using the entropy blockchain. This will take an unsigned tx and return
-   * a signature, it is up to the user to handle from there
-   *
-   * @param {utils.UnsignedTransaction} tx - {@link UnsignedTransaction} - The transaction to be signed
-   * @param {boolean} freeTx - use the free tx pallet
-   * @param {number} retries - To be deprecated when alice signs with the validators, but polling for sig retries
-   * @return {*}  {Promise<SignatureLike>} {@link SignatureLike} - A signature to then be included in a transaction
-   */
 
-  async sign ({
-    sigRequestHash,
-    arch,
-    type,
-    freeTx = true,
-    retries
-  }: SigOps): Promise<SignatureLike> {
+  async sign ({ sigRequestHash }: SigOps): Promise<SignatureLike> {
+    const strippedsigRequestHash = stripHexPrefix(sigRequestHash)
+    const validatorsInfo: Array<ValidatorInfo> = await this.getArbitraryValidators(
+      strippedsigRequestHash
+    )
 
-    const validatorsInfo: Array<ValidatorInfo> = await this.getArbitraryValidators(sigRequestHash)
+    const txRequests: Array<EncMsg> = await this.formatTxRequests({
+      validatorsInfo: validatorsInfo.reverse(),
+      strippedsigRequestHash,
+    })
+    const sigs = await this.submitTransactionRequest(txRequests)
+    const sig = sigs[0]
+    return Uint8Array.from(atob(sig), (c) => c.charCodeAt(0))
+  }
 
-    const txRequestData = {  // Ensure this type is imported/defined
-      arch,
-      transaction_request: sigRequestHash,
+  getTimeStamp () {
+    const timestampInMilliseconds = Date.now()
+    const secs_since_epoch = Math.floor(timestampInMilliseconds / 1000)
+    const nanos_since_epoch = (timestampInMilliseconds % 1000) * 1_000_000
+
+    return {
+      secs_since_epoch: secs_since_epoch,
+      nanos_since_epoch: nanos_since_epoch,
     }
+  }
 
-    const txRequests: Array<EncMsg> = await Promise.all(validatorsInfo.map(async (validator: ValidatorInfo, i: number): Promise<EncMsg> => {
-      const serverDHKey = await crypto.parseServerDHKey({
-        x25519_public_key: validatorsInfo[i].x25519_public_key,
+  async formatTxRequests ({
+    strippedsigRequestHash,
+    validatorsInfo,
+  }: {
+    strippedsigRequestHash: string
+    validatorsInfo: Array<ValidatorInfo>
+  }): Promise<EncMsg[]> {
+    return await Promise.all(
+      validatorsInfo.map(
+        async (validator: ValidatorInfo): Promise<EncMsg> => {
+          const txRequestData = {
+            transaction_request: stripHexPrefix(strippedsigRequestHash),
+            validators_info: validatorsInfo,
+            timestamp: this.getTimeStamp(),
+          }
+
+          const serverDHKey = await crypto.from_hex(validator.x25519_public_key)
+
+          const formattedValidators = await Promise.all(
+            validatorsInfo.map(async (v) => {
+              return {
+                ...v,
+                x25519_public_key: Array.from(
+                  await crypto.from_hex(v.x25519_public_key)
+                ),
+              }
+            })
+          )
+
+          const encoded = Uint8Array.from(
+            JSON.stringify({
+              ...txRequestData,
+              validators_info: formattedValidators,
+            }),
+            (x) => x.charCodeAt(0)
+          )
+
+          const encryptedMessage = await crypto.encrypt_and_sign(
+            this.signer.pair.secretKey,
+            encoded,
+            serverDHKey
+          )
+
+          return {
+            url: validator.ip_address,
+            msg: encryptedMessage,
+          }
+        }
+      )
+    )
+  }
+
+  async submitTransactionRequest (txReq: Array<EncMsg>): Promise<string[]> {
+    return Promise.all(
+      txReq.map(async (message: EncMsg) => {
+        const parsedMsg = JSON.parse(message.msg)
+        const payload = {
+          ...parsedMsg,
+          msg: stripHexPrefix(parsedMsg.msg),
+        }
+
+        const sig = await sendHttpPost(
+          `http://${message.url}/user/sign_tx`,
+          JSON.stringify(payload)
+        )
+        return sig[0]
       })
+    )
+  }
 
-      const encoded = Uint8Array.from(
-        JSON.stringify({ ...txRequestData, validators_info: validator }),
-        (x) => x.charCodeAt(0)
-      )
-
-      const encryptedMessage = await crypto.encrypt_and_sign(
-        this.signer.pair.secretKey,
-        encoded,
-        serverDHKey
-      )
-
-      return {
-        url: validatorsInfo[i].ip_address,
-        encMsg: encryptedMessage,
-      }
-    }))
-
-    // Assuming sigHash is derived from sigRequestHash or similar
-
-    txRequests.forEach((req) => {
-      this.submitTransactionRequest(req)
+  async getArbitraryValidators (sigRequest: string): Promise<ValidatorInfo[]> {
+    const stashKeys = (
+      await this.substrate.query.stakingExtension.signingGroups.entries()
+    ).map((group) => {
+      const stashKeys = group[1]
+      // omg polkadot type gen is a head ache
+      // @ts-ignore: next line
+      const index = parseInt(sigRequest, 16) % stashKeys.unwrap().length
+      // omg polkadot type gen is a head ache
+      // @ts-ignore: next line
+      return stashKeys.unwrap()[index]
     })
 
-    const signature: SignatureLike = await this.pollNodeForSignature(
-      stripHexPrefix(sigRequestHash),
-      validatorsInfo[0].ip_address,
-      retries,
-    )
-    return signature
-  }
-
-  /**
-   * Submits the transaction request to the threshold server so its constraints can be validated
-   *
-   * @async
-   * @param {Array<EncMsg>} txReq
-   * @param {string[]} serversWithPort IP/domain and port of the threshold server, separated by ':'
-   * @returns {Promise<>}
-   */
-  async submitTransactionRequest (txReq: Array<EncMsg>): Promise<void> {
-    await Promise.all(
-      txReq.map(
-        async (message) =>
-          await sendHttpPost(`http://${message.url}/user/sign_tx`, message.encMsg)
+    const rawValidatorInfo = await Promise.all(
+      stashKeys.map((stashKey) =>
+        this.substrate.query.stakingExtension.thresholdServers(stashKey)
       )
     )
-  }
+    const validatorsInfo: Array<ValidatorInfo> = rawValidatorInfo.map(
+      (validator) => {
+        /*
+        fuck me, i'm sorry frankie i know this looks bad and you're right
+        it does but this is going to require a destruction of polkadotjs as a dependency
+        or parsing the return types are selves? but if we do that we might as well not use polkadot js
+      */
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        const { x25519PublicKey, endpoint, tssAccount } = validator.toHuman()
+        //test
 
-  /**
-   * @deprecated
-   *
-   * @param {string} sigHash - hash of the message to be signed
-   * @param {string} thresholdUrl - url of the threshold server
-   * @param {number} retries - number of times to retry
-   * @return {*}  {Promise<SignatureLike>} - {@link ThresholdServer}  signature of the message
-   * @memberof ThresholdServer
-   */
-  async pollNodeForSignature (
-    sigHash: string,
-    thresholdUrl: string,
-    retries: number
-  ): Promise<SignatureLike> {
-    let i = 0
-    let status
-    let postRequest
-    while (status !== 202 && i < retries) {
-      try {
-        postRequest = await fetch(`http://${thresholdUrl}/signer/signature`, {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          method: 'POST',
-          body: JSON.stringify({ message: sigHash }),
-        })
-        status = postRequest.status
-      } catch (e) {
-        status = 500
+        return {
+          x25519_public_key: x25519PublicKey,
+          ip_address: endpoint,
+          tss_account: tssAccount,
+        }
       }
-      // TODO: DONT USE SLEEP maybe uses blocks from substrate as a timer?
-      // or something a little less arbitrary
-      await sleep(3000)
-      i++
-    }
-    const result = await postRequest.text()
-    try {
-      return Uint8Array.from(atob(result), (c) => c.charCodeAt(0))
-    } catch (e) {
-      throw new Error(postRequest.statusText)
-    }
+    )
+
+    return validatorsInfo
   }
 }

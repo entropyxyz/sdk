@@ -3,56 +3,55 @@ import { SignatureLike } from '@ethersproject/bytes'
 import { isValidSubstrateAddress } from './utils'
 import RegistrationManager, { RegistrationParams } from './registration'
 import { getWallet } from './keys'
-import SignatureRequestManager, { SigOps, SigTxOps }  from './signing'
-import {  crypto } from './utils/crypto' 
+import SignatureRequestManager, { SigOps, SigTxOps } from './signing'
+import { crypto } from './utils/crypto'
 import { Adapter } from './signing/adapters/types'
 import { Signer, Address } from './types'
 import ProgramManager from './programs'
 
-
 export interface EntropyOpts {
-  seed?: string;
-  endpoint?: string;
-  adapters?: { [key: string | number]: Adapter };
+  seed?: string
+  endpoint?: string
+  adapters?: { [key: string | number]: Adapter }
 }
 
 export default class Entropy {
-  #ready?: (value?: any) => void
-  #fail?: (reason?: any) => void
+  #ready?: (value?: unknown) => void
+  #fail?: (reason?: unknown) => void
   ready: Promise<void>
-  isRegistered: (address: Address) => Promise<boolean>;
-  keys?: Signer;
-  registrationManager: RegistrationManager;
+  isRegistered: (address: Address) => Promise<boolean>
+  keys?: Signer
+  registrationManager: RegistrationManager
   programs: ProgramManager
   signingManager: SignatureRequestManager
 
   substrate: ApiPromise
 
   async init (opts: EntropyOpts) {
-    this.keys = await getWallet(opts.seed);
-    const wsProvider = new WsProvider(opts.endpoint);
-  
-    const substrate = new ApiPromise({ provider: wsProvider });
-  
+    this.keys = await getWallet(opts.seed)
+    const wsProvider = new WsProvider(opts.endpoint)
+
+    const substrate = new ApiPromise({ provider: wsProvider })
+    this.substrate = substrate
     this.registrationManager = new RegistrationManager({
       substrate: substrate,
       signer: this.keys,
-      program: this.programs,
-    });
+    })
     this.signingManager = new SignatureRequestManager({
       signer: this.keys,
       substrate,
-      adapters,
-      crypto
-    });
-    this.programs = new ProgramManager({ 
+      adapters: opts.adapters,
+      crypto,
+    })
+    this.programs = new ProgramManager({
       substrate: substrate,
       signer: this.keys,
-    });
-    await substrate.isReady;
+    })
+    await substrate.isReady
     this.#ready()
-    this.isRegistered = this.registrationManager.checkRegistrationStatus.bind(this.registrationManager)
-
+    this.isRegistered = this.registrationManager.checkRegistrationStatus.bind(
+      this.registrationManager
+    )
   }
 
   constructor (opts: EntropyOpts) {
@@ -60,9 +59,9 @@ export default class Entropy {
       this.#ready = resolve
       this.#fail = reject
     })
-  
+
     this.init(opts).catch((error) => {
-      this.#fail(error);
+      this.#fail(error)
     })
   }
 
@@ -85,6 +84,4 @@ export default class Entropy {
     await this.ready
     return this.signingManager.sign(params)
   }
-
 }
-

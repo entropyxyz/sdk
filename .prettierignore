@@ -1,6 +1,9 @@
 build
 coverage
 node_modules
-packages/typegen
+types
+dist
 docs/_book
 LICENSE.md
+entropy-js.sublime-project
+entropy-js.sublime-workspace

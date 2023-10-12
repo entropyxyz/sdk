@@ -22,7 +22,6 @@ import type {
   Perbill,
   Percent,
   Permill,
-  WeightV1,
 } from '@polkadot/types/interfaces/runtime'
 import type {
   FrameSupportPalletId,
@@ -30,24 +29,13 @@ import type {
   FrameSystemLimitsBlockWeights,
   SpVersionRuntimeVersion,
   SpWeightsRuntimeDbWeight,
+  SpWeightsWeightV2Weight,
 } from '@polkadot/types/lookup'
 
 export type __AugmentedConst<ApiType extends ApiTypes> = AugmentedConst<ApiType>
 
 declare module '@polkadot/api-base/types/consts' {
   interface AugmentedConsts<ApiType extends ApiTypes> {
-    authorship: {
-      /**
-       * The number of blocks back we should accept uncles.
-       * This means that we will deal with uncle-parents that are
-       * `UncleGenerations + 1` before `now`.
-       **/
-      uncleGenerations: u32 & AugmentedConst<ApiType>
-      /**
-       * Generic const
-       **/
-      [key: string]: Codec
-    }
     babe: {
       /**
        * The amount of time, in slots, that each epoch should last.
@@ -126,9 +114,24 @@ declare module '@polkadot/api-base/types/consts' {
     }
     balances: {
       /**
-       * The minimum amount required to keep an account open.
+       * The minimum amount required to keep an account open. MUST BE GREATER THAN ZERO!
+       *
+       * If you *really* need it to be zero, you can enable the feature `insecure_zero_ed` for
+       * this pallet. However, you do so at your own risk: this will open up a major DoS vector.
+       * In case you have multiple sources of provider references, you may also get unexpected
+       * behaviour if you set this to zero.
+       *
+       * Bottom line: Do yourself a favour and make it at least one!
        **/
       existentialDeposit: u128 & AugmentedConst<ApiType>
+      /**
+       * The maximum number of individual freeze locks that can exist on an account at any time.
+       **/
+      maxFreezes: u32 & AugmentedConst<ApiType>
+      /**
+       * The maximum number of holds that can exist on an account at any time.
+       **/
+      maxHolds: u32 & AugmentedConst<ApiType>
       /**
        * The maximum number of locks that should exist on an account.
        * Not strictly enforced, but used for weight estimation.
@@ -190,6 +193,16 @@ declare module '@polkadot/api-base/types/consts' {
        **/
       [key: string]: Codec
     }
+    council: {
+      /**
+       * The maximum weight of a dispatch call that can be proposed and executed.
+       **/
+      maxProposalWeight: SpWeightsWeightV2Weight & AugmentedConst<ApiType>
+      /**
+       * Generic const
+       **/
+      [key: string]: Codec
+    }
     democracy: {
       /**
        * Period in blocks where an external proposal may not be re-submitted after being vetoed.
@@ -218,6 +231,14 @@ declare module '@polkadot/api-base/types/consts' {
        **/
       launchPeriod: u32 & AugmentedConst<ApiType>
       /**
+       * The maximum number of items which can be blacklisted.
+       **/
+      maxBlacklisted: u32 & AugmentedConst<ApiType>
+      /**
+       * The maximum number of deposits a public proposal may have at any time.
+       **/
+      maxDeposits: u32 & AugmentedConst<ApiType>
+      /**
        * The maximum number of public proposals that can exist at any time.
        **/
       maxProposals: u32 & AugmentedConst<ApiType>
@@ -232,10 +253,6 @@ declare module '@polkadot/api-base/types/consts' {
        * The minimum amount to be used as a deposit for a public referendum proposal.
        **/
       minimumDeposit: u128 & AugmentedConst<ApiType>
-      /**
-       * The amount of balance that must be deposited per byte of preimage stored.
-       **/
-      preimageByteDeposit: u128 & AugmentedConst<ApiType>
       /**
        * The minimum period of vote locking.
        *
@@ -273,9 +290,17 @@ declare module '@polkadot/api-base/types/consts' {
        * take place over multiple blocks.
        **/
       maxElectingVoters: u32 & AugmentedConst<ApiType>
+      /**
+       * The maximum number of winners that can be elected by this `ElectionProvider`
+       * implementation.
+       *
+       * Note: This must always be greater or equal to `T::DataProvider::desired_targets()`.
+       **/
+      maxWinners: u32 & AugmentedConst<ApiType>
       minerMaxLength: u32 & AugmentedConst<ApiType>
       minerMaxVotesPerVoter: u32 & AugmentedConst<ApiType>
-      minerMaxWeight: WeightV1 & AugmentedConst<ApiType>
+      minerMaxWeight: SpWeightsWeightV2Weight & AugmentedConst<ApiType>
+      minerMaxWinners: u32 & AugmentedConst<ApiType>
       /**
        * The priority of the unsigned transaction submitted in the unsigned-phase
        **/
@@ -320,7 +345,7 @@ declare module '@polkadot/api-base/types/consts' {
        * this pallet), then [`MinerConfig::solution_weight`] is used to compare against
        * this value.
        **/
-      signedMaxWeight: WeightV1 & AugmentedConst<ApiType>
+      signedMaxWeight: SpWeightsWeightV2Weight & AugmentedConst<ApiType>
       /**
        * Duration of the signed phase.
        **/
@@ -354,18 +379,28 @@ declare module '@polkadot/api-base/types/consts' {
       /**
        * The maximum number of candidates in a phragmen election.
        *
-       * Warning: The election happens onchain, and this value will determine
-       * the size of the election. When this limit is reached no more
-       * candidates are accepted in the election.
+       * Warning: This impacts the size of the election which is run onchain. Chose wisely, and
+       * consider how it will impact `T::WeightInfo::election_phragmen`.
+       *
+       * When this limit is reached no more candidates are accepted in the election.
        **/
       maxCandidates: u32 & AugmentedConst<ApiType>
       /**
        * The maximum number of voters to allow in a phragmen election.
        *
-       * Warning: This impacts the size of the election which is run onchain.
+       * Warning: This impacts the size of the election which is run onchain. Chose wisely, and
+       * consider how it will impact `T::WeightInfo::election_phragmen`.
+       *
        * When the limit is reached the new voters are ignored.
        **/
       maxVoters: u32 & AugmentedConst<ApiType>
+      /**
+       * Maximum numbers of votes per voter.
+       *
+       * Warning: This impacts the size of the election which is run onchain. Chose wisely, and
+       * consider how it will impact `T::WeightInfo::election_phragmen`.
+       **/
+      maxVotesPerVoter: u32 & AugmentedConst<ApiType>
       /**
        * Identifier for the elections-phragmen pallet's lock
        **/
@@ -397,6 +432,15 @@ declare module '@polkadot/api-base/types/consts' {
        * Max Authorities in use
        **/
       maxAuthorities: u32 & AugmentedConst<ApiType>
+      /**
+       * The maximum number of entries to keep in the set id to session index mapping.
+       *
+       * Since the `SetIdSession` map is only used for validating equivocations this
+       * value should relate to the bonding duration of whatever staking system is
+       * being used (if any). If equivocation handling is not enabled then this value
+       * can be zero.
+       **/
+      maxSetIdSessionEntries: u64 & AugmentedConst<ApiType>
       /**
        * Generic const
        **/
@@ -478,7 +522,7 @@ declare module '@polkadot/api-base/types/consts' {
       /**
        * The maximum amount of signatories allowed in the multisig.
        **/
-      maxSignatories: u16 & AugmentedConst<ApiType>
+      maxSignatories: u32 & AugmentedConst<ApiType>
       /**
        * Generic const
        **/
@@ -594,13 +638,15 @@ declare module '@polkadot/api-base/types/consts' {
     }
     scheduler: {
       /**
-       * The maximum weight that may be scheduled per block for any dispatchables of less
-       * priority than `schedule::HARD_DEADLINE`.
+       * The maximum weight that may be scheduled per block for any dispatchables.
        **/
-      maximumWeight: WeightV1 & AugmentedConst<ApiType>
+      maximumWeight: SpWeightsWeightV2Weight & AugmentedConst<ApiType>
       /**
        * The maximum number of scheduled calls in the queue for a single block.
-       * Not strictly enforced, but used for weight estimation.
+       *
+       * NOTE:
+       * + Dependent pallets' benchmarks might require a higher limit for the setting. Set a
+       * higher limit under `runtime-benchmarks` feature.
        **/
       maxScheduledPerBlock: u32 & AugmentedConst<ApiType>
       /**
@@ -749,6 +795,16 @@ declare module '@polkadot/api-base/types/consts' {
        * Get the chain's current version.
        **/
       version: SpVersionRuntimeVersion & AugmentedConst<ApiType>
+      /**
+       * Generic const
+       **/
+      [key: string]: Codec
+    }
+    technicalCommittee: {
+      /**
+       * The maximum weight of a dispatch call that can be proposed and executed.
+       **/
+      maxProposalWeight: SpWeightsWeightV2Weight & AugmentedConst<ApiType>
       /**
        * Generic const
        **/

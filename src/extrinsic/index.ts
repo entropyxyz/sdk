@@ -1,9 +1,8 @@
 import { ApiPromise, SubmittableResult } from '@polkadot/api'
-import { Signer, EventFilter, Address } from '../types'
+import { Signer, EventFilter } from '../types'
 import { EventRecord } from '@polkadot/types/interfaces/types'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
 import { RegistryError } from '@polkadot/types-codec/types'
-
 
 interface Decoded extends RegistryError {
   name: string
@@ -11,11 +10,9 @@ interface Decoded extends RegistryError {
   section: string
 }
 
-export default class Extrinsic {
-  // should it be Api Promise or Substrate lol? 
-  // substrate: Substrate
+export default class ExtrinsicBaseClass {
   substrate: ApiPromise
-  signer: Signer 
+  signer: Signer
 
   constructor ({ substrate, signer }) {
     this.substrate = substrate
@@ -23,7 +20,7 @@ export default class Extrinsic {
   }
   async sendAndWaitFor (
     call: SubmittableExtrinsic<'promise'>,
-    freeTx: boolean,
+    freeTx = true,
     filter: EventFilter
   ): Promise<EventRecord> {
     const newCall = freeTx ? await this.handleFreeTx(call) : call
@@ -31,7 +28,6 @@ export default class Extrinsic {
       newCall
         .signAndSend(this.signer.wallet, (res: SubmittableResult) => {
           const { dispatchError, status } = res
-
           if (dispatchError) {
             if (dispatchError.isModule) {
               // for module errors, we have the section indexed, lookup
@@ -45,7 +41,6 @@ export default class Extrinsic {
               reject(Error(dispatchError.toString()))
             }
           }
-
           if (status.isInBlock || status.isFinalized) {
             const record = res.findRecord(filter.section, filter.name)
             if (record) {
@@ -71,7 +66,9 @@ export default class Extrinsic {
    * @returns {*}  {Promise<SubmittableExtrinsic<'promise'>>} - A promise that resolves when the transaction is included in a block.
    */
 
-  async handleFreeTx (call: SubmittableExtrinsic<'promise'>): Promise<SubmittableExtrinsic<'promise'>> {
+  async handleFreeTx (
+    call: SubmittableExtrinsic<'promise'>
+  ): Promise<SubmittableExtrinsic<'promise'>> {
     const freeTxWrapper = this.substrate.tx.freeTx.callUsingElectricity(call)
     const result = await freeTxWrapper.dryRun(this.signer.wallet)
     if (result.isErr) {
