@@ -10,9 +10,6 @@ export interface RegistrationParams {
 }
 
 export default class RegistrationManager extends ExtrinsicBaseClass {
-  substrate: ApiPromise
-  signer: Signer
-
   constructor ({
     substrate,
     signer,
@@ -77,6 +74,6 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
 
   async checkRegistrationStatus (address: Address): Promise<boolean> {
     const isRegistered = await this.substrate.query.relayer.registered(address)
-    return !!isRegistered.unwrapOr(false)
+    return !!isRegistered.toJSON()
   }
 }

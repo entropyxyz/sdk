@@ -21,10 +21,6 @@ export default class ProgramManager extends ExtrinsicBaseClass {
    * @param {ApiPromise} substrate - The api object for an Entropy blockchain
    * @param {Signer} signer - The signer object for the user interfacing with the Entropy blockchain
    */
-
-  substrate: ApiPromise
-  signer: Signer
-
   constructor ({ substrate, signer }) {
     super({ substrate, signer })
     this.substrate = substrate
@@ -40,7 +36,8 @@ export default class ProgramManager extends ExtrinsicBaseClass {
     if (responseHexOption.isEmpty) {
       throw new Error('No program defined for the given account.')
     }
-
+      // omg polkadot type gen is a head ache
+      // @ts-ignore: next line
     const responseHex = responseHexOption.unwrap().toHex() // Get the hex representation
     const byteBuffer = hex2buf(responseHex) // Convert hex string to ArrayBuffer
     return byteBuffer

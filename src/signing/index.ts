@@ -31,7 +31,6 @@ export interface SigOps {
 
 export default class SignatureRequestManager extends ExtrinsicBaseClass {
   adapters: { [key: string | number]: Adapter }
-  signer: Signer
   crypto: CryptoLib
 
   constructor ({ signer, substrate, adapters, crypto }: Config) {
@@ -164,8 +163,11 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
       await this.substrate.query.stakingExtension.signingGroups.entries()
     ).map((group) => {
       const stashKeys = group[1]
+      // omg polkadot type gen is a head ache
+      // @ts-ignore: next line
       const index = parseInt(sigRequest, 16) % stashKeys.unwrap().length
-
+      // omg polkadot type gen is a head ache
+      // @ts-ignore: next line
       return stashKeys.unwrap()[index]
     })
 
