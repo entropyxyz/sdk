@@ -25,6 +25,8 @@ jobs:
       - run: sudo swapon /swapfile
       - run: grep Swap /proc/meminfo
       - run: sudo apt update
+      - run: curl 'https://entropy-api-docs.vercel.app/assets/releases/v0.0.7/entropy' -o tests/testing-utils/test-binaries/entropy && chmod a+x tests/testing-utils/test-binaries/entropy
+      - run: curl 'https://entropy-api-docs.vercel.app/assets/releases/v0.0.7/server' -o tests/testing-utils/test-binaries/server && chmod a+x tests/testing-utils/test-binaries/server
       - run:
           command: yarn run lint
           name: Lint app
