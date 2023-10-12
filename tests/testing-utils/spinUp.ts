@@ -1,30 +1,30 @@
-import { ApiPromise } from '@polkadot/api'
+import { ApiPromise, WsProvider } from '@polkadot/api'
 import { stringToHex } from '@polkadot/util/string'
 import { spawn, ChildProcessWithoutNullStreams } from 'child_process'
 import rimraf from 'rimraf'
-import { getApi } from '../../src/utils'
+
+async function getApi (endpoint = 'ws://127.0.0.1:9944'): Promise<ApiPromise> {
+  const wsProvider = new WsProvider(endpoint)
+  const api = new ApiPromise({ provider: wsProvider })
+  await api.isReady
+  return api
+}
+
 
 export const modifyOcwPostEndpoint = async (
   endpoint: string,
   new_url: string
 ) => {
-  try {
-    // console.log(`Connecting to endpoint: ${endpoint}`)
-    const apiFactory = await getApi()
-    const api = await apiFactory(endpoint)
-
-    const key = 'propagation'
-    const value = stringToHex(new_url)
-    const keyValue = stringToHex(key)
-    await api.rpc.offchain.localStorageSet('PERSISTENT', keyValue, value)
-    // console.log(`Set Feed to ${new_url} successfully.`)
-    // console.log('Inserted keys successfully.')
-    await disconnect(api)
-  } catch (error) {
-    console.error(`Error in modifyOcwPostEndpoint: ${error.message}`)
-  }
+  const api = await getApi(endpoint)
+  const key = 'propagation'
+  const value = stringToHex(new_url)
+  const keyValue = stringToHex(key)
+  await api.rpc.offchain.localStorageSet('PERSISTENT', keyValue, value)
+  console.log('  Set Feed  ' + ` ${new_url}` + ' Successful')
+  console.log('  Insert Keys  ')
+  console.log(' Successful')
+  await disconnect(api)
 }
-
 export const spinChain = async (
   bin: string,
   name: string,
