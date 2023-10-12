@@ -6,10 +6,10 @@ const config: Config = {
   preset: 'ts-jest',
   testEnvironment: 'node',
   testTimeout: 200000,
-  modulePathIgnorePatterns: ['examples/'],
-  verbose: false,
+  modulePathIgnorePatterns: [],
+  verbose: true,
   forceExit: true,
-  silent: true,
+  // silent: true,
 }
 
 export default config

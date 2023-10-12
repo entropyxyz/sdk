@@ -11,40 +11,6 @@ export type __AugmentedError<ApiType extends ApiTypes> = AugmentedError<ApiType>
 
 declare module '@polkadot/api-base/types/errors' {
   interface AugmentedErrors<ApiType extends ApiTypes> {
-    authorship: {
-      /**
-       * The uncle is genesis.
-       **/
-      GenesisUncle: AugmentedError<ApiType>
-      /**
-       * The uncle parent not in the chain.
-       **/
-      InvalidUncleParent: AugmentedError<ApiType>
-      /**
-       * The uncle isn't recent enough to be included.
-       **/
-      OldUncle: AugmentedError<ApiType>
-      /**
-       * The uncle is too high in chain.
-       **/
-      TooHighUncle: AugmentedError<ApiType>
-      /**
-       * Too many uncles.
-       **/
-      TooManyUncles: AugmentedError<ApiType>
-      /**
-       * The uncle is already included.
-       **/
-      UncleAlreadyIncluded: AugmentedError<ApiType>
-      /**
-       * Uncles already set in the block.
-       **/
-      UnclesAlreadySet: AugmentedError<ApiType>
-      /**
-       * Generic error
-       **/
-      [key: string]: AugmentedError<ApiType>
-    }
     babe: {
       /**
        * A given equivocation report is valid but already previously reported.
@@ -79,35 +45,43 @@ declare module '@polkadot/api-base/types/errors' {
     }
     balances: {
       /**
-       * Beneficiary account must pre-exist
+       * Beneficiary account must pre-exist.
        **/
       DeadAccount: AugmentedError<ApiType>
       /**
-       * Value too low to create account due to existential deposit
+       * Value too low to create account due to existential deposit.
        **/
       ExistentialDeposit: AugmentedError<ApiType>
       /**
-       * A vesting schedule already exists for this account
+       * A vesting schedule already exists for this account.
        **/
       ExistingVestingSchedule: AugmentedError<ApiType>
       /**
-       * Balance too low to send value
+       * Transfer/payment would kill account.
+       **/
+      Expendability: AugmentedError<ApiType>
+      /**
+       * Balance too low to send value.
        **/
       InsufficientBalance: AugmentedError<ApiType>
       /**
-       * Transfer/payment would kill account
-       **/
-      KeepAlive: AugmentedError<ApiType>
-      /**
-       * Account liquidity restrictions prevent withdrawal
+       * Account liquidity restrictions prevent withdrawal.
        **/
       LiquidityRestrictions: AugmentedError<ApiType>
       /**
-       * Number of named reserves exceed MaxReserves
+       * Number of freezes exceed `MaxFreezes`.
+       **/
+      TooManyFreezes: AugmentedError<ApiType>
+      /**
+       * Number of holds exceed `MaxHolds`.
+       **/
+      TooManyHolds: AugmentedError<ApiType>
+      /**
+       * Number of named reserves exceed `MaxReserves`.
        **/
       TooManyReserves: AugmentedError<ApiType>
       /**
-       * Vesting balance too high to send value
+       * Vesting balance too high to send value.
        **/
       VestingBalance: AugmentedError<ApiType>
       /**
@@ -180,6 +154,10 @@ declare module '@polkadot/api-base/types/errors' {
        **/
       NotAuthorized: AugmentedError<ApiType>
       /**
+       * V2 constraint length is too long
+       **/
+      V2ConstraintLengthExceeded: AugmentedError<ApiType>
+      /**
        * Generic error
        **/
       [key: string]: AugmentedError<ApiType>
@@ -244,17 +222,9 @@ declare module '@polkadot/api-base/types/errors' {
        **/
       AlreadyVetoed: AugmentedError<ApiType>
       /**
-       * Preimage already noted
-       **/
-      DuplicatePreimage: AugmentedError<ApiType>
-      /**
        * Proposal already made
        **/
       DuplicateProposal: AugmentedError<ApiType>
-      /**
-       * Imminent
-       **/
-      Imminent: AugmentedError<ApiType>
       /**
        * The instant referendum origin is currently disallowed.
        **/
@@ -292,10 +262,6 @@ declare module '@polkadot/api-base/types/errors' {
        **/
       NotDelegating: AugmentedError<ApiType>
       /**
-       * Not imminent
-       **/
-      NotImminent: AugmentedError<ApiType>
-      /**
        * Next external proposal not simple majority
        **/
       NotSimpleMajority: AugmentedError<ApiType>
@@ -304,13 +270,9 @@ declare module '@polkadot/api-base/types/errors' {
        **/
       NotVoter: AugmentedError<ApiType>
       /**
-       * Invalid preimage
+       * The preimage does not exist.
        **/
-      PreimageInvalid: AugmentedError<ApiType>
-      /**
-       * Preimage not found
-       **/
-      PreimageMissing: AugmentedError<ApiType>
+      PreimageNotExist: AugmentedError<ApiType>
       /**
        * Proposal still blacklisted
        **/
@@ -324,13 +286,9 @@ declare module '@polkadot/api-base/types/errors' {
        **/
       ReferendumInvalid: AugmentedError<ApiType>
       /**
-       * Too early
+       * Maximum number of items reached.
        **/
-      TooEarly: AugmentedError<ApiType>
-      /**
-       * Maximum number of proposals reached.
-       **/
-      TooManyProposals: AugmentedError<ApiType>
+      TooMany: AugmentedError<ApiType>
       /**
        * Value too low
        **/
@@ -354,6 +312,10 @@ declare module '@polkadot/api-base/types/errors' {
       [key: string]: AugmentedError<ApiType>
     }
     electionProviderMultiPhase: {
+      /**
+       * Some bound not met
+       **/
+      BoundNotMet: AugmentedError<ApiType>
       /**
        * The call is not allowed at this point.
        **/
@@ -402,6 +364,10 @@ declare module '@polkadot/api-base/types/errors' {
        * The signed submission consumes too much weight
        **/
       SignedTooMuchWeight: AugmentedError<ApiType>
+      /**
+       * Submitted solution has too many winners
+       **/
+      TooManyWinners: AugmentedError<ApiType>
       /**
        * Generic error
        **/
@@ -570,6 +536,10 @@ declare module '@polkadot/api-base/types/errors' {
        **/
       JudgementGiven: AugmentedError<ApiType>
       /**
+       * Error that occurs when there is an issue paying for judgement.
+       **/
+      JudgementPaymentFailed: AugmentedError<ApiType>
+      /**
        * No identity found.
        **/
       NoIdentity: AugmentedError<ApiType>
@@ -719,6 +689,10 @@ declare module '@polkadot/api-base/types/errors' {
        **/
       AccountBelongsToOtherPool: AugmentedError<ApiType>
       /**
+       * Bonding extra is restricted to the exact pending reward amount.
+       **/
+      BondExtraRestricted: AugmentedError<ApiType>
+      /**
        * The pools state cannot be changed.
        **/
       CanNotChangeState: AugmentedError<ApiType>
@@ -726,6 +700,18 @@ declare module '@polkadot/api-base/types/errors' {
        * None of the funds can be withdrawn yet because the bonding duration has not passed.
        **/
       CannotWithdrawAny: AugmentedError<ApiType>
+      /**
+       * The submitted changes to commission change rate are not allowed.
+       **/
+      CommissionChangeRateNotAllowed: AugmentedError<ApiType>
+      /**
+       * Not enough blocks have surpassed since the last commission update.
+       **/
+      CommissionChangeThrottled: AugmentedError<ApiType>
+      /**
+       * The supplied commission exceeds the max allowed commission.
+       **/
+      CommissionExceedsMaximum: AugmentedError<ApiType>
       /**
        * Some error occurred that should never happen. This should be reported to the
        * maintainers.
@@ -740,6 +726,14 @@ declare module '@polkadot/api-base/types/errors' {
        * anymore to, for example, collect rewards).
        **/
       FullyUnbonding: AugmentedError<ApiType>
+      /**
+       * Pool id provided is not correct/usable.
+       **/
+      InvalidPoolId: AugmentedError<ApiType>
+      /**
+       * The pool's max commission cannot be set higher than the existing value.
+       **/
+      MaxCommissionRestricted: AugmentedError<ApiType>
       /**
        * Too many members in the pool or system.
        **/
@@ -765,6 +759,14 @@ declare module '@polkadot/api-base/types/errors' {
        **/
       MinimumBondNotMet: AugmentedError<ApiType>
       /**
+       * No commission current has been set.
+       **/
+      NoCommissionCurrentSet: AugmentedError<ApiType>
+      /**
+       * There is no pending commission to claim.
+       **/
+      NoPendingCommission: AugmentedError<ApiType>
+      /**
        * A pool must be in [`PoolState::Destroying`] in order for the depositor to unbond or for
        * other members to be permissionlessly unbonded.
        **/
@@ -789,6 +791,10 @@ declare module '@polkadot/api-base/types/errors' {
        * Partial unbonding now allowed permissionlessly.
        **/
       PartialUnbondNotAllowedPermissionlessly: AugmentedError<ApiType>
+      /**
+       * Pool id currently in use.
+       **/
+      PoolIdInUse: AugmentedError<ApiType>
       /**
        * An account is not a member.
        **/
@@ -834,7 +840,7 @@ declare module '@polkadot/api-base/types/errors' {
       /**
        * Preimage is too large to store on-chain.
        **/
-      TooLarge: AugmentedError<ApiType>
+      TooBig: AugmentedError<ApiType>
       /**
        * Generic error
        **/
@@ -952,17 +958,13 @@ declare module '@polkadot/api-base/types/errors' {
       AlreadyConfirmed: AugmentedError<ApiType>
       AlreadySubmitted: AugmentedError<ApiType>
       InvalidSubgroup: AugmentedError<ApiType>
-      InvalidValidatorId: AugmentedError<ApiType>
       IpAddressError: AugmentedError<ApiType>
-      NoResponsibility: AugmentedError<ApiType>
       NoSyncedValidators: AugmentedError<ApiType>
       NoThresholdKey: AugmentedError<ApiType>
       NotInSigningGroup: AugmentedError<ApiType>
       NotRegistered: AugmentedError<ApiType>
       NotRegistering: AugmentedError<ApiType>
-      NotYourResponsibility: AugmentedError<ApiType>
       SigningGroupError: AugmentedError<ApiType>
-      Test: AugmentedError<ApiType>
       /**
        * Generic error
        **/
@@ -973,6 +975,10 @@ declare module '@polkadot/api-base/types/errors' {
        * Failed to schedule a call
        **/
       FailedToSchedule: AugmentedError<ApiType>
+      /**
+       * Attempt to use a non-named function on a named task.
+       **/
+      Named: AugmentedError<ApiType>
       /**
        * Cannot find the scheduled call.
        **/
@@ -1195,8 +1201,8 @@ declare module '@polkadot/api-base/types/errors' {
        **/
       TooManyTargets: AugmentedError<ApiType>
       /**
-       * There are too many validators in the system. Governance needs to adjust the staking
-       * settings to keep things safe for the runtime.
+       * There are too many validator candidates in the system. Governance needs to adjust the
+       * staking settings to keep things safe for the runtime.
        **/
       TooManyValidators: AugmentedError<ApiType>
       /**
