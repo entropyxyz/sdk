@@ -183,3 +183,6 @@ test_db/
 .tsbuildinfo/
 testing-utils/test-binaries/*
 prepTests.sh
+
+
+entropy-js.sublime-*
