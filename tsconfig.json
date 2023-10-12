@@ -1,11 +1,17 @@
 {
   "compilerOptions": {
+    "paths": {
+      "sample-polkadotjs-typegen/*": ["./types/*"],
+      "@polkadot/api/augment": ["./types/interfaces/augment-api.ts"],
+      "@polkadot/types/augment": ["./types/interfaces/augment-types.ts"]
+    },
     "target": "ES6",
     "skipLibCheck": true,
     "noEmit": true,
     "incremental": true,
     "typeRoots": ["node_modules/@types", "@types/"],
     "tsBuildInfoFile": ".tsbuildinfo",
+    "moduleResolution": "node",
     "module": "Node16"
   },
   "exclude": ["node_modules", "dist", "build", "examples", "old"],
