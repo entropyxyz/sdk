@@ -1,7 +1,7 @@
 
-import { crypto, cryptoIsLoaded } from "../src/utils/crypto/index.ts"
+import { crypto, cryptoIsLoaded } from "../src/utils/crypto"
 import { hexToU8a } from '@polkadot/util'
-import { readKey } from "../src/utils/index.ts"
+import { readKey } from "../src/utils"
 
 
 describe('Crypto Tests', () => {

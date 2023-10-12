@@ -8,7 +8,6 @@
     "dist"
   ],
   "types": "dist/index.d.ts",
-  "type": "module",
   "module": "dist/index.cjs",
   "browser": "dist/index.js",
   "scripts": {

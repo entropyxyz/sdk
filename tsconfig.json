@@ -1,10 +1,5 @@
 {
   "compilerOptions": {
-    "paths": {
-      "sample-polkadotjs-typegen/*": ["./types/*"],
-      "@polkadot/api/augment": ["./types/interfaces/augment-api.ts"],
-      "@polkadot/types/augment": ["./types/interfaces/augment-types.ts"]
-    },
     "target": "ES6",
     "skipLibCheck": true,
     "noEmit": true,
