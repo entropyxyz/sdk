@@ -113,6 +113,25 @@ afterEach(async () => {
     ).toBeTruthy()
     console.log('post registration')
 
+    try {
+      const registrationStatus = await entropy.isRegistered(charlieStashAddress)
+      expect(registrationStatus).toBeTruthy()
+    
+      const stringifiedResponse = JSON.stringify(registrationStatus)
+      console.log("is Registered?", stringifiedResponse)
+    
+      if (stringifiedResponse === 'false') {
+        console.log("is not registered")
+      }
+    
+      expect(stringifiedResponse).toBe('true')
+    
+      console.log('post registration')
+    } catch (e) {
+      console.error('Error in registration status check:', e.message)
+    }
+  
+
     // Set a program for the user
     const dummyProgram: any = readFileSync(
       './tests/testing-utils/template_barebones.wasm'
