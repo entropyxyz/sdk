@@ -31,13 +31,13 @@ describe('Core Tests', () => {
   beforeEach(async () => {
     jest.setTimeout(30000)
     try {
-     serverProcess1 = await spinThreshold(serverPath, 'alice', '3001')
+      serverProcess1 = await spinThreshold(serverPath, 'alice', '3001')
       serverProcess2 = await spinThreshold(serverPath, 'bob', '3002')
       chainProcess1 = await spinChain(chainPath, 'alice', '9944')
       await sleep(3000)
       chainProcess2 = await spinChain(chainPath, 'bob', '9945')
       await sleep(3000)
-
+      console.log('created all chains and threshold servers')
       // Handle process errors
       const processes = [
         serverProcess1,
