@@ -58,12 +58,12 @@ export const spinChain = async (
   //   console.log(name, ': ', {message})
   // })
 
-  // process.on('error', (error) => {
-  //     console.error(`chain for ${name} Error in spinChain process: ${error.message}`)
-  // })
-  // process.on('exit', (code) => {
-  //     console.log(`spinChain process exited with code: ${code}`)
-  // })
+  process.on('error', (error) => {
+      console.error(`chain for ${name} Error in spinChain process: ${error.message}`)
+  })
+  process.on('exit', (code) => {
+      console.log(`spinChain process exited with code: ${code}`)
+  })
   return process
 }
 
