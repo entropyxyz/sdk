@@ -53,10 +53,13 @@ export const spinChain = async (
 
   const process = spawn(bin, args)
   // comment in for chain logging and add verbose to jest
-  // process.stderr.on('data', async function (chunk) {
-  //   const message = chunk.toString()
-  //   console.log(name, ': ', {message})
-  // })
+  process.stderr.on('data', (data) => {
+    console.error(`STDERR: ${data}`)
+  })
+
+  process.stdout.on('data', (data) => {
+    console.log(`STDOUT: ${data}`);
+  });
 
   process.on('error', (error) => {
       console.error(`chain for ${name} Error in spinChain process: ${error.message}`)
