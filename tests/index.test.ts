@@ -91,45 +91,56 @@ afterEach(async () => {
     }
 })
 
-  it('should handle registration, program management, and signing', async () => {
-    jest.setTimeout(60000)
+it('should handle registration, program management, and signing', async () => {
+  jest.setTimeout(60000)
+  
+  // Pre-registration check
+  try {
+      const preRegistrationStatus = await entropy.isRegistered(charlieStashAddress)
+      expect(preRegistrationStatus).toBeFalsy()
+      const preStringifiedResponse = JSON.stringify(preRegistrationStatus)
+      console.log("is Registered pre-registration?", preStringifiedResponse)
+      expect(preStringifiedResponse).toBe('false')
+  } catch (e) {
+      console.error('Error in pre-registration status check:', e.message)
+  }
+  
+  try {
+    await entropy.register({
+      address: charlieStashAddress,
+      keyVisibility: 'Permissioned',
+      freeTx: false,
+    })
+  } catch (e) {
+    console.error('Error in test:', e.message)
+  }
 
-    try {
-      await entropy.register({
-        address: charlieStashAddress,
-        keyVisibility: 'Permissioned',
-        freeTx: false,
-      })
-    } catch (e) {
-      console.error('Error in test:', e.message)
+  expect(entropy.keys.wallet.address).toBe(charlieStashAddress)
+  console.log('post registration')
+  expect(
+    await entropy.registrationManager.checkRegistrationStatus(
+      charlieStashAddress
+    )
+  ).toBeTruthy()
+  
+  // Post-registration check
+  try {
+    const postRegistrationStatus = await entropy.isRegistered(charlieStashAddress)
+    expect(postRegistrationStatus).toBeTruthy()
+  
+    const postStringifiedResponse = JSON.stringify(postRegistrationStatus)
+    console.log("is Registered post-registration?", postStringifiedResponse)
+  
+    if (postStringifiedResponse === 'false') {
+      console.log("is not registered")
     }
-
-    expect(entropy.keys.wallet.address).toBe(charlieStashAddress)
-    console.log('pre registration')
-    expect(
-      await entropy.registrationManager.checkRegistrationStatus(
-        charlieStashAddress
-      )
-    ).toBeTruthy()
+  
+    expect(postStringifiedResponse).toBe('true')
+  
     console.log('post registration')
-
-    try {
-      const registrationStatus = await entropy.isRegistered(charlieStashAddress)
-      expect(registrationStatus).toBeTruthy()
-    
-      const stringifiedResponse = JSON.stringify(registrationStatus)
-      console.log("is Registered?", stringifiedResponse)
-    
-      if (stringifiedResponse === 'false') {
-        console.log("is not registered")
-      }
-    
-      expect(stringifiedResponse).toBe('true')
-    
-      console.log('post registration')
-    } catch (e) {
-      console.error('Error in registration status check:', e.message)
-    }
+  } catch (e) {
+    console.error('Error in post-registration status check:', e.message)
+  }
   
 
     // Set a program for the user
