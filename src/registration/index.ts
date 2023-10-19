@@ -51,7 +51,7 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
             console.log('subscribe to new blocks: finish is registered')
 
             if (registeredCheck) {
-            console.log('subscribe to new blocks: finish is registered')
+              console.log('subscribe to new blocks: finish is registered')
 
               const unsub = await unsubPromise
               unsub()
