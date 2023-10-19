@@ -14,6 +14,7 @@ import {
   whitelisted_test_tx_req,
   non_whitelisted_test_tx_req,
   whitelisted_test_constraints,
+  noBalanceSeed,
 } from './testing-utils'
 import { ethers } from 'ethers'
 import { keccak256 } from 'ethers/lib/utils'
@@ -58,14 +59,6 @@ describe('Core Tests', () => {
       'ws://127.0.0.1:9945',
       'http://localhost:3002/user/new'
     )
-    entropy = new Entropy({
-      seed: charlieStashSeed,
-      // devnet endpoint
-      // endpoint: customEndpoint
-    })
-
-    // Wait for the entropy instance to be ready
-    await entropy.ready
   })
 afterEach(async () => {
     jest.setTimeout(30000)
@@ -91,10 +84,43 @@ afterEach(async () => {
     }
 })
 
+it('should fail registration', async () => {
+      entropy = new Entropy({
+      seed: noBalanceSeed,
+      // devnet endpoint
+      // endpoint: customEndpoint
+    })
+
+    // Wait for the entropy instance to be ready
+    await entropy.ready
+  try {
+    const preRegistrationStatus = await entropy.isRegistered(charlieStashAddress)
+    expect(preRegistrationStatus).toBeFalsy()
+    await entropy.register({
+      address: charlieStashAddress,
+      keyVisibility: 'Permissioned',
+      freeTx: false,
+    })
+  } catch (e) {
+      expect(e).toBeTruthy()
+  }
+
+
+})
+
 it('should handle registration, program management, and signing', async () => {
   jest.setTimeout(60000)
-  
+      entropy = new Entropy({
+      seed: charlieStashSeed,
+      // devnet endpoint
+      // endpoint: customEndpoint
+    })
+
+    // Wait for the entropy instance to be ready
+    await entropy.ready
+
   // Pre-registration check
+
   try {
       const preRegistrationStatus = await entropy.isRegistered(charlieStashAddress)
       expect(preRegistrationStatus).toBeFalsy()

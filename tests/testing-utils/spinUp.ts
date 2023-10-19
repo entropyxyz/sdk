@@ -75,33 +75,25 @@ export const spinThreshold = async (
   name: string,
   port: string
 ): Promise<ChildProcessWithoutNullStreams> => {
-  return new Promise(async (resolve, reject) => {
-    // console.log(`Spinning up threshold with binary: ${bin}, name: ${name}, port: ${port}`)
-    const args = []
-    if (name) {
-      args.push('--' + name, '--threshold-url=127.0.0.1:' + port)
-    }
-    const process = spawn(bin, args)
-    await sleep(1000)
-    // comment in for threshold logging and add verbose to jest
-    process.stdout.once('data', async function (chunk) {
-      resolve(process)
-    })
-    process.stdout.once('error', async function (chunk) {
-      reject(process)
-    })
-
-    process.stdout.on('data', async function (chunk) {
-      const message = chunk.toString()
-    console.log('Threshold chain data for ', name, ':', message)
-    })
-      process.on('error', (error) => {
-        console.error(`Error in spinThreshold process: ${error.message}`)
-    })
-    process.on('exit', (code) => {
-        console.log(`spinThreshold process exited with code: ${code}`)
-    })
+  // console.log(`Spinning up threshold with binary: ${bin}, name: ${name}, port: ${port}`)
+  const args = []
+  if (name) {
+    args.push('--' + name, '--threshold-url=127.0.0.1:' + port)
+  }
+  const process = spawn(bin, args)
+  await sleep(1000)
+  // comment in for threshold logging and add verbose to jest
+  process.stdout.on('data', async function (chunk) {
+    const message = chunk.toString()
+  console.log('Threshold chain data for ', name, ':', message)
   })
+    process.on('error', (error) => {
+      console.error(`Error in spinThreshold process: ${error.message}`)
+  })
+  process.on('exit', (code) => {
+      console.log(`spinThreshold process exited with code: ${code}`)
+  })
+  return process
 }
 
 export const removeDB = async () => {
