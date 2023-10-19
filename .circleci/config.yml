@@ -16,26 +16,52 @@ jobs:
       - node/install-packages:
           pkg-manager: yarn
       - run:
+          name: Build app.
           command: yarn --frozen-lockfile --network-timeout 180000
-          name: Build app
-      - run: sudo swapoff -a
-      - run: sudo dd if=/dev/zero of=/swapfile bs=1G count=8
-      - run: sudo chmod 0600 /swapfile
-      - run: sudo mkswap /swapfile
-      - run: sudo swapon /swapfile
-      - run: grep Swap /proc/meminfo
-      - run: sudo apt update
-      - run: curl 'https://entropy-api-docs.vercel.app/assets/releases/v0.0.7/entropy' -o tests/testing-utils/test-binaries/entropy && chmod a+x tests/testing-utils/test-binaries/entropy
-      - run: curl 'https://entropy-api-docs.vercel.app/assets/releases/v0.0.7/server' -o tests/testing-utils/test-binaries/server && chmod a+x tests/testing-utils/test-binaries/server
       - run:
+          name: Remake swap file.
+          command: |
+            sudo swapoff -a
+            sudo dd if=/dev/zero of=/swapfile bs=1G count=8
+            sudo chmod 0600 /swapfile
+            sudo mkswap /swapfile
+            sudo swapon /swapfile
+            grep Swap /proc/meminfo
+      - run:
+          name: Retrieve binaries.
+          command: |
+            tmpdir="$(mktemp -d)"
+
+            echo -n "Downloading 'entropy' binary (artifact ID ${ENTROPY_ENTROPY_BINARY_ARTIFACT_ID})..." 1>&2
+            curl --silent --location \
+              --header "Accept: application/vnd.github+json" \
+              --header "Authorization: Bearer $GITHUB_TOKEN" \
+              --header "X-GitHub-Api-Version: 2022-11-28" \
+              "https://api.github.com/repos/entropyxyz/entropy-core/actions/artifacts/${ENTROPY_ENTROPY_BINARY_ARTIFACT_ID}/zip" \
+              > $tmpdir/entropy.zip
+            echo 'done' 1>&2
+
+            echo -n "Downloading 'server' binary (artifact ID ${ENTROPY_SERVER_BINARY_ARTIFACT_ID})..." 1>&2
+            curl --silent --location \
+              --header "Accept: application/vnd.github+json" \
+              --header "Authorization: Bearer $GITHUB_TOKEN" \
+              --header "X-GitHub-Api-Version: 2022-11-28" \
+              "https://api.github.com/repos/entropyxyz/entropy-core/actions/artifacts/${ENTROPY_SERVER_BINARY_ARTIFACT_ID}/zip" \
+              > $tmpdir/server.zip
+            echo 'done.' 1>&2
+
+            unzip -o $tmpdir/entropy.zip -d tests/testing-utils/test-binaries
+            unzip -o $tmpdir/server.zip -d tests/testing-utils/test-binaries
+            chmod a+x tests/testing-utils/test-binaries/{entropy,server}
+      - run:
+          name: Lint app.
           command: yarn run lint
-          name: Lint app
       - run:
           command: yarn run bundle
           name: Bundle app
       - run:
+          name: Test app.
           command: yarn run test
-          name: Test app
 
 workflows:
   build_test_lint:
