@@ -29,7 +29,7 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
     // this is sloppy
     // TODO: store multiple signers via address. and respond accordingly
     // however it should be handled in extrinsic class and not here
-
+    console.log('checking registration')
     const isCurrentlyRegistered = await this.checkRegistrationStatus(address)
     if (isCurrentlyRegistered) {
       throw new Error('already registered')
@@ -40,6 +40,7 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
     // fgilter through events for accountregistartion :P vom
     // this.substrate.events.relayer.AccountRegistered
     // unsubcribes from blocks once event has been found
+    console.log('subscribe to new blocks')
     const registered: Promise<undefined> = new Promise((resolve, reject) => {
       try {
         const unsubPromise = this.substrate.rpc.chain.subscribeNewHeads(
@@ -47,7 +48,11 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
             const registeredCheck = await this.checkRegistrationStatus(
               this.signer.wallet.address
             )
+            console.log('subscribe to new blocks: finish is registered')
+
             if (registeredCheck) {
+            console.log('subscribe to new blocks: finish is registered')
+
               const unsub = await unsubPromise
               unsub()
               resolve(undefined)
@@ -64,6 +69,8 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
       keyVisibility,
       initialProgram ? initialProgram : null
     )
+    console.log('created register tx about to send')
+
     await this.sendAndWaitFor(registerTx, freeTx, {
       section: 'relayer',
       name: 'SignalRegister',
