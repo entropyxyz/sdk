@@ -53,13 +53,13 @@ export const spinChain = async (
 
   const process = spawn(bin, args)
   // comment in for chain logging and add verbose to jest
-  // process.stderr.on('data', (data) => {
-  //   console.log(`STDERR: ${data}`)
-  // })
+  process.stderr.on('data', (data) => {
+    console.log(`STDERR: ${data}`)
+  })
 
-  // process.stdout.on('data', (data) => {
-  //   console.log(`STDOUT: ${data}`);
-  // });
+  process.stdout.on('data', (data) => {
+    console.log(`STDOUT: ${data}`);
+  });
 
   process.on('error', (error) => {
       console.error(`chain for ${name} Error in spinChain process: ${error.message}`)
@@ -83,16 +83,16 @@ export const spinThreshold = async (
   const process = spawn(bin, args)
   await sleep(1000)
   // comment in for threshold logging and add verbose to jest
-  // process.stdout.on('data', async function (chunk) {
-  //   const message = chunk.toString()
-  // console.log('Threshold chain data for ', name, ':', message)
-  // })
-  //   process.on('error', (error) => {
-  //     console.error(`Error in spinThreshold process: ${error.message}`)
-  // })
-  // process.on('exit', (code) => {
-  //     console.log(`spinThreshold process exited with code: ${code}`)
-  // })
+  process.stdout.on('data', async function (chunk) {
+    const message = chunk.toString()
+  console.log('Threshold chain data for ', name, ':', message)
+  })
+    process.on('error', (error) => {
+      console.error(`Error in spinThreshold process: ${error.message}`)
+  })
+  process.on('exit', (code) => {
+      console.log(`spinThreshold process exited with code: ${code}`)
+  })
   return process
 }
 
