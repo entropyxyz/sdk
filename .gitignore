@@ -181,12 +181,10 @@ kvstore/
 test_db/
 .entropy
 .tsbuildinfo/
-testing-utils/test-binaries/*
+tests/testing-utils/test-binaries
 prepTests.sh
 
 # the things that make frankie's environment just how she likes it ;}
 
 *.sublime-project
 *.sublime-workspace
-
-tests/testing-utils/test-binaries
