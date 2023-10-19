@@ -78,7 +78,7 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
       section: 'relayer',
       name: 'SignalRegister',
     })
-
+    console.log('sent tx')
     return registered
   }
 

@@ -104,8 +104,6 @@ it('should fail registration', async () => {
   } catch (e) {
       expect(e).toBeTruthy()
   }
-
-
 })
 
 it('should handle registration, program management, and signing', async () => {
