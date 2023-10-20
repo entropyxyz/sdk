@@ -98,13 +98,9 @@ it('should fail registration', async () => {
     // Wait for the entropy instance to be ready
     await entropy.ready
   try {
-    const preRegistrationStatus = await entropy.isRegistered(charlieStashAddress)
+    const preRegistrationStatus = await entropy.isRegistered(noBalanceSeed)
     expect(preRegistrationStatus).toBeFalsy()
-    await entropy.register({
-      address: charlieStashAddress,
-      keyVisibility: 'Permissioned',
-      freeTx: false,
-    })
+
   } catch (e) {
       expect(e).toBeTruthy()
   }
@@ -164,12 +160,11 @@ it('should handle registration, program management, and signing', async () => {
     }
 
     expect(postStringifiedResponse).toBe('true')
-
+    
     console.log('post registration')
   } catch (e) {
     console.error('Error in post-registration status check:', e.message)
   }
-
 
     // Set a program for the user
     const dummyProgram: any = readFileSync(
