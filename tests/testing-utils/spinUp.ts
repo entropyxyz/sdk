@@ -19,7 +19,12 @@ export const modifyOcwPostEndpoint = async (
   const key = 'propagation'
   const value = stringToHex(new_url)
   const keyValue = stringToHex(key)
-  await api.rpc.offchain.localStorageSet('PERSISTENT', keyValue, value)
+  try {
+    await api.rpc.offchain.localStorageSet('PERSISTENT', keyValue, value)
+
+  } catch(e) {
+    console.log("in modify", {e})
+  }
   console.log('  Set Feed  ' + ` ${new_url}` + ' Successful')
   console.log('  Insert Keys  ')
   console.log(' Successful')
