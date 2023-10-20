@@ -23,15 +23,19 @@ describe('Core Tests', () => {
   let entropy: Entropy
   let chainProcess1, chainProcess2, serverProcess1, serverProcess2
 
-  const chainPath = process.cwd() + '/tests/testing-utils/test-binaries/entropy'
-  const serverPath = process.cwd() + '/tests/testing-utils/test-binaries/server'
+  const binaryDir = process.env.ENTROPY_BINARY_DIR
+    ? process.env.ENTROPY_BINARY_DIR
+    : process.cwd() + '/tests/testing-utils/test-binaries'
+  const chainPath  = binaryDir + '/entropy'
+  const serverPath = binaryDir + '/server'
   // devnet endpoint. providing no endpoint defaults to local chain spinup
   // const customEndpoint = 'ws://devnet-forfrankie-nodes-617e8e312bab1d9f.elb.us-west-2.amazonaws.com:9944'
 
   beforeEach(async () => {
     jest.setTimeout(30000)
     try {
-     serverProcess1 = await spinThreshold(serverPath, 'alice', '3001')
+      console.log('Spinning up chain node and TSS server binaries from dir %s', binaryDir)
+      serverProcess1 = await spinThreshold(serverPath, 'alice', '3001')
       serverProcess2 = await spinThreshold(serverPath, 'bob', '3002')
       chainProcess1 = await spinChain(chainPath, 'alice', '9944')
       await sleep(3000)
