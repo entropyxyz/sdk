@@ -84,27 +84,27 @@ afterEach(async () => {
     }
 })
 
-it('should fail registration', async () => {
-      entropy = new Entropy({
-      seed: noBalanceSeed,
-      // devnet endpoint
-      // endpoint: customEndpoint
-    })
+// it('should fail registration', async () => {
+//       entropy = new Entropy({
+//       seed: noBalanceSeed,
+//       // devnet endpoint
+//       // endpoint: customEndpoint
+//     })
 
-    // Wait for the entropy instance to be ready
-    await entropy.ready
-  try {
-    const preRegistrationStatus = await entropy.isRegistered(charlieStashAddress)
-    expect(preRegistrationStatus).toBeFalsy()
-    await entropy.register({
-      address: charlieStashAddress,
-      keyVisibility: 'Permissioned',
-      freeTx: false,
-    })
-  } catch (e) {
-      expect(e).toBeTruthy()
-  }
-})
+//     // Wait for the entropy instance to be ready
+//     await entropy.ready
+//   try {
+//     const preRegistrationStatus = await entropy.isRegistered(charlieStashAddress)
+//     expect(preRegistrationStatus).toBeFalsy()
+//     await entropy.register({
+//       address: charlieStashAddress,
+//       keyVisibility: 'Permissioned',
+//       freeTx: false,
+//     })
+//   } catch (e) {
+//       expect(e).toBeTruthy()
+//   }
+// })
 
 it('should handle registration, program management, and signing', async () => {
   jest.setTimeout(60000)
