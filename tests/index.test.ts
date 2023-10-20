@@ -132,7 +132,7 @@ it('should handle registration, program management, and signing', async () => {
   } catch (e) {
       console.error('Error in pre-registration status check:', e.message)
   }
-  
+
   try {
     await entropy.register({
       address: charlieStashAddress,
@@ -150,26 +150,26 @@ it('should handle registration, program management, and signing', async () => {
       charlieStashAddress
     )
   ).toBeTruthy()
-  
+
   // Post-registration check
   try {
     const postRegistrationStatus = await entropy.isRegistered(charlieStashAddress)
     expect(postRegistrationStatus).toBeTruthy()
-  
+
     const postStringifiedResponse = JSON.stringify(postRegistrationStatus)
     console.log("is Registered post-registration?", postStringifiedResponse)
-  
+
     if (postStringifiedResponse === 'false') {
       console.log("is not registered")
     }
-  
+
     expect(postStringifiedResponse).toBe('true')
-  
+
     console.log('post registration')
   } catch (e) {
     console.error('Error in post-registration status check:', e.message)
   }
-  
+
 
     // Set a program for the user
     const dummyProgram: any = readFileSync(
