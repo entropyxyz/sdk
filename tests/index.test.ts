@@ -30,7 +30,6 @@ describe('Core Tests', () => {
   // const customEndpoint = 'ws://devnet-forfrankie-nodes-617e8e312bab1d9f.elb.us-west-2.amazonaws.com:9944'
 
   beforeEach(async () => {
-    jest.setTimeout(30000)
     try {
       serverProcess1 = await spinThreshold(serverPath, 'alice', '3001')
       serverProcess2 = await spinThreshold(serverPath, 'bob', '3002')
