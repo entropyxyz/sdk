@@ -44,28 +44,28 @@ describe('Core Tests', () => {
       'http://localhost:3002/user/new'
     )
   })
-  afterEach(async () => {
-    try {
-      await disconnect(entropy.substrate)
-      await sleep(2000)
-      if (serverProcess1 && !serverProcess1.killed) {
-        serverProcess1.kill()
-      }
-      if (serverProcess2 && !serverProcess2.killed) {
-        serverProcess2.kill()
-      }
-      if (chainProcess1 && !chainProcess1.killed) {
-        chainProcess1.kill()
-      }
-      if (chainProcess2 && !chainProcess2.killed) {
-        chainProcess2.kill()
-      }
-      await sleep(6000)
-      removeDB()
-    } catch (e) {
-      console.error('Error in afterEach:', e.message)
-    }
-  })
+  // afterEach(async () => {
+  //   try {
+  //     await disconnect(entropy.substrate)
+  //     await sleep(2000)
+  //     if (serverProcess1 && !serverProcess1.killed) {
+  //       serverProcess1.kill()
+  //     }
+  //     if (serverProcess2 && !serverProcess2.killed) {
+  //       serverProcess2.kill()
+  //     }
+  //     if (chainProcess1 && !chainProcess1.killed) {
+  //       chainProcess1.kill()
+  //     }
+  //     if (chainProcess2 && !chainProcess2.killed) {
+  //       chainProcess2.kill()
+  //     }
+  //     await sleep(6000)
+  //     removeDB()
+  //   } catch (e) {
+  //     console.error('Error in afterEach:', e.message)
+  //   }
+  // })
 
   // it('should fail registration', async () => {
   //       entropy = new Entropy({
