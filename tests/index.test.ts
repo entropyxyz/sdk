@@ -38,11 +38,11 @@ describe('Core Tests', () => {
     await sleep(3000)
     console.log('created all chains and threshold servers')
 
-    // await sleep(9000)
-    // await modifyOcwPostEndpoint(
-    //   'ws://localhost:9945',
-    //   'http://localhost:3002/user/new'
-    // )
+    await sleep(9000)
+    await modifyOcwPostEndpoint(
+      'ws://localhost:9945',
+      'http://localhost:3002/user/new'
+    )
   })
   afterEach(async () => {
     try {

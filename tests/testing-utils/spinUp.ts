@@ -23,7 +23,7 @@ export const modifyOcwPostEndpoint = async (
   console.log('  Set Feed  ' + ` ${new_url}` + ' Successful')
   console.log('  Insert Keys  ')
   console.log(' Successful')
-  await disconnect(api)
+  // await disconnect(api)
 }
 export const spinChain = async (
   bin: string,
@@ -65,7 +65,7 @@ export const spinChain = async (
       console.error(`chain for ${name} Error in spinChain process: ${error.message}`)
   })
   process.on('exit', (code) => {
-      console.log(`spinChain process exited with code: ${code}`)
+      console.log(`spinChain process exited with code: ${name}, ${code}`)
   })
   return process
 }
