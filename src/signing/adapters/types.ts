@@ -1,14 +1,16 @@
 import { Arch } from '../../types'
+import { TxParams } from '..'
+import { SignatureLike } from '@ethersproject/bytes'
 export interface Adapter {
   type: string
   arch: Arch
-  preSign: (sigReq: any) => Promise<string>
-  postSign: (sig: any) => Promise<string>
+  preSign: (sigReq: TxParams) => Promise<string>
+  postSign: (sig: SignatureLike) => Promise<string>
 }
 
 export interface OptAdapter {
   type: string
   arch?: Arch
-  preSign?: (sigReq: any) => Promise<string>
-  postSign?: (sig: any) => Promise<string>
+  preSign?: (sigReq: TxParams) => Promise<string>
+  postSign?: (sig: SignatureLike) => Promise<string>
 }

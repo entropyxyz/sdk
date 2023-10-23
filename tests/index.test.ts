@@ -18,6 +18,8 @@ import {
 import { ethers } from 'ethers'
 import { keccak256 } from 'ethers/lib/utils'
 import { buf2hex, stripHexPrefix } from '../src/utils'
+import SignatureRequestManager from '../src/signing'
+import { SignatureLike } from '@ethersproject/bytes'
 
 describe('Core Tests', () => {
   let entropy: Entropy
@@ -185,13 +187,14 @@ it('should handle registration, program management, and signing', async () => {
       whitelisted_test_tx_req
     )
 
-    const signature: any = await entropy.sign({
+    const signature: SignatureLike = await entropy.sign({
       sigRequestHash: serializedTx,
     })
 
     // encoding signature
     console.log('pre signature')
-    expect(signature.length).toBe(65)
+    const signatureArray = signature.toString().split(',')
+    expect(signatureArray.length).toBe(65)
     console.log('post signature')
     // await disconnect(charlieStashEntropy.substrate)
   })
