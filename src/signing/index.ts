@@ -7,6 +7,7 @@ import { Adapter } from './adapters/types'
 import { EncMsg, ValidatorInfo } from '../types'
 import { stripHexPrefix, sendHttpPost } from '../utils'
 import { crypto, CryptoLib } from '../utils/crypto'
+import { Transaction } from 'ethers'
 
 export interface Config {
   signer: Signer
@@ -16,7 +17,7 @@ export interface Config {
 }
 
 export interface TxParams {
-  [key: string]: any
+  [key: string]: Transaction | unknown 
 }
 
 export interface SigTxOps {
@@ -43,6 +44,7 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
   }
 
   async signTransaction ({ txParams, type }: SigTxOps): Promise<SignatureLike> {
+
     if (!this.adapters[type])
       throw new Error(`No transaction adapter for type: ${type} submit as hash`)
     if (!this.adapters[type].preSign)

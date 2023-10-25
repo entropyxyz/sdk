@@ -8,9 +8,10 @@ interface ResObjectType {
 
 let isImported = false
 let cryptoLib
-const res: ResObjectType = { resolve: () => { 
-  throw new Error('resolve function not yet set')
-} 
+const res: ResObjectType = { 
+  resolve: () => { 
+    throw new Error('resolve function not yet set')
+  } 
 }
 
 loadCryptoLib()
