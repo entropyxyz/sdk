@@ -1,9 +1,15 @@
+const { cryptoWaitReady, decodeAddress, signatureVerify } = require('@polkadot/util-crypto');
+import { u8aToHex } from '@polkadot/util'
+
 let isImported = false
 let cryptoLib
 const res: any = {}
 loadCryptoLib()
 
 export interface CryptoLib {
+  // from polkadotjs
+  verifySignture: (message: string, signature: string, address: string) => Promise<boolean>
+  // from chacha20poly1305
   from_hex: (input: string) => Uint8Array
   encrypt_and_sign: (
     secretKey: Uint8Array,
@@ -25,6 +31,7 @@ export const crypto: CryptoLib = new Proxy({} as CryptoLib, {
       if (!cryptoLib) {
         throw new Error('cryptoLib loaded incorrectly')
       }
+      if (key === 'verifySignture') return verifySignture
       if (!cryptoLib[key]) {
         throw new Error(
           `Function "${key as string}" is not available in the crypto library`
@@ -36,6 +43,13 @@ export const crypto: CryptoLib = new Proxy({} as CryptoLib, {
   },
 })
 
+async function verifySignture (signedMessage: string, signature: string, address: string): Promise<boolean> {
+  const publicKey = decodeAddress(address)
+  const hexPublicKey = u8aToHex(publicKey)
+
+  return signatureVerify(signedMessage, signature, hexPublicKey).isValid
+}
+
 export async function loadCryptoLib () {
   if (isImported) return cryptoLib
 
@@ -44,6 +58,7 @@ export async function loadCryptoLib () {
   } else {
     cryptoLib = await import('@entropyxyz/x25519-chacha20poly1305-web')
   }
+  await cryptoWaitReady()
   isImported = true
   res.resolve(true)
   return cryptoLib
