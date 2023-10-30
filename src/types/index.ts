@@ -96,6 +96,7 @@ export interface ITransactionRequest {
 export interface EncMsg {
   msg: string
   url: string
+  tss_account: string
 }
 
 /*

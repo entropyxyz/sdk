@@ -29,12 +29,17 @@ export interface SigOps {
   type?: string
 }
 
-export default class SignatureRequestManager extends ExtrinsicBaseClass {
+export type SigAndProof = string[]
+
+export default class SignatureRequestManager {
   adapters: { [key: string | number]: Adapter }
   crypto: CryptoLib
+  signer: Signer
+  substrate: ApiPromise
 
   constructor ({ signer, substrate, adapters, crypto }: Config) {
-    super({ signer, substrate })
+    this.signer = signer
+    this.substrate = substrate
     this.crypto = crypto
     this.adapters = {
       ...defaultAdapters,
@@ -73,7 +78,7 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
       strippedsigRequestHash,
     })
     const sigs = await this.submitTransactionRequest(txRequests)
-    const sig = sigs[0]
+    const sig = await this.verifiyAndReduceSignatures(sigs)
     return Uint8Array.from(atob(sig), (c) => c.charCodeAt(0))
   }
 
@@ -132,6 +137,7 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
           )
 
           return {
+            tss_account: validator.tss_account,
             url: validator.ip_address,
             msg: encryptedMessage,
           }
@@ -140,7 +146,7 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
     )
   }
 
-  async submitTransactionRequest (txReq: Array<EncMsg>): Promise<string[]> {
+  async submitTransactionRequest (txReq: Array<EncMsg>): Promise<SigAndProof[]> {
     return Promise.all(
       txReq.map(async (message: EncMsg) => {
         const parsedMsg = JSON.parse(message.msg)
@@ -149,11 +155,12 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
           msg: stripHexPrefix(parsedMsg.msg),
         }
 
-        const sig = await sendHttpPost(
+        const sigProof = await sendHttpPost(
           `http://${message.url}/user/sign_tx`,
           JSON.stringify(payload)
         )
-        return sig[0]
+        sigProof.push(message.tss_account)
+        return sigProof
       })
     )
   }
@@ -197,5 +204,33 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
     )
 
     return validatorsInfo
+  }
+
+  async verifiyAndReduceSignatures (sigsAndProofs: SigAndProof[]): Promise<string> {
+    const seperatedSigsAndProofs = sigsAndProofs.reduce((a, sp) => {
+      if (!sp || !sp.length) return a
+      // the place holder is for holding an index. in the future we should notify
+      // the nodes or something about faulty validators
+      // this is really just good house keeping because you never know?
+      a.sigs.push(sp[0] || 'place-holder')
+      a.proofs.push(sp[1] || 'place-holder')
+      a.addresses.push(sp[2] || 'place-holder')
+      return a
+    }, { sigs: [], proofs: [], addresses: [] })
+    // find a valid signature
+    const sigMatch = seperatedSigsAndProofs.sigs.find((s) => s !== 'place-holder')
+    if (!sigMatch) throw new Error('Did not receive a valid signature')
+    // use valid signature to see if they all match
+    const allSigsMatch = seperatedSigsAndProofs.sigs.every((s) => s === sigMatch )
+    if (!allSigsMatch) throw new Error('All signatures do not match')
+    // in the future. notify network of compromise?
+    // check to see if the tss_account signed the proof
+    const validated = await Promise.all(seperatedSigsAndProofs.proofs.map(async (proof: string, index: number): Promise<boolean> => {
+      return await this.crypto.verifySignture(seperatedSigsAndProofs.sigs[index], proof, seperatedSigsAndProofs.addresses[index])
+    }))
+    const first = validated.findIndex((v) => v)
+    if (first === -1) throw new Error('Can not validate the identity of any validator')
+
+    return seperatedSigsAndProofs.sigs[first]
   }
 }
