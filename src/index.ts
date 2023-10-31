@@ -15,6 +15,8 @@ export interface EntropyOpts {
   adapters?: { [key: string | number]: Adapter }
 }
 
+
+
 export default class Entropy {
   #ready?: (value?: unknown) => void
   #fail?: (reason?: unknown) => void
@@ -64,8 +66,14 @@ export default class Entropy {
       this.#fail(error)
     })
   }
-
-  async register (params: RegistrationParams) {
+/**
+   * Register an address with the given parameters.
+   *
+   * @param registrationParams - The registration parameters.
+   * @returns A promise that resolves when the registration is complete.
+   * @throws Error if the address is already registered.
+   */
+   async register (params: RegistrationParams): Promise<undefined> {
     await this.ready
     if (params.address) {
       if (!isValidSubstrateAddress(params.address)) {

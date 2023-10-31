@@ -1,36 +1,41 @@
 # entropy-js
 
+DISCLAMER: VERSIONS OF ENTROPY-JS BEFORE VERSION 0.1.2 MAY HAVE BREAKING CHANGES BETWEEN VERSIONS THIS PROJECT IS UNSTABLE TILL THEN
+
+
 `entropy-js` is a collection of TS packages that allow you to interact with the Entropy network. This is currently in **alpha** release.
 
-## Usage
 
-### Entropy
+### Instillation
+yarn:
+```yarn add @entropyxyz/entropy-js```
 
-### keys
+yarn:
+```npm i @entropyxyz/entropy-js --save```
 
-### Registration
+### Usage
 
-### Signature requests
+```js
+import Entropy from '@entropyxyz/entropy-js'
 
-### Entropy Programs
+opts = {}
 
-## Development
+const entropy = new Entropy()
 
-## notes
+const address = entropy.keys.wallet.address
 
-### TODOS BEFORE JS DEV LAUNCH:
+entropy.isRegistered(address)
 
-- [ ] Have functioning entropy lib
-- [ ] documentation of all methods, functions and classes
-- [ ] Passing existing tests (maybe mod them to fit new api)
-- [ ] %80 code coverage also integrated with tests
-- [ ] house cleaning:
-  - [ ] delete old PR'S and branches that we no longer need
-  - [ ] correctly type `any`s
-  - [ ] delete `old` dir
-  - remove unused deps
+entropy.register({
+  keyVisibility: 'Permissioned',
+  freeTx: false,
+})
 
-## BLOCKERS:
+entropy
 
-- [ ] programs integrated into #entropy-core @jakehemmerle
-- [ ] dkg registration @JesseAbram
+```
+
+### Methods
+
+#### constructor
+
