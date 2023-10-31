@@ -23,11 +23,11 @@ describe('Core Tests', () => {
   beforeAll(async () => {
     try {
       spawn(
-        "/usr/local/bin/docker",
+        "docker",
         [ "compose", "--file", "tests/docker-compose.yaml", "up" ],
-        { stdio: 'inherit' }
+        { shell: true, stdio: 'inherit' } // Use shell's search path.
       )
-      await sleep(10000) // Give it some time to come up.
+      await sleep(20000) // Give it some time to come up.
     } catch (e) {
       console.error('Error in beforeAll: ', e.message)
     }
@@ -42,7 +42,7 @@ describe('Core Tests', () => {
       spawn(
         "docker",
         [ "compose", "--file", "tests/docker-compose.yaml", "down" ],
-        { stdio: 'inherit' }
+        { shell: true, stdio: 'inherit' }
       )
     } catch (e) {
         console.error('Error in afterAll: ', e.message)

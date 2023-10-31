@@ -14,7 +14,7 @@ services:
   # Threshold Signature Scheme server
   # In a local devnet setup, for now, this is "Alice's TSS server."
   alice-tss-server:
-    image: entropyxyz/server:sha-a9240e0
+    image: entropyxyz/server:latest
     ports:
       - "127.0.0.1:3001:3001/tcp"
     command:
@@ -27,7 +27,7 @@ services:
   # Sometimes also called simply a "chain," or a "validator."
   # In a local devnet setup, for now, this is "Alice's chain."
   alice-chain-node:
-    image: entropyxyz/entropy:sha-a9240e0
+    image: entropyxyz/entropy:latest
     depends_on:
       - alice-tss-server
     ports:
@@ -55,7 +55,7 @@ services:
 
   # "Bob's TSS server."
   bob-tss-server:
-    image: entropyxyz/server:sha-a9240e0
+    image: entropyxyz/server:latest
     ports:
       - "127.0.0.1:3002:3001/tcp"
     command:
@@ -67,7 +67,7 @@ services:
 
   # "Bob's chain node."
   bob-chain-node:
-    image: entropyxyz/entropy:sha-a9240e0
+    image: entropyxyz/entropy:latest
     depends_on:
       - bob-tss-server
     ports:
