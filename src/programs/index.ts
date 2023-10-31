@@ -13,10 +13,10 @@ import * as util from '@polkadot/util'
 export default class ProgramManager extends ExtrinsicBaseClass {
   /**
    * Creates an instance of ProgramManager.
-   * @param {ApiPromise} substrate - The API object 
+   * @param {ApiPromise} substrate - Substrate API object 
    * @param {Signer} signer - The signer object for the user interfacing with Substrate
    * @remarks
-   * The constructor initializes the substrate and signer api. 
+   * The constructor initializes the Substrate api and the signer. 
    * @alpha
    */
   constructor ({ substrate, signer }: { substrate: ApiPromise; signer: Signer }) {
@@ -29,7 +29,7 @@ export default class ProgramManager extends ExtrinsicBaseClass {
    * Retrieves the program associated with a given deployKey (account) 
    * @param {string} deployKey - The account key, defaulting to the signer's wallet address if not provided.
    * @returns {Promise<ArrayBuffer>} - The program as an ArrayBuffer.
-   * @throws Will throw an error if no program is defined for the given account.
+   * @throws Will throw an error if no program is defined for the given account. 
    * @remarks
    * This method communicates with substrate to fetch bytecode associated with an account. 
    * The response is then processed and converted to an ArrayBuffer before being returned 
@@ -55,8 +55,8 @@ export default class ProgramManager extends ExtrinsicBaseClass {
    * @returns {Promise<void>}
    * @throws Will throw an error if there's an issue setting the program.
    * @remarks
-   * This method takes a program in the form of an ArrayBuffer, converts it (so it can be passed to substrate), and prepares a transaction to set or update the program 
-   * for the associated account. After preparing the transaction, it's sent to substrate, and the method waits for a confirmation event.
+   * This method takes a program in the form of an ArrayBuffer, converts it (so it can be passed to Substrate), and prepares a transaction to set or update the program 
+   * for the associated account. After preparing the transaction, it's sent to Substrate, and the method waits for a confirmation event.
    * @alpha
    */
 
