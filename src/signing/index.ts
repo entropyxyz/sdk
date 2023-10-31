@@ -1,12 +1,12 @@
 import { ApiPromise } from '@polkadot/api'
 import ExtrinsicBaseClass from '../extrinsic'
 import { Signer } from '../types'
-import { SignatureLike } from '@ethersproject/bytes'
 import { defaultAdapters } from './adapters/default'
 import { Adapter } from './adapters/types'
 import { EncMsg, ValidatorInfo } from '../types'
 import { stripHexPrefix, sendHttpPost } from '../utils'
 import { crypto, CryptoLib } from '../utils/crypto'
+import { Transaction } from 'ethers'
 
 export interface Config {
   signer: Signer
@@ -16,7 +16,7 @@ export interface Config {
 }
 
 export interface TxParams {
-  [key: string]: any
+  [key: string]: Transaction | unknown 
 }
 
 export interface SigTxOps {
@@ -42,7 +42,8 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
     }
   }
 
-  async signTransaction ({ txParams, type }: SigTxOps): Promise<SignatureLike> {
+  async signTransaction ({ txParams, type }: SigTxOps): Promise<unknown> {
+
     if (!this.adapters[type])
       throw new Error(`No transaction adapter for type: ${type} submit as hash`)
     if (!this.adapters[type].preSign)
@@ -62,7 +63,7 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
     return signature
   }
 
-  async sign ({ sigRequestHash }: SigOps): Promise<SignatureLike> {
+  async sign ({ sigRequestHash }: SigOps): Promise<Uint8Array> {
     const strippedsigRequestHash = stripHexPrefix(sigRequestHash)
     const validatorsInfo: Array<ValidatorInfo> = await this.getArbitraryValidators(
       strippedsigRequestHash

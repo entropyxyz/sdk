@@ -8,8 +8,9 @@ export async function preSign (tx): Promise<string> {
 }
 
 // noop
-export async function postSign (tx: string): Promise<string> {
-  return tx
+export async function postSign (sig: Uint8Array): Promise<string> {
+  const hex = Buffer.from(sig).toString('hex')
+  return hex
 }
 
 export const type = 'eth'

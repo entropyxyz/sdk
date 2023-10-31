@@ -1,6 +1,19 @@
+interface ResolveType {
+  (value?: void | PromiseLike<void>): void
+}
+
+interface ResObjectType {
+  resolve: ResolveType
+}
+
 let isImported = false
 let cryptoLib
-const res: any = {}
+const res: ResObjectType = { 
+  resolve: () => { 
+    throw new Error('resolve function not yet set')
+  } 
+}
+
 loadCryptoLib()
 
 export interface CryptoLib {
@@ -45,6 +58,6 @@ export async function loadCryptoLib () {
     cryptoLib = await import('@entropyxyz/x25519-chacha20poly1305-web')
   }
   isImported = true
-  res.resolve(true)
+  res.resolve()
   return cryptoLib
 }
