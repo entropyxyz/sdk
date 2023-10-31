@@ -50,7 +50,7 @@ export default class ProgramManager extends ExtrinsicBaseClass {
   }
 
   /**
-   * Sets or updates a program for the current signer's account on the blockchain.
+   * Sets or updates a program for the current signer's account on Substrate.
    * @param {ArrayBuffer} program - The program to be set or updated, as an ArrayBuffer.
    * @returns {Promise<void>}
    * @throws Will throw an error if there's an issue setting the program.

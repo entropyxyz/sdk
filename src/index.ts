@@ -89,7 +89,7 @@ export default class Entropy {
   }
 
   /**
-   * Registers an address on the blockchain using the provided parameters.
+   * Registers an address to Entropy using the provided parameters.
    *
    * @param registrationParams - Parameters for registration, including:
    *   - `address`: The address to register
