@@ -43,7 +43,7 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
     }
   }
 
-  async signTransaction ({ txParams, type }: SigTxOps): Promise<SignatureLike> {
+  async signTransaction ({ txParams, type }: SigTxOps): Promise<unknown> {
 
     if (!this.adapters[type])
       throw new Error(`No transaction adapter for type: ${type} submit as hash`)
@@ -64,7 +64,7 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
     return signature
   }
 
-  async sign ({ sigRequestHash }: SigOps): Promise<SignatureLike> {
+  async sign ({ sigRequestHash }: SigOps): Promise<Uint8Array> {
     const strippedsigRequestHash = stripHexPrefix(sigRequestHash)
     const validatorsInfo: Array<ValidatorInfo> = await this.getArbitraryValidators(
       strippedsigRequestHash

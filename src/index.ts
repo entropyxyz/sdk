@@ -75,12 +75,12 @@ export default class Entropy {
     return this.registrationManager.register(params)
   }
 
-  async signTransaction (params: SigTxOps): Promise<SignatureLike> {
+  async signTransaction (params: SigTxOps): Promise<unknown> {
     await this.ready
     return this.signingManager.signTransaction(params)
   }
 
-  async sign (params: SigOps): Promise<SignatureLike> {
+  async sign (params: SigOps): Promise<Uint8Array> {
     await this.ready
     return this.signingManager.sign(params)
   }
