@@ -1,6 +1,5 @@
 import { Arch } from '../../types'
 import { TxParams } from '..'
-import { SignatureLike } from '@ethersproject/bytes'
 export interface Adapter {
   type: string
   arch: Arch

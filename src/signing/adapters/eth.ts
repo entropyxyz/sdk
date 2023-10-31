@@ -1,6 +1,5 @@
 import { utils } from 'ethers'
 import { Arch } from '../../types'
-import { SignatureLike } from '@ethersproject/bytes'
 
 export async function preSign (tx): Promise<string> {
   const serializedTx = await utils.serializeTransaction(tx)
@@ -9,7 +8,7 @@ export async function preSign (tx): Promise<string> {
 }
 
 // noop
-export async function postSign (sig: Uint8Array): Promise<SignatureLike> {
+export async function postSign (sig: Uint8Array): Promise<string> {
   const hex = Buffer.from(sig).toString('hex')
   return hex
 }

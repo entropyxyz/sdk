@@ -1,7 +1,6 @@
 import { ApiPromise } from '@polkadot/api'
 import ExtrinsicBaseClass from '../extrinsic'
 import { Signer } from '../types'
-import { SignatureLike } from '@ethersproject/bytes'
 import { defaultAdapters } from './adapters/default'
 import { Adapter } from './adapters/types'
 import { EncMsg, ValidatorInfo } from '../types'
