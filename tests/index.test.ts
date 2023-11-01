@@ -21,17 +21,18 @@ describe('Core Tests', () => {
   let entropy: Entropy
 
   beforeAll(async () => {
+    jest.setTimeout(300000); // Give us five minutes to spin up.
     try {
       spawn(
         "docker",
         [ "compose", "--file", "tests/docker-compose.yaml", "up" ],
         { shell: true, stdio: 'inherit' } // Use shell's search path.
       )
-      await sleep(20000) // Give it some time to come up.
     } catch (e) {
       console.error('Error in beforeAll: ', e.message)
     }
 
+    await sleep(120000)
     entropy = new Entropy({ seed: charlieStashSeed })
     await entropy.ready
   })
