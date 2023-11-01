@@ -29,9 +29,24 @@ export interface SigOps {
   type?: string
 }
 
+/**
+ * `SignatureRequestManager` facilitates signature requests using Polkadot/Substrate API.
+ * This manager handles transaction signing using pre-defined adapters and cryptographic utilities.
+ * 
+ */
+
 export default class SignatureRequestManager extends ExtrinsicBaseClass {
   adapters: { [key: string | number]: Adapter }
   crypto: CryptoLib
+
+  /**
+   * Constructs a new instance of the `SignatureRequestManager` class.
+   *
+   * @param signer - The signer for the transaction.
+   * @param substrate - Polkadot/Substrate API instance.
+   * @param adapters - Transaction adapters for different transaction types (chain dependent).
+   * @param crypto - chachapoly cryptoLib
+   */
 
   constructor ({ signer, substrate, adapters, crypto }: Config) {
     super({ signer, substrate })
@@ -42,6 +57,15 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
     }
   }
 
+  /**
+   * Signs a transaction of the specified type.
+   *
+   * @param txParams - The transaction parameters.
+   * @param type - The type of the transaction.
+   * 
+   * @returns A promise that resolves with the signed transaction.
+   * @throws {Error} If an adapter for the given transaction type is not found.
+   */
   async signTransaction ({ txParams, type }: SigTxOps): Promise<unknown> {
 
     if (!this.adapters[type])
@@ -62,7 +86,12 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
 
     return signature
   }
-
+  /**
+   * Signs the provided request hash.
+   *
+   * @param sigRequestHash - The request hash to sign.
+   * @returns A promise which resolves to the generated signature as a Uint8Array.
+   */
   async sign ({ sigRequestHash }: SigOps): Promise<Uint8Array> {
     const strippedsigRequestHash = stripHexPrefix(sigRequestHash)
     const validatorsInfo: Array<ValidatorInfo> = await this.getArbitraryValidators(
@@ -78,6 +107,12 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
     return Uint8Array.from(atob(sig), (c) => c.charCodeAt(0))
   }
 
+  /**
+   * Retrieves the current timestamp split into seconds and nanoseconds.
+   * 
+   * @returns An object containing `secs_since_epoch` and `nanos_since_epoch`.
+   */
+
   getTimeStamp () {
     const timestampInMilliseconds = Date.now()
     const secs_since_epoch = Math.floor(timestampInMilliseconds / 1000)
@@ -88,6 +123,14 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
       nanos_since_epoch: nanos_since_epoch,
     }
   }
+
+  /**
+   * Generates formatted transaction requests suitable for validators.
+   *
+   * @param strippedsigRequestHash - The signature request hash, with hex prefix stripped.
+   * @param validatorsInfo - Information regarding the validators.
+   * @returns A promise that resolves to an array of encrypted messages for each validator.
+   */
 
   async formatTxRequests ({
     strippedsigRequestHash,
@@ -141,6 +184,13 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
     )
   }
 
+  /**
+   * Sends transaction requests and retrieves the associated signatures.
+   *
+   * @param txReq - An array of encrypted messages to send as transaction requests.
+   * @returns A promise that resolves to an array of signatures in string format.
+   */
+
   async submitTransactionRequest (txReq: Array<EncMsg>): Promise<string[]> {
     return Promise.all(
       txReq.map(async (message: EncMsg) => {
@@ -158,6 +208,13 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
       })
     )
   }
+
+  /**
+   * Fetches validator information based on the signature request.
+   *
+   * @param sigRequest - The provided signature request.
+   * @returns A promise that resolves to an array of information related to validators.
+   */
 
   async getArbitraryValidators (sigRequest: string): Promise<ValidatorInfo[]> {
     const stashKeys = (
