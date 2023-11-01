@@ -1,6 +1,6 @@
 import ExtrinsicBaseClass from '../extrinsic'
 import { ApiPromise } from '@polkadot/api'
-import { Signer } from '../types'
+import { Address, Signer } from '../types'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
 import { hex2buf } from '../utils'
 import * as util from '@polkadot/util'
@@ -26,8 +26,8 @@ export default class ProgramManager extends ExtrinsicBaseClass {
   }
 
   /**
-   * Retrieves the program associated with a given deployKey (account) 
-   * @param {string} deployKey - The account key, defaulting to the signer's wallet address if not provided.
+   * Retrieves the program associated with a given account
+   * @param {string} account - The account key, defaulting to the signer's wallet address if not provided.
    * @returns {Promise<ArrayBuffer>} - The program as an ArrayBuffer.
    * @throws {Error} If no program is defined for the given account. 
    * @remarks
@@ -36,9 +36,9 @@ export default class ProgramManager extends ExtrinsicBaseClass {
    * @alpha
    */
 
-  async get (deployKey = this.signer.wallet.address): Promise<ArrayBuffer> {
+  async get (account = this.signer.wallet.address): Promise<ArrayBuffer> {
     const responseHexOption = await this.substrate.query.constraints.v2Bytecode(
-      deployKey
+      account
     )
     if (responseHexOption.isEmpty) {
       throw new Error('No program defined for the given account.')
@@ -60,14 +60,14 @@ export default class ProgramManager extends ExtrinsicBaseClass {
    * @alpha
    */
 
-  async set (program: ArrayBuffer): Promise<void> {
+  async set (program: ArrayBuffer, account: Address = this.signer.wallet.address): Promise<void> {
     try {
 
       // Convert ArrayBuffer to Uint8Array and then to Hex
       const programHex = util.u8aToHex(new Uint8Array(program))
       // Create the transaction
       const tx: SubmittableExtrinsic<'promise'> = this.substrate.tx.constraints.updateV2Constraints(
-        this.signer.wallet.address,
+        account,
         programHex
       )
       // Send the transaction and wait for the confirmation event.
