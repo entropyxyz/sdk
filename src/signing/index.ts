@@ -1,5 +1,4 @@
 import { ApiPromise } from '@polkadot/api'
-import ExtrinsicBaseClass from '../extrinsic'
 import { Signer } from '../types'
 import { defaultAdapters } from './adapters/default'
 import { Adapter } from './adapters/types'
@@ -35,7 +34,9 @@ export interface SigOps {
  * 
  */
 
-export default class SignatureRequestManager extends ExtrinsicBaseClass {
+export default class SignatureRequestManager {
+  substrate: ApiPromise
+  signer: Signer
   adapters: { [key: string | number]: Adapter }
   crypto: CryptoLib
 
@@ -49,7 +50,8 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
    */
 
   constructor ({ signer, substrate, adapters, crypto }: Config) {
-    super({ signer, substrate })
+    this.substrate = substrate
+    this.signer = signer
     this.crypto = crypto
     this.adapters = {
       ...defaultAdapters,
@@ -66,6 +68,7 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
    * @returns A promise that resolves with the signed transaction.
    * @throws {Error} If an adapter for the given transaction type is not found.
    */
+
   async signTransaction ({ txParams, type }: SigTxOps): Promise<unknown> {
 
     if (!this.adapters[type])
@@ -86,12 +89,14 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
 
     return signature
   }
+
   /**
    * Signs the provided request hash.
    *
    * @param sigRequestHash - The request hash to sign.
    * @returns A promise which resolves to the generated signature as a Uint8Array.
    */
+
   async sign ({ sigRequestHash }: SigOps): Promise<Uint8Array> {
     const strippedsigRequestHash = stripHexPrefix(sigRequestHash)
     const validatorsInfo: Array<ValidatorInfo> = await this.getArbitraryValidators(
@@ -221,10 +226,8 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
       await this.substrate.query.stakingExtension.signingGroups.entries()
     ).map((group) => {
       const stashKeys = group[1]
-      // omg polkadot type gen is a head ache
       // @ts-ignore: next line
       const index = parseInt(sigRequest, 16) % stashKeys.unwrap().length
-      // omg polkadot type gen is a head ache
       // @ts-ignore: next line
       return stashKeys.unwrap()[index]
     })
