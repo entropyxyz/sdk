@@ -29,7 +29,7 @@ export default class ProgramManager extends ExtrinsicBaseClass {
    * Retrieves the program associated with a given deployKey (account) 
    * @param {string} deployKey - The account key, defaulting to the signer's wallet address if not provided.
    * @returns {Promise<ArrayBuffer>} - The program as an ArrayBuffer.
-   * @throws Will throw an error if no program is defined for the given account. 
+   * @throws {Error} If no program is defined for the given account. 
    * @remarks
    * This method communicates with substrate to fetch bytecode associated with an account. 
    * The response is then processed and converted to an ArrayBuffer before being returned 
@@ -53,7 +53,7 @@ export default class ProgramManager extends ExtrinsicBaseClass {
    * Sets or updates a program for the current signer's account on Substrate.
    * @param {ArrayBuffer} program - The program to be set or updated, as an ArrayBuffer.
    * @returns {Promise<void>}
-   * @throws Will throw an error if there's an issue setting the program.
+   * @throws {Error} If there's an issue setting the program.
    * @remarks
    * This method takes a program in the form of an ArrayBuffer, converts it (so it can be passed to Substrate), and prepares a transaction to set or update the program 
    * for the associated account. After preparing the transaction, it's sent to Substrate, and the method waits for a confirmation event.
