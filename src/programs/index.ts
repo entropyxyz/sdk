@@ -36,9 +36,9 @@ export default class ProgramManager extends ExtrinsicBaseClass {
    * @alpha
    */
 
-  async get (programModKey = this.signer.wallet.address): Promise<ArrayBuffer> {
+  async get (deployKey = this.signer.wallet.address): Promise<ArrayBuffer> {
     const responseHexOption = await this.substrate.query.constraints.v2Bytecode(
-      programModKey
+      deployKey
     )
     if (responseHexOption.isEmpty) {
       throw new Error('No program defined for the given account.')
@@ -60,15 +60,15 @@ export default class ProgramManager extends ExtrinsicBaseClass {
    * @alpha
    */
 
-  async set (program: ArrayBuffer, programModKey: Address = this.signer.wallet.address): Promise<void> {
+  async set (program: ArrayBuffer): Promise<void> {
     try {
 
       // Convert ArrayBuffer to Uint8Array and then to Hex
       const programHex = util.u8aToHex(new Uint8Array(program))
       // Create the transaction
       const tx: SubmittableExtrinsic<'promise'> = this.substrate.tx.constraints.updateV2Constraints(
+        this.signer.wallet.address,
         programHex,
-        programModKey,
       )
       // Send the transaction and wait for the confirmation event.
       await this.sendAndWaitFor(tx, false, {
