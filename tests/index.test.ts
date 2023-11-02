@@ -2,7 +2,6 @@ import { readFileSync } from 'fs'
 import { SignatureLike } from '@ethersproject/bytes'
 import Entropy from '../src'
 import {
-  sleep,
   disconnect,
   charlieSeed,
   charlieAddress,
@@ -15,7 +14,7 @@ import {
 import { ethers } from 'ethers'
 import { keccak256 } from 'ethers/lib/utils'
 import { buf2hex, stripHexPrefix } from '../src/utils'
-import { spawn } from 'child_process'
+import { spawnSync } from 'child_process'
 
 describe('Core Tests', () => {
   let entropy: Entropy
@@ -23,16 +22,15 @@ describe('Core Tests', () => {
   beforeAll(async () => {
     jest.setTimeout(300000); // Give us five minutes to spin up.
     try {
-      spawn(
+      spawnSync(
         "docker",
-        [ "compose", "--file", "tests/docker-compose.yaml", "up" ],
+        [ "compose", "--file", "tests/docker-compose.yaml", "up", "--detach" ],
         { shell: true, stdio: 'inherit' } // Use shell's search path.
       )
     } catch (e) {
       console.error('Error in beforeAll: ', e.message)
     }
 
-    await sleep(120000)
     entropy = new Entropy({ seed: charlieStashSeed })
     await entropy.ready
   })
@@ -40,7 +38,7 @@ describe('Core Tests', () => {
   afterAll(async () => {
     try {
       await disconnect(entropy.substrate)
-      spawn(
+      spawnSync(
         "docker",
         [ "compose", "--file", "tests/docker-compose.yaml", "down" ],
         { shell: true, stdio: 'inherit' }
