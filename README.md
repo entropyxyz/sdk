@@ -104,7 +104,7 @@ Throws if the address being registered is already in use.
 
 ___
 
-#### ProgramMananger
+## ProgramMananger
 
 - [get](programs.default.md#get)
 - [handleFreeTx](programs.default.md#handlefreetx)
