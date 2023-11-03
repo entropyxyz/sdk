@@ -80,9 +80,11 @@ Throws if the address being registered is already in use.
 
  const address = entropy.keys?.wallet.address
  console.log({ address });
+
   // Can do a pre-check to see if the address is registered 
 
  const isRegistered = await entropy.registrationManager.checkRegistrationStatus(address)
+
   // Register the address
 
  await entropy.register({
@@ -102,7 +104,7 @@ Throws if the address being registered is already in use.
 
 ___
 
-### Methods
+#### ProgramMananger
 
 - [get](programs.default.md#get)
 - [handleFreeTx](programs.default.md#handlefreetx)
@@ -318,11 +320,9 @@ for the associated account. After preparing the transaction, it's sent to Substr
  console.log('Retrieved program (hex):', processedProgramHex);
 ```
 
-
 #### Defined in
 
 [programs/index.ts:63](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/programs/index.ts#L63)
-
 
 ### sign
 
