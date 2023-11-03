@@ -18,25 +18,18 @@ npm:
 ```js
 import Entropy from '@entropyxyz/entropy-js'
 
-opts = {}
+// initialize entropy 
 
-const entropy = new Entropy(opts)
+const seed = "SEED"
+const endpoint = "endpoint"
 
-const address = entropy.keys.wallet.address
-
-entropy.isRegistered(address)
-
-entropy.register({
-  keyVisibility: 'Permissioned',
-  freeTx: false,
-})
-
-entropy
+const entropy = new Entropy({ seed, endpoint });
+await entropy.ready;
 
 ```
 
 ### Methods
-### isRegistered
+### Register
 
 ▸ **init**(address): `Promise`\<`boolean`\>
 
@@ -44,7 +37,7 @@ entropy
 
 | Name | Type |
 | :------ | :------ |
-| `adresss` | Adress |
+| `address` | Address |
 
 #### Returns
 
@@ -82,11 +75,48 @@ Throws if the provided address format is not compatible.
 
 Throws if the address being registered is already in use.
 
+#### Example(s)
+```js
+
+ const address = entropy.keys?.wallet.address
+ console.log({ address });
+  // Can do a pre-check to see if the address is registered 
+
+ const isRegistered = await entropy.registrationManager.checkRegistrationStatus(address)
+  // Register the address
+
+ await entropy.register({
+        address,
+        keyVisibility: 'Permissioned',
+        freeTx: false,
+      })
+
+  // check post-registration    
+
+ const postRegistrationStatus = await entropy.isRegistered(address)
+ ```     
+
 #### Defined in
 
 [index.ts:103](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/index.ts#L103)
 
 ___
+
+### programs
+
+#### Examples(s)
+
+```js
+   // set program
+ const userProgram: any = 
+ await entropy.programs.set(userProgram);
+ console.log("Program set successfully.");
+   // get program
+ const fetchedProgram: ArrayBuffer = await entropy.programs.get(entropy.keys?.wallet.address);
+ const processedProgram = preprocessAfterGet(fetchedProgram);
+ const processedProgramHex = buf2hex(processedProgram);
+ console.log('Retrieved program (hex):', processedProgramHex);
+```
 
 ### sign
 
@@ -126,6 +156,7 @@ A promise which, when resolved, produces a Uint8Array with the signature of the 
 
 Throws an error if there's an error at any stage in the signing routine.
 
+
 #### Defined in
 
 [index.ts:163](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/index.ts#L163)
@@ -160,6 +191,15 @@ A promise that returns the transaction signature. Note that the structure
 **`Throws`**
 
 Will throw an error if the transaction type does not have a corresponding adapter.
+
+#### Examples(s)
+
+```js
+  const signature: Uint8Array = await entropy.sign({
+    sigRequestHash: serializedTx,
+  })
+
+```
 
 #### Defined in
 
