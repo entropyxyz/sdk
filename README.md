@@ -6,7 +6,7 @@ DISCLAMER: VERSIONS OF ENTROPY-JS BEFORE VERSION 0.1.2 MAY HAVE BREAKING CHANGES
 `entropy-js` is a collection of TS packages that allow you to interact with the Entropy network. This is currently in **alpha** release.
 
 
-### Instillation
+### Installation
 yarn:
 ```yarn add @entropyxyz/entropy-js```
 
