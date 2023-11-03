@@ -23,8 +23,8 @@ import Entropy from '@entropyxyz/entropy-js'
 const seed = "SEED"
 const endpoint = "endpoint"
 
-const entropy = new Entropy({ seed, endpoint });
-await entropy.ready;
+const entropy = new Entropy({ seed, endpoint })
+await entropy.ready
 
 ```
 
@@ -77,13 +77,13 @@ Throws if the address being registered is already in use.
 #### Example(s)
 ```js
  const address = entropy.keys?.wallet.address
- console.log({ address });
+ console.log({ address })
 
-  // Can do a pre-check to see if the address is registered 
+// Can do a pre-check to see if the address is registered 
 
  const isRegistered = await entropy.registrationManager.checkRegistrationStatus(address)
 
-  // Register the address
+// Register the address
 
  await entropy.register({
         address,
@@ -91,7 +91,7 @@ Throws if the address being registered is already in use.
         freeTx: false,
       })
 
-  // Check post-registration    
+// Check post-registration    
 
  const postRegistrationStatus = await entropy.isRegistered(address)
  ```     
@@ -284,8 +284,8 @@ for the associated account. After preparing the transaction, it's sent to Substr
 ```js
 // set program
  const userProgram: any = 
- await entropy.programs.set(userProgram);
- console.log("Program set successfully.");
+ await entropy.programs.set(userProgram)
+ console.log("Program set successfully.")
 ```
 
 #### Defined in
