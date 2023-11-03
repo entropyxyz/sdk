@@ -1,9 +1,22 @@
 const { cryptoWaitReady, decodeAddress, signatureVerify } = require('@polkadot/util-crypto');
 import { u8aToHex } from '@polkadot/util'
 
+interface ResolveType {
+  (value?: void | PromiseLike<void>): void
+}
+
+interface ResObjectType {
+  resolve: ResolveType
+}
+
 let isImported = false
 let cryptoLib
-const res: any = {}
+const res: ResObjectType = {
+  resolve: () => {
+    throw new Error('resolve function not yet set')
+  }
+}
+
 loadCryptoLib()
 
 export interface CryptoLib {
@@ -60,6 +73,6 @@ export async function loadCryptoLib () {
   }
   await cryptoWaitReady()
   isImported = true
-  res.resolve(true)
+  res.resolve()
   return cryptoLib
 }

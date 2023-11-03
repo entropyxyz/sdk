@@ -1,13 +1,14 @@
 import { decodeAddress, encodeAddress } from '@polkadot/keyring'
 import { hexToU8a, isHex } from '@polkadot/util'
 import { ApiPromise, WsProvider } from '@polkadot/api'
+import { Address } from '../types'
 
 export function stripHexPrefix (str: string): string {
   if (str.startsWith('0x')) return str.slice(2)
   return str
 }
 
-export function isValidSubstrateAddress (address: any) {
+export function isValidSubstrateAddress (address: Address) {
   try {
     encodeAddress(isHex(address) ? hexToU8a(address) : decodeAddress(address))
 
@@ -43,7 +44,7 @@ export async function getApi (): Promise<ApiFactory> {
   }
 }
 
-export async function sendHttpPost (url: string, data: any): Promise<any> {
+export async function sendHttpPost (url: string, data: string): Promise<string> {
   const headers = {
     'Content-Type': 'application/json',
   }
@@ -124,9 +125,6 @@ export function stringToU8Array (str: string): Uint8Array {
   return new TextEncoder().encode(str)
 }
 
-export function decodeVecU8ToArrayBuffer (data: any): Uint8Array {
-  return new Uint8Array(data)
-}
 
 export function decodeArrayBufferToString (buf: ArrayBuffer): string {
   return new TextDecoder().decode(new Uint8Array(buf))

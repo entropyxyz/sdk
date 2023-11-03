@@ -1,4 +1,5 @@
 import { readFileSync } from 'fs'
+import { SignatureLike } from '@ethersproject/bytes'
 import Entropy from '../src'
 import {
   spinChain,
@@ -185,12 +186,11 @@ it('should handle registration, program management, and signing', async () => {
       whitelisted_test_tx_req
     )
 
-    const signature: any = await entropy.sign({
+    console.log('pre signature')
+    const signature: Uint8Array = await entropy.sign({
       sigRequestHash: serializedTx,
     })
-
     // encoding signature
-    console.log('pre signature')
     expect(signature.length).toBe(65)
     console.log('post signature')
     // await disconnect(charlieStashEntropy.substrate)
