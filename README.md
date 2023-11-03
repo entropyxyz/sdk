@@ -28,8 +28,7 @@ await entropy.ready;
 
 ```
 
-### Methods
-### Register
+# Register
 
 ▸ **init**(address): `Promise`\<`boolean`\>
 
@@ -77,7 +76,6 @@ Throws if the address being registered is already in use.
 
 #### Example(s)
 ```js
-
  const address = entropy.keys?.wallet.address
  console.log({ address });
 
@@ -93,7 +91,7 @@ Throws if the address being registered is already in use.
         freeTx: false,
       })
 
-  // check post-registration    
+  // Check post-registration    
 
  const postRegistrationStatus = await entropy.isRegistered(address)
  ```     
@@ -104,7 +102,7 @@ Throws if the address being registered is already in use.
 
 ___
 
-## ProgramMananger
+# ProgramMananger
 
 - [get](programs.default.md#get)
 - [handleFreeTx](programs.default.md#handlefreetx)
@@ -113,7 +111,7 @@ ___
 
 ## Constructors
 
-### constructor
+
 
 • **new default**(`«destructured»`): [`default`](programs.default.md)
 
@@ -200,6 +198,16 @@ If no program is defined for the given account.
 This method communicates with substrate to fetch bytecode associated with an account. 
 The response is then processed and converted to an ArrayBuffer before being returned
 
+#### Example(s)
+```js 
+ // get program
+ const fetchedProgram: ArrayBuffer = await entropy.programs.get(entropy.keys?.wallet.address)
+
+ const processedProgram = preprocessAfterGet(fetchedProgram)
+ const processedProgramHex = buf2hex(processedProgram)
+
+ console.log('Retrieved program (hex):', processedProgramHex)
+```
 #### Defined in
 
 [programs/index.ts:39](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/programs/index.ts#L39)
@@ -243,41 +251,6 @@ If the dry run fails or there's insufficient electricity (zaps).
 #### Defined in
 
 [extrinsic/index.ts:99](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/extrinsic/index.ts#L99)
-
-___
-
-### sendAndWaitFor
-
-▸ **sendAndWaitFor**(`call`, `freeTx?`, `filter`): `Promise`\<`EventRecord`\>
-
-Sends an extrinsic and waits for a specific event or rejects with an error.
-
-#### Parameters
-
-| Name | Type | Default value | Description |
-| :------ | :------ | :------ | :------ |
-| `call` | `SubmittableExtrinsic`\<``"promise"``, `ISubmittableResult`\> | `undefined` | The extrinsic call to send. |
-| `freeTx` | `boolean` | `true` | Optional. Flag indicating if the transaction should be free (default: true). |
-| `filter` | [`EventFilter`](../interfaces/types.EventFilter.md) | `undefined` | An event filter to wait for. |
-
-#### Returns
-
-`Promise`\<`EventRecord`\>
-
-A promise that resolves with the filtered event record.
-
-**`Throws`**
-
-Will reject the promise if a dispatch error occurs or the filtered event is not found.
-
-#### Inherited from
-
-[default](extrinsic.default.md).[sendAndWaitFor](extrinsic.default.md#sendandwaitfor)
-
-#### Defined in
-
-[extrinsic/index.ts:45](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/extrinsic/index.ts#L45)
-
 ___
 
 ### set
@@ -309,22 +282,19 @@ for the associated account. After preparing the transaction, it's sent to Substr
 #### Examples(s)
 
 ```js
-   // set program
+// set program
  const userProgram: any = 
  await entropy.programs.set(userProgram);
  console.log("Program set successfully.");
-   // get program
- const fetchedProgram: ArrayBuffer = await entropy.programs.get(entropy.keys?.wallet.address);
- const processedProgram = preprocessAfterGet(fetchedProgram);
- const processedProgramHex = buf2hex(processedProgram);
- console.log('Retrieved program (hex):', processedProgramHex);
 ```
 
 #### Defined in
 
 [programs/index.ts:63](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/programs/index.ts#L63)
 
-### sign
+___
+
+# sign
 
 ▸ **sign**(`params`): `Promise`\<`Uint8Array`\>
 
