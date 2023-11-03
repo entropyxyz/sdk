@@ -29,7 +29,6 @@ export interface SigOps {
   type?: string
 }
 
-export type SigAndProof = string[]
 
 export default class SignatureRequestManager {
   adapters: { [key: string | number]: Adapter }
@@ -147,7 +146,7 @@ export default class SignatureRequestManager {
     )
   }
 
-  async submitTransactionRequest (txReq: Array<EncMsg>): Promise<SigAndProof[]> {
+  async submitTransactionRequest (txReq: Array<EncMsg>): Promise<string[][]> {
     return Promise.all(
       txReq.map(async (message: EncMsg) => {
         const parsedMsg = JSON.parse(message.msg)
@@ -159,7 +158,7 @@ export default class SignatureRequestManager {
         const sigProof = await sendHttpPost(
           `http://${message.url}/user/sign_tx`,
           JSON.stringify(payload)
-        )
+        ) as string[]
         sigProof.push(message.tss_account)
         return sigProof
       })
@@ -205,7 +204,7 @@ export default class SignatureRequestManager {
     return validatorsInfo
   }
 
-  async verifiyAndReduceSignatures (sigsAndProofs: SigAndProof[]): Promise<string> {
+  async verifiyAndReduceSignatures (sigsAndProofs: Array<string[]>): Promise<string> {
     const seperatedSigsAndProofs = sigsAndProofs.reduce((a, sp) => {
       if (!sp || !sp.length) return a
       // the place holder is for holding an index. in the future we should notify
