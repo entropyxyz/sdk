@@ -165,8 +165,6 @@ export default class SignatureRequestManager {
     )
   }
 
-  async getValidators (): Promise<>
-
   async pickValidators (sigRequest: string): Promise<ValidatorInfo[]> {
     const entries = await this.substrate.query.stakingExtension.signingGroups.entries()
     const stashKeys = entries.map((group) => {
