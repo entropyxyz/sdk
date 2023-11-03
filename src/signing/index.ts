@@ -78,7 +78,6 @@ export default class SignatureRequestManager {
       strippedsigRequestHash,
     })
     const sigs = await this.submitTransactionRequest(txRequests)
-    console.log('sigs', sigs)
     const sig = await this.verifiyAndReduceSignatures(sigs)
     return Uint8Array.from(atob(sig), (c) => c.charCodeAt(0))
   }
@@ -170,8 +169,6 @@ export default class SignatureRequestManager {
 
   async pickValidators (sigRequest: string): Promise<ValidatorInfo[]> {
     const entries = await this.substrate.query.stakingExtension.signingGroups.entries()
-    console.log('entries', entries.toJSON())
-    console.log('entries', entries)
     const stashKeys = entries.map((group) => {
       const keyGroup = group[1]
       // omg polkadot type gen is a head ache
@@ -198,7 +195,6 @@ export default class SignatureRequestManager {
         // @ts-ignore
         const { x25519PublicKey, endpoint, tssAccount } = validator.toHuman()
         //test
-        console.log()
         return {
           x25519_public_key: x25519PublicKey,
           ip_address: endpoint,
