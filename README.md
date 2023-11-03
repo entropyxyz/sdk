@@ -283,7 +283,7 @@ for the associated account. After preparing the transaction, it's sent to Substr
 
 ```js
 // set program
- const userProgram: any = 
+ const userProgram: any = <insert program>
  await entropy.programs.set(userProgram)
  console.log("Program set successfully.")
 ```
