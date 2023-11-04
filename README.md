@@ -1,6 +1,6 @@
 # entropy-js
 
-DISCLAMER: VERSIONS OF ENTROPY-JS BEFORE VERSION 0.1.2 MAY HAVE BREAKING CHANGES BETWEEN VERSIONS THIS PROJECT IS UNSTABLE TILL THEN
+![EN-Backgrounds-2023-7-5_11-35-31](https://github.com/entropyxyz/entropy-js/assets/62079777/6a4fb41c-7ff7-420f-8efd-84f42f23c688)
 
 
 `entropy-js` is a collection of TS packages that allow you to interact with the Entropy network. This is currently in **alpha** release.
