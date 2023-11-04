@@ -82,6 +82,7 @@ Throws if the address being registered is already in use.
 // Can do a pre-check to see if the address is registered 
 
  const isRegistered = await entropy.registrationManager.checkRegistrationStatus(address)
+ console.log(isRegistered)
 
 // Register the address
 
@@ -94,6 +95,8 @@ Throws if the address being registered is already in use.
 // Check post-registration    
 
  const postRegistrationStatus = await entropy.isRegistered(address)
+ console.log(postRegistrationStatus)
+
  ```     
 
 #### Defined in
@@ -202,11 +205,6 @@ The response is then processed and converted to an ArrayBuffer before being retu
 ```js 
  // get program
  const fetchedProgram: ArrayBuffer = await entropy.programs.get(entropy.keys?.wallet.address)
-
- const processedProgram = preprocessAfterGet(fetchedProgram)
- const processedProgramHex = buf2hex(processedProgram)
-
- console.log('Retrieved program (hex):', processedProgramHex)
 ```
 #### Defined in
 
@@ -282,8 +280,15 @@ for the associated account. After preparing the transaction, it's sent to Substr
 #### Examples(s)
 
 ```js
-// set program
- const userProgram: any = `${program}` // insert program 
+/**
+ * Replace 'program' with the actual program ArrayBuffer, variable, or path.
+ * For example, if you have the program in a file named 'userProgram.js', it would be:
+ * const userProgram: any = require('./path_to/userProgram.js');
+ * If you have an ArrayBuffer or binary data, it could be directly assigned as follows:
+ * const userProgram: ArrayBuffer = new ArrayBuffer() 
+ */
+
+ const userProgram = program
  await entropy.programs.set(userProgram)
  console.log("Program set successfully.")
 ```
