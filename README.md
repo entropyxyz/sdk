@@ -8,10 +8,14 @@
 
 ### Installation
 yarn:
-```yarn add @entropyxyz/entropy-js```
+```js
+yarn add @entropyxyz/entropy-js
+```
 
 npm:
-```npm i @entropyxyz/entropy-js --save```
+```js
+npm i @entropyxyz/entropy-js --save
+```
 
 ### Usage
 
