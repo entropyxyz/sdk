@@ -1,42 +1,38 @@
 # entropy-js
 
-DISCLAMER: VERSIONS OF ENTROPY-JS BEFORE VERSION 0.1.2 MAY HAVE BREAKING CHANGES BETWEEN VERSIONS THIS PROJECT IS UNSTABLE TILL THEN
+![EN-Backgrounds-2023-7-5_11-35-31](https://github.com/entropyxyz/entropy-js/assets/62079777/6a4fb41c-7ff7-420f-8efd-84f42f23c688)
 
 
 `entropy-js` is a collection of TS packages that allow you to interact with the Entropy network. This is currently in **alpha** release.
 
 
-### Instillation
+### Installation
 yarn:
-```yarn add @entropyxyz/entropy-js```
+```js
+yarn add @entropyxyz/entropy-js
+```
 
 npm:
-```npm i @entropyxyz/entropy-js --save```
+```js
+npm i @entropyxyz/entropy-js --save
+```
 
 ### Usage
 
 ```js
 import Entropy from '@entropyxyz/entropy-js'
 
-opts = {}
+// initialize entropy 
 
-const entropy = new Entropy(opts)
+const seed = "SEED"
+const endpoint = "endpoint"
 
-const address = entropy.keys.wallet.address
-
-entropy.isRegistered(address)
-
-entropy.register({
-  keyVisibility: 'Permissioned',
-  freeTx: false,
-})
-
-entropy
+const entropy = new Entropy({ seed, endpoint })
+await entropy.ready
 
 ```
 
-### Methods
-### isRegistered
+# Register
 
 ▸ **init**(address): `Promise`\<`boolean`\>
 
@@ -44,7 +40,7 @@ entropy
 
 | Name | Type |
 | :------ | :------ |
-| `adresss` | Adress |
+| `address` | Address |
 
 #### Returns
 
@@ -82,13 +78,232 @@ Throws if the provided address format is not compatible.
 
 Throws if the address being registered is already in use.
 
+#### Example(s)
+```js
+ const address = entropy.keys?.wallet.address
+ console.log({ address })
+
+// Can do a pre-check to see if the address is registered 
+
+ const isRegistered = await entropy.registrationManager.checkRegistrationStatus(address)
+ console.log(isRegistered)
+
+// Register the address
+
+ await entropy.register({
+        address,
+        keyVisibility: 'Permissioned',
+        freeTx: false,
+      })
+
+// Check post-registration    
+
+ const postRegistrationStatus = await entropy.isRegistered(address)
+ console.log(postRegistrationStatus)
+
+ ```     
+
 #### Defined in
 
 [index.ts:103](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/index.ts#L103)
 
 ___
 
-### sign
+# ProgramMananger
+
+- [get](programs.default.md#get)
+- [handleFreeTx](programs.default.md#handlefreetx)
+- [sendAndWaitFor](programs.default.md#sendandwaitfor)
+- [set](programs.default.md#set)
+
+## Constructors
+
+
+
+• **new default**(`«destructured»`): [`default`](programs.default.md)
+
+Creates an instance of ProgramManager.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `«destructured»` | `Object` |
+| › `signer` | [`Signer`](../interfaces/types.Signer.md) |
+| › `substrate` | `ApiPromise` |
+
+#### Returns
+
+[`default`](programs.default.md)
+
+**`Remarks`**
+
+The constructor initializes the Substrate api and the signer.
+
+#### Overrides
+
+[default](extrinsic.default.md).[constructor](extrinsic.default.md#constructor)
+
+#### Defined in
+
+[programs/index.ts:22](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/programs/index.ts#L22)
+
+## Properties
+
+### signer
+
+• **signer**: [`Signer`](../interfaces/types.Signer.md)
+
+#### Inherited from
+
+[default](extrinsic.default.md).[signer](extrinsic.default.md#signer)
+
+#### Defined in
+
+[extrinsic/index.ts:21](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/extrinsic/index.ts#L21)
+
+___
+
+### substrate
+
+• **substrate**: `ApiPromise`
+
+#### Inherited from
+
+[default](extrinsic.default.md).[substrate](extrinsic.default.md#substrate)
+
+#### Defined in
+
+[extrinsic/index.ts:20](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/extrinsic/index.ts#L20)
+
+## Methods
+
+### get
+
+▸ **get**(`deployKey?`): `Promise`\<`ArrayBuffer`\>
+
+Retrieves the program associated with a given deployKey (account)
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `deployKey` | `string` | The account key, defaulting to the signer's wallet address if not provided. |
+
+#### Returns
+
+`Promise`\<`ArrayBuffer`\>
+
+- The program as an ArrayBuffer.
+
+**`Throws`**
+
+If no program is defined for the given account.
+
+**`Remarks`**
+
+This method communicates with substrate to fetch bytecode associated with an account. 
+The response is then processed and converted to an ArrayBuffer before being returned
+
+#### Example(s)
+```js 
+ // get program
+ const fetchedProgram: ArrayBuffer = await entropy.programs.get(entropy.keys?.wallet.address)
+```
+#### Defined in
+
+[programs/index.ts:39](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/programs/index.ts#L39)
+
+___
+
+### handleFreeTx
+
+▸ **handleFreeTx**(`call`): `Promise`\<`SubmittableExtrinsic`\<``"promise"``, `ISubmittableResult`\>\>
+
+Prepares a free transaction, performs a dry run, and ensures its viability.
+
+In this system:
+- **Electricity** represents an energy unit allowing certain transactions to bypass traditional fees.
+- An account's **Zaps** represent the available electricity it has. Consuming zaps results in transaction execution without fees.
+- **Batteries** are rechargeable units in an account that generate zaps over time.
+
+This method leverages the `callUsingElectricity` from the `freeTx` module to create a transaction that utilizes zaps.
+A dry run is then performed to ensure its success when broadcasted.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `call` | `SubmittableExtrinsic`\<``"promise"``, `ISubmittableResult`\> | The extrinsic intended for execution. |
+
+#### Returns
+
+`Promise`\<`SubmittableExtrinsic`\<``"promise"``, `ISubmittableResult`\>\>
+
+A promise resolving to a transaction prepared to use electricity.
+
+**`Throws`**
+
+If the dry run fails or there's insufficient electricity (zaps).
+
+#### Inherited from
+
+[default](extrinsic.default.md).[handleFreeTx](extrinsic.default.md#handlefreetx)
+
+#### Defined in
+
+[extrinsic/index.ts:99](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/extrinsic/index.ts#L99)
+___
+
+### set
+
+▸ **set**(`program`): `Promise`\<`void`\>
+
+Sets or updates a program for the current signer's account on Substrate.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `program` | `ArrayBuffer` | The program to be set or updated, as an ArrayBuffer. |
+
+#### Returns
+
+`Promise`\<`void`\>
+
+**`Throws`**
+
+If there's an issue setting the program.
+
+**`Remarks`**
+
+This method takes a program in the form of an ArrayBuffer, converts it (so it can be passed to Substrate), and prepares a transaction to set or update the program 
+for the associated account. After preparing the transaction, it's sent to Substrate, and the method waits for a confirmation event.
+
+
+#### Examples(s)
+
+```js
+/**
+ * Replace 'program' with the actual program ArrayBuffer, variable, or path.
+ * For example, if you have the program in a file named 'userProgram.wasm', it would be:
+ * const userProgram: any = require('./path_to/userProgram.wasm')
+ * If you have an ArrayBuffer or binary data, it could be directly assigned as follows:
+ * const userProgram: ArrayBuffer = new ArrayBuffer() 
+ */
+
+ const userProgram = program
+ await entropy.programs.set(userProgram)
+ console.log("Program set successfully.")
+```
+
+#### Defined in
+
+[programs/index.ts:63](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/programs/index.ts#L63)
+
+___
+
+# sign
 
 ▸ **sign**(`params`): `Promise`\<`Uint8Array`\>
 
@@ -126,6 +341,7 @@ A promise which, when resolved, produces a Uint8Array with the signature of the 
 
 Throws an error if there's an error at any stage in the signing routine.
 
+
 #### Defined in
 
 [index.ts:163](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/index.ts#L163)
@@ -160,6 +376,15 @@ A promise that returns the transaction signature. Note that the structure
 **`Throws`**
 
 Will throw an error if the transaction type does not have a corresponding adapter.
+
+#### Examples(s)
+
+```js
+  const signature: Uint8Array = await entropy.sign({
+    sigRequestHash: serializedTx,
+  })
+
+```
 
 #### Defined in
 
