@@ -12,7 +12,7 @@ jobs:
       - checkout
       - node/install:
           install-yarn: true
-          yarn-version: 4.0.1
+          yarn-version: 1.22.19
           node-version: 19.0.0
       - node/install-packages:
           pkg-manager: yarn
