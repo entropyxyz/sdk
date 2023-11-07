@@ -12,11 +12,12 @@ jobs:
       - checkout
       - node/install:
           install-yarn: true
+          yarn-version: 1.22.19
           node-version: 19.0.0
       - node/install-packages:
           pkg-manager: yarn
       - run:
-          name: Build app.
+          name: Install dependencies.
           command: yarn --frozen-lockfile --network-timeout 180000
       - run:
           name: Remake swap file.
