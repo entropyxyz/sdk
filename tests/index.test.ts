@@ -2,6 +2,7 @@ import { readFileSync } from 'fs'
 import { SignatureLike } from '@ethersproject/bytes'
 import Entropy from '../src'
 import {
+  sleep,
   disconnect,
   charlieSeed,
   charlieAddress,
@@ -31,6 +32,7 @@ describe('Core Tests', () => {
       console.error('Error in beforeAll: ', e.message)
     }
 
+    await sleep(30000) // Give the chain nodes some time to spin up.
     entropy = new Entropy({ seed: charlieStashSeed })
     await entropy.ready
   })
@@ -41,6 +43,11 @@ describe('Core Tests', () => {
       spawnSync(
         "docker",
         [ "compose", "--file", "tests/docker-compose.yaml", "down" ],
+        { shell: true, stdio: 'inherit' }
+      )
+      spawnSync(
+        "docker",
+        [ "compose", "--file", "tests/docker-compose.yaml", "logs" ],
         { shell: true, stdio: 'inherit' }
       )
     } catch (e) {
