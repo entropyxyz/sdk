@@ -13,6 +13,12 @@ name: entropy-local-devnet
 services:
   # In a local devnet setup, for now, this is "Alice's TSS server."
   alice-tss-server:
+    # This pulls from Docker Hub, so you can replace the image tag name
+    # (the string after the `:` in the `image` key) with whatever tag
+    # name you'd like to use. Each Docker image is built from a specific
+    # commit in the `entropy-core` repository. Refer to the wiki page at
+    # https://github.com/entropyxyz/meta/wiki/Git#conventions for details
+    # about how Git tags, branches, and commits refer to image tags here.
     image: entropyxyz/server:vi-ci-builds-for-entropy-js
     ports:
       - "127.0.0.1:3001:3001/tcp"
