@@ -1,10 +1,8 @@
 # entropy-js
 
-![EN-Backgrounds-2023-7-5_11-35-31](https://github.com/entropyxyz/entropy-js/assets/62079777/6a4fb41c-7ff7-420f-8efd-84f42f23c688)
-
-
 `entropy-js` is a collection of TS packages that allow you to interact with the Entropy network. This is currently in **alpha** release.
 
+![EN-Backgrounds-2023-7-5_11-35-31](https://github.com/entropyxyz/entropy-js/assets/62079777/070ebeb6-6c70-4087-b901-9f82ee724dbf)
 
 ### Installation
 yarn:
