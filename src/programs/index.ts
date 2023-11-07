@@ -6,20 +6,18 @@ import { hex2buf } from '../utils'
 import * as util from '@polkadot/util'
 
 /**
- * @alpha
  * @remarks
- * This is the {@link ProgramManager} class
- * A class for interfacing with the V2 Entropy Constraints system
+ * The ProgramManager class provides an interface to interact with the V2 Entropy Programs. 
+ * @alpha
  */
 export default class ProgramManager extends ExtrinsicBaseClass {
   /**
-   * @alpha
-   * @remarks
-   * This function is part of the {@link ProgramManager} class
    * Creates an instance of ProgramManager.
-   *
-   * @param {ApiPromise} substrate - The api object for an Entropy blockchain
-   * @param {Signer} signer - The signer object for the user interfacing with the Entropy blockchain
+   * @param {ApiPromise} substrate - Substrate API object 
+   * @param {Signer} signer - The signer object for the user interfacing with Substrate
+   * @remarks
+   * The constructor initializes the Substrate api and the signer. 
+   * @alpha
    */
   constructor ({ substrate, signer }: { substrate: ApiPromise; signer: Signer }) {
     super({ substrate, signer })
@@ -27,7 +25,16 @@ export default class ProgramManager extends ExtrinsicBaseClass {
     this.signer = signer
   }
 
-  // set up functions in entropy class
+  /**
+   * Retrieves the program associated with a given deployKey (account) 
+   * @param {string} deployKey - The account key, defaulting to the signer's wallet address if not provided.
+   * @returns {Promise<ArrayBuffer>} - The program as an ArrayBuffer.
+   * @throws {Error} If no program is defined for the given account. 
+   * @remarks
+   * This method communicates with substrate to fetch bytecode associated with an account. 
+   * The response is then processed and converted to an ArrayBuffer before being returned 
+   * @alpha
+   */
 
   async get (deployKey = this.signer.wallet.address): Promise<ArrayBuffer> {
     const responseHexOption = await this.substrate.query.constraints.v2Bytecode(
@@ -36,45 +43,33 @@ export default class ProgramManager extends ExtrinsicBaseClass {
     if (responseHexOption.isEmpty) {
       throw new Error('No program defined for the given account.')
     }
-    // omg polkadot type gen is a head ache
     // @ts-ignore: next line
     const responseHex = responseHexOption.unwrap().toHex() // Get the hex representation
     const byteBuffer = hex2buf(responseHex) // Convert hex string to ArrayBuffer
     return byteBuffer
   }
 
-  // // we're assuming/inferring account/key
-  // async set (program: ArrayBuffer): Promise<void> {
-  //   try {
-  //     // note for later
-  //     // https://github.com/entropyxyz/x25519-chacha20poly1305/blob/main/pkg/x25519_chacha20poly1305.js#L73
-
-  //     // ts-ignore
-  //     const tx: SubmittableExtrinsic<'promise'> = this.substrate.tx.constraints.updateV2Constraints(this.signer.wallet.address, new Uint8Array(program))
-
-  //     // Send the transaction and wait for the confirmation event.
-  //     await this.sendAndWaitFor(tx, false, {
-  //       section: 'constraints',
-  //       name: 'ConstraintsV2Updated'
-  //     })
-
-  //   } catch (error) {
-  //     console.error("Error setting program:", error)
-  //     throw error
-  //   }
-  // }
+  /**
+   * Sets or updates a program for the current signer's account on Substrate.
+   * @param {ArrayBuffer} program - The program to be set or updated, as an ArrayBuffer.
+   * @returns {Promise<void>}
+   * @throws {Error} If there's an issue setting the program.
+   * @remarks
+   * This method takes a program in the form of an ArrayBuffer, converts it (so it can be passed to Substrate), and prepares a transaction to set or update the program 
+   * for the associated account. After preparing the transaction, it's sent to Substrate, and the method waits for a confirmation event.
+   * @alpha
+   */
 
   async set (program: ArrayBuffer): Promise<void> {
     try {
+
       // Convert ArrayBuffer to Uint8Array and then to Hex
       const programHex = util.u8aToHex(new Uint8Array(program))
-
       // Create the transaction
       const tx: SubmittableExtrinsic<'promise'> = this.substrate.tx.constraints.updateV2Constraints(
         this.signer.wallet.address,
         programHex
       )
-
       // Send the transaction and wait for the confirmation event.
       await this.sendAndWaitFor(tx, false, {
         section: 'constraints',
