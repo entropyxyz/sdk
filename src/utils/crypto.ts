@@ -21,7 +21,7 @@ loadCryptoLib()
 
 export interface CryptoLib {
   // from polkadotjs
-  verifySignture: (message: string, signature: string, address: string) => Promise<boolean>
+  verifySignature: (message: string, signature: string, address: string) => Promise<boolean>
   // from chacha20poly1305
   from_hex: (input: string) => Uint8Array
   encrypt_and_sign: (
@@ -44,7 +44,7 @@ export const crypto: CryptoLib = new Proxy({} as CryptoLib, {
       if (!cryptoLib) {
         throw new Error('cryptoLib loaded incorrectly')
       }
-      if (key === 'verifySignture') return verifySignture
+      if (key === 'verifySignature') return verifySignature
       if (!cryptoLib[key]) {
         throw new Error(
           `Function "${key as string}" is not available in the crypto library`
@@ -56,11 +56,11 @@ export const crypto: CryptoLib = new Proxy({} as CryptoLib, {
   },
 })
 
-async function verifySignture (signedMessage: string, signature: string, address: string): Promise<boolean> {
+async function verifySignature (message: string, signature: string, address: string): Promise<boolean> {
   const publicKey = decodeAddress(address)
   const hexPublicKey = u8aToHex(publicKey)
 
-  return signatureVerify(signedMessage, signature, hexPublicKey).isValid
+  return signatureVerify(message, signature, hexPublicKey).isValid
 }
 
 export async function loadCryptoLib () {

@@ -77,7 +77,7 @@ export default class SignatureRequestManager {
       strippedsigRequestHash,
     })
     const sigs = await this.submitTransactionRequest(txRequests)
-    const sig = await this.verifiyAndReduceSignatures(sigs)
+    const sig = await this.verifyAndReduceSignatures(sigs)
     return Uint8Array.from(atob(sig), (c) => c.charCodeAt(0))
   }
 
@@ -203,7 +203,7 @@ export default class SignatureRequestManager {
     return validatorsInfo
   }
 
-  async verifiyAndReduceSignatures (sigsAndProofs: Array<string[]>): Promise<string> {
+  async verifyAndReduceSignatures (sigsAndProofs: Array<string[]>): Promise<string> {
     const seperatedSigsAndProofs = sigsAndProofs.reduce((a, sp) => {
       if (!sp || !sp.length) return a
       // the place holder is for holding an index. in the future we should notify
