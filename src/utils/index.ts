@@ -3,6 +3,10 @@ import { hexToU8a, isHex } from '@polkadot/util'
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import { Address } from '../types'
 
+export interface AnyObject {
+  [key: string]: number | string | string[] | AnyObject
+}
+
 export function stripHexPrefix (str: string): string {
   if (str.startsWith('0x')) return str.slice(2)
   return str
@@ -44,7 +48,7 @@ export async function getApi (): Promise<ApiFactory> {
   }
 }
 
-export async function sendHttpPost (url: string, data: string): Promise<string> {
+export async function sendHttpPost (url: string, data: string): Promise<string[] | string | AnyObject> {
   const headers = {
     'Content-Type': 'application/json',
   }

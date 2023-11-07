@@ -18,6 +18,7 @@ Interface for the cryptographic library, detailing core functionality: encryptio
 - [encrypt\_and\_sign](utils_crypto.CryptoLib.md#encrypt_and_sign)
 - [from\_hex](utils_crypto.CryptoLib.md#from_hex)
 - [public\_key\_from\_secret](utils_crypto.CryptoLib.md#public_key_from_secret)
+- [verifySignature](utils_crypto.CryptoLib.md#verifysignature)
 
 ## Properties
 
@@ -45,7 +46,7 @@ Uses the provided secret key for decryption.
 
 #### Defined in
 
-[utils/crypto.ts:40](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/utils/crypto.ts#L40)
+[utils/crypto.ts:46](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/utils/crypto.ts#L46)
 
 ___
 
@@ -74,7 +75,7 @@ Uses the provided secret key for encryption and the server's Diffie-Hellman (DH)
 
 #### Defined in
 
-[utils/crypto.ts:31](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/utils/crypto.ts#L31)
+[utils/crypto.ts:37](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/utils/crypto.ts#L37)
 
 ___
 
@@ -98,7 +99,7 @@ ___
 
 #### Defined in
 
-[utils/crypto.ts:26](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/utils/crypto.ts#L26)
+[utils/crypto.ts:32](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/utils/crypto.ts#L32)
 
 ___
 
@@ -124,4 +125,30 @@ Derives the public key from the provided secret key.
 
 #### Defined in
 
-[utils/crypto.ts:44](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/utils/crypto.ts#L44)
+[utils/crypto.ts:50](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/utils/crypto.ts#L50)
+
+___
+
+### verifySignature
+
+• **verifySignature**: (`message`: `string`, `signature`: `string`, `address`: `string`) => `Promise`\<`boolean`\>
+
+#### Type declaration
+
+▸ (`message`, `signature`, `address`): `Promise`\<`boolean`\>
+
+##### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `message` | `string` |
+| `signature` | `string` |
+| `address` | `string` |
+
+##### Returns
+
+`Promise`\<`boolean`\>
+
+#### Defined in
+
+[utils/crypto.ts:30](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/utils/crypto.ts#L30)

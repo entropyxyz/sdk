@@ -26,4 +26,4 @@
 
 #### Defined in
 
-[keys/index.ts:5](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/keys/index.ts#L5)
+[keys/index.ts:5](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/keys/index.ts#L5)

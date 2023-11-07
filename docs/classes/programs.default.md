@@ -62,7 +62,7 @@ The constructor initializes the Substrate api and the signer.
 
 #### Defined in
 
-[programs/index.ts:22](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/programs/index.ts#L22)
+[programs/index.ts:22](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/programs/index.ts#L22)
 
 ## Properties
 
@@ -76,7 +76,7 @@ The constructor initializes the Substrate api and the signer.
 
 #### Defined in
 
-[extrinsic/index.ts:21](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/extrinsic/index.ts#L21)
+[extrinsic/index.ts:21](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/extrinsic/index.ts#L21)
 
 ___
 
@@ -90,7 +90,7 @@ ___
 
 #### Defined in
 
-[extrinsic/index.ts:20](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/extrinsic/index.ts#L20)
+[extrinsic/index.ts:20](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/extrinsic/index.ts#L20)
 
 ## Methods
 
@@ -123,7 +123,7 @@ The response is then processed and converted to an ArrayBuffer before being retu
 
 #### Defined in
 
-[programs/index.ts:39](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/programs/index.ts#L39)
+[programs/index.ts:39](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/programs/index.ts#L39)
 
 ___
 
@@ -163,7 +163,7 @@ If the dry run fails or there's insufficient electricity (zaps).
 
 #### Defined in
 
-[extrinsic/index.ts:99](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/extrinsic/index.ts#L99)
+[extrinsic/index.ts:99](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/extrinsic/index.ts#L99)
 
 ___
 
@@ -197,7 +197,7 @@ Will reject the promise if a dispatch error occurs or the filtered event is not 
 
 #### Defined in
 
-[extrinsic/index.ts:45](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/extrinsic/index.ts#L45)
+[extrinsic/index.ts:45](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/extrinsic/index.ts#L45)
 
 ___
 
@@ -228,4 +228,4 @@ for the associated account. After preparing the transaction, it's sent to Substr
 
 #### Defined in
 
-[programs/index.ts:63](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/programs/index.ts#L63)
+[programs/index.ts:63](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/programs/index.ts#L63)

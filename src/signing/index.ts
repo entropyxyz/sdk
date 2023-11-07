@@ -1,5 +1,4 @@
 import { ApiPromise } from '@polkadot/api'
-import ExtrinsicBaseClass from '../extrinsic'
 import { Signer } from '../types'
 import { defaultAdapters } from './adapters/default'
 import { Adapter } from './adapters/types'
@@ -32,12 +31,13 @@ export interface SigOps {
 /**
  * `SignatureRequestManager` facilitates signature requests using Polkadot/Substrate API.
  * This manager handles transaction signing using pre-defined adapters and cryptographic utilities.
- * 
+ *
  */
-
-export default class SignatureRequestManager extends ExtrinsicBaseClass {
+export default class SignatureRequestManager {
   adapters: { [key: string | number]: Adapter }
   crypto: CryptoLib
+  signer: Signer
+  substrate: ApiPromise
 
   /**
    * Constructs a new instance of the `SignatureRequestManager` class.
@@ -49,7 +49,8 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
    */
 
   constructor ({ signer, substrate, adapters, crypto }: Config) {
-    super({ signer, substrate })
+    this.signer = signer
+    this.substrate = substrate
     this.crypto = crypto
     this.adapters = {
       ...defaultAdapters,
@@ -62,7 +63,7 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
    *
    * @param txParams - The transaction parameters.
    * @param type - The type of the transaction.
-   * 
+   *
    * @returns A promise that resolves with the signed transaction.
    * @throws {Error} If an adapter for the given transaction type is not found.
    */
@@ -94,7 +95,7 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
    */
   async sign ({ sigRequestHash }: SigOps): Promise<Uint8Array> {
     const strippedsigRequestHash = stripHexPrefix(sigRequestHash)
-    const validatorsInfo: Array<ValidatorInfo> = await this.getArbitraryValidators(
+    const validatorsInfo: Array<ValidatorInfo> = await this.pickValidators(
       strippedsigRequestHash
     )
 
@@ -103,13 +104,13 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
       strippedsigRequestHash,
     })
     const sigs = await this.submitTransactionRequest(txRequests)
-    const sig = sigs[0]
+    const sig = await this.verifyAndReduceSignatures(sigs)
     return Uint8Array.from(atob(sig), (c) => c.charCodeAt(0))
   }
 
   /**
    * Retrieves the current timestamp split into seconds and nanoseconds.
-   * 
+   *
    * @returns An object containing `secs_since_epoch` and `nanos_since_epoch`.
    */
 
@@ -176,6 +177,7 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
           )
 
           return {
+            tss_account: validator.tss_account,
             url: validator.ip_address,
             msg: encryptedMessage,
           }
@@ -188,10 +190,10 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
    * Sends transaction requests and retrieves the associated signatures.
    *
    * @param txReq - An array of encrypted messages to send as transaction requests.
-   * @returns A promise that resolves to an array of signatures in string format.
+   * @returns A promise that resolves to an array of arrays of signatures in string format.
    */
 
-  async submitTransactionRequest (txReq: Array<EncMsg>): Promise<string[]> {
+  async submitTransactionRequest (txReq: Array<EncMsg>): Promise<string[][]> {
     return Promise.all(
       txReq.map(async (message: EncMsg) => {
         const parsedMsg = JSON.parse(message.msg)
@@ -200,11 +202,12 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
           msg: stripHexPrefix(parsedMsg.msg),
         }
 
-        const sig = await sendHttpPost(
+        const sigProof = await sendHttpPost(
           `http://${message.url}/user/sign_tx`,
           JSON.stringify(payload)
-        )
-        return sig[0]
+        ) as string[]
+        sigProof.push(message.tss_account)
+        return sigProof
       })
     )
   }
@@ -215,18 +218,16 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
    * @param sigRequest - The provided signature request.
    * @returns A promise that resolves to an array of information related to validators.
    */
-
-  async getArbitraryValidators (sigRequest: string): Promise<ValidatorInfo[]> {
-    const stashKeys = (
-      await this.substrate.query.stakingExtension.signingGroups.entries()
-    ).map((group) => {
-      const stashKeys = group[1]
+  async pickValidators (sigRequest: string): Promise<ValidatorInfo[]> {
+    const entries = await this.substrate.query.stakingExtension.signingGroups.entries()
+    const stashKeys = entries.map((group) => {
+      const keyGroup = group[1]
       // omg polkadot type gen is a head ache
       // @ts-ignore: next line
-      const index = parseInt(sigRequest, 16) % stashKeys.unwrap().length
+      const index = parseInt(sigRequest, 16) % keyGroup.unwrap().length
       // omg polkadot type gen is a head ache
       // @ts-ignore: next line
-      return stashKeys.unwrap()[index]
+      return keyGroup.unwrap()[index]
     })
 
     const rawValidatorInfo = await Promise.all(
@@ -245,7 +246,6 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
         // @ts-ignore
         const { x25519PublicKey, endpoint, tssAccount } = validator.toHuman()
         //test
-
         return {
           x25519_public_key: x25519PublicKey,
           ip_address: endpoint,
@@ -255,5 +255,39 @@ export default class SignatureRequestManager extends ExtrinsicBaseClass {
     )
 
     return validatorsInfo
+  }
+
+  /**
+   * Verifies the signatures from the tss_nodes
+   *
+   * @param string[][] - An array of encrypted messages to send as transaction requests.
+   * @returns string - the first valid signature
+   */
+  async verifyAndReduceSignatures (sigsAndProofs: string[][]): Promise<string> {
+    const seperatedSigsAndProofs = sigsAndProofs.reduce((a, sp) => {
+      if (!sp || !sp.length) return a
+      // the place holder is for holding an index. in the future we should notify
+      // the nodes or something about faulty validators
+      // this is really just good house keeping because you never know?
+      a.sigs.push(sp[0] || 'place-holder')
+      a.proofs.push(sp[1] || 'place-holder')
+      a.addresses.push(sp[2] || 'place-holder')
+      return a
+    }, { sigs: [], proofs: [], addresses: [] })
+    // find a valid signature
+    const sigMatch = seperatedSigsAndProofs.sigs.find((s) => s !== 'place-holder')
+    if (!sigMatch) throw new Error('Did not receive a valid signature')
+    // use valid signature to see if they all match
+    const allSigsMatch = seperatedSigsAndProofs.sigs.every((s) => s === sigMatch )
+    if (!allSigsMatch) throw new Error('All signatures do not match')
+    // in the future. notify network of compromise?
+    // check to see if the tss_account signed the proof
+    const validated = await Promise.all(seperatedSigsAndProofs.proofs.map(async (proof: string, index: number): Promise<boolean> => {
+      return await this.crypto.verifySignature(seperatedSigsAndProofs.sigs[index], proof, seperatedSigsAndProofs.addresses[index])
+    }))
+    const first = validated.findIndex((v) => v)
+    if (first === -1) throw new Error('Can not validate the identity of any validator')
+
+    return seperatedSigsAndProofs.sigs[first]
   }
 }
