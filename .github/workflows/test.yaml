@@ -1,0 +1,33 @@
+---
+name: Build, lint, test
+run-name: Test JS SDK (started by @${{ github.triggering_actor }})
+
+on:
+  pull_request:
+    types:
+      - opened
+
+jobs:
+  build_test_lint:
+    name: Build, test, and lint
+    permissions:
+      contents: read
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 19.0.0
+      - name: Build
+        run: yarn --frozen-lockfile --network-timeout 180000
+      - name: Lint
+        run: yarn run lint
+      - name: Bundle
+        run: yarn run bundle
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_CI_TOKEN }}
+      - name: Test
+        run: yarn run test
