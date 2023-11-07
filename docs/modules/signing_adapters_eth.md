@@ -22,7 +22,7 @@
 
 #### Defined in
 
-[signing/adapters/eth.ts:17](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/signing/adapters/eth.ts#L17)
+[signing/adapters/eth.ts:17](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/signing/adapters/eth.ts#L17)
 
 ___
 
@@ -32,7 +32,7 @@ ___
 
 #### Defined in
 
-[signing/adapters/eth.ts:16](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/signing/adapters/eth.ts#L16)
+[signing/adapters/eth.ts:16](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/signing/adapters/eth.ts#L16)
 
 ## Functions
 
@@ -52,7 +52,7 @@ ___
 
 #### Defined in
 
-[signing/adapters/eth.ts:11](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/signing/adapters/eth.ts#L11)
+[signing/adapters/eth.ts:11](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/signing/adapters/eth.ts#L11)
 
 ___
 
@@ -72,4 +72,4 @@ ___
 
 #### Defined in
 
-[signing/adapters/eth.ts:4](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/signing/adapters/eth.ts#L4)
+[signing/adapters/eth.ts:4](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/signing/adapters/eth.ts#L4)

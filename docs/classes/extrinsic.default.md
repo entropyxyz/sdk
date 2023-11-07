@@ -15,8 +15,6 @@ Allows the user to send extrinsics and automatically handles errors, events, and
 
   ↳ [`default`](registration.default.md)
 
-  ↳ [`default`](signing.default.md)
-
 ## Table of contents
 
 ### Constructors
@@ -55,7 +53,7 @@ Initializes a new instance of the `ExtrinsicBaseClass`.
 
 #### Defined in
 
-[extrinsic/index.ts:30](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/extrinsic/index.ts#L30)
+[extrinsic/index.ts:30](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/extrinsic/index.ts#L30)
 
 ## Properties
 
@@ -65,7 +63,7 @@ Initializes a new instance of the `ExtrinsicBaseClass`.
 
 #### Defined in
 
-[extrinsic/index.ts:21](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/extrinsic/index.ts#L21)
+[extrinsic/index.ts:21](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/extrinsic/index.ts#L21)
 
 ___
 
@@ -75,7 +73,7 @@ ___
 
 #### Defined in
 
-[extrinsic/index.ts:20](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/extrinsic/index.ts#L20)
+[extrinsic/index.ts:20](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/extrinsic/index.ts#L20)
 
 ## Methods
 
@@ -111,7 +109,7 @@ If the dry run fails or there's insufficient electricity (zaps).
 
 #### Defined in
 
-[extrinsic/index.ts:99](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/extrinsic/index.ts#L99)
+[extrinsic/index.ts:99](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/extrinsic/index.ts#L99)
 
 ___
 
@@ -141,4 +139,4 @@ Will reject the promise if a dispatch error occurs or the filtered event is not 
 
 #### Defined in
 
-[extrinsic/index.ts:45](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/extrinsic/index.ts#L45)
+[extrinsic/index.ts:45](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/extrinsic/index.ts#L45)

@@ -63,7 +63,7 @@ await entropy.register({ address, keyVisibility: 'Permissioned', freeTx: false }
 
 #### Defined in
 
-[index.ts:80](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/index.ts#L80)
+[index.ts:80](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/index.ts#L80)
 
 ## Properties
 
@@ -87,7 +87,7 @@ await entropy.register({ address, keyVisibility: 'Permissioned', freeTx: false }
 
 #### Defined in
 
-[index.ts:41](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/index.ts#L41)
+[index.ts:41](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/index.ts#L41)
 
 ___
 
@@ -111,7 +111,7 @@ ___
 
 #### Defined in
 
-[index.ts:40](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/index.ts#L40)
+[index.ts:40](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/index.ts#L40)
 
 ___
 
@@ -135,7 +135,7 @@ ___
 
 #### Defined in
 
-[index.ts:47](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/index.ts#L47)
+[index.ts:47](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/index.ts#L47)
 
 ___
 
@@ -145,7 +145,7 @@ ___
 
 #### Defined in
 
-[index.ts:45](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/index.ts#L45)
+[index.ts:45](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/index.ts#L45)
 
 ___
 
@@ -155,7 +155,7 @@ ___
 
 #### Defined in
 
-[index.ts:48](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/index.ts#L48)
+[index.ts:48](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/index.ts#L48)
 
 ___
 
@@ -167,7 +167,7 @@ A promise that resolves once chacha20poly1305 cryptoLib has been loaded
 
 #### Defined in
 
-[index.ts:44](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/index.ts#L44)
+[index.ts:44](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/index.ts#L44)
 
 ___
 
@@ -177,7 +177,7 @@ ___
 
 #### Defined in
 
-[index.ts:46](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/index.ts#L46)
+[index.ts:46](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/index.ts#L46)
 
 ___
 
@@ -187,7 +187,7 @@ ___
 
 #### Defined in
 
-[index.ts:49](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/index.ts#L49)
+[index.ts:49](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/index.ts#L49)
 
 ___
 
@@ -197,7 +197,7 @@ ___
 
 #### Defined in
 
-[index.ts:51](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/index.ts#L51)
+[index.ts:51](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/index.ts#L51)
 
 ## Methods
 
@@ -217,7 +217,7 @@ ___
 
 #### Defined in
 
-[index.ts:53](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/index.ts#L53)
+[index.ts:53](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/index.ts#L53)
 
 ___
 
@@ -249,7 +249,7 @@ Throws if the address being registered is already in use.
 
 #### Defined in
 
-[index.ts:103](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/index.ts#L103)
+[index.ts:103](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/index.ts#L103)
 
 ___
 
@@ -293,7 +293,7 @@ Throws an error if there's an error at any stage in the signing routine.
 
 #### Defined in
 
-[index.ts:163](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/index.ts#L163)
+[index.ts:163](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/index.ts#L163)
 
 ___
 
@@ -328,4 +328,4 @@ Will throw an error if the transaction type does not have a corresponding adapte
 
 #### Defined in
 
-[index.ts:132](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/index.ts#L132)
+[index.ts:132](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/index.ts#L132)

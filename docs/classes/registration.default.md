@@ -59,7 +59,7 @@ Constructs a new instance of the `RegistrationManager` class.
 
 #### Defined in
 
-[registration/index.ts:29](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/registration/index.ts#L29)
+[registration/index.ts:29](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/registration/index.ts#L29)
 
 ## Properties
 
@@ -73,7 +73,7 @@ Constructs a new instance of the `RegistrationManager` class.
 
 #### Defined in
 
-[extrinsic/index.ts:21](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/extrinsic/index.ts#L21)
+[extrinsic/index.ts:21](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/extrinsic/index.ts#L21)
 
 ___
 
@@ -87,7 +87,7 @@ ___
 
 #### Defined in
 
-[extrinsic/index.ts:20](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/extrinsic/index.ts#L20)
+[extrinsic/index.ts:20](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/extrinsic/index.ts#L20)
 
 ## Methods
 
@@ -111,7 +111,7 @@ A promise which resolves to `true` if the address is registered, otherwise `fals
 
 #### Defined in
 
-[registration/index.ts:106](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/registration/index.ts#L106)
+[registration/index.ts:106](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/registration/index.ts#L106)
 
 ___
 
@@ -151,7 +151,7 @@ If the dry run fails or there's insufficient electricity (zaps).
 
 #### Defined in
 
-[extrinsic/index.ts:99](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/extrinsic/index.ts#L99)
+[extrinsic/index.ts:99](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/extrinsic/index.ts#L99)
 
 ___
 
@@ -179,7 +179,7 @@ If the user is already registered.
 
 #### Defined in
 
-[registration/index.ts:51](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/registration/index.ts#L51)
+[registration/index.ts:51](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/registration/index.ts#L51)
 
 ___
 
@@ -213,4 +213,4 @@ Will reject the promise if a dispatch error occurs or the filtered event is not 
 
 #### Defined in
 
-[extrinsic/index.ts:45](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/extrinsic/index.ts#L45)
+[extrinsic/index.ts:45](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/extrinsic/index.ts#L45)

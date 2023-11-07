@@ -9,6 +9,7 @@
 ### Properties
 
 - [msg](types.EncMsg.md#msg)
+- [tss\_account](types.EncMsg.md#tss_account)
 - [url](types.EncMsg.md#url)
 
 ## Properties
@@ -19,7 +20,17 @@
 
 #### Defined in
 
-[types/index.ts:97](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/types/index.ts#L97)
+[types/index.ts:97](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/types/index.ts#L97)
+
+___
+
+### tss\_account
+
+• **tss\_account**: `string`
+
+#### Defined in
+
+[types/index.ts:99](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/types/index.ts#L99)
 
 ___
 
@@ -29,4 +40,4 @@ ___
 
 #### Defined in
 
-[types/index.ts:98](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/types/index.ts#L98)
+[types/index.ts:98](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/types/index.ts#L98)

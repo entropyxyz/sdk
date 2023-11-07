@@ -26,7 +26,7 @@ A collection of signing adapters.
 
 #### Defined in
 
-[index.ts:17](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/index.ts#L17)
+[index.ts:17](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/index.ts#L17)
 
 ___
 
@@ -38,7 +38,7 @@ local or devnet endpoint for establishing a connection to validators
 
 #### Defined in
 
-[index.ts:15](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/index.ts#L15)
+[index.ts:15](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/index.ts#L15)
 
 ___
 
@@ -50,4 +50,4 @@ seed for wallet initialization.
 
 #### Defined in
 
-[index.ts:13](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/index.ts#L13)
+[index.ts:13](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/index.ts#L13)

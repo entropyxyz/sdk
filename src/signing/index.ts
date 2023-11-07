@@ -257,7 +257,13 @@ export default class SignatureRequestManager {
     return validatorsInfo
   }
 
-  async verifyAndReduceSignatures (sigsAndProofs: Array<string[]>): Promise<string> {
+  /**
+   * Verifies the signatures from the tss_nodes
+   *
+   * @param string[][] - An array of encrypted messages to send as transaction requests.
+   * @returns string - the first valid signature
+   */
+  async verifyAndReduceSignatures (sigsAndProofs: string[][]): Promise<string> {
     const seperatedSigsAndProofs = sigsAndProofs.reduce((a, sp) => {
       if (!sp || !sp.length) return a
       // the place holder is for holding an index. in the future we should notify
@@ -277,7 +283,7 @@ export default class SignatureRequestManager {
     // in the future. notify network of compromise?
     // check to see if the tss_account signed the proof
     const validated = await Promise.all(seperatedSigsAndProofs.proofs.map(async (proof: string, index: number): Promise<boolean> => {
-      return await this.crypto.verifySignture(seperatedSigsAndProofs.sigs[index], proof, seperatedSigsAndProofs.addresses[index])
+      return await this.crypto.verifySignature(seperatedSigsAndProofs.sigs[index], proof, seperatedSigsAndProofs.addresses[index])
     }))
     const first = validated.findIndex((v) => v)
     if (first === -1) throw new Error('Can not validate the identity of any validator')

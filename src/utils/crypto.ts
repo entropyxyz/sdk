@@ -73,6 +73,15 @@ export const crypto: CryptoLib = new Proxy({} as CryptoLib, {
   },
 })
 
+/**
+ * Verifies the signature of a message using a substrate address and returns the result.
+ *
+ * @param message - The message to be verified.
+ * @param signature - The signature to verify.
+ * @param address - The address associated with the public key.
+ * @returns A Promise that resolves to a boolean indicating whether the signature is valid.
+ */
+
 async function verifySignature (message: string, signature: string, address: string): Promise<boolean> {
   const publicKey = decodeAddress(address)
   const hexPublicKey = u8aToHex(publicKey)
