@@ -160,7 +160,21 @@ export default class ProgramManager extends ExtrinsicBaseClass {
     }
   }
 
-  /**
+}
+
+// REGISTRATION TODO: 
+// i think the above implementation will require us to add programModAccount to register
+// before registering we then run setAuthorization on behalf of the sigReqAccount and assign a delegated programModAccount
+// then a programModAccount can set and update programs post register without having to do any set authorization extrinsics
+// may not be possible to set an authorization of a programModAccount on a sigReqAccount before it is even registered to entropy
+
+// PROGRAMS DEPOSIT TODO: 
+// need to expand deposit + setting to include reserveProgramDeposit, unreserveProgramDeposit, updateProgramStorageDeposit based on:
+// https://github.com/entropyxyz/entropy-core/blob/master/pallets/programs/src/lib.rs#L102
+
+// INITIAL ESTIMATE
+
+/**
    * Estimate the transaction fee for updating a program.
    * @param {ArrayBuffer} program - The program to be set or updated, as an ArrayBuffer.
    * @param {string} [programModAccount] - (Optional) The account that will be used to modify the program if different from the signer's account.
@@ -173,34 +187,23 @@ export default class ProgramManager extends ExtrinsicBaseClass {
    * @alpha
    */
 
-  async estimateProgramDepositFee (
-    program: ArrayBuffer,
-    programModAccount?: string,
-    sigReqAccount: string = this.signer.wallet.address
-  ): Promise<string> {
-    try {
-      const accountToUse = programModAccount || sigReqAccount
-      const programHex = util.u8aToHex(new Uint8Array(program))
-      const tx = this.substrate.tx.programs.updateProgram(
-        accountToUse,
-        programHex
-      )
+// async estimateProgramDepositFee (
+//   program: ArrayBuffer,
+//   programModAccount?: string,
+//   sigReqAccount: string = this.signer.wallet.address
+// ): Promise<string> {
+//   try {
+//     const accountToUse = programModAccount || sigReqAccount
+//     const programHex = util.u8aToHex(new Uint8Array(program))
+//     const tx = this.substrate.tx.programs.updateProgram(
+//       accountToUse,
+//       programHex
+//     )
 
-      const paymentInfo = await tx.paymentInfo(accountToUse)
-      return paymentInfo.partialFee.toHuman()
-    } catch (error) {
-      console.error('Error estimating program update fee:', error)
-      throw error
-    }
-  }
-}
-
-// REGISTRATION TODO: 
-// i think the above implementation will require us to add programModAccount to register
-// before registering we then run setAuthorization on behalf of the sigReqAccount and assign a delegated programModAccount
-// then a programModAccount can set and update programs post register without having to do any set authorization extrinsics
-// may not be possible to set an authorization of a programModAccount on a sigReqAccount before it is even registered to entropy
-
-// PROGRAMS DEPOSIT TODO: 
-// need to expand deposit + setting to include reserveProgramDeposit, unreserveProgramDeposit, updateProgramStorageDeposit based on:
-// https://github.com/entropyxyz/entropy-core/blob/master/pallets/programs/src/lib.rs#L102
+//     const paymentInfo = await tx.paymentInfo(accountToUse)
+//     return paymentInfo.partialFee.toHuman()
+//   } catch (error) {
+//     console.error('Error estimating program update fee:', error)
+//     throw error
+//   }
+// }
