@@ -140,7 +140,7 @@ export default class ProgramManager extends ExtrinsicBaseClass {
    * @alpha
    */
 
-  async estimateUpdateProgramFee (
+  async estimateProgramDepositFee (
     program: ArrayBuffer,
     programModificationAccount?: string,
     sigReqAccount: string = this.signer.wallet.address
