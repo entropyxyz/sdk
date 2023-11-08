@@ -1,4 +1,5 @@
 import ExtrinsicBaseClass from '../extrinsic'
+import { Option, Bool } from '@polkadot/types'
 import { ApiPromise } from '@polkadot/api'
 import { Signer } from '../types'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
@@ -7,38 +8,46 @@ import * as util from '@polkadot/util'
 
 /**
  * @remarks
- * The ProgramManager class provides an interface to interact with the V2 Entropy Programs. 
+ * The ProgramManager class provides an interface to interact with Entropy Programs.
  * @alpha
  */
 export default class ProgramManager extends ExtrinsicBaseClass {
+
   /**
    * Creates an instance of ProgramManager.
-   * @param {ApiPromise} substrate - Substrate API object 
+   * @param {ApiPromise} substrate - Substrate API object
    * @param {Signer} signer - The signer object for the user interfacing with Substrate
    * @remarks
-   * The constructor initializes the Substrate api and the signer. 
+   * The constructor initializes the Substrate api and the signer.
    * @alpha
    */
-  constructor ({ substrate, signer }: { substrate: ApiPromise; signer: Signer }) {
+
+  constructor ({
+    substrate,
+    signer,
+  }: {
+    substrate: ApiPromise
+    signer: Signer
+  }) {
     super({ substrate, signer })
     this.substrate = substrate
     this.signer = signer
   }
 
   /**
-   * Retrieves the program associated with a given deployKey (account) 
-   * @param {string} deployKey - The account key, defaulting to the signer's wallet address if not provided.
+   * Retrieves the program associated with a given sigReqAccount (account)
+   * @param {string} sigReqAccount - The account key, defaulting to the signer's wallet address if not provided.
    * @returns {Promise<ArrayBuffer>} - The program as an ArrayBuffer.
-   * @throws {Error} If no program is defined for the given account. 
+   * @throws {Error} If no program is defined for the given account.
    * @remarks
-   * This method communicates with substrate to fetch bytecode associated with an account. 
-   * The response is then processed and converted to an ArrayBuffer before being returned 
+   * This method communicates with Substrate to fetch bytecode associated with an account.
+   * The response is then procesed and converted to an ArrayBuffer before being returned
    * @alpha
    */
 
-  async get (deployKey = this.signer.wallet.address): Promise<ArrayBuffer> {
-    const responseHexOption = await this.substrate.query.constraints.v2Bytecode(
-      deployKey
+  async get (sigReqAccount = this.signer.wallet.address): Promise<ArrayBuffer> {
+    const responseHexOption = await this.substrate.query.programs.v2Bytecode(
+      sigReqAccount
     )
     if (responseHexOption.isEmpty) {
       throw new Error('No program defined for the given account.')
@@ -50,34 +59,143 @@ export default class ProgramManager extends ExtrinsicBaseClass {
   }
 
   /**
-   * Sets or updates a program for the current signer's account on Substrate.
+   * Sets or updates the program of a specified account on Substrate
+   * This method allows the current signer or an authorized account to update the program associated with the signer's account or another specified account.
    * @param {ArrayBuffer} program - The program to be set or updated, as an ArrayBuffer.
-   * @returns {Promise<void>}
-   * @throws {Error} If there's an issue setting the program.
+   * @param {string} [programModificationAccount] - (Optional) The account that will be used to modify the program if different from the signer's account.
+   * @param {string} [sigReqAccount=this.signer.wallet.address] - (Optional) The account for which the program will be set or updated. Defaults to the signer's account.
+   * @returns {Promise<void>} A promise that resolves when the transaction has been included in the block.
+   * @throws {Error} Throws an error if the account is unauthorized or if there's a problem setting the program.
    * @remarks
-   * This method takes a program in the form of an ArrayBuffer, converts it (so it can be passed to Substrate), and prepares a transaction to set or update the program 
-   * for the associated account. After preparing the transaction, it's sent to Substrate, and the method waits for a confirmation event.
+   * This method handles the conversion of a program from an ArrayBuffer to a hex string
+   * It checks for authorization if the programModificationAccount is provided, ensuring that only authorized accounts can update the bytecode.
+   * The transaction is created and sent to Substrate. This method then awaits the confirmation event 'ProgramUpdated' to ensure that the update was successful.
    * @alpha
    */
 
-  async set (program: ArrayBuffer): Promise<void> {
+  async set (
+    program: ArrayBuffer,
+    programModificationAccount?: string, // optional param
+    sigReqAccount: string = this.signer.wallet.address
+  ): Promise<void> {
     try {
-
-      // Convert ArrayBuffer to Uint8Array and then to Hex
+      const accountToUse = programModificationAccount || sigReqAccount
+      if (programModificationAccount) {
+        const isAuthorized = await this.checkAuthorization(
+          sigReqAccount,
+          programModificationAccount
+        )
+        if (!isAuthorized) {
+          throw new Error(
+            `${programModificationAccount} is not authorized to modify the program for ${sigReqAccount}`
+          )
+        }
+      }
       const programHex = util.u8aToHex(new Uint8Array(program))
-      // Create the transaction
-      const tx: SubmittableExtrinsic<'promise'> = this.substrate.tx.constraints.updateV2Constraints(
-        this.signer.wallet.address,
+      const tx: SubmittableExtrinsic<'promise'> = this.substrate.tx.programs.updateProgram(
+        accountToUse,
         programHex
       )
-      // Send the transaction and wait for the confirmation event.
+      // Send the tx and wait for the confirmation event.
       await this.sendAndWaitFor(tx, false, {
-        section: 'constraints',
-        name: 'ConstraintsV2Updated',
+        section: 'programs',
+        name: 'ProgramUpdated',
       })
     } catch (error) {
       console.error('Error setting program:', error)
       throw error
     }
   }
+
+  async checkAuthorization (
+    ownerAccount: string,
+    delegateAccount: string
+  ): Promise<boolean> {
+    // Get authorization status from Substrate
+    const authorizationStatus: Option<Bool> = ((await this.substrate.query.programs.getAuthorizationStatus(
+      ownerAccount,
+      delegateAccount
+    )) as unknown) as Option<Bool>
+
+    // Check if the Option is populated with a value
+    if (authorizationStatus.isSome) {
+    // Unwrap the value to get the actual authorization status
+      return authorizationStatus.unwrap().toJSON()
+    } else {
+    // If no value, it means no authorization has been set, so return false.
+      return false
+    }
+  }
+
+  /**
+   * Estimate the transaction fee for updating a program.
+   * @param {ArrayBuffer} program - The program to be set or updated, as an ArrayBuffer.
+   * @param {string} [programModificationAccount] - (Optional) The account that will be used to modify the program if different from the signer's account.
+   * @param {string} [sigReqAccount=this.signer.wallet.address] - (Optional) The account for which the program will be set or updated. Defaults to the signer's account.
+   * @returns {Promise<string>} - Estimated transaction fee in a human-readable format.
+   * @throws {Error} If there's an issue with estimating the fee.
+   * @remarks
+   * This method creates a simulated transaction to update a program and estimates the fee that would be charged if the program were to be submitted.
+   * Allows the specification of a program modification account separate from the signer's account.
+   * @alpha
+   */
+
+  async estimateUpdateProgramFee (
+    program: ArrayBuffer,
+    programModificationAccount?: string,
+    sigReqAccount: string = this.signer.wallet.address
+  ): Promise<string> {
+    try {
+      const accountToUse = programModificationAccount || sigReqAccount
+      const programHex = util.u8aToHex(new Uint8Array(program))
+      const tx = this.substrate.tx.programs.updateProgram(
+        accountToUse,
+        programHex
+      )
+
+      const paymentInfo = await tx.paymentInfo(accountToUse)
+      return paymentInfo.partialFee.toHuman()
+    } catch (error) {
+      console.error('Error estimating program update fee:', error)
+      throw error
+    }
+  }
+
+  /**
+   * Sets or revokes the authorization for a given account to modify the program associated with another account.
+   * @param {string} sigReqAccount - The account for which the program will be modified.
+   * @param {string} programModificationAccount - The account that is being authorized or revoked.
+   * @param {boolean} isAuthorized - Flag to set or revoke authorization.
+   * @returns {Promise<void>}
+   * @throws {Error} If there's an issue setting the authorization.
+   * @remarks
+   * This method creates a transaction to set or revoke the authorization for an account to modify the program of another account on Substrate.
+   * It uses the `setAuthorization` extrinsic from the Substrate pallet.
+   * @alpha
+   */
+
+  async setAuthorization (
+    sigReqAccount: string,
+    programModificationAccount: string,
+    isAuthorized: boolean
+  ): Promise<void> {
+    try {
+      const tx: SubmittableExtrinsic<'promise'> = this.substrate.tx.programs.setAuthorization(
+        sigReqAccount,
+        programModificationAccount,
+        isAuthorized
+      )
+      await this.sendAndWaitFor(tx, false, {
+        section: 'programs',
+        name: 'AuthorizationSet',
+      })
+    } catch (error) {
+      console.error('Error setting authorization:', error)
+      throw error
+    }
+  }
 }
+
+// i think the above implementation will require us to add programModificationAccount to register
+// before registering we then run setAuthorization on behalf of the sigReqAccount and assign a delegated programModificationAccount
+// then a programModificationAccount can set and update programs post register without having to do any set authorization extrinsics
