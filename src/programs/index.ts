@@ -12,7 +12,6 @@ import * as util from '@polkadot/util'
  * @alpha
  */
 export default class ProgramManager extends ExtrinsicBaseClass {
-
   /**
    * Creates an instance of ProgramManager.
    * @param {ApiPromise} substrate - Substrate API object
@@ -107,6 +106,40 @@ export default class ProgramManager extends ExtrinsicBaseClass {
     }
   }
 
+  /**
+   * Sets or revokes the authorization for a given account to modify the program associated with another account.
+   * @param {string} sigReqAccount - The account for which the program will be modified.
+   * @param {string} programModificationAccount - The account that is being authorized or revoked.
+   * @param {boolean} isAuthorized - Flag to set or revoke authorization.
+   * @returns {Promise<void>}
+   * @throws {Error} If there's an issue setting the authorization.
+   * @remarks
+   * This method creates a transaction to set or revoke the authorization for an account to modify the program of another account on Substrate.
+   * It uses the `setAuthorization` extrinsic from the Substrate pallet.
+   * @alpha
+   */
+
+  async setAuthorization (
+    sigReqAccount: string,
+    programModificationAccount: string,
+    isAuthorized: boolean
+  ): Promise<void> {
+    try {
+      const tx: SubmittableExtrinsic<'promise'> = this.substrate.tx.programs.setAuthorization(
+        sigReqAccount,
+        programModificationAccount,
+        isAuthorized
+      )
+      await this.sendAndWaitFor(tx, false, {
+        section: 'programs',
+        name: 'AuthorizationSet',
+      })
+    } catch (error) {
+      console.error('Error setting authorization:', error)
+      throw error
+    }
+  }
+
   async checkAuthorization (
     ownerAccount: string,
     delegateAccount: string
@@ -119,10 +152,10 @@ export default class ProgramManager extends ExtrinsicBaseClass {
 
     // Check if the Option is populated with a value
     if (authorizationStatus.isSome) {
-    // Unwrap the value to get the actual authorization status
+      // Unwrap the value to get the actual authorization status
       return authorizationStatus.unwrap().toJSON()
     } else {
-    // If no value, it means no authorization has been set, so return false.
+      // If no value, it means no authorization has been set, so return false.
       return false
     }
   }
@@ -157,40 +190,6 @@ export default class ProgramManager extends ExtrinsicBaseClass {
       return paymentInfo.partialFee.toHuman()
     } catch (error) {
       console.error('Error estimating program update fee:', error)
-      throw error
-    }
-  }
-
-  /**
-   * Sets or revokes the authorization for a given account to modify the program associated with another account.
-   * @param {string} sigReqAccount - The account for which the program will be modified.
-   * @param {string} programModificationAccount - The account that is being authorized or revoked.
-   * @param {boolean} isAuthorized - Flag to set or revoke authorization.
-   * @returns {Promise<void>}
-   * @throws {Error} If there's an issue setting the authorization.
-   * @remarks
-   * This method creates a transaction to set or revoke the authorization for an account to modify the program of another account on Substrate.
-   * It uses the `setAuthorization` extrinsic from the Substrate pallet.
-   * @alpha
-   */
-
-  async setAuthorization (
-    sigReqAccount: string,
-    programModificationAccount: string,
-    isAuthorized: boolean
-  ): Promise<void> {
-    try {
-      const tx: SubmittableExtrinsic<'promise'> = this.substrate.tx.programs.setAuthorization(
-        sigReqAccount,
-        programModificationAccount,
-        isAuthorized
-      )
-      await this.sendAndWaitFor(tx, false, {
-        section: 'programs',
-        name: 'AuthorizationSet',
-      })
-    } catch (error) {
-      console.error('Error setting authorization:', error)
       throw error
     }
   }
