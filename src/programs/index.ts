@@ -45,7 +45,7 @@ export default class ProgramManager extends ExtrinsicBaseClass {
    */
 
   async get (sigReqAccount = this.signer.wallet.address): Promise<ArrayBuffer> {
-    const responseHexOption = await this.substrate.query.programs.v2Bytecode(
+    const responseHexOption = await this.substrate.query.programs.bytecode(
       sigReqAccount
     )
     if (responseHexOption.isEmpty) {
