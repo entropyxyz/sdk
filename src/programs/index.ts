@@ -195,7 +195,12 @@ export default class ProgramManager extends ExtrinsicBaseClass {
   }
 }
 
+// REGISTRATION TODO: 
 // i think the above implementation will require us to add programModAccount to register
 // before registering we then run setAuthorization on behalf of the sigReqAccount and assign a delegated programModAccount
 // then a programModAccount can set and update programs post register without having to do any set authorization extrinsics
 // may not be possible to set an authorization of a programModAccount on a sigReqAccount before it is even registered to entropy
+
+// PROGRAMS DEPOSIT TODO: 
+// need to expand deposit + setting to include reserveProgramDeposit, unreserveProgramDeposit, updateProgramStorageDeposit based on:
+// https://github.com/entropyxyz/entropy-core/blob/master/pallets/programs/src/lib.rs#L102
