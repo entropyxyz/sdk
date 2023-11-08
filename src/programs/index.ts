@@ -198,3 +198,4 @@ export default class ProgramManager extends ExtrinsicBaseClass {
 // i think the above implementation will require us to add programModificationAccount to register
 // before registering we then run setAuthorization on behalf of the sigReqAccount and assign a delegated programModificationAccount
 // then a programModificationAccount can set and update programs post register without having to do any set authorization extrinsics
+// may not be possible to set an authorization of a programModificationAccount on a sigReqAccount before it is even registered to entropy
