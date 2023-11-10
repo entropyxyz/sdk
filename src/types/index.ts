@@ -11,6 +11,13 @@ export interface KeyPair {
   private: hexString
 }
 
+export interface EntropyAccount {
+
+  sigRequestKeyPair: Keypair
+  programModificationKeyPair?: Keypair
+
+}
+
 export interface Signer {
   wallet: KeyringPair
   pair: Keypair
