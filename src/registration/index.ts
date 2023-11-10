@@ -6,8 +6,8 @@ export interface RegistrationParams {
   freeTx?: boolean
   initialProgram?: string
   keyVisibility?: 'Public' | 'Permissioned' | 'Private'
-  programModAccount?: Address 
-  address: Address
+  programModAccount: Address 
+  address?: Address
 }
 
 /**
