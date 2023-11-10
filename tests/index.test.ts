@@ -71,9 +71,10 @@ it('should handle registration, program management, and signing', async () => {
   
   try {
     await entropy.register({
-      address: charlieStashAddress,
+      programModAccount: charlieStashAddress,
       keyVisibility: 'Permissioned',
       freeTx: false,
+      initialProgram: '0x'
     })
   } catch (e) {
     console.error('Error in test:', e.message)
@@ -111,7 +112,7 @@ it('should handle registration, program management, and signing', async () => {
     const dummyProgram: any = readFileSync(
       './tests/testing-utils/template_barebones.wasm'
     )
-    await entropy.programs.set(dummyProgram)
+    await entropy.programs.set(dummyProgram, charlieStashAddress)
     console.log('set program')
     // Retrieve the program and compare
     const fetchedProgram: ArrayBuffer = await entropy.programs.get()

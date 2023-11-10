@@ -138,13 +138,13 @@ export default class ProgramManager extends ExtrinsicBaseClass {
   }
 
   async checkAuthorization (
-    ownerAccount: string,
-    delegateAccount: string
+    sigReqAccount: string,
+    programModAccount: string
   ): Promise<boolean> {
     // Get authorization status from Substrate
-    const authorizationStatus: Option<Bool> = ((await this.substrate.query.programs.getAuthorizationStatus(
-      ownerAccount,
-      delegateAccount
+    const authorizationStatus: Option<Bool> = ((await this.substrate.query.programs.allowedToModifyProgram(
+      sigReqAccount,
+      programModAccount
     )) as unknown) as Option<Bool>
 
     // Check if the Option is populated with a value
