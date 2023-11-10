@@ -6,6 +6,7 @@ export interface RegistrationParams {
   freeTx?: boolean
   initialProgram?: string
   keyVisibility?: 'Public' | 'Permissioned' | 'Private'
+  programModAccount?: Address 
   address: Address
 }
 
@@ -52,8 +53,11 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
     freeTx = true,
     initialProgram,
     keyVisibility = 'Permissioned',
+    programModAccount,
     address = this.signer.wallet.address,
   }: RegistrationParams): Promise<undefined> {
+    const programModificationAccount = programModAccount || this.getDefaultProgramModAccount(address);
+
 
     // this is sloppy
     // TODO: store multiple signers via address. and respond accordingly
@@ -84,7 +88,7 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
     })
 
     const registerTx = this.substrate.tx.relayer.register(
-      address,
+      programModificationAccount,
       keyVisibility,
       initialProgram ? initialProgram : null
     )
@@ -106,5 +110,8 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
   async checkRegistrationStatus (address: Address): Promise<boolean> {
     const isRegistered = await this.substrate.query.relayer.registered(address)
     return !!isRegistered.toJSON()
+  }
+  private getDefaultProgramModAccount (address: Address): Address {
+    return address
   }
 }
