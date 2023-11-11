@@ -56,8 +56,7 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
     programModAccount,
     address = this.signer.wallet.address,
   }: RegistrationParams): Promise<undefined> {
-    const programModificationAccount = programModAccount || this.getDefaultProgramModAccount(address)
-
+    const programModificationAccount = programModAccount
 
     // this is sloppy
     // TODO: store multiple signers via address. and respond accordingly

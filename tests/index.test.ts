@@ -70,11 +70,16 @@ it('should handle registration, program management, and signing', async () => {
   }
   
   try {
+       // Set a program for the user
+       const dummyProgram: any = readFileSync(
+        './tests/testing-utils/template_barebones.wasm'
+      )
     await entropy.register({
+      address: charlieStashAddress,
       programModAccount: charlieStashAddress,
       keyVisibility: 'Permissioned',
       freeTx: false,
-      initialProgram: '0x'
+      initialProgram: dummyProgram
     })
   } catch (e) {
     console.error('Error in test:', e.message)
@@ -107,6 +112,7 @@ it('should handle registration, program management, and signing', async () => {
     console.error('Error in post-registration status check:', e.message)
   }
   
+
 
     // Set a program for the user
     const dummyProgram: any = readFileSync(
