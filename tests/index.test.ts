@@ -11,6 +11,8 @@ import {
   whitelisted_test_tx_req,
   non_whitelisted_test_tx_req,
   whitelisted_test_constraints,
+  aliceSeed,
+  aliceAddress
 } from './testing-utils'
 import { ethers } from 'ethers'
 import { keccak256 } from 'ethers/lib/utils'
@@ -21,7 +23,7 @@ describe('Core Tests', () => {
   let entropy: Entropy
 
   beforeAll(async () => {
-    jest.setTimeout(300000); // Give us five minutes to spin up.
+    jest.setTimeout(300000) // Give us five minutes to spin up.
     try {
       spawnSync(
         "docker",
@@ -93,7 +95,6 @@ it('should handle registration, program management, and signing', async () => {
     )
   ).toBeTruthy()
   
-  // Post-registration check
   try {
     const postRegistrationStatus = await entropy.isRegistered(charlieStashAddress)
     expect(postRegistrationStatus).toBeTruthy()
@@ -112,20 +113,44 @@ it('should handle registration, program management, and signing', async () => {
     console.error('Error in post-registration status check:', e.message)
   }
   
-
-
-    // Set a program for the user
     const dummyProgram: any = readFileSync(
       './tests/testing-utils/template_barebones.wasm'
     )
+  const isAuthorized = await entropy.programs.checkAuthorization(charlieStashAddress, charlieStashAddress)
+  console.log("charlie, charlie:", await entropy.programs.checkAuthorization(charlieStashAddress, charlieStashAddress))
+  const notAuthorized = await entropy.programs.checkAuthorization(charlieStashAddress, aliceAddress)
+  console.log("alice, charlie:",await entropy.programs.checkAuthorization(charlieStashAddress, aliceAddress))
+
+  if (!isAuthorized) {
+    throw new Error(`${charlieStashAddress} is not authorized to modify the program.`)
+  }
+    console.log('Authorization check passed')
+  
+    console.log('setting program')
     await entropy.programs.set(dummyProgram, charlieStashAddress)
-    console.log('set program')
-    // Retrieve the program and compare
+    console.log('program set')
+    console.log('program get')
     const fetchedProgram: ArrayBuffer = await entropy.programs.get()
     const trimmedBuffer = fetchedProgram.slice(1)
 
     expect(buf2hex(trimmedBuffer)).toEqual(buf2hex(dummyProgram))
 
+    let unauthorizedErrorCaught = false
+
+    try {
+      console.log("false program test")
+      await entropy.programs.set(dummyProgram, aliceAddress, charlieStashAddress)
+      fail('Alice should not be authorized to set the program for Charlie')
+    } catch (error) {
+      if (error.message.includes("Program modification account doesn't have permission to modify this program")) {
+        unauthorizedErrorCaught = true
+      } else {
+        throw error
+      }
+    }
+
+    expect(unauthorizedErrorCaught).toBe(true)
+    
     // signing attempts should fail cause we haven't set constraints yet
     /*    const no_constraint: any = await entropy.sign({
       sigRequestHash: keccak256(ethers.utils.serializeTransaction(whitelisted_test_tx_req)),

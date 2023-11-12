@@ -75,24 +75,23 @@ export default class ProgramManager extends ExtrinsicBaseClass {
   async set (
     program: ArrayBuffer,
     programModAccount: string,
-    // sigReqAccount: string = this.signer.wallet.address
+    sigReqAccount: string = this.signer.wallet.address
   ): Promise<void> {
     try {
-      // const isAuthorized = await this.checkAuthorization(
-      //   sigReqAccount,
-      //   programModAccount
-      // )
-      // if (!isAuthorized) {
-      //   throw new Error(
-      //     `${programModAccount} is not authorized to modify the program for ${sigReqAccount}`
-      //   )
-      // }
-
+      // Check if the programModAccount is allowed to modify the program
+      const isAuthorized = await this.checkAuthorization(sigReqAccount, programModAccount)
+      if (!isAuthorized) {
+        throw new Error(
+          `${programModAccount} is not authorized to modify the program for ${sigReqAccount}`
+        )
+      }
       const programHex = util.u8aToHex(new Uint8Array(program))
+  
       const tx: SubmittableExtrinsic<'promise'> = this.substrate.tx.programs.updateProgram(
         programModAccount,
         programHex
       )
+  
       await this.sendAndWaitFor(tx, false, {
         section: 'programs',
         name: 'ProgramUpdated',
@@ -102,106 +101,23 @@ export default class ProgramManager extends ExtrinsicBaseClass {
       throw error
     }
   }
+  
+  async checkAuthorization (
+    sigReqAccount: string,
+    programModAccount: string
+  ): Promise<boolean> {
+    const result = await this.substrate.query.programs.allowedToModifyProgram(
+      sigReqAccount,
+      programModAccount
+    )
+    // seems like the return of value isnt a simple boolean 
+    if (result.isSome) {
+      const value = result.unwrap()  
+      console.log("value", value)
+      return Boolean(value)
+    } else {
+      console.log("No value returned, interpreted as not authorized")
+      return false
+    }
+  } 
 }
-
-/**
- * Sets or revokes the authorization for a given account to modify the program associated with another account.
- * @param {string} sigReqAccount - The account for which the program will be modified.
- * @param {string} programModAccount - The account that is being authorized or revoked.
- * @param {boolean} isAuthorized - Flag to set or revoke authorization.
- * @returns {Promise<void>}
- * @throws {Error} If there's an issue setting the authorization.
- * @remarks
- * This method creates a transaction to set or revoke the authorization for an account to modify the program of another account on Substrate.
- * It uses the `setAuthorization` extrinsic from the Substrate pallet.
- * @alpha
- */
-
-// async setAuthorization (
-//   sigReqAccount: string,
-//   programModAccount: string,
-//   isAuthorized: boolean
-// ): Promise<void> {
-//   try {
-//     const tx: SubmittableExtrinsic<'promise'> = this.substrate.query.programs.setAuthorization(
-//       sigReqAccount,
-//       programModAccount,
-//       isAuthorized
-//     )
-//     await this.sendAndWaitFor(tx, false, {
-//       section: 'programs',
-//       name: 'AuthorizationSet',
-//     })
-//   } catch (error) {
-//     console.error('Error setting authorization:', error)
-//     throw error
-//   }
-// }
-
-//   async checkAuthorization (
-//     sigReqAccount: string,
-//     programModAccount: string
-//   ): Promise<boolean> {
-//     // Get authorization status from Substrate
-//     const authorizationStatus: Option<Bool> = ((await this.substrate.query.programs.allowedToModifyProgram(
-//       sigReqAccount,
-//       programModAccount
-//     )) as unknown) as Option<Bool>
-
-//     // Check if the Option is populated with a value
-//     if (authorizationStatus.isSome) {
-//       // Unwrap the value to get the actual authorization status
-//       return authorizationStatus.unwrap().toJSON()
-//     } else {
-//       // If no value, it means no authorization has been set, so return false.
-//       return false
-//     }
-//   }
-
-// }
-
-// REGISTRATION TODO:
-// i think the above implementation will require us to add programModAccount to register
-// before registering we then run setAuthorization on behalf of the sigReqAccount and assign a delegated programModAccount
-// then a programModAccount can set and update programs post register without having to do any set authorization extrinsics
-// may not be possible to set an authorization of a programModAccount on a sigReqAccount before it is even registered to entropy
-
-// PROGRAMS DEPOSIT TODO:
-// need to expand deposit + setting to include reserveProgramDeposit, unreserveProgramDeposit, updateProgramStorageDeposit based on:
-// https://github.com/entropyxyz/entropy-core/blob/master/pallets/programs/src/lib.rs#L102
-
-// INITIAL ESTIMATE
-
-/**
- * Estimate the transaction fee for updating a program.
- * @param {ArrayBuffer} program - The program to be set or updated, as an ArrayBuffer.
- * @param {string} [programModAccount] - (Optional) The account that will be used to modify the program if different from the signer's account.
- * @param {string} [sigReqAccount=this.signer.wallet.address] - (Optional) The account for which the program will be set or updated. Defaults to the signer's account.
- * @returns {Promise<string>} - Estimated transaction fee in a human-readable format.
- * @throws {Error} If there's an issue with estimating the fee.
- * @remarks
- * This method creates a simulated transaction to update a program and estimates the fee that would be charged if the program were to be submitted.
- * Allows the specification of a program modification account separate from the signer's account.
- * @alpha
- */
-
-// async estimateProgramDepositFee (
-//   program: ArrayBuffer,
-//   programModAccount?: string,
-//   sigReqAccount: string = this.signer.wallet.address
-// ): Promise<string> {
-//   try {
-//     const accountToUse = programModAccount || sigReqAccount
-//     const programHex = util.u8aToHex(new Uint8Array(program))
-//     const tx = this.substrate.tx.programs.updateProgram(
-//       accountToUse,
-//       programHex
-//     )
-
-//     const paymentInfo = await tx.paymentInfo(accountToUse)
-//     return paymentInfo.partialFee.toHuman()
-//   } catch (error) {
-//     console.error('Error estimating program update fee:', error)
-//     throw error
-//   }
-// }
