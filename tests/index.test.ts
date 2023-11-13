@@ -68,7 +68,6 @@ it('should handle registration, program management, and signing', async () => {
   
   try {
     await entropy.register({
-      address: charlieStashAddress,
       programModAccount: charlieStashAddress,
       keyVisibility: 'Permissioned',
       freeTx: false,
