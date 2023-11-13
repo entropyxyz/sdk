@@ -71,7 +71,7 @@ describe('Programs Tests', () => {
     const isAuthorized = await entropy.programs.checkAuthorization(
       charlieStashAddress,
       charlieStashAddress
-    );
+    )
     expect(isAuthorized).toBeTruthy()
 
     // // create key to check authorized
@@ -89,7 +89,7 @@ describe('Programs Tests', () => {
     const notAuthorized = await entropy.programs.checkAuthorization(
       derivedAddress,
       charlieStashAddress
-    );
+    )
     expect(notAuthorized).toBeFalsy()
 
 
