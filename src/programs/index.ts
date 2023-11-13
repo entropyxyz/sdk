@@ -119,23 +119,19 @@ export default class ProgramManager extends ExtrinsicBaseClass {
  * console.log(isAuthorized) // Outputs: true or false
  * ```
  */
-
   async checkAuthorization (
-    sigReqAccount: string,
-    programModAccount: string
+    programModAccount: string,
+    sigReqAccount: string
   ): Promise<boolean> {
-    const result = await this.substrate.query.programs.allowedToModifyProgram(
-      sigReqAccount,
-      programModAccount
-    )
-    // seems like the return of value isnt a simple boolean 
-    if (result.isSome) {
-      const value = result.unwrap()  
-      console.log("value", value)
-      return Boolean(value)
-    } else {
-      console.log("No value returned, interpreted as not authorized")
+    try {
+      const result = await this.substrate.query.programs.allowedToModifyProgram(
+        programModAccount,
+        sigReqAccount
+      )
+      return result.isSome;
+    } catch (error) {
+      console.error("Error in checkAuthorization:", error)
       return false
     }
-  } 
+  }
 }
