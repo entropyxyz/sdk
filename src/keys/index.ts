@@ -16,6 +16,7 @@ export const getWallet = async (seed: string): Promise<Signer> => {
     pair 
   }
 }
+
 export async function generateKeysFromMnemonic (mnemonic: string): Promise<Signer> {
   const keyring = new Keyring({ type: 'sr25519' })
   await cryptoWaitReady()

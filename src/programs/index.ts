@@ -102,6 +102,24 @@ export default class ProgramManager extends ExtrinsicBaseClass {
     }
   }
   
+  /**
+ *  Checks if a given program modification account is authorized to modify the program associated with a specific signature request account.
+ * 
+ * @param {string} sigReqAccount - The account for which the program modification authorization is being checked.
+ * @param {string} programModAccount - The account that is being checked for authorization to modify the program.
+ * @returns {Promise<boolean>} - A promise that resolves if the `programModAccount` is authorized to modify the program for `sigReqAccount`
+ * @remarks
+ * This method queries Substrate  to determine if the `programModAccount` is allowed to modify the program associated with the `sigReqAccount`.
+ * The method utilizes the `allowedToModifyProgram` quert, which returns an optional value. If the value is present (`isSome`), it indicates authorization. 
+ * (I'm not sure about this as the blob that's returned is extremely long )
+ * The method unwraps the optional value 
+ * @example
+ * ```typescript
+ * const isAuthorized = await checkAuthorization('5FHneW46...HgYb3fW', '5DAAnrj7...P5JT7zP')
+ * console.log(isAuthorized) // Outputs: true or false
+ * ```
+ */
+
   async checkAuthorization (
     sigReqAccount: string,
     programModAccount: string

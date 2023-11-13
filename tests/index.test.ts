@@ -47,11 +47,6 @@ describe('Core Tests', () => {
         [ "compose", "--file", "tests/docker-compose.yaml", "down" ],
         { shell: true, stdio: 'inherit' }
       )
-      spawnSync(
-        "docker",
-        [ "compose", "--file", "tests/docker-compose.yaml", "logs" ],
-        { shell: true, stdio: 'inherit' }
-      )
     } catch (e) {
         console.error('Error in afterAll: ', e.message)
     }
@@ -72,16 +67,12 @@ it('should handle registration, program management, and signing', async () => {
   }
   
   try {
-       // Set a program for the user
-       const dummyProgram: any = readFileSync(
-        './tests/testing-utils/template_barebones.wasm'
-      )
     await entropy.register({
       address: charlieStashAddress,
       programModAccount: charlieStashAddress,
       keyVisibility: 'Permissioned',
       freeTx: false,
-      initialProgram: dummyProgram
+      initialProgram: '0x'
     })
   } catch (e) {
     console.error('Error in test:', e.message)
