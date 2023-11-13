@@ -119,6 +119,7 @@ export default class ProgramManager extends ExtrinsicBaseClass {
  * console.log(isAuthorized) // Outputs: true or false
  * ```
  */
+
   async checkAuthorization (
     programModAccount: string,
     sigReqAccount: string
@@ -127,10 +128,10 @@ export default class ProgramManager extends ExtrinsicBaseClass {
       const result = await this.substrate.query.programs.allowedToModifyProgram(
         programModAccount,
         sigReqAccount
-      )
-      return result.isSome;
+      );
+      return !result.isEmpty
     } catch (error) {
-      console.error("Error in checkAuthorization:", error)
+      console.error("Error in checkAuthorization:", error);
       return false
     }
   }

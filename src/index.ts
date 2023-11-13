@@ -47,6 +47,7 @@ export default class Entropy {
   registrationManager: RegistrationManager
   isRegistered: (address: Address) => Promise<boolean>
   programs: ProgramManager
+  allowedToModifyProgram: (sigReqAccount: Address, programModAccount: Address) => Promise<boolean>
   signingManager: SignatureRequestManager
   entropyAccount?: EntropyAccount
   substrate: ApiPromise
@@ -89,7 +90,11 @@ export default class Entropy {
     this.isRegistered = this.registrationManager.checkRegistrationStatus.bind(
       this.registrationManager
     )
+    this.allowedToModifyProgram = this.programs.checkAuthorization.bind(
+      this.programs
+    )
   }
+
 
   constructor (opts: EntropyOpts) {
     this.ready = new Promise((resolve, reject) => {

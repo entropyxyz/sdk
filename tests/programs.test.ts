@@ -65,15 +65,14 @@ describe('Programs Tests', () => {
 
 
     // // Test authorization
-    // console.log('authorization checks')
+    console.log('authorization checks')
 
-    // const isAuthorized = await entropy.programs.checkAuthorization(
-    //   charlieStashAddress,
-    //   charlieStashAddress
-    // )
-    // expect(isAuthorized).toBeTruthy()
-    // const authorizedResponse = JSON.stringify(isAuthorized)
-    // expect(authorizedResponse).toBe('true')
+ 
+    const isAuthorized = await entropy.programs.checkAuthorization(
+      charlieStashAddress,
+      charlieStashAddress
+    );
+    expect(isAuthorized).toBeTruthy()
 
     // // create key to check authorized
 
@@ -84,15 +83,15 @@ describe('Programs Tests', () => {
     const derivedAddress = keypair.address
     console.log('Derived Address:', derivedAddress)
 
-    // const notAuthorized = await entropy.programs.checkAuthorization(
-    //   derivedAddress,
-    //   charlieStashAddress
-    // )
+    const charlieRegistered = await entropy.isRegistered(charlieStashAddress)
+    console.log("charlieregistered", charlieRegistered )
 
-    // expect(notAuthorized).toBeFalsy()
+    const notAuthorized = await entropy.programs.checkAuthorization(
+      derivedAddress,
+      charlieStashAddress
+    );
+    expect(notAuthorized).toBeFalsy()
 
-    // const notAuthorizedResponse = JSON.stringify(notAuthorized)
-    // expect(notAuthorizedResponse).toBe('false')
 
     console.log('setting checks')
 
@@ -108,6 +107,7 @@ describe('Programs Tests', () => {
     console.log('unathorized checks')
 
     let unauthorizedErrorCaught = false
+
     try {
       await entropy.programs.set(
         dummyProgram,
@@ -119,7 +119,8 @@ describe('Programs Tests', () => {
         'not authorized to modify the program'
       )
     }
-    expect(unauthorizedErrorCaught).toBeFalsy()
+    expect(unauthorizedErrorCaught).toBeTruthy()
+
 
     // // pass an invalid program eventually
     // console.log('invalid program checks')
