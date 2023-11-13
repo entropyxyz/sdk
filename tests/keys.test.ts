@@ -25,7 +25,7 @@ import {
   deriveNewKeysFromMnemonic
 } from '../src/keys'
 
-describe('Core Tests', () => {
+describe('Keys Tests', () => {
   let entropy: Entropy
   let testMnemonic: string
   let derivationPath: string
@@ -68,7 +68,6 @@ describe('Core Tests', () => {
     }
   })
 
-  // Add your new tests here
   describe('generateEntropyAccountFromSeed', () => {
     it('should generate valid EntropyAccount from seed', async () => {
       const entropyAccount = await generateEntropyAccountFromSeed(testMnemonic)
