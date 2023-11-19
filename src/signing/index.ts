@@ -15,7 +15,7 @@ export interface Config {
 }
 
 export interface TxParams {
-  [key: string]: Transaction | unknown 
+  [key: string]: Transaction | unknown
 }
 
 export interface SigTxOps {
@@ -68,7 +68,6 @@ export default class SignatureRequestManager {
    * @throws {Error} If an adapter for the given transaction type is not found.
    */
   async signTransaction ({ txParams, type }: SigTxOps): Promise<unknown> {
-
     if (!this.adapters[type])
       throw new Error(`No transaction adapter for type: ${type} submit as hash`)
     if (!this.adapters[type].preSign)
@@ -100,7 +99,7 @@ export default class SignatureRequestManager {
     )
 
     const txRequests: Array<EncMsg> = await this.formatTxRequests({
-      validatorsInfo: validatorsInfo.reverse(),
+      validatorsInfo: validatorsInfo,
       strippedsigRequestHash,
     })
     const sigs = await this.submitTransactionRequest(txRequests)
@@ -144,7 +143,7 @@ export default class SignatureRequestManager {
       validatorsInfo.map(
         async (validator: ValidatorInfo): Promise<EncMsg> => {
           const txRequestData = {
-            transaction_request: stripHexPrefix(strippedsigRequestHash),
+            message: stripHexPrefix(strippedsigRequestHash),
             validators_info: validatorsInfo,
             timestamp: this.getTimeStamp(),
           }
@@ -176,10 +175,12 @@ export default class SignatureRequestManager {
             serverDHKey
           )
 
+          console.log('ENCRYP', encryptedMessage)
+
           return {
-            tss_account: validator.tss_account,
-            url: validator.ip_address,
             msg: encryptedMessage,
+            url: validator.ip_address,
+            tss_account: validator.tss_account,
           }
         }
       )
@@ -196,16 +197,16 @@ export default class SignatureRequestManager {
   async submitTransactionRequest (txReq: Array<EncMsg>): Promise<string[][]> {
     return Promise.all(
       txReq.map(async (message: EncMsg) => {
+        // Extract the required fields from parsedMsg
         const parsedMsg = JSON.parse(message.msg)
         const payload = {
           ...parsedMsg,
-          msg: stripHexPrefix(parsedMsg.msg),
+          msg: parsedMsg.msg,
         }
-
-        const sigProof = await sendHttpPost(
+        const sigProof = (await sendHttpPost(
           `http://${message.url}/user/sign_tx`,
           JSON.stringify(payload)
-        ) as string[]
+        )) as string[]
         sigProof.push(message.tss_account)
         return sigProof
       })
@@ -264,29 +265,45 @@ export default class SignatureRequestManager {
    * @returns string - the first valid signature
    */
   async verifyAndReduceSignatures (sigsAndProofs: string[][]): Promise<string> {
-    const seperatedSigsAndProofs = sigsAndProofs.reduce((a, sp) => {
-      if (!sp || !sp.length) return a
-      // the place holder is for holding an index. in the future we should notify
-      // the nodes or something about faulty validators
-      // this is really just good house keeping because you never know?
-      a.sigs.push(sp[0] || 'place-holder')
-      a.proofs.push(sp[1] || 'place-holder')
-      a.addresses.push(sp[2] || 'place-holder')
-      return a
-    }, { sigs: [], proofs: [], addresses: [] })
+    const seperatedSigsAndProofs = sigsAndProofs.reduce(
+      (a, sp) => {
+        if (!sp || !sp.length) return a
+        // the place holder is for holding an index. in the future we should notify
+        // the nodes or something about faulty validators
+        // this is really just good house keeping because you never know?
+        a.sigs.push(sp[0] || 'place-holder')
+        a.proofs.push(sp[1] || 'place-holder')
+        a.addresses.push(sp[2] || 'place-holder')
+        return a
+      },
+      { sigs: [], proofs: [], addresses: [] }
+    )
     // find a valid signature
-    const sigMatch = seperatedSigsAndProofs.sigs.find((s) => s !== 'place-holder')
+    const sigMatch = seperatedSigsAndProofs.sigs.find(
+      (s) => s !== 'place-holder'
+    )
     if (!sigMatch) throw new Error('Did not receive a valid signature')
     // use valid signature to see if they all match
-    const allSigsMatch = seperatedSigsAndProofs.sigs.every((s) => s === sigMatch )
+    const allSigsMatch = seperatedSigsAndProofs.sigs.every(
+      (s) => s === sigMatch
+    )
     if (!allSigsMatch) throw new Error('All signatures do not match')
     // in the future. notify network of compromise?
     // check to see if the tss_account signed the proof
-    const validated = await Promise.all(seperatedSigsAndProofs.proofs.map(async (proof: string, index: number): Promise<boolean> => {
-      return await this.crypto.verifySignature(seperatedSigsAndProofs.sigs[index], proof, seperatedSigsAndProofs.addresses[index])
-    }))
+    const validated = await Promise.all(
+      seperatedSigsAndProofs.proofs.map(
+        async (proof: string, index: number): Promise<boolean> => {
+          return await this.crypto.verifySignature(
+            seperatedSigsAndProofs.sigs[index],
+            proof,
+            seperatedSigsAndProofs.addresses[index]
+          )
+        }
+      )
+    )
     const first = validated.findIndex((v) => v)
-    if (first === -1) throw new Error('Can not validate the identity of any validator')
+    if (first === -1)
+      throw new Error('Can not validate the identity of any validator')
 
     return seperatedSigsAndProofs.sigs[first]
   }

@@ -19,7 +19,7 @@ services:
     # commit in the `entropy-core` repository. Refer to the wiki page at
     # https://github.com/entropyxyz/meta/wiki/Git#conventions for details
     # about how Git tags, branches, and commits refer to image tags here.
-    image: entropyxyz/server:vi-ci-builds-for-entropy-js
+    image: entropyxyz/server:test-luis-release-luis-entropyjs-core111823
     ports:
       - "127.0.0.1:3001:3001/tcp"
     command:
@@ -31,7 +31,7 @@ services:
 
   # In a local devnet setup, for now, this is "Alice's chain."
   alice-chain-node:
-    image: entropyxyz/entropy:vi-ci-builds-for-entropy-js
+    image: entropyxyz/entropy:test-luis-release-luis-entropyjs-core111823
     ports:
       - "127.0.0.1:9944:9944/tcp"   # "RPC Port."
     command:
@@ -51,19 +51,19 @@ services:
 
   # "Bob's TSS server."
   bob-tss-server:
-    image: entropyxyz/server:vi-ci-builds-for-entropy-js
+    image: entropyxyz/server:test-luis-release-luis-entropyjs-core111823
     ports:
-      - "127.0.0.1:3002:3001/tcp"
+      - "127.0.0.1:3002:3002/tcp"
     command:
       - "--bob"
       - "--threshold-url"
-      - "0.0.0.0:3001"
+      - "0.0.0.0:3002"
       - "--chain-endpoint"
       - "ws://bob-chain-node:9944"
 
   # "Bob's chain node."
   bob-chain-node:
-    image: entropyxyz/entropy:vi-ci-builds-for-entropy-js
+    image: entropyxyz/entropy:test-luis-release-luis-entropyjs-core111823
     ports:
       - "127.0.0.1:9945:9944/tcp"
     command:
@@ -80,4 +80,4 @@ services:
       - "--bootnodes"
       - "/dns4/alice-chain-node/tcp/30333/p2p/12D3KooWEyoppNCUx8Yx66oV9fJnriXwCcXwDDUA2kj6vnc6iDEp"
       - "--tss-server-endpoint"
-      - "http://bob-tss-server:3001"
+      - "http://bob-tss-server:3002"
