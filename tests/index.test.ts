@@ -21,7 +21,7 @@ describe('Core Tests', () => {
   let entropy: Entropy
 
   beforeAll(async () => {
-    jest.setTimeout(300000); // Give us five minutes to spin up.
+    jest.setTimeout(300000) // Give us five minutes to spin up.
     try {
       spawnSync(
         "docker",
@@ -70,10 +70,10 @@ it('should handle registration, program management, and signing', async () => {
   }
   
   try {
-    await entropy.register({
-      address: charlieStashAddress,
+    await entropy.register ({
       keyVisibility: 'Permissioned',
       freeTx: false,
+      programModAccount: charlieStashAddress,
     })
   } catch (e) {
     console.error('Error in test:', e.message)

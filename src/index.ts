@@ -102,8 +102,8 @@ export default class Entropy {
 
   async register (params: RegistrationParams): Promise<undefined> {
     await this.ready
-    if (params.address) {
-      if (!isValidSubstrateAddress(params.address)) {
+    if (params.programModAccount) {
+      if (!isValidSubstrateAddress(params.programModAccount)) {
         throw new TypeError('Incompatible address type')
       }
     }
