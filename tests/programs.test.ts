@@ -1,18 +1,15 @@
 import { readFileSync } from 'fs'
-import { SignatureLike } from '@ethersproject/bytes'
 import Entropy from '../src'
 import {
   sleep,
   disconnect,
   charlieStashSeed,
   charlieStashAddress,
-  aliceAddress,
 } from './testing-utils'
 import { Keyring } from '@polkadot/api'
 import { mnemonicGenerate } from '@polkadot/util-crypto'
 import { buf2hex } from '../src/utils'
 import { spawnSync } from 'child_process'
-import { mnemonicToSeed } from 'ethers/lib/utils'
 
 describe('Programs Tests', () => {
   let entropy: Entropy

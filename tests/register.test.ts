@@ -6,8 +6,6 @@ import {
   charlieStashAddress,
 } from './testing-utils'
 import { spawnSync } from 'child_process'
-import { mnemonicGenerate, mnemonicToMiniSecret} from '@polkadot/util-crypto'
-import { Keyring } from '@polkadot/api'
 
 describe('Register Tests', () => {
   let entropy
@@ -77,7 +75,7 @@ describe('Register Tests', () => {
         initialProgram: '0x',
       })
     ).rejects.toThrow('already registered')
-  });
+  })
 
   it('should verify registration status of a new address', async () => {
 
