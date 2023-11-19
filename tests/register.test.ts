@@ -68,7 +68,6 @@ describe('Register Tests', () => {
       expect(isRegisteredAfter).toBeTruthy()
     }
   })
-
   it('should not allow re-registration', async () => {
     await expect(
       entropy.register({
@@ -77,9 +76,8 @@ describe('Register Tests', () => {
         freeTx: true,
         initialProgram: '0x',
       })
-    )
-    expect('already registered').toContain
-  })
+    ).rejects.toThrow('already registered')
+  });
 
   it('should verify registration status of a new address', async () => {
 
