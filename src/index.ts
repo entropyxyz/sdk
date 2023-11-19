@@ -1,16 +1,24 @@
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import { isValidSubstrateAddress } from './utils'
 import RegistrationManager, { RegistrationParams } from './registration'
-import { getWallet } from './keys'
+import { getWallet,deriveNewKeysFromMnemonic, generateKeysFromMnemonic } from './keys'
 import SignatureRequestManager, { SigOps, SigTxOps } from './signing'
 import { crypto } from './utils/crypto'
 import { Adapter } from './signing/adapters/types'
 import { Signer, Address } from './types'
 import ProgramManager from './programs'
 
+export interface KeyOptions {
+  seed?: string
+  mnemonic?: string
+  sigSeed?: string
+  progSeed?: string
+  derivationPath?: string
+}
+
 export interface EntropyOpts {
   /** seed for wallet initialization. */
-  seed?: string
+  keyOptions?: KeyOptions
   /** local or devnet endpoint for establishing a connection to validators */
   endpoint?: string
   /** A collection of signing adapters. */
@@ -51,30 +59,39 @@ export default class Entropy {
   substrate: ApiPromise
 
   async init (opts: EntropyOpts) {
-    this.keys = await getWallet(opts.seed)  
-    const wsProvider = new WsProvider(opts.endpoint)
+    const keys = opts.keyOptions
 
-    const substrate = new ApiPromise({ provider: wsProvider })
-    this.substrate = substrate
+    if (keys?.seed) {
+      this.keys = await getWallet(keys.seed)
+    } else if (keys?.mnemonic && keys?.derivationPath) {
+      this.keys = await deriveNewKeysFromMnemonic(keys.mnemonic, keys.derivationPath)
+    } else if (keys?.mnemonic) {
+      this.keys = await generateKeysFromMnemonic(keys.mnemonic)
+    } else {
+      throw new Error("Insufficient data provided for key generation")
+    }
+
+    const wsProvider = new WsProvider(opts.endpoint)
+    this.substrate = new ApiPromise({ provider: wsProvider })
+    await this.substrate.isReady
+
     this.registrationManager = new RegistrationManager({
-      substrate: substrate,
+      substrate: this.substrate,
       signer: this.keys,
     })
     this.signingManager = new SignatureRequestManager({
       signer: this.keys,
-      substrate,
+      substrate: this.substrate,
       adapters: opts.adapters,
       crypto,
     })
     this.programs = new ProgramManager({
-      substrate: substrate,
+      substrate: this.substrate,
       signer: this.keys,
     })
-    await substrate.isReady
+
     this.#ready()
-    this.isRegistered = this.registrationManager.checkRegistrationStatus.bind(
-      this.registrationManager
-    )
+    this.isRegistered = this.registrationManager.checkRegistrationStatus.bind(this.registrationManager)
   }
 
   constructor (opts: EntropyOpts) {

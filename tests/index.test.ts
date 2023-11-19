@@ -4,17 +4,13 @@ import Entropy from '../src'
 import {
   sleep,
   disconnect,
-  charlieSeed,
-  charlieAddress,
   charlieStashSeed,
   charlieStashAddress,
   whitelisted_test_tx_req,
-  non_whitelisted_test_tx_req,
-  whitelisted_test_constraints,
+
 } from './testing-utils'
 import { ethers } from 'ethers'
-import { keccak256 } from 'ethers/lib/utils'
-import { buf2hex, stripHexPrefix } from '../src/utils'
+import { buf2hex } from '../src/utils'
 import { spawnSync } from 'child_process'
 
 describe('Core Tests', () => {
@@ -32,8 +28,12 @@ describe('Core Tests', () => {
       console.error('Error in beforeAll: ', e.message)
     }
 
+    const keyOptions = {
+        seed: charlieStashSeed,
+      }
+
     await sleep(30000) // Give the chain nodes some time to spin up.
-    entropy = new Entropy({ seed: charlieStashSeed })
+    entropy = new Entropy({ keyOptions: keyOptions })
     await entropy.ready
   })
 
