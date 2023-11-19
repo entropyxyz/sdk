@@ -9,6 +9,8 @@ import {
   whitelisted_test_tx_req,
 
 } from './testing-utils'
+import { Keyring } from '@polkadot/api'
+import { mnemonicGenerate} from '@polkadot/util-crypto'
 import { ethers } from 'ethers'
 import { buf2hex } from '../src/utils'
 import { spawnSync } from 'child_process'
@@ -118,6 +120,29 @@ it('should handle registration, program management, and signing', async () => {
     const trimmedBuffer = fetchedProgram.slice(1)
 
     expect(buf2hex(trimmedBuffer)).toEqual(buf2hex(dummyProgram))
+
+    let unauthorizedErrorCaught = false
+
+    const testMnemonic = mnemonicGenerate()
+    const keyring = new Keyring({ type: 'sr25519' })
+    const keypair = keyring.addFromUri(testMnemonic)
+
+    const derivedAddress = keypair.address
+    console.log('Derived Address:', derivedAddress)
+
+    try {
+      console.log("false program test")
+      await entropy.programs.set(dummyProgram, derivedAddress)
+      expect('derivedAddress should not be authorized to set the program for Charlie')
+    } catch (error) {
+      if (error.message.includes("Program modification account doesn't have permission to modify this program")) {
+        unauthorizedErrorCaught = true
+      } else {
+        throw error
+      }
+    }
+
+    expect(unauthorizedErrorCaught).toBeTruthy()
 
     // signing attempts should fail cause we haven't set constraints yet
     /*    const no_constraint: any = await entropy.sign({

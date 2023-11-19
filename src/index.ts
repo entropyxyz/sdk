@@ -1,7 +1,7 @@
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import { isValidSubstrateAddress } from './utils'
 import RegistrationManager, { RegistrationParams } from './registration'
-import { getWallet,deriveNewKeysFromMnemonic, generateKeysFromMnemonic } from './keys'
+import { getWallet,deriveFromMnemonic, generateFromMnemonic } from './keys'
 import SignatureRequestManager, { SigOps, SigTxOps } from './signing'
 import { crypto } from './utils/crypto'
 import { Adapter } from './signing/adapters/types'
@@ -64,9 +64,9 @@ export default class Entropy {
     if (keys?.seed) {
       this.keys = await getWallet(keys.seed)
     } else if (keys?.mnemonic && keys?.derivationPath) {
-      this.keys = await deriveNewKeysFromMnemonic(keys.mnemonic, keys.derivationPath)
+      this.keys = await deriveFromMnemonic(keys.mnemonic, keys.derivationPath)
     } else if (keys?.mnemonic) {
-      this.keys = await generateKeysFromMnemonic(keys.mnemonic)
+      this.keys = await generateFromMnemonic(keys.mnemonic)
     } else {
       throw new Error("Insufficient data provided for key generation")
     }

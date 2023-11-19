@@ -16,7 +16,7 @@ export const getWallet = async (seed: string): Promise<Signer> => {
   }
 }
 // wordlist 
-export async function generateKeysFromMnemonic (mnemonic: string): Promise<Signer> {
+export async function generateFromMnemonic (mnemonic: string): Promise<Signer> {
   await cryptoWaitReady()
   const keyring = new Keyring({ type: 'sr25519' })
   const seed = mnemonicToMiniSecret(mnemonic)
@@ -29,7 +29,7 @@ export async function generateKeysFromMnemonic (mnemonic: string): Promise<Signe
   }
 }
 // word list 
-export async function deriveNewKeysFromMnemonic (mnemonic: string, derivationPath: string): Promise<Signer> {
+export async function deriveFromMnemonic (mnemonic: string, derivationPath: string): Promise<Signer> {
   await cryptoWaitReady()
   const keyring = new Keyring({ type: 'sr25519' })
   const seed = mnemonicToMiniSecret(mnemonic)
