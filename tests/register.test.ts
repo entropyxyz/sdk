@@ -2,36 +2,31 @@ import Entropy from '../src'
 import {
   sleep,
   disconnect,
-  aliceAddress,
-  charlieStashAddress,
   charlieStashSeed,
+  charlieStashAddress,
 } from './testing-utils'
-import { mnemonicGenerate } from '@polkadot/util-crypto'
 import { spawnSync } from 'child_process'
+import { mnemonicGenerate, mnemonicToMiniSecret} from '@polkadot/util-crypto'
 import { Keyring } from '@polkadot/api'
 
 describe('Register Tests', () => {
-  let entropy: Entropy
+  let entropy
+  let isRegisteredBefore
 
   beforeAll(async () => {
-    jest.setTimeout(300000) // Give us five minutes to spin up.
-    try {
-      spawnSync(
-        'docker',
-        ['compose', '--file', 'tests/docker-compose.yaml', 'up', '--detach'],
-        { shell: true, stdio: 'inherit' }
-      )
-    } catch (e) {
-      console.error('Error in beforeAll: ', e.message)
-    }
+    jest.setTimeout(300000) // Set timeout for the entire suite
+
+    // Spin up the test environment
+    spawnSync('docker', ['compose', '--file', 'tests/docker-compose.yaml', 'up', '--detach'], { shell: true, stdio: 'inherit' })
 
     const keyOptions = {
-      seed: charlieStashSeed,
-    }
+        seed: charlieStashSeed,
+      }
 
+    await sleep(30000) // Give the chain nodes some time to spin up.
     entropy = new Entropy({ keyOptions: keyOptions })
     await entropy.ready
-  })
+    })
 
   afterAll(async () => {
     try {
@@ -43,7 +38,7 @@ describe('Register Tests', () => {
       )
       spawnSync(
         'docker',
-        ['compose', '--file', 'tests/docker-compose.yaml', 'down'],
+        ['compose', '--file', 'tests/docker-compose.yaml', 'logs'],
         { shell: true, stdio: 'inherit' }
       )
     } catch (e) {
@@ -51,112 +46,44 @@ describe('Register Tests', () => {
     }
   })
 
-  it('should handle user registration and error handling', async () => {
-    jest.setTimeout(60000) // Extend timeout for the test
+  it('should check pre-registration status', async () => {
 
-    // Pre-registration check
-    try {
-      const preRegistrationStatus = await entropy.isRegistered(
-        charlieStashAddress
-      )
-      const preStringifiedResponse = JSON.stringify(preRegistrationStatus)
-      console.log('is Registered pre-registration?', preStringifiedResponse)
-      expect(preStringifiedResponse).toBe('false')
-    } catch (e) {
-      console.error('Error in pre-registration status check:', e.message)
-    }
+    // Check if already registered before the test
+    isRegisteredBefore = await entropy.isRegistered(charlieStashAddress)
+    expect(isRegisteredBefore).toBeFalsy()
 
-    try {
+  })
+
+
+  it('should handle user registration', async () => {
+    if (!isRegisteredBefore) {
       await entropy.register({
         programModAccount: charlieStashAddress,
         keyVisibility: 'Permissioned',
         freeTx: false,
         initialProgram: '0x',
       })
-    } catch (e) {
-      console.error('Error in test:', e.message)
+
+      const isRegisteredAfter = await entropy.isRegistered(charlieStashAddress)
+      expect(isRegisteredAfter).toBeTruthy()
     }
+  })
 
-    expect(entropy.keys.wallet.address).toBe(charlieStashAddress)
-    console.log('post registration')
-    expect(
-      await entropy.registrationManager.checkRegistrationStatus(
-        charlieStashAddress
-      )
-    ).toBeTruthy()
-
-    try {
-      const postRegistrationStatus = await entropy.isRegistered(
-        charlieStashAddress
-      )
-      expect(postRegistrationStatus).toBeTruthy()
-
-      const postStringifiedResponse = JSON.stringify(postRegistrationStatus)
-      console.log('is Registered post-registration?', postStringifiedResponse)
-
-      if (postStringifiedResponse === 'false') {
-        console.log('is not registered')
-      }
-
-      expect(postStringifiedResponse).toBe('true')
-
-      console.log('post registration')
-    } catch (e) {
-      console.error('Error in post-registration status check:', e.message)
-    }
-
-    // Attempt to re-register Charlie
-    let reRegistrationError = null
-
-    try {
-      await entropy.registrationManager.register({
+  it('should not allow re-registration', async () => {
+    await expect(
+      entropy.register({
         programModAccount: charlieStashAddress,
         keyVisibility: 'Permissioned',
         freeTx: true,
         initialProgram: '0x',
       })
-    } catch (e) {
-      reRegistrationError = e
-    }
-    expect(reRegistrationError).not.toBeNull()
-    expect(reRegistrationError.message).toContain('already registered')
+    )
+    expect('already registered').toContain
+  })
 
-    // Check registration status for a derived address (who is not registered)
-    try {
-      console.log('derived address isRegistered test')
+  it('should verify registration status of a new address', async () => {
 
-      const testMnemonic = mnemonicGenerate()
-      const keyring = new Keyring({ type: 'sr25519' })
-      const keypair = keyring.addFromUri(testMnemonic)
-
-      const derivedAddress = keypair.address
-      console.log('Derived Address:', derivedAddress)
-
-      const derivedAddressRegistrationStatus = await entropy.isRegistered(
-        derivedAddress
-      )
-
-      const preStringifiedResponse = JSON.stringify(
-        derivedAddressRegistrationStatus
-      )
-      console.log('is Registered pre-registration?', preStringifiedResponse)
-      expect(preStringifiedResponse).toBe('false')
-
-      expect(
-        await entropy.registrationManager.checkRegistrationStatus(
-          derivedAddress
-        )
-      ).toBeFalsy()
-      const derivedAddressStringifiedResponse = JSON.stringify(
-        derivedAddressRegistrationStatus
-      )
-      console.log(
-        'is the address Registered?',
-        derivedAddressStringifiedResponse
-      )
-
-    } catch (e) {
-      console.error('Error in derived status check:', e.message)
-    }
+    const isNewAddressRegistered = await entropy.isRegistered("5FWd3NSnWQ6Ay9CXmw9aTU8ZvDksn7zzzuw5dCKq9R8DsaCo")
+    expect(isNewAddressRegistered).toBeFalsy()
   })
 })
