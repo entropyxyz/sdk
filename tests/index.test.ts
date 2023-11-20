@@ -1,5 +1,5 @@
 import { readFileSync } from 'fs'
-import { SignatureLike } from '@ethersproject/bytes'
+import { EntropyAccount } from '../src'
 import Entropy from '../src'
 import {
   sleep,
@@ -7,10 +7,10 @@ import {
   charlieStashSeed,
   charlieStashAddress,
   whitelisted_test_tx_req,
-
 } from './testing-utils'
 import { Keyring } from '@polkadot/api'
-import { mnemonicGenerate} from '@polkadot/util-crypto'
+import { getWallet } from '../src/keys'
+import { mnemonicGenerate } from '@polkadot/util-crypto'
 import { ethers } from 'ethers'
 import { buf2hex } from '../src/utils'
 import { spawnSync } from 'child_process'
@@ -22,92 +22,103 @@ describe('Core Tests', () => {
     jest.setTimeout(300000) // Give us five minutes to spin up.
     try {
       spawnSync(
-        "docker",
-        [ "compose", "--file", "tests/docker-compose.yaml", "up", "--detach" ],
+        'docker',
+        ['compose', '--file', 'tests/docker-compose.yaml', 'up', '--detach'],
         { shell: true, stdio: 'inherit' } // Use shell's search path.
       )
     } catch (e) {
       console.error('Error in beforeAll: ', e.message)
     }
 
-    const keyOptions = {
-        seed: charlieStashSeed,
-      }
+    const signer = await getWallet(charlieStashSeed)
+    
+    //passing charlie as string 
+    // const signer = charlieStashSeed
+    // const publicKey = '5HGjWAeFDfFCWPsjFQdVV2Msvz2XtMktvgocEZcCj68kUMaw'
 
-    await sleep(30000) // Give the chain nodes some time to spin up.
-    entropy = new Entropy({ keyOptions: keyOptions })
+    const entropyAccount: EntropyAccount = {
+      sigRequestKey: signer,
+      programModKey: signer
+    }
+
+    await sleep(30000)
+    entropy = new Entropy({ account: entropyAccount})
     await entropy.ready
+
   })
 
   afterAll(async () => {
     try {
       await disconnect(entropy.substrate)
       spawnSync(
-        "docker",
-        [ "compose", "--file", "tests/docker-compose.yaml", "down" ],
+        'docker',
+        ['compose', '--file', 'tests/docker-compose.yaml', 'down'],
         { shell: true, stdio: 'inherit' }
       )
       spawnSync(
-        "docker",
-        [ "compose", "--file", "tests/docker-compose.yaml", "logs" ],
+        'docker',
+        ['compose', '--file', 'tests/docker-compose.yaml', 'logs'],
         { shell: true, stdio: 'inherit' }
       )
     } catch (e) {
-        console.error('Error in afterAll: ', e.message)
+      console.error('Error in afterAll: ', e.message)
     }
   })
 
-it('should handle registration, program management, and signing', async () => {
-  jest.setTimeout(60000)
-  
-  // Pre-registration check
-  try {
-      const preRegistrationStatus = await entropy.isRegistered(charlieStashAddress)
+  it('should handle registration, program management, and signing', async () => {
+    jest.setTimeout(60000)
+
+    // Pre-registration check
+    try {
+      const preRegistrationStatus = await entropy.isRegistered(
+        charlieStashAddress
+      )
       expect(preRegistrationStatus).toBeFalsy()
       const preStringifiedResponse = JSON.stringify(preRegistrationStatus)
-      console.log("is Registered pre-registration?", preStringifiedResponse)
+      console.log('is Registered pre-registration?', preStringifiedResponse)
       expect(preStringifiedResponse).toBe('false')
-  } catch (e) {
+    } catch (e) {
       console.error('Error in pre-registration status check:', e.message)
-  }
-  
-  try {
-    await entropy.register ({
-      keyVisibility: 'Permissioned',
-      freeTx: false,
-      programModAccount: charlieStashAddress,
-    })
-  } catch (e) {
-    console.error('Error in test:', e.message)
-  }
-
-  expect(entropy.keys.wallet.address).toBe(charlieStashAddress)
-  console.log('post registration')
-  expect(
-    await entropy.registrationManager.checkRegistrationStatus(
-      charlieStashAddress
-    )
-  ).toBeTruthy()
-  
-  // Post-registration check
-  try {
-    const postRegistrationStatus = await entropy.isRegistered(charlieStashAddress)
-    expect(postRegistrationStatus).toBeTruthy()
-  
-    const postStringifiedResponse = JSON.stringify(postRegistrationStatus)
-    console.log("is Registered post-registration?", postStringifiedResponse)
-  
-    if (postStringifiedResponse === 'false') {
-      console.log("is not registered")
     }
-  
-    expect(postStringifiedResponse).toBe('true')
-  
+
+    try {
+      await entropy.register({
+        keyVisibility: 'Permissioned',
+        freeTx: false,
+        programModAccount: charlieStashAddress,
+      })
+    } catch (e) {
+      console.error('Error in test:', e.message)
+    }
+
+    expect(entropy.keys.wallet.address).toBe(charlieStashAddress)
     console.log('post registration')
-  } catch (e) {
-    console.error('Error in post-registration status check:', e.message)
-  }
-  
+    expect(
+      await entropy.registrationManager.checkRegistrationStatus(
+        charlieStashAddress
+      )
+    ).toBeTruthy()
+
+    // Post-registration check
+    try {
+      const postRegistrationStatus = await entropy.isRegistered(
+        charlieStashAddress
+      )
+      expect(postRegistrationStatus).toBeTruthy()
+
+      const postStringifiedResponse = JSON.stringify(postRegistrationStatus)
+      console.log('is Registered post-registration?', postStringifiedResponse)
+
+      if (postStringifiedResponse === 'false') {
+        console.log('is not registered')
+      }
+
+      expect(postStringifiedResponse).toBe('true')
+
+      console.log('post registration')
+    } catch (e) {
+      console.error('Error in post-registration status check:', e.message)
+    }
 
     // Set a program for the user
     const dummyProgram: any = readFileSync(
@@ -131,11 +142,17 @@ it('should handle registration, program management, and signing', async () => {
     console.log('Derived Address:', derivedAddress)
 
     try {
-      console.log("false program test")
+      console.log('false program test')
       await entropy.programs.set(dummyProgram, derivedAddress)
-      expect('derivedAddress should not be authorized to set the program for Charlie')
+      expect(
+        'derivedAddress should not be authorized to set the program for Charlie'
+      )
     } catch (error) {
-      if (error.message.includes("Program modification account doesn't have permission to modify this program")) {
+      if (
+        error.message.includes(
+          "Program modification account doesn't have permission to modify this program"
+        )
+      ) {
         unauthorizedErrorCaught = true
       } else {
         throw error

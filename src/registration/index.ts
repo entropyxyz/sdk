@@ -108,7 +108,5 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
     const isRegistered = await this.substrate.query.relayer.registered(address)
     return !!isRegistered.toJSON()
   }
-  private getDefaultProgramModAccount (address: Address): Address {
-    return address
-  }
+
 }

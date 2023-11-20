@@ -1,5 +1,4 @@
 import ExtrinsicBaseClass from '../extrinsic'
-// import { Option, Bool } from '@polkadot/types'
 import { ApiPromise } from '@polkadot/api'
 import { Signer } from '../types'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
@@ -74,10 +73,9 @@ export default class ProgramManager extends ExtrinsicBaseClass {
 
   async set (
     program: ArrayBuffer,
-    sigReqAccount?: string,
+    sigReqAccount = this.signer.wallet.address,
     programModAccount?: string
   ): Promise<void> {
-    sigReqAccount = sigReqAccount || this.signer.wallet.address
     programModAccount = programModAccount || sigReqAccount
   
     const isAuthorized = await this.checkAuthorization(programModAccount, sigReqAccount)

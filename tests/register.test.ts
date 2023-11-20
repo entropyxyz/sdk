@@ -6,6 +6,8 @@ import {
   charlieStashAddress,
 } from './testing-utils'
 import { spawnSync } from 'child_process'
+import { getWallet } from '../src/keys'
+import { EntropyAccount } from '../src'
 
 describe('Register Tests', () => {
   let entropy
@@ -17,14 +19,16 @@ describe('Register Tests', () => {
     // Spin up the test environment
     spawnSync('docker', ['compose', '--file', 'tests/docker-compose.yaml', 'up', '--detach'], { shell: true, stdio: 'inherit' })
 
-    const keyOptions = {
-        seed: charlieStashSeed,
-      }
+    const signer = await getWallet(charlieStashSeed)
+    const entropyAccount: EntropyAccount = {
+      sigRequestKey: signer,
+      programModKey: signer
+    }
 
-    await sleep(30000) // Give the chain nodes some time to spin up.
-    entropy = new Entropy({ keyOptions: keyOptions })
+    await sleep(30000)
+    entropy = new Entropy({ account: entropyAccount})
     await entropy.ready
-    })
+  })
 
   afterAll(async () => {
     try {

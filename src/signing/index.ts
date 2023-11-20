@@ -203,10 +203,10 @@ export default class SignatureRequestManager {
           ...parsedMsg,
           msg: parsedMsg.msg,
         }
-        const sigProof = (await sendHttpPost(
+        const sigProof = await sendHttpPost(
           `http://${message.url}/user/sign_tx`,
           JSON.stringify(payload)
-        )) as string[]
+        ) as string[]
         sigProof.push(message.tss_account)
         return sigProof
       })
