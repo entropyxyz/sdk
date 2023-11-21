@@ -7,6 +7,19 @@ export interface AnyObject {
   [key: string]: number | string | string[] | AnyObject
 }
 
+export function isPublicKey (str: string): boolean {
+  const stripped = stripHexPrefix(str)
+  const hexPattern = /^[0-9a-fA-F]{64}$/ // is publicKey
+  return hexPattern.test(stripped)
+}
+
+export function isHexSee (str: string): boolean {
+  const stripped = stripHexPrefix(str)
+  const hexPattern = /^[0-9a-fA-F]{64}$/ // is publicKey
+  return hexPattern.test(stripped)
+}
+
+
 export function stripHexPrefix (str: string): string {
   if (str.startsWith('0x')) return str.slice(2)
   return str
