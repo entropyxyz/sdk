@@ -59,7 +59,6 @@ export default class Entropy {
   ready: Promise<void>
   public sigRequestPublicKey?: string
   public programModPublicKey?: string
-  keys?: Signer
   registrationManager: RegistrationManager
   isRegistered: (address: Address) => Promise<boolean>
   programs: ProgramManager
