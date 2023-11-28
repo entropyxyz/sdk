@@ -100,11 +100,11 @@ export default class Entropy {
       crypto,
     })
 
-    // const programModKeyPair = isValidPair(this.account.programModKey as Signer) ? this.account.programModKey : undefined
+    const programModKeyPair = isValidPair(this.account.programModKey as Signer) ? this.account.programModKey : undefined
 
     this.programs = new ProgramManager({
       substrate: this.substrate,
-      signer: this.account.programModKey as Signer || this.account.sigRequestKey,
+      signer: programModKeyPair as Signer || this.account.sigRequestKey,
     })
     if (this.#programReadOnly || this.#allReadOnly) this.programs.set = async () => { throw new Error('Programs is in a read only state: Must pass a valid key pair in initialization.') }
     this.#ready()
