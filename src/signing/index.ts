@@ -40,12 +40,12 @@ export default class SignatureRequestManager {
   substrate: ApiPromise
 
   /**
-   * Constructs a new instance of the `SignatureRequestManager` class.
+   * Initializes a new instance of `SignatureRequestManager`.
    *
-   * @param signer - The signer for the transaction.
-   * @param substrate - Polkadot/Substrate API instance.
-   * @param adapters - Transaction adapters for different transaction types (chain dependent).
-   * @param crypto - chachapoly cryptoLib
+   * @param signer - The signer for authorizing transactions.
+   * @param substrate - Instance of the Polkadot/Substrate API.
+   * @param adapters - Set of adapters for handling different types of transactions.
+   * @param crypto - Instance of CryptoLib for cryptographic operations.
    */
 
   constructor ({ signer, substrate, adapters, crypto }: Config) {
@@ -59,14 +59,14 @@ export default class SignatureRequestManager {
   }
 
   /**
-   * Signs a transaction of the specified type.
+   * Signs a transaction using the appropriate adapter.
    *
-   * @param txParams - The transaction parameters.
-   * @param type - The type of the transaction.
-   *
-   * @returns A promise that resolves with the signed transaction.
-   * @throws {Error} If an adapter for the given transaction type is not found.
+   * @param txParams - The parameters of the transaction to be signed.
+   * @param type - The type of transaction.
+   * @returns A promise resolving with the signed transaction.
+   * @throws Error if an adapter for the transaction type is not found.
    */
+
   async signTransaction ({ txParams, type }: SigTxOps): Promise<unknown> {
     if (!this.adapters[type])
       throw new Error(`No transaction adapter for type: ${type} submit as hash`)
@@ -86,12 +86,14 @@ export default class SignatureRequestManager {
 
     return signature
   }
+
   /**
-   * Signs the provided request hash.
+   * Signs a given signature request hash.
    *
-   * @param sigRequestHash - The request hash to sign.
-   * @returns A promise which resolves to the generated signature as a Uint8Array.
+   * @param sigRequestHash - The hash of the signature request to be signed.
+   * @returns A promise resolving to the signed hash as a Uint8Array.
    */
+
   async sign ({ sigRequestHash }: SigOps): Promise<Uint8Array> {
     const strippedsigRequestHash = stripHexPrefix(sigRequestHash)
     const validatorsInfo: Array<ValidatorInfo> = await this.pickValidators(
@@ -125,11 +127,11 @@ export default class SignatureRequestManager {
   }
 
   /**
-   * Generates formatted transaction requests suitable for validators.
+   * Generates transaction requests formatted for validators.
    *
-   * @param strippedsigRequestHash - The signature request hash, with hex prefix stripped.
-   * @param validatorsInfo - Information regarding the validators.
-   * @returns A promise that resolves to an array of encrypted messages for each validator.
+   * @param strippedsigRequestHash - Stripped signature request hash.
+   * @param validatorsInfo - Information about the validators.
+   * @returns A promise resolving to an array of encrypted messages for validators.
    */
 
   async formatTxRequests ({
@@ -214,11 +216,12 @@ export default class SignatureRequestManager {
   }
 
   /**
-   * Fetches validator information based on the signature request.
+   * Selects validators based on the signature request.
    *
-   * @param sigRequest - The provided signature request.
-   * @returns A promise that resolves to an array of information related to validators.
+   * @param sigRequest - The signature request hash.
+   * @returns A promise resolving to an array of validator information.
    */
+
   async pickValidators (sigRequest: string): Promise<ValidatorInfo[]> {
     const entries = await this.substrate.query.stakingExtension.signingGroups.entries()
     const stashKeys = entries.map((group) => {
@@ -259,11 +262,12 @@ export default class SignatureRequestManager {
   }
 
   /**
-   * Verifies the signatures from the tss_nodes
+   * Verifies and consolidates signatures received from validators.
    *
-   * @param string[][] - An array of encrypted messages to send as transaction requests.
-   * @returns string - the first valid signature
+   * @param sigsAndProofs - Arrays of signatures and proofs.
+   * @returns The first valid signature after verification.
    */
+  
   async verifyAndReduceSignatures (sigsAndProofs: string[][]): Promise<string> {
     const seperatedSigsAndProofs = sigsAndProofs.reduce(
       (a, sp) => {
