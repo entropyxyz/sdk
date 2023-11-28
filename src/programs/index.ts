@@ -99,7 +99,7 @@ export default class ProgramManager extends ExtrinsicBaseClass {
   /**
    *  Checks if a given program modification account is authorized to modify the program associated with a specific signature request account.
    *
-   * @param {string} sigReqAccount - he account for which the program modification is intended.
+   * @param {string} sigReqAccount - The account for which the program modification is intended.
    * @param {string} programModAccount - The account whose authorization is to be verified.
    * @returns {Promise<boolean>} - A promise that resolves if the `programModAccount` is authorized to modify the program for `sigReqAccount`
    * @remarks
