@@ -1,5 +1,5 @@
 import { ApiPromise, WsProvider } from '@polkadot/api'
-import { isValidSubstrateAddress } from './utils/'
+import { isValidSubstrateAddress } from './utils'
 import RegistrationManager, { RegistrationParams } from './registration'
 import SignatureRequestManager, { SigOps, SigTxOps } from './signing'
 import { crypto } from './utils/crypto'
