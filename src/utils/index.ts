@@ -1,7 +1,7 @@
 import { decodeAddress, encodeAddress } from '@polkadot/keyring'
 import { hexToU8a, isHex } from '@polkadot/util'
 import { ApiPromise, WsProvider } from '@polkadot/api'
-import { Address } from '../types'
+import { Address } from '../types/'
 
 export interface AnyObject {
   [key: string]: number | string | string[] | AnyObject
