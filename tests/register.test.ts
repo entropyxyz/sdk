@@ -20,9 +20,10 @@ describe('Register Tests', () => {
     spawnSync('docker', ['compose', '--file', 'tests/docker-compose.yaml', 'up', '--detach'], { shell: true, stdio: 'inherit' })
 
     const signer = await getWallet(charlieStashSeed)
+
     const entropyAccount: EntropyAccount = {
-      sigRequestKey: signer,
-      programModKey: signer
+      sigRequestKey: signer.pair,
+      programModKey: signer.pair
     }
 
     await sleep(30000)
