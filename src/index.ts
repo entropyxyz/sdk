@@ -4,7 +4,7 @@ import RegistrationManager, { RegistrationParams } from './registration'
 import SignatureRequestManager, { SigOps, SigTxOps } from './signing'
 import { crypto } from './utils/crypto'
 import { Adapter } from './signing/adapters/types'
-import { getWallet, isValidPair } from './keys'
+import { isValidPair } from './keys'
 import { Signer, Address } from './types'
 import ProgramManager from './programs'
 
@@ -91,20 +91,20 @@ export default class Entropy {
 
     this.registrationManager = new RegistrationManager({
       substrate: this.substrate,
-      signer: getWallet(this.account.sigRequestKey),
+      signer: {wallet: this.account.sigRequestKey.wallet, pair: this.account.sigRequestKey.pair},
     })
     this.signingManager = new SignatureRequestManager({
-      signer: getWallet(this.account.sigRequestKey),
+      signer: {wallet: this.account.sigRequestKey.wallet, pair: this.account.sigRequestKey.pair},
       substrate: this.substrate,
       adapters: opts.adapters,
       crypto,
     })
 
-    const programModKeyPair = isValidPair(this.account.programModKey) ? this.account.programModKey : undefined
+    // const programModKeyPair = isValidPair(this.account.programModKey as Signer) ? this.account.programModKey : undefined
 
     this.programs = new ProgramManager({
       substrate: this.substrate,
-      signer: getWallet(programModKeyPair || this.account.sigRequestKey),
+      signer: this.account.programModKey as Signer || this.account.sigRequestKey,
     })
     if (this.#programReadOnly || this.#allReadOnly) this.programs.set = async () => { throw new Error('Programs is in a read only state: Must pass a valid key pair in initialization.') }
     this.#ready()
@@ -114,7 +114,7 @@ export default class Entropy {
   }
 
   #setReadOnlyStates (): void {
-   // the readOnly state will not allow for write functions
+  // the readOnly state will not allow for write functions
     this.#programReadOnly = false
     this.#allReadOnly = false
 
@@ -127,7 +127,7 @@ export default class Entropy {
 
     if (typeof this.account.sigRequestKey !== 'object') {
       throw new Error('AccountTypeError: sigRequestKey can not be a string')
-    } else if (!isValidPair(this.account.sigRequestKey)) {
+    } else if (!isValidPair({ wallet: this.account.sigRequestKey.wallet, pair: this.account.sigRequestKey.pair})) {
       throw new Error('AccountTypeError: sigRequestKey not a valid signing pair')
     }
 
