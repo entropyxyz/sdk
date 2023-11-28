@@ -60,8 +60,8 @@ export default class ProgramManager extends ExtrinsicBaseClass {
    * Sets or updates the program of a specified account on Substrate
    * This method allows the current signer or an authorized account to update the program associated with the signer's account or another specified account.
    * @param {ArrayBuffer} program - The program to be set or updated, as an ArrayBuffer.
-   * @param {string} [programModAccount] - (Optional) The account that will be used to modify the program if different from the signer's account.
-   * @param {string} [sigReqAccount=this.signer.wallet.address] - (Optional) The account for which the program will be set or updated. Defaults to the signer's account.
+   * @param {string} [programModAccount] - Optional. An authorized account to modify the program, if different from the signer's account.
+   * @param {string} [sigReqAccount=this.signer.wallet.address] -The account for which the program will be set or updated. Defaults to the signer's account.
    * @returns {Promise<void>} A promise that resolves when the transaction has been included in the block.
    * @throws {Error} Throws an error if the account is unauthorized or if there's a problem setting the program.
    * @remarks
@@ -99,8 +99,8 @@ export default class ProgramManager extends ExtrinsicBaseClass {
   /**
    *  Checks if a given program modification account is authorized to modify the program associated with a specific signature request account.
    *
-   * @param {string} sigReqAccount - The account for which the program modification authorization is being checked.
-   * @param {string} programModAccount - The account that is being checked for authorization to modify the program.
+   * @param {string} sigReqAccount - The account for which the program modification is intended.
+   * @param {string} programModAccount - The account whose authorization is to be verified.
    * @returns {Promise<boolean>} - A promise that resolves if the `programModAccount` is authorized to modify the program for `sigReqAccount`
    * @remarks
    * This method queries Substrate  to determine if the `programModAccount` is allowed to modify the program associated with the `sigReqAccount`.

@@ -31,14 +31,10 @@ describe('Core Tests', () => {
     }
 
     const signer = await getWallet(charlieStashSeed)
-    
-    //passing charlie as string 
-    // const signer = charlieStashSeed
-    // const publicKey = '5HGjWAeFDfFCWPsjFQdVV2Msvz2XtMktvgocEZcCj68kUMaw'
 
     const entropyAccount: EntropyAccount = {
-      sigRequestKey: signer,
-      programModKey: signer
+      sigRequestKey: signer.pair,
+      programModKey: signer.pair
     }
 
     await sleep(30000)
@@ -91,7 +87,7 @@ describe('Core Tests', () => {
       console.error('Error in test:', e.message)
     }
 
-    expect(entropy.keys.wallet.address).toBe(charlieStashAddress)
+    expect(entropy.account.sigRequestKey.wallet.address).toBe(charlieStashAddress)
     console.log('post registration')
     expect(
       await entropy.registrationManager.checkRegistrationStatus(
