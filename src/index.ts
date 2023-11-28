@@ -36,17 +36,14 @@ export interface EntropyOpts {
  * 
     const signer = await getWallet(charlieStashSeed)
 
-    // OR pass Charlie seed as string 
-    // const signer = charlieStashSeed
-
     const entropyAccount: EntropyAccount = {
-      sigRequestKey: signer,
-      programModKey: signer
+      sigRequestKey: signer.pair,
+      programModKey: signer.pair
     }
 
-    entropy = new Entropy({ account: entropyAccount})
+    const entropy = new Entropy({ account: entropyAccount})
+    await entropy.ready
 
-    await entropy.ready * await entropy.ready
     await entropy.register({ address, keyVisibility: 'Permissioned', freeTx: false })
     
  * ```
@@ -144,7 +141,7 @@ export default class Entropy {
    * Registers an address to Entropy using the provided parameters.
    *
    * @param registrationParams - Parameters for registration, including:
-   *   - `address`: The address to register
+   *   - `programModAccount`: The address of the account authorized to set program's on the sigRequestKey's behalf
    *   - `keyVisibility`: The visibility setting for the key. "Private" | "Public" | "Permissioned"
    *   - `initialProgram`: (optional for now) Initial program setting. TODO // update to reflect new settings
    * @returns A promise indicating the completion of the registration process.

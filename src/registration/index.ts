@@ -39,11 +39,10 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
   /**
    * Registers a user with the given parameters.
    *
-   * @param freeTx - Flag indicating if the transaction should be free (default: true).
-   * @param initialProgram - Initial program (optional).
-   * @param keyVisibility - Visibility level of the key. Defaults to 'Permissioned'.
-   * @param programModAccount - Address that is able to modify programs on `address` behalf
- * @param sigReqAccount - Signature request account of the user. Defaults to signer's wallet address.
+   * @param freeTx - Optional. Indicates if the transaction should be free (default: true).
+   * @param initialProgram - Optional. Initial program associated with the user.
+   * @param keyVisibility - Key visibility level ('Public', 'Permissioned', 'Private'). Defaults to 'Permissioned'.
+   * @param programModAccount - Account authorized to modify programs on behalf of the user.
    * 
    * @returns A promise that resolves when the user is successfully registered.
    * @throws {Error} If the user is already registered.
