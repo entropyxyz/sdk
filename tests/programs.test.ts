@@ -63,7 +63,6 @@ describe('Programs Tests', () => {
     const isRegistered = await entropy.isRegistered(charlieStashAddress)
     if (!isRegistered) {
       // Test registration
-      console.log('pre-register')
 
       await entropy.register({
         programModAccount: charlieStashAddress,
@@ -84,9 +83,6 @@ describe('Programs Tests', () => {
     const keypair = keyring.addFromUri(testMnemonic)
 
     const derivedAddress = keypair.address
-    console.log('Derived Address:', derivedAddress)
-
-    console.log('setting checks')
 
     const dummyProgram = readFileSync(
       './tests/testing-utils/template_barebones.wasm'

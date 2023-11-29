@@ -71,7 +71,6 @@ describe('Core Tests', () => {
       )
       expect(preRegistrationStatus).toBeFalsy()
       const preStringifiedResponse = JSON.stringify(preRegistrationStatus)
-      console.log('is Registered pre-registration?', preStringifiedResponse)
       expect(preStringifiedResponse).toBe('false')
     } catch (e) {
       console.error('Error in pre-registration status check:', e.message)
@@ -88,7 +87,6 @@ describe('Core Tests', () => {
     }
 
     expect(entropy.account.sigRequestKey.wallet.address).toBe(charlieStashAddress)
-    console.log('post registration')
     expect(
       await entropy.registrationManager.checkRegistrationStatus(
         charlieStashAddress
@@ -103,7 +101,6 @@ describe('Core Tests', () => {
       expect(postRegistrationStatus).toBeTruthy()
 
       const postStringifiedResponse = JSON.stringify(postRegistrationStatus)
-      console.log('is Registered post-registration?', postStringifiedResponse)
 
       if (postStringifiedResponse === 'false') {
         console.log('is not registered')
@@ -111,7 +108,6 @@ describe('Core Tests', () => {
 
       expect(postStringifiedResponse).toBe('true')
 
-      console.log('post registration')
     } catch (e) {
       console.error('Error in post-registration status check:', e.message)
     }
@@ -121,7 +117,6 @@ describe('Core Tests', () => {
       './tests/testing-utils/template_barebones.wasm'
     )
     await entropy.programs.set(dummyProgram)
-    console.log('set program')
     // Retrieve the program and compare
     const fetchedProgram: ArrayBuffer = await entropy.programs.get()
     const trimmedBuffer = fetchedProgram.slice(1)
@@ -135,10 +130,8 @@ describe('Core Tests', () => {
     const keypair = keyring.addFromUri(testMnemonic)
 
     const derivedAddress = keypair.address
-    console.log('Derived Address:', derivedAddress)
 
     try {
-      console.log('false program test')
       await entropy.programs.set(dummyProgram, derivedAddress)
       expect(
         'derivedAddress should not be authorized to set the program for Charlie'
@@ -183,13 +176,11 @@ describe('Core Tests', () => {
       whitelisted_test_tx_req
     )
 
-    console.log('pre signature')
     const signature: Uint8Array = await entropy.sign({
       sigRequestHash: serializedTx,
     })
     // encoding signature
     expect(signature.length).toBe(65)
-    console.log('post signature')
     // await disconnect(charlieStashEntropy.substrate)
   })
 })

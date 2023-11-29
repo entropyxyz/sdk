@@ -177,8 +177,6 @@ export default class SignatureRequestManager {
             serverDHKey
           )
 
-          console.log('ENCRYP', encryptedMessage)
-
           return {
             msg: encryptedMessage,
             url: validator.ip_address,

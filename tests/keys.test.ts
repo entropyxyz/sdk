@@ -9,7 +9,7 @@ describe('Keys Tests', () => {
 
   beforeAll(async () => {
     try {
-      console.log('start')
+      console.log('starting key tests')
     } catch (e) {
       console.error('Error in beforeAll: ', e.message)
     }
