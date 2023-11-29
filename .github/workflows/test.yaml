@@ -31,5 +31,8 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_CI_TOKEN }}
+      - name: Add TSS server host mappings
+        run: |
+          echo "127.0.0.1 alice-tss-server bob-tss-server" | sudo tee -a /etc/hosts
       - name: Test
         run: yarn run test
