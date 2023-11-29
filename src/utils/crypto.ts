@@ -1,4 +1,4 @@
-const { cryptoWaitReady, decodeAddress, signatureVerify } = require('@polkadot/util-crypto');
+const { cryptoWaitReady, decodeAddress, signatureVerify } = require('@polkadot/util-crypto')
 import { u8aToHex } from '@polkadot/util'
 
 interface ResolveType {

@@ -6,7 +6,7 @@ export interface RegistrationParams {
   freeTx?: boolean
   initialProgram?: string
   keyVisibility?: 'Public' | 'Permissioned' | 'Private'
-  address: Address
+  programModAccount: Address
 }
 
 /**
@@ -39,10 +39,10 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
   /**
    * Registers a user with the given parameters.
    *
-   * @param freeTx - Flag indicating if the transaction should be free (default: true).
-   * @param initialProgram - Initial program (optional).
-   * @param keyVisibility - Visibility level of the key. Defaults to 'Permissioned'.
-   * @param address - Address of the user. Defaults to signer's address.
+   * @param freeTx - Optional. Indicates if the transaction should be free (default: true).
+   * @param initialProgram - Optional. Initial program associated with the user.
+   * @param keyVisibility - Key visibility level ('Public', 'Permissioned', 'Private'). Defaults to 'Permissioned'.
+   * @param programModAccount - Account authorized to modify programs on behalf of the user.
    * 
    * @returns A promise that resolves when the user is successfully registered.
    * @throws {Error} If the user is already registered.
@@ -52,14 +52,15 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
     freeTx = true,
     initialProgram,
     keyVisibility = 'Permissioned',
-    address = this.signer.wallet.address,
+    programModAccount,
   }: RegistrationParams): Promise<undefined> {
+    const programModificationAccount = programModAccount
 
     // this is sloppy
     // TODO: store multiple signers via address. and respond accordingly
     // however it should be handled in extrinsic class and not here
 
-    const isCurrentlyRegistered = await this.checkRegistrationStatus(address)
+    const isCurrentlyRegistered = await this.checkRegistrationStatus(this.signer.wallet.address)
     if (isCurrentlyRegistered) {
       throw new Error('already registered')
     }
@@ -69,8 +70,7 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
         const unsubPromise = this.substrate.rpc.chain.subscribeNewHeads(
           async () => {
             const registeredCheck = await this.checkRegistrationStatus(
-              this.signer.wallet.address
-            )
+              this.signer.wallet.address            )
             if (registeredCheck) {
               const unsub = await unsubPromise
               unsub()
@@ -84,7 +84,7 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
     })
 
     const registerTx = this.substrate.tx.relayer.register(
-      address,
+      programModificationAccount,
       keyVisibility,
       initialProgram ? initialProgram : null
     )
@@ -107,4 +107,5 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
     const isRegistered = await this.substrate.query.relayer.registered(address)
     return !!isRegistered.toJSON()
   }
+
 }
