@@ -65,6 +65,7 @@ describe('Core Tests', () => {
     jest.setTimeout(60000)
 
     // Pre-registration check
+    console.log("pre-registration check")
     try {
       const preRegistrationStatus = await entropy.isRegistered(
         charlieStashAddress
@@ -94,6 +95,8 @@ describe('Core Tests', () => {
     ).toBeTruthy()
 
     // Post-registration check
+    console.log("post-registration check")
+
     try {
       const postRegistrationStatus = await entropy.isRegistered(
         charlieStashAddress
@@ -113,11 +116,14 @@ describe('Core Tests', () => {
     }
 
     // Set a program for the user
+    console.log("setting program")
+
     const dummyProgram: any = readFileSync(
       './tests/testing-utils/template_barebones.wasm'
     )
     await entropy.programs.set(dummyProgram)
     // Retrieve the program and compare
+    console.log("getting program")
     const fetchedProgram: ArrayBuffer = await entropy.programs.get()
     const trimmedBuffer = fetchedProgram.slice(1)
 
@@ -130,6 +136,9 @@ describe('Core Tests', () => {
     const keypair = keyring.addFromUri(testMnemonic)
 
     const derivedAddress = keypair.address
+
+    console.log("not authorized to set program test")
+
 
     try {
       await entropy.programs.set(dummyProgram, derivedAddress)
@@ -172,6 +181,8 @@ describe('Core Tests', () => {
     expect(wrong_constraint.length).toBe(0)
 */
     // signing should work for whitelisted tx requests
+    console.log("signing test")
+
     const serializedTx = ethers.utils.serializeTransaction(
       whitelisted_test_tx_req
     )
