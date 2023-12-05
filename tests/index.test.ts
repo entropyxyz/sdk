@@ -11,9 +11,9 @@ import {
 import { Keyring } from '@polkadot/api'
 import { getWallet } from '../src/keys'
 import { mnemonicGenerate } from '@polkadot/util-crypto'
-import { ethers } from 'ethers'
 import { buf2hex } from '../src/utils'
 import { spawnSync } from 'child_process'
+import { Transaction } from 'ethereumjs-tx'
 
 describe('Core Tests', () => {
   let entropy: Entropy
@@ -184,9 +184,10 @@ describe('Core Tests', () => {
     // signing should work for whitelisted tx requests
     console.log("signing test")
 
-    const serializedTx = ethers.utils.serializeTransaction(
-      whitelisted_test_tx_req
-    )
+
+    const tx = new Transaction(whitelisted_test_tx_req)
+
+    const serializedTx = tx.serialize.toString()
 
     const signature: Uint8Array = await entropy.sign({
       sigRequestHash: serializedTx,
