@@ -1,24 +1,13 @@
 import { Arch } from '../../types'
 import { keccak256 } from "ethereum-cryptography/keccak.js"
-import { encode } from '@ethereumjs/rlp'
 import { Transaction } from 'ethereumjs-tx'
 
 export async function preSign (txData) {
   const tx = new Transaction(txData)
+  
+  const serializedTx = tx.serialize().toString('hex')
 
-  const rlpEncodedTx = encode([
-    tx.nonce,
-    tx.gasPrice,
-    tx.gasLimit,
-    tx.to,
-    tx.value,
-    tx.data,
-    tx.v,
-    tx.r,
-    tx.s
-  ])
-
-  return '0x' + (rlpEncodedTx as Buffer).toString('hex')
+  return serializedTx
 }
 
 export async function postSign (sig: Uint8Array): Promise<string> {

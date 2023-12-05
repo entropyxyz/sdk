@@ -187,8 +187,8 @@ describe('Core Tests', () => {
 
     const tx = new Transaction(whitelisted_test_tx_req)
 
-    const serializedTx = tx.serialize.toString()
-
+    const serializedTx = tx.serialize().toString('hex')
+    
     const signature: Uint8Array = await entropy.sign({
       sigRequestHash: serializedTx,
     })
