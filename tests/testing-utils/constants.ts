@@ -1,4 +1,3 @@
-import { BigNumber, ethers } from 'ethers'
 
 export const x25519_public_key_alice =
   '0x0ac029f0b853b23bed652d6d0de69b7cc38d94f93732eefc85b5861e90f73a22'
