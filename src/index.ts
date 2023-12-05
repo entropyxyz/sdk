@@ -189,7 +189,7 @@ export default class Entropy {
 
   }
 
-/**
+  /**
 
    * @param params - substrate account id
    *
