@@ -6,14 +6,16 @@ import {
   disconnect,
   charlieStashSeed,
   charlieStashAddress,
+  whitelisted_test_evm_address,
   whitelisted_test_tx_req,
 } from './testing-utils'
 import { Keyring } from '@polkadot/api'
 import { getWallet } from '../src/keys'
 import { mnemonicGenerate } from '@polkadot/util-crypto'
-import { ethers } from 'ethers'
 import { buf2hex } from '../src/utils'
 import { spawnSync } from 'child_process'
+import { Transaction } from 'ethereumjs-tx'
+import { preSign } from '../src/signing/adapters/eth'
 
 describe('Core Tests', () => {
   let entropy: Entropy
@@ -86,7 +88,8 @@ describe('Core Tests', () => {
     } catch (e) {
       console.error('Error in test:', e.message)
     }
-
+    console.log('verifyingKey:', entropy.account.verifyingKey)
+    expect(entropy.account.verifyingKey).toBeTruthy()
     expect(entropy.account.sigRequestKey.wallet.address).toBe(charlieStashAddress)
     expect(
       await entropy.registrationManager.checkRegistrationStatus(
@@ -183,15 +186,21 @@ describe('Core Tests', () => {
     // signing should work for whitelisted tx requests
     console.log("signing test")
 
-    const serializedTx = ethers.utils.serializeTransaction(
-      whitelisted_test_tx_req
-    )
+    // const serializedTx = await preSign(whitelisted_test_tx_req)
 
-    const signature: Uint8Array = await entropy.sign({
-      sigRequestHash: serializedTx,
-    })
+    // const signature: Uint8Array = await entropy.sign({
+    //   sigRequestHash: serializedTx,
+    // })
+
+
+
+    const signature = await entropy.signTransaction({txParams: whitelisted_test_tx_req, type: 'eth'}) as string
+
+
+
     // encoding signature
-    expect(signature.length).toBe(65)
+    console.log("SIGGGG", signature)
+    expect(signature.length).toBe(130)
     // await disconnect(charlieStashEntropy.substrate)
   })
 })

@@ -1,17 +1,21 @@
-import { utils } from 'ethers'
 import { Arch } from '../../types'
+import { keccak256 } from "ethereum-cryptography/keccak.js"
+import { Transaction } from 'ethereumjs-tx'
 
-export async function preSign (tx): Promise<string> {
-  const serializedTx = await utils.serializeTransaction(tx)
-  const sigHash = utils.keccak256(serializedTx)
-  return sigHash
+export async function preSign (txData): Promise<string> {
+  const tx = new Transaction(txData)
+  const serializedTx = tx.serialize().toString('hex')
+  return serializedTx
 }
 
-// noop
 export async function postSign (sig: Uint8Array): Promise<string> {
-  const hexTx = Buffer.from(sig).toString('hex')
-  return hexTx
+  return Buffer.from(sig).toString('hex')
 }
 
 export const type = 'eth'
 export const arch = Arch.Evm
+
+export function pubToAddress (publicKey: string) {
+  const hash = keccak256(Buffer.from(publicKey, 'hex'))
+  return `0x${hash.slice(-20)}`
+}

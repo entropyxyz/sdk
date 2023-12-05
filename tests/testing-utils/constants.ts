@@ -1,4 +1,3 @@
-import { BigNumber, ethers } from 'ethers'
 
 export const x25519_public_key_alice =
   '0x0ac029f0b853b23bed652d6d0de69b7cc38d94f93732eefc85b5861e90f73a22'
@@ -48,20 +47,23 @@ export const whitelisted_test_constraints = {
   },
 }
 
-/// A transaction request that satisfies the test whitelisted constraints
-export const whitelisted_test_tx_req: ethers.utils.UnsignedTransaction = {
-  to: whitelisted_test_evm_address,
-  value: BigNumber.from('1'),
-  chainId: 1,
-  nonce: 1,
-  data: ethers.utils.hexlify(ethers.utils.toUtf8Bytes('Created On Entropy')),
+export function toHex(value) {
+  return '0x' + BigInt(value).toString(16);
 }
 
-/// An invalid transaction request that shouldn't satisfy any whitelisted constraints
-export const non_whitelisted_test_tx_req: ethers.utils.UnsignedTransaction = {
-  to: '', // random evm address from etherscan
-  value: BigNumber.from('1'),
+/// A transaction request that satisfies the test whitelisted constraints
+export const whitelisted_test_tx_req = {
+  to: whitelisted_test_evm_address,
+  value: 1, 
   chainId: 1,
   nonce: 1,
-  data: ethers.utils.hexlify(ethers.utils.toUtf8Bytes('Created On Entropy')),
+  data: '0x' + Buffer.from('Created On Entropy').toString('hex'),
+}
+
+export const non_whitelisted_test_tx_req = {
+  to: '', 
+  value: toHex(1), 
+  chainId: 1,
+  nonce: 1,
+  data: '0x' + Buffer.from('Created On Entropy').toString('hex'),
 }

@@ -11,6 +11,7 @@ import ProgramManager from './programs'
 export interface EntropyAccount {
   sigRequestKey?: Signer
   programModKey?: Signer | string
+  verifyingKey?: string
 }
 
 export interface EntropyOpts {
@@ -107,7 +108,25 @@ export default class Entropy {
     this.isRegistered = this.registrationManager.checkRegistrationStatus.bind(
       this.registrationManager
     )
+    this.#setVerfiyingKeys()
   }
+
+  async #setVerfiyingKeys (): Promise<void> {
+    // if an account was provided
+    if (this.account) {
+      // and their is a sigRequest key
+      if (this.account.sigRequestKey) {
+        const address = this.account.sigRequestKey.wallet.address
+        // check if it is registered
+        if (await this.isRegistered(address)) {
+          // then get the verifyingKey from the registration record
+          // on chain and set it on the account object
+          this.account.verifyingKey = await this.getVerifyingKey(address)
+        }
+      }
+    }
+  }
+
 
   #setReadOnlyStates (): void {
   // the readOnly state will not allow for write functions
@@ -165,9 +184,24 @@ export default class Entropy {
     ) {
       throw new TypeError('Incompatible address type')
     }
+    await this.registrationManager.register(params)
+    this.account.verifyingKey = await this.getVerifyingKey(this.account.sigRequestKey.wallet.address)
 
-    return this.registrationManager.register(params)
   }
+
+  /**
+
+   * @param params - substrate account id
+   *
+   * @returns A promise that returns the verifying key associated with the
+   * registration record for the given address/account
+   */
+  async getVerifyingKey (address: Address): Promise<string> {
+    const registeredInfo = await this.substrate.query.relayer.registered(address)
+    // @ts-ignore: next line
+    return registeredInfo.toHuman().verifyingKey
+  }
+
   /**
    * Signs a given transaction based on the provided parameters.
    *
