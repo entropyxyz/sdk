@@ -25,11 +25,15 @@ import Entropy from '@entropyxyz/entropy-js'
 
 // initialize entropy 
 
-const seed = "SEED"
-const endpoint = "endpoint"
+  const signer = await getWallet(charlieStashSeed)
 
-const entropy = new Entropy({ seed, endpoint })
-await entropy.ready
+    const entropyAccount: EntropyAccount = {
+      sigRequestKey: signer.pair,
+      programModKey: signer.pair
+    }
+
+    entropy = new Entropy({ account: entropyAccount})
+    await entropy.ready
 
 ```
 
@@ -81,7 +85,7 @@ Throws if the address being registered is already in use.
 
 #### Example(s)
 ```js
- const address = entropy.keys?.wallet.address
+ const address = entropy.account?.wallet.address
  console.log({ address })
 
 // Can do a pre-check to see if the address is registered 
@@ -209,7 +213,7 @@ The response is then processed and converted to an ArrayBuffer before being retu
 #### Example(s)
 ```js 
  // get program
- const fetchedProgram: ArrayBuffer = await entropy.programs.get(entropy.keys?.wallet.address)
+ const fetchedProgram: ArrayBuffer = await entropy.programs.get(entropy.account?.wallet.address)
 ```
 #### Defined in
 
