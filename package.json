@@ -77,11 +77,13 @@
   "dependencies": {
     "@entropyxyz/x25519-chacha20poly1305-nodejs": "^0.2.0",
     "@entropyxyz/x25519-chacha20poly1305-web": "^0.2.0",
+    "@ethereumjs/rlp": "^5.0.1",
+    "@ethereumjs/tx": "^5.1.0",
+    "@ethereumjs/util": "^9.0.1",
     "@ethersproject/bytes": "^5.7.0",
     "@polkadot/api": "^10.11.1",
     "@polkadot/typegen": "^10.11.1",
-    "ethereum-cryptography": "^2.1.2",
-    "ethers": "^5.7.2"
+    "ethereum-cryptography": "^2.1.2"
   },
   "directories": {
     "example": "examples"
