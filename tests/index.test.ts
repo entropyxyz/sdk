@@ -6,6 +6,7 @@ import {
   disconnect,
   charlieStashSeed,
   charlieStashAddress,
+  whitelisted_test_evm_address,
   whitelisted_test_tx_req,
 } from './testing-utils'
 import { Keyring } from '@polkadot/api'
@@ -14,6 +15,7 @@ import { mnemonicGenerate } from '@polkadot/util-crypto'
 import { buf2hex } from '../src/utils'
 import { spawnSync } from 'child_process'
 import { Transaction } from 'ethereumjs-tx'
+import { preSign } from '../src/signing/adapters/eth'
 
 describe('Core Tests', () => {
   let entropy: Entropy
@@ -184,15 +186,20 @@ describe('Core Tests', () => {
     // signing should work for whitelisted tx requests
     console.log("signing test")
 
+    // const serializedTx = await preSign(whitelisted_test_tx_req)
 
-    const tx = new Transaction(whitelisted_test_tx_req)
+    // const signature: Uint8Array = await entropy.sign({
+    //   sigRequestHash: serializedTx,
+    // })
 
-    const serializedTx = tx.serialize().toString('hex')
-    
-    const signature: Uint8Array = await entropy.sign({
-      sigRequestHash: serializedTx,
-    })
+
+
+    const signature = await entropy.signTransaction({txParams: whitelisted_test_tx_req, type: 'eth'}) as string
+
+
+
     // encoding signature
+    console.log("SIGGGG", signature)
     expect(signature.length).toBe(65)
     // await disconnect(charlieStashEntropy.substrate)
   })

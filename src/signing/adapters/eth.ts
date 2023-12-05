@@ -2,17 +2,14 @@ import { Arch } from '../../types'
 import { keccak256 } from "ethereum-cryptography/keccak.js"
 import { Transaction } from 'ethereumjs-tx'
 
-export async function preSign (txData) {
+export async function preSign (txData): Promise<string> {
   const tx = new Transaction(txData)
-  
   const serializedTx = tx.serialize().toString('hex')
-
   return serializedTx
 }
 
 export async function postSign (sig: Uint8Array): Promise<string> {
-  const hexTx = Buffer.from(sig).toString('hex')
-  return hexTx
+  return Buffer.from(sig).toString('hex')
 }
 
 export const type = 'eth'
