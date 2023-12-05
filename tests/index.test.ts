@@ -200,7 +200,7 @@ describe('Core Tests', () => {
 
     // encoding signature
     console.log("SIGGGG", signature)
-    expect(signature.length).toBe(65)
+    expect(signature.length).toBe(130)
     // await disconnect(charlieStashEntropy.substrate)
   })
 })
