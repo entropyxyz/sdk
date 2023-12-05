@@ -9,6 +9,16 @@ export interface RegistrationParams {
   programModAccount: Address
 }
 
+export interface RegisteredInfo {
+  keyVisibility: KeyVisibilityInfo
+  verifyingKey: string
+}
+
+export type KeyVisibilityInfo =
+  | { public: null }
+  | { permissioned: null }
+  | { private: null }
+
 /**
  * The `RegistrationManager` class provides functionality for user registration using the Polkadot/Substrate API.
  * It extends the `ExtrinsicBaseClass` to handle extrinsic submissions and utility methods.
@@ -53,7 +63,7 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
     initialProgram,
     keyVisibility = 'Permissioned',
     programModAccount,
-  }: RegistrationParams): Promise<undefined> {
+  }: RegistrationParams): Promise<RegisteredInfo> {
     const programModificationAccount = programModAccount
 
     // this is sloppy
@@ -65,16 +75,24 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
       throw new Error('already registered')
     }
 
-    const registered: Promise<undefined> = new Promise((resolve, reject) => {
+    const registered: Promise<RegisteredInfo> = new Promise((resolve, reject) => {
       try {
         const unsubPromise = this.substrate.rpc.chain.subscribeNewHeads(
           async () => {
-            const registeredCheck = await this.checkRegistrationStatus(
-              this.signer.wallet.address            )
+            const registeredCheck = await this.checkRegistrationStatus(this.signer.wallet.address)
             if (registeredCheck) {
               const unsub = await unsubPromise
               unsub()
-              resolve(undefined)
+  
+              const registeredData = await this.substrate.query.relayer.registered(this.signer.wallet.address)
+              if (!registeredData.isSome) {
+                throw new Error('Registration information not found')
+              }
+              const data = registeredData.unwrap()
+              resolve({
+                keyVisibility: data.keyVisibility.toJSON() as KeyVisibilityInfo, 
+                verifyingKey: data.verifyingKey.toString(),
+              })
             }
           }
         )
@@ -105,6 +123,7 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
 
   async checkRegistrationStatus (address: Address): Promise<boolean> {
     const isRegistered = await this.substrate.query.relayer.registered(address)
+    console.log("REGISTERED", isRegistered.toJSON())
     return !!isRegistered.toJSON()
   }
 
