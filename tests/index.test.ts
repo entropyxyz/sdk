@@ -86,7 +86,8 @@ describe('Core Tests', () => {
     } catch (e) {
       console.error('Error in test:', e.message)
     }
-
+    console.log('verifyingKey:', entropy.account.verifyingKey)
+    expect(entropy.account.verifyingKey).toBeTruthy()
     expect(entropy.account.sigRequestKey.wallet.address).toBe(charlieStashAddress)
     expect(
       await entropy.registrationManager.checkRegistrationStatus(

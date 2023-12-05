@@ -1,13 +1,11 @@
 import { utils } from 'ethers'
 import { Arch } from '../../types'
-
+import { keccak256 } from 'ethereum-cryptography'
 export async function preSign (tx): Promise<string> {
-  const serializedTx = await utils.serializeTransaction(tx)
-  const sigHash = utils.keccak256(serializedTx)
-  return sigHash
+  // rlp encode
+  return await utils.serializeTransaction(tx)
 }
 
-// noop
 export async function postSign (sig: Uint8Array): Promise<string> {
   const hexTx = Buffer.from(sig).toString('hex')
   return hexTx
@@ -15,3 +13,7 @@ export async function postSign (sig: Uint8Array): Promise<string> {
 
 export const type = 'eth'
 export const arch = Arch.Evm
+
+export function pubToAddress (): Promise<string> {
+
+}

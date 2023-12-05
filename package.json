@@ -80,6 +80,7 @@
     "@ethersproject/bytes": "^5.7.0",
     "@polkadot/api": "^10.11.1",
     "@polkadot/typegen": "^10.11.1",
+    "ethereum-cryptography": "^2.1.2",
     "ethers": "^5.7.2"
   },
   "directories": {
