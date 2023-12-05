@@ -17,6 +17,9 @@ npm i @entropyxyz/entropy-js --save
 
 ### Usage
 
+NOTICE 
+`endpoint ` defaults to 'ws://127.0.0.1:9944' if no value is provided. 
+
 ```js
 import Entropy from '@entropyxyz/entropy-js'
 

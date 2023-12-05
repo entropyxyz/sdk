@@ -39,7 +39,7 @@
 
 #### Defined in
 
-[types/index.ts:74](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/types/index.ts#L74)
+[types/index.ts:74](https://github.com/entropyxyz/entropy-js/blob/7732646/src/types/index.ts#L74)
 
 ___
 
@@ -49,7 +49,7 @@ ___
 
 #### Defined in
 
-[types/index.ts:75](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/types/index.ts#L75)
+[types/index.ts:75](https://github.com/entropyxyz/entropy-js/blob/7732646/src/types/index.ts#L75)
 
 ___
 
@@ -59,7 +59,7 @@ ___
 
 #### Defined in
 
-[types/index.ts:76](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/types/index.ts#L76)
+[types/index.ts:76](https://github.com/entropyxyz/entropy-js/blob/7732646/src/types/index.ts#L76)
 
 ___
 
@@ -69,7 +69,7 @@ ___
 
 #### Defined in
 
-[types/index.ts:6](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/types/index.ts#L6)
+[types/index.ts:6](https://github.com/entropyxyz/entropy-js/blob/7732646/src/types/index.ts#L6)
 
 ___
 
@@ -79,7 +79,7 @@ ___
 
 #### Defined in
 
-[types/index.ts:7](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/types/index.ts#L7)
+[types/index.ts:7](https://github.com/entropyxyz/entropy-js/blob/7732646/src/types/index.ts#L7)
 
 ___
 
@@ -89,4 +89,4 @@ ___
 
 #### Defined in
 
-[types/index.ts:31](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/types/index.ts#L31)
+[types/index.ts:31](https://github.com/entropyxyz/entropy-js/blob/7732646/src/types/index.ts#L31)

@@ -56,7 +56,6 @@ export default class Entropy {
   #fail?: (reason?: unknown) => void
   #programReadOnly: boolean
   #allReadOnly: boolean
-  /** A promise that resolves once chacha20poly1305 cryptoLib has been loaded */
   ready: Promise<void>
   public sigRequestPublicKey?: string
   public programModPublicKey?: string
@@ -190,11 +189,11 @@ export default class Entropy {
   }
 
   /**
-
-   * @param params - substrate account id
-   *
-   * @returns A promise that returns the verifying key associated with the
-   * registration record for the given address/account
+   * Retrieves the verifying key associated with a given address.
+   * Queries to find the verifying key linked to the registered address.
+   * 
+   * @param address - The address for which to retrieve the verifying key.
+   * @returns A promise resolving to the verifying key as a string.
    */
   async getVerifyingKey (address: Address): Promise<string> {
     const registeredInfo = await this.substrate.query.relayer.registered(address)

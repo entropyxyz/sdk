@@ -20,7 +20,7 @@
 
 #### Defined in
 
-[types/index.ts:53](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/types/index.ts#L53)
+[types/index.ts:53](https://github.com/entropyxyz/entropy-js/blob/7732646/src/types/index.ts#L53)
 
 ___
 
@@ -30,7 +30,7 @@ ___
 
 #### Defined in
 
-[types/index.ts:55](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/types/index.ts#L55)
+[types/index.ts:55](https://github.com/entropyxyz/entropy-js/blob/7732646/src/types/index.ts#L55)
 
 ___
 
@@ -40,4 +40,4 @@ ___
 
 #### Defined in
 
-[types/index.ts:56](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/types/index.ts#L56)
+[types/index.ts:56](https://github.com/entropyxyz/entropy-js/blob/7732646/src/types/index.ts#L56)

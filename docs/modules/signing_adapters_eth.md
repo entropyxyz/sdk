@@ -13,6 +13,7 @@
 
 - [postSign](signing_adapters_eth.md#postsign)
 - [preSign](signing_adapters_eth.md#presign)
+- [pubToAddress](signing_adapters_eth.md#pubtoaddress)
 
 ## Variables
 
@@ -22,7 +23,7 @@
 
 #### Defined in
 
-[signing/adapters/eth.ts:17](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/signing/adapters/eth.ts#L17)
+[signing/adapters/eth.ts:16](https://github.com/entropyxyz/entropy-js/blob/7732646/src/signing/adapters/eth.ts#L16)
 
 ___
 
@@ -32,7 +33,7 @@ ___
 
 #### Defined in
 
-[signing/adapters/eth.ts:16](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/signing/adapters/eth.ts#L16)
+[signing/adapters/eth.ts:15](https://github.com/entropyxyz/entropy-js/blob/7732646/src/signing/adapters/eth.ts#L15)
 
 ## Functions
 
@@ -52,19 +53,19 @@ ___
 
 #### Defined in
 
-[signing/adapters/eth.ts:11](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/signing/adapters/eth.ts#L11)
+[signing/adapters/eth.ts:11](https://github.com/entropyxyz/entropy-js/blob/7732646/src/signing/adapters/eth.ts#L11)
 
 ___
 
 ### preSign
 
-▸ **preSign**(`tx`): `Promise`\<`string`\>
+▸ **preSign**(`txData`): `Promise`\<`string`\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `tx` | `any` |
+| `txData` | `any` |
 
 #### Returns
 
@@ -72,4 +73,24 @@ ___
 
 #### Defined in
 
-[signing/adapters/eth.ts:4](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/signing/adapters/eth.ts#L4)
+[signing/adapters/eth.ts:5](https://github.com/entropyxyz/entropy-js/blob/7732646/src/signing/adapters/eth.ts#L5)
+
+___
+
+### pubToAddress
+
+▸ **pubToAddress**(`publicKey`): `string`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `publicKey` | `string` |
+
+#### Returns
+
+`string`
+
+#### Defined in
+
+[signing/adapters/eth.ts:18](https://github.com/entropyxyz/entropy-js/blob/7732646/src/signing/adapters/eth.ts#L18)

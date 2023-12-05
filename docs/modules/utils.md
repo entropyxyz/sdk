@@ -17,6 +17,8 @@
 - [hexStringToIntArray](utils.md#hexstringtointarray)
 - [hexToBase64](utils.md#hextobase64)
 - [hexToBase64remove](utils.md#hextobase64remove)
+- [isHexSee](utils.md#ishexsee)
+- [isPublicKey](utils.md#ispublickey)
 - [isValidSubstrateAddress](utils.md#isvalidsubstrateaddress)
 - [readKey](utils.md#readkey)
 - [sendHttpPost](utils.md#sendhttppost)
@@ -43,7 +45,7 @@
 
 #### Defined in
 
-[utils/index.ts:137](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/utils/index.ts#L137)
+[utils/index.ts:150](https://github.com/entropyxyz/entropy-js/blob/7732646/src/utils/index.ts#L150)
 
 ___
 
@@ -63,7 +65,7 @@ ___
 
 #### Defined in
 
-[utils/index.ts:133](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/utils/index.ts#L133)
+[utils/index.ts:146](https://github.com/entropyxyz/entropy-js/blob/7732646/src/utils/index.ts#L146)
 
 ___
 
@@ -77,7 +79,7 @@ ___
 
 #### Defined in
 
-[utils/index.ts:34](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/utils/index.ts#L34)
+[utils/index.ts:47](https://github.com/entropyxyz/entropy-js/blob/7732646/src/utils/index.ts#L47)
 
 ___
 
@@ -97,7 +99,7 @@ ___
 
 #### Defined in
 
-[utils/index.ts:143](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/utils/index.ts#L143)
+[utils/index.ts:156](https://github.com/entropyxyz/entropy-js/blob/7732646/src/utils/index.ts#L156)
 
 ___
 
@@ -117,7 +119,7 @@ ___
 
 #### Defined in
 
-[utils/index.ts:165](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/utils/index.ts#L165)
+[utils/index.ts:178](https://github.com/entropyxyz/entropy-js/blob/7732646/src/utils/index.ts#L178)
 
 ___
 
@@ -137,7 +139,7 @@ ___
 
 #### Defined in
 
-[utils/index.ts:160](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/utils/index.ts#L160)
+[utils/index.ts:173](https://github.com/entropyxyz/entropy-js/blob/7732646/src/utils/index.ts#L173)
 
 ___
 
@@ -157,7 +159,47 @@ ___
 
 #### Defined in
 
-[utils/index.ts:151](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/utils/index.ts#L151)
+[utils/index.ts:164](https://github.com/entropyxyz/entropy-js/blob/7732646/src/utils/index.ts#L164)
+
+___
+
+### isHexSee
+
+▸ **isHexSee**(`str`): `boolean`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `str` | `string` |
+
+#### Returns
+
+`boolean`
+
+#### Defined in
+
+[utils/index.ts:16](https://github.com/entropyxyz/entropy-js/blob/7732646/src/utils/index.ts#L16)
+
+___
+
+### isPublicKey
+
+▸ **isPublicKey**(`str`): `boolean`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `str` | `string` |
+
+#### Returns
+
+`boolean`
+
+#### Defined in
+
+[utils/index.ts:10](https://github.com/entropyxyz/entropy-js/blob/7732646/src/utils/index.ts#L10)
 
 ___
 
@@ -177,7 +219,7 @@ ___
 
 #### Defined in
 
-[utils/index.ts:15](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/utils/index.ts#L15)
+[utils/index.ts:28](https://github.com/entropyxyz/entropy-js/blob/7732646/src/utils/index.ts#L28)
 
 ___
 
@@ -197,7 +239,7 @@ ___
 
 #### Defined in
 
-[utils/index.ts:94](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/utils/index.ts#L94)
+[utils/index.ts:107](https://github.com/entropyxyz/entropy-js/blob/7732646/src/utils/index.ts#L107)
 
 ___
 
@@ -218,7 +260,7 @@ ___
 
 #### Defined in
 
-[utils/index.ts:51](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/utils/index.ts#L51)
+[utils/index.ts:64](https://github.com/entropyxyz/entropy-js/blob/7732646/src/utils/index.ts#L64)
 
 ___
 
@@ -238,7 +280,7 @@ ___
 
 #### Defined in
 
-[utils/index.ts:25](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/utils/index.ts#L25)
+[utils/index.ts:38](https://github.com/entropyxyz/entropy-js/blob/7732646/src/utils/index.ts#L38)
 
 ___
 
@@ -258,7 +300,7 @@ ___
 
 #### Defined in
 
-[utils/index.ts:128](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/utils/index.ts#L128)
+[utils/index.ts:141](https://github.com/entropyxyz/entropy-js/blob/7732646/src/utils/index.ts#L141)
 
 ___
 
@@ -278,7 +320,7 @@ ___
 
 #### Defined in
 
-[utils/index.ts:10](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/utils/index.ts#L10)
+[utils/index.ts:23](https://github.com/entropyxyz/entropy-js/blob/7732646/src/utils/index.ts#L23)
 
 ___
 
@@ -298,4 +340,4 @@ ___
 
 #### Defined in
 
-[utils/index.ts:124](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/utils/index.ts#L124)
+[utils/index.ts:137](https://github.com/entropyxyz/entropy-js/blob/7732646/src/utils/index.ts#L137)

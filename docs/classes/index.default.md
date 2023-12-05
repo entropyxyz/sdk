@@ -15,9 +15,19 @@ before performing operations.
 **`Example`**
 
 ```typescript
-const entropy = new Entropy({ seed: 'SEED', endpoint: 'wss://localhost:8080' })
-await entropy.ready
-await entropy.register({ address, keyVisibility: 'Permissioned', freeTx: false })
+
+   const signer = await getWallet(charlieStashSeed)
+
+   const entropyAccount: EntropyAccount = {
+     sigRequestKey: signer.pair,
+     programModKey: signer.pair
+   }
+
+   const entropy = new Entropy({ account: entropyAccount})
+   await entropy.ready
+
+   await entropy.register({ address, keyVisibility: 'Permissioned', freeTx: false })
+   
 ```
 
 ## Table of contents
@@ -28,19 +38,26 @@ await entropy.register({ address, keyVisibility: 'Permissioned', freeTx: false }
 
 ### Properties
 
+- [#allReadOnly](index.default.md##allreadonly)
 - [#fail](index.default.md##fail)
+- [#programReadOnly](index.default.md##programreadonly)
 - [#ready](index.default.md##ready)
+- [account](index.default.md#account)
 - [isRegistered](index.default.md#isregistered)
-- [keys](index.default.md#keys)
+- [programModPublicKey](index.default.md#programmodpublickey)
 - [programs](index.default.md#programs)
 - [ready](index.default.md#ready)
 - [registrationManager](index.default.md#registrationmanager)
+- [sigRequestPublicKey](index.default.md#sigrequestpublickey)
 - [signingManager](index.default.md#signingmanager)
 - [substrate](index.default.md#substrate)
 
 ### Methods
 
-- [init](index.default.md#init)
+- [#init](index.default.md##init)
+- [#setReadOnlyStates](index.default.md##setreadonlystates)
+- [#setVerfiyingKeys](index.default.md##setverfiyingkeys)
+- [getVerifyingKey](index.default.md#getverifyingkey)
 - [register](index.default.md#register)
 - [sign](index.default.md#sign)
 - [signTransaction](index.default.md#signtransaction)
@@ -63,9 +80,19 @@ await entropy.register({ address, keyVisibility: 'Permissioned', freeTx: false }
 
 #### Defined in
 
-[index.ts:80](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/index.ts#L80)
+[index.ts:69](https://github.com/entropyxyz/entropy-js/blob/7732646/src/index.ts#L69)
 
 ## Properties
+
+### #allReadOnly
+
+• `Private` **#allReadOnly**: `boolean`
+
+#### Defined in
+
+[index.ts:58](https://github.com/entropyxyz/entropy-js/blob/7732646/src/index.ts#L58)
+
+___
 
 ### #fail
 
@@ -87,7 +114,17 @@ await entropy.register({ address, keyVisibility: 'Permissioned', freeTx: false }
 
 #### Defined in
 
-[index.ts:41](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/index.ts#L41)
+[index.ts:56](https://github.com/entropyxyz/entropy-js/blob/7732646/src/index.ts#L56)
+
+___
+
+### #programReadOnly
+
+• `Private` **#programReadOnly**: `boolean`
+
+#### Defined in
+
+[index.ts:57](https://github.com/entropyxyz/entropy-js/blob/7732646/src/index.ts#L57)
 
 ___
 
@@ -111,7 +148,17 @@ ___
 
 #### Defined in
 
-[index.ts:40](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/index.ts#L40)
+[index.ts:55](https://github.com/entropyxyz/entropy-js/blob/7732646/src/index.ts#L55)
+
+___
+
+### account
+
+• `Optional` **account**: [`EntropyAccount`](../interfaces/index.EntropyAccount.md)
+
+#### Defined in
+
+[index.ts:66](https://github.com/entropyxyz/entropy-js/blob/7732646/src/index.ts#L66)
 
 ___
 
@@ -135,17 +182,17 @@ ___
 
 #### Defined in
 
-[index.ts:47](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/index.ts#L47)
+[index.ts:63](https://github.com/entropyxyz/entropy-js/blob/7732646/src/index.ts#L63)
 
 ___
 
-### keys
+### programModPublicKey
 
-• `Optional` **keys**: [`Signer`](../interfaces/types.Signer.md)
+• `Optional` **programModPublicKey**: `string`
 
 #### Defined in
 
-[index.ts:45](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/index.ts#L45)
+[index.ts:61](https://github.com/entropyxyz/entropy-js/blob/7732646/src/index.ts#L61)
 
 ___
 
@@ -155,7 +202,7 @@ ___
 
 #### Defined in
 
-[index.ts:48](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/index.ts#L48)
+[index.ts:64](https://github.com/entropyxyz/entropy-js/blob/7732646/src/index.ts#L64)
 
 ___
 
@@ -163,11 +210,9 @@ ___
 
 • **ready**: `Promise`\<`void`\>
 
-A promise that resolves once chacha20poly1305 cryptoLib has been loaded
-
 #### Defined in
 
-[index.ts:44](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/index.ts#L44)
+[index.ts:59](https://github.com/entropyxyz/entropy-js/blob/7732646/src/index.ts#L59)
 
 ___
 
@@ -177,7 +222,17 @@ ___
 
 #### Defined in
 
-[index.ts:46](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/index.ts#L46)
+[index.ts:62](https://github.com/entropyxyz/entropy-js/blob/7732646/src/index.ts#L62)
+
+___
+
+### sigRequestPublicKey
+
+• `Optional` **sigRequestPublicKey**: `string`
+
+#### Defined in
+
+[index.ts:60](https://github.com/entropyxyz/entropy-js/blob/7732646/src/index.ts#L60)
 
 ___
 
@@ -187,7 +242,7 @@ ___
 
 #### Defined in
 
-[index.ts:49](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/index.ts#L49)
+[index.ts:65](https://github.com/entropyxyz/entropy-js/blob/7732646/src/index.ts#L65)
 
 ___
 
@@ -197,13 +252,13 @@ ___
 
 #### Defined in
 
-[index.ts:51](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/index.ts#L51)
+[index.ts:67](https://github.com/entropyxyz/entropy-js/blob/7732646/src/index.ts#L67)
 
 ## Methods
 
-### init
+### #init
 
-▸ **init**(`opts`): `Promise`\<`void`\>
+▸ **#init**(`opts`): `Promise`\<`void`\>
 
 #### Parameters
 
@@ -217,13 +272,66 @@ ___
 
 #### Defined in
 
-[index.ts:53](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/index.ts#L53)
+[index.ts:80](https://github.com/entropyxyz/entropy-js/blob/7732646/src/index.ts#L80)
+
+___
+
+### #setReadOnlyStates
+
+▸ **#setReadOnlyStates**(): `void`
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[index.ts:130](https://github.com/entropyxyz/entropy-js/blob/7732646/src/index.ts#L130)
+
+___
+
+### #setVerfiyingKeys
+
+▸ **#setVerfiyingKeys**(): `Promise`\<`void`\>
+
+#### Returns
+
+`Promise`\<`void`\>
+
+#### Defined in
+
+[index.ts:113](https://github.com/entropyxyz/entropy-js/blob/7732646/src/index.ts#L113)
+
+___
+
+### getVerifyingKey
+
+▸ **getVerifyingKey**(`address`): `Promise`\<`string`\>
+
+Retrieves the verifying key associated with a given address.
+Queries to find the verifying key linked to the registered address.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `address` | [`Address`](../modules/types.md#address) | The address for which to retrieve the verifying key. |
+
+#### Returns
+
+`Promise`\<`string`\>
+
+A promise resolving to the verifying key as a string.
+
+#### Defined in
+
+[index.ts:198](https://github.com/entropyxyz/entropy-js/blob/7732646/src/index.ts#L198)
 
 ___
 
 ### register
 
-▸ **register**(`params`): `Promise`\<`undefined`\>
+▸ **register**(`params`): `Promise`\<`void`\>
 
 Registers an address to Entropy using the provided parameters.
 
@@ -231,11 +339,11 @@ Registers an address to Entropy using the provided parameters.
 
 | Name | Type |
 | :------ | :------ |
-| `params` | [`RegistrationParams`](../interfaces/registration.RegistrationParams.md) |
+| `params` | [`RegistrationParams`](../interfaces/registration.RegistrationParams.md) & \{ `account?`: [`EntropyAccount`](../interfaces/index.EntropyAccount.md)  } |
 
 #### Returns
 
-`Promise`\<`undefined`\>
+`Promise`\<`void`\>
 
 A promise indicating the completion of the registration process.
 
@@ -249,7 +357,7 @@ Throws if the address being registered is already in use.
 
 #### Defined in
 
-[index.ts:103](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/index.ts#L103)
+[index.ts:169](https://github.com/entropyxyz/entropy-js/blob/7732646/src/index.ts#L169)
 
 ___
 
@@ -257,14 +365,14 @@ ___
 
 ▸ **sign**(`params`): `Promise`\<`Uint8Array`\>
 
-The `sign` method is tasked with signing a `sigRequestHash`, which is essentially a hash of the 
-request that needs signing. It does so by obtaining validator information based on the hash, 
-formatting transaction requests for these validators, and then submitting these requests for the 
+The `sign` method is tasked with signing a `sigRequestHash`, which is essentially a hash of the
+request that needs signing. It does so by obtaining validator information based on the hash,
+formatting transaction requests for these validators, and then submitting these requests for the
 validators to sign.
 
 The process in detail:
 1. The method removes any hex prefix from the request hash.
-2. Determines a set of validators corresponding to the stripped request hash. These validators 
+2. Determines a set of validators corresponding to the stripped request hash. These validators
    are tasked with validating and signing the transaction.
 3. For each of these validators, the method constructs a transaction request. This request encompasses:
    - The stripped transaction request hash.
@@ -293,7 +401,7 @@ Throws an error if there's an error at any stage in the signing routine.
 
 #### Defined in
 
-[index.ts:163](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/index.ts#L163)
+[index.ts:253](https://github.com/entropyxyz/entropy-js/blob/7732646/src/index.ts#L253)
 
 ___
 
@@ -303,10 +411,10 @@ ___
 
 Signs a given transaction based on the provided parameters.
 
-The `signTransaction` method invokes the appropriate adapter (chain based configuration) 
-based on the type specified in the `params`. This modular approach ensures that various 
-transaction types can be supported. The method performs a series of operations, starting 
-with the `preSign` function of the selected adapter, followed by the actual signing of the 
+The `signTransaction` method invokes the appropriate adapter (chain based configuration)
+based on the type specified in the `params`. This modular approach ensures that various
+transaction types can be supported. The method performs a series of operations, starting
+with the `preSign` function of the selected adapter, followed by the actual signing of the
 transaction request hash, and if necessary, the `postSign` function of the adapter.
 
 #### Parameters
@@ -319,7 +427,7 @@ transaction request hash, and if necessary, the `postSign` function of the adapt
 
 `Promise`\<`unknown`\>
 
-A promise that returns the transaction signature. Note that the structure 
+A promise that returns the transaction signature. Note that the structure
          and format of this signature may differ based on the adapter.
 
 **`Throws`**
@@ -328,4 +436,4 @@ Will throw an error if the transaction type does not have a corresponding adapte
 
 #### Defined in
 
-[index.ts:132](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/index.ts#L132)
+[index.ts:223](https://github.com/entropyxyz/entropy-js/blob/7732646/src/index.ts#L223)

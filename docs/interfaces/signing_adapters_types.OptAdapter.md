@@ -21,7 +21,7 @@
 
 #### Defined in
 
-[signing/adapters/types.ts:12](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/signing/adapters/types.ts#L12)
+[signing/adapters/types.ts:12](https://github.com/entropyxyz/entropy-js/blob/7732646/src/signing/adapters/types.ts#L12)
 
 ___
 
@@ -45,7 +45,7 @@ ___
 
 #### Defined in
 
-[signing/adapters/types.ts:14](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/signing/adapters/types.ts#L14)
+[signing/adapters/types.ts:14](https://github.com/entropyxyz/entropy-js/blob/7732646/src/signing/adapters/types.ts#L14)
 
 ___
 
@@ -69,7 +69,7 @@ ___
 
 #### Defined in
 
-[signing/adapters/types.ts:13](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/signing/adapters/types.ts#L13)
+[signing/adapters/types.ts:13](https://github.com/entropyxyz/entropy-js/blob/7732646/src/signing/adapters/types.ts#L13)
 
 ___
 
@@ -79,4 +79,4 @@ ___
 
 #### Defined in
 
-[signing/adapters/types.ts:11](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/signing/adapters/types.ts#L11)
+[signing/adapters/types.ts:11](https://github.com/entropyxyz/entropy-js/blob/7732646/src/signing/adapters/types.ts#L11)

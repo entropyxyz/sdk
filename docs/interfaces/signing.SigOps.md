@@ -19,7 +19,7 @@
 
 #### Defined in
 
-[signing/index.ts:27](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/signing/index.ts#L27)
+[signing/index.ts:27](https://github.com/entropyxyz/entropy-js/blob/7732646/src/signing/index.ts#L27)
 
 ___
 
@@ -29,4 +29,4 @@ ___
 
 #### Defined in
 
-[signing/index.ts:28](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/signing/index.ts#L28)
+[signing/index.ts:28](https://github.com/entropyxyz/entropy-js/blob/7732646/src/signing/index.ts#L28)
