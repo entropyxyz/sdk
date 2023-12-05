@@ -56,7 +56,7 @@ export default class Entropy {
   #programReadOnly: boolean
   #allReadOnly: boolean
   /** A promise that resolves once chacha20poly1305 cryptoLib has been loaded */
-  ready: Promise<void>
+  ready: Promise<boolean>
   public sigRequestPublicKey?: string
   public programModPublicKey?: string
   registrationManager: RegistrationManager
@@ -103,7 +103,7 @@ export default class Entropy {
       signer: programModKeyPair as Signer || this.account.sigRequestKey,
     })
     if (this.#programReadOnly || this.#allReadOnly) this.programs.set = async () => { throw new Error('Programs is in a read only state: Must pass a valid key pair in initialization.') }
-    this.#ready()
+    this.#ready(true)
     this.isRegistered = this.registrationManager.checkRegistrationStatus.bind(
       this.registrationManager
     )
