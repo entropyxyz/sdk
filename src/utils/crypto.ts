@@ -98,7 +98,7 @@ async function verifySignature (message: string, signature: string, address: str
 export async function loadCryptoLib () {
   if (isImported) return cryptoLib
 
-  if (typeof window === 'undefined') {
+  if (!globalThis.window) {
     cryptoLib = await import('@entropyxyz/x25519-chacha20poly1305-nodejs')
   } else {
     cryptoLib = await import('@entropyxyz/x25519-chacha20poly1305-web')
