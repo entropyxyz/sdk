@@ -30,8 +30,8 @@ describe('Programs Tests', () => {
 
     const signer = await getWallet(charlieStashSeed)
     const entropyAccount: EntropyAccount = {
-      sigRequestKey: signer.pair,
-      programModKey: signer.pair
+      sigRequestKey: signer,
+      programModKey: signer
     }
 
     await sleep(30000)

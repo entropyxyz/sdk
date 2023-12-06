@@ -35,8 +35,8 @@ describe('Core Tests', () => {
     const signer = await getWallet(charlieStashSeed)
 
     const entropyAccount: EntropyAccount = {
-      sigRequestKey: signer.pair,
-      programModKey: signer.pair
+      sigRequestKey: signer,
+      programModKey: signer
     }
 
     await sleep(30000)
@@ -162,36 +162,7 @@ describe('Core Tests', () => {
 
     expect(unauthorizedErrorCaught).toBeTruthy()
 
-    // signing attempts should fail cause we haven't set constraints yet
-    /*    const no_constraint: any = await entropy.sign({
-      sigRequestHash: keccak256(ethers.utils.serializeTransaction(whitelisted_test_tx_req)),
-      freeTx: false,
-      retries: 3
-    })
-    expect(no_constraint.length).toBe(0)
-
-    // set user's constraints on-chain
-    const charlieStashEntropy = new Entropy({
-      seed: charlieStashSeed
-    })
-
-    // signing should fail with a non-whitelisted tx requests
-    const wrong_constraint: any = await entropy.sign({
-      sigRequestHash: keccak256(ethers.utils.serializeTransaction(non_whitelisted_test_tx_req)),
-      freeTx: false,
-      retries: 3
-    })
-    expect(wrong_constraint.length).toBe(0)
-*/
-    // signing should work for whitelisted tx requests
     console.log("signing test")
-
-    // const serializedTx = await preSign(whitelisted_test_tx_req)
-
-    // const signature: Uint8Array = await entropy.sign({
-    //   sigRequestHash: serializedTx,
-    // })
-
 
 
     const signature = await entropy.signTransaction({txParams: whitelisted_test_tx_req, type: 'eth'}) as string

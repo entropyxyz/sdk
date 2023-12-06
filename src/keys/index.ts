@@ -6,6 +6,7 @@ import {
   keyFromPath,
   keyExtractPath,
 } from '@polkadot/util-crypto'
+import { Keypair } from '@polkadot/util-crypto/types'
 import { Keyring } from '@polkadot/keyring'
 import { KeyringPair } from '@polkadot/keyring/types'
 import { hexToU8a } from '@polkadot/util'
@@ -36,30 +37,20 @@ export function isValidPair (pair: Signer): boolean {
  * @returns A function that takes a `Signer` or seed string and returns a Promise resolving to an object containing the wallet and its associated `Signer`.
  */
 
-function setupGetWallet (): (input: Signer | string) => Promise<{ wallet: KeyringPair, pair: Signer }> | undefined {
+function setupGetWallet (): (input: string) => Promise<Signer> | undefined {
   const keyring = new Keyring({ type: 'sr25519' })
 
-  return async (input: Signer | string) => {
-    let processedPair: Signer
+  return async (input: Keypair | string) => {
 
     // do a string typecheck 
     if (typeof input === 'string') {
       await cryptoWaitReady() 
       const seed = hexToU8a(input)
-      const sr25519Pair = sr25519PairFromSeed(seed)
-      const keyringPair = keyring.addFromPair(sr25519Pair)
-      processedPair = { wallet: keyringPair, pair: sr25519Pair } 
-    } else if (input && 'pair' in input) {
-      // If input is already a Signer object use it 
-      processedPair = input
+      const pair = sr25519PairFromSeed(seed)
+      const wallet = keyring.addFromPair(pair)
+      return { wallet, pair }
     } else {
-      return undefined
-    }
-
-    const wallet = keyring.addFromPair(processedPair.pair)
-    return {
-      wallet,
-      pair: processedPair,
+      throw new Error('input is not a string')
     }
   }
 }
@@ -71,7 +62,7 @@ function setupGetWallet (): (input: Signer | string) => Promise<{ wallet: Keyrin
  * @returns A Promise resolving to an object containing the wallet and its associated `Signer`, or undefined if the input is invalid.
  */
 
-export const getWallet: (pair: Signer | string) => Promise<{ wallet: KeyringPair, pair: Signer }> | undefined = setupGetWallet()
+export const getWallet: (pair: Signer | string) => Promise<{ wallet: KeyringPair, pair: Keypair }> | undefined = setupGetWallet()
 
 /**
  * Generates a new mnemonic phrase or derives a wallet from an existing mnemonic and an optional derivation path.
