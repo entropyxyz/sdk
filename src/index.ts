@@ -38,8 +38,8 @@ export interface EntropyOpts {
     const signer = await getWallet(charlieStashSeed)
 
     const entropyAccount: EntropyAccount = {
-      sigRequestKey: signer.pair,
-      programModKey: signer.pair
+      sigRequestKey: signer,
+      programModKey: signer
     }
 
     const entropy = new Entropy({ account: entropyAccount})

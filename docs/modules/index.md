@@ -10,4 +10,5 @@
 
 ### Interfaces
 
+- [EntropyAccount](../interfaces/index.EntropyAccount.md)
 - [EntropyOpts](../interfaces/index.EntropyOpts.md)

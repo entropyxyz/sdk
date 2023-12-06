@@ -36,7 +36,7 @@ This manager handles transaction signing using pre-defined adapters and cryptogr
 
 • **new default**(`«destructured»`): [`default`](signing.default.md)
 
-Constructs a new instance of the `SignatureRequestManager` class.
+Initializes a new instance of `SignatureRequestManager`.
 
 #### Parameters
 
@@ -50,7 +50,7 @@ Constructs a new instance of the `SignatureRequestManager` class.
 
 #### Defined in
 
-[signing/index.ts:51](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/signing/index.ts#L51)
+[signing/index.ts:51](https://github.com/entropyxyz/entropy-js/blob/368842b/src/signing/index.ts#L51)
 
 ## Properties
 
@@ -64,7 +64,7 @@ Constructs a new instance of the `SignatureRequestManager` class.
 
 #### Defined in
 
-[signing/index.ts:37](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/signing/index.ts#L37)
+[signing/index.ts:37](https://github.com/entropyxyz/entropy-js/blob/368842b/src/signing/index.ts#L37)
 
 ___
 
@@ -74,7 +74,7 @@ ___
 
 #### Defined in
 
-[signing/index.ts:38](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/signing/index.ts#L38)
+[signing/index.ts:38](https://github.com/entropyxyz/entropy-js/blob/368842b/src/signing/index.ts#L38)
 
 ___
 
@@ -84,7 +84,7 @@ ___
 
 #### Defined in
 
-[signing/index.ts:39](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/signing/index.ts#L39)
+[signing/index.ts:39](https://github.com/entropyxyz/entropy-js/blob/368842b/src/signing/index.ts#L39)
 
 ___
 
@@ -94,7 +94,7 @@ ___
 
 #### Defined in
 
-[signing/index.ts:40](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/signing/index.ts#L40)
+[signing/index.ts:40](https://github.com/entropyxyz/entropy-js/blob/368842b/src/signing/index.ts#L40)
 
 ## Methods
 
@@ -102,7 +102,7 @@ ___
 
 ▸ **formatTxRequests**(`«destructured»`): `Promise`\<[`EncMsg`](../interfaces/types.EncMsg.md)[]\>
 
-Generates formatted transaction requests suitable for validators.
+Generates transaction requests formatted for validators.
 
 #### Parameters
 
@@ -116,11 +116,11 @@ Generates formatted transaction requests suitable for validators.
 
 `Promise`\<[`EncMsg`](../interfaces/types.EncMsg.md)[]\>
 
-A promise that resolves to an array of encrypted messages for each validator.
+A promise resolving to an array of encrypted messages for validators.
 
 #### Defined in
 
-[signing/index.ts:136](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/signing/index.ts#L136)
+[signing/index.ts:137](https://github.com/entropyxyz/entropy-js/blob/368842b/src/signing/index.ts#L137)
 
 ___
 
@@ -143,7 +143,7 @@ An object containing `secs_since_epoch` and `nanos_since_epoch`.
 
 #### Defined in
 
-[signing/index.ts:117](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/signing/index.ts#L117)
+[signing/index.ts:118](https://github.com/entropyxyz/entropy-js/blob/368842b/src/signing/index.ts#L118)
 
 ___
 
@@ -151,23 +151,23 @@ ___
 
 ▸ **pickValidators**(`sigRequest`): `Promise`\<[`ValidatorInfo`](../interfaces/types.ValidatorInfo.md)[]\>
 
-Fetches validator information based on the signature request.
+Selects validators based on the signature request.
 
 #### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `sigRequest` | `string` | The provided signature request. |
+| `sigRequest` | `string` | The signature request hash. |
 
 #### Returns
 
 `Promise`\<[`ValidatorInfo`](../interfaces/types.ValidatorInfo.md)[]\>
 
-A promise that resolves to an array of information related to validators.
+A promise resolving to an array of validator information.
 
 #### Defined in
 
-[signing/index.ts:221](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/signing/index.ts#L221)
+[signing/index.ts:223](https://github.com/entropyxyz/entropy-js/blob/368842b/src/signing/index.ts#L223)
 
 ___
 
@@ -175,23 +175,23 @@ ___
 
 ▸ **sign**(`sigRequestHash`): `Promise`\<`Uint8Array`\>
 
-Signs the provided request hash.
+Signs a given signature request hash.
 
 #### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `sigRequestHash` | [`SigOps`](../interfaces/signing.SigOps.md) | The request hash to sign. |
+| `sigRequestHash` | [`SigOps`](../interfaces/signing.SigOps.md) | The hash of the signature request to be signed. |
 
 #### Returns
 
 `Promise`\<`Uint8Array`\>
 
-A promise which resolves to the generated signature as a Uint8Array.
+A promise resolving to the signed hash as a Uint8Array.
 
 #### Defined in
 
-[signing/index.ts:96](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/signing/index.ts#L96)
+[signing/index.ts:97](https://github.com/entropyxyz/entropy-js/blob/368842b/src/signing/index.ts#L97)
 
 ___
 
@@ -199,7 +199,7 @@ ___
 
 ▸ **signTransaction**(`«destructured»`): `Promise`\<`unknown`\>
 
-Signs a transaction of the specified type.
+Signs a transaction using the appropriate adapter.
 
 #### Parameters
 
@@ -211,15 +211,15 @@ Signs a transaction of the specified type.
 
 `Promise`\<`unknown`\>
 
-A promise that resolves with the signed transaction.
+A promise resolving with the signed transaction.
 
 **`Throws`**
 
-If an adapter for the given transaction type is not found.
+Error if an adapter for the transaction type is not found.
 
 #### Defined in
 
-[signing/index.ts:70](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/signing/index.ts#L70)
+[signing/index.ts:70](https://github.com/entropyxyz/entropy-js/blob/368842b/src/signing/index.ts#L70)
 
 ___
 
@@ -243,7 +243,7 @@ A promise that resolves to an array of arrays of signatures in string format.
 
 #### Defined in
 
-[signing/index.ts:196](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/signing/index.ts#L196)
+[signing/index.ts:197](https://github.com/entropyxyz/entropy-js/blob/368842b/src/signing/index.ts#L197)
 
 ___
 
@@ -251,20 +251,20 @@ ___
 
 ▸ **verifyAndReduceSignatures**(`sigsAndProofs`): `Promise`\<`string`\>
 
-Verifies the signatures from the tss_nodes
+Verifies and consolidates signatures received from validators.
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `sigsAndProofs` | `string`[][] |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `sigsAndProofs` | `string`[][] | Arrays of signatures and proofs. |
 
 #### Returns
 
 `Promise`\<`string`\>
 
-string - the first valid signature
+The first valid signature after verification.
 
 #### Defined in
 
-[signing/index.ts:266](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/signing/index.ts#L266)
+[signing/index.ts:269](https://github.com/entropyxyz/entropy-js/blob/368842b/src/signing/index.ts#L269)
