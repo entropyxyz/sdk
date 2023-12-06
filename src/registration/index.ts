@@ -83,12 +83,12 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
             if (registeredCheck) {
               const unsub = await unsubPromise
               unsub()
-              // @ts-ignore: next line
-
               const registeredData = await this.substrate.query.relayer.registered(this.signer.wallet.address)
+              // @ts-ignore: next line
               if (!registeredData.isSome) {
                 throw new Error('Registration information not found')
               }
+              // @ts-ignore: next line
               const data = registeredData.unwrap()
               resolve({
                 keyVisibility: data.keyVisibility.toJSON() as KeyVisibilityInfo, 
