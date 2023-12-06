@@ -124,7 +124,6 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
 
   async checkRegistrationStatus (address: Address): Promise<boolean> {
     const isRegistered = await this.substrate.query.relayer.registered(address)
-    console.log("REGISTERED", isRegistered.toJSON())
     return !!isRegistered.toJSON()
   }
 
