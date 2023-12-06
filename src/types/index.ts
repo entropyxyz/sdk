@@ -6,7 +6,7 @@ import { U8aFixed } from '@polkadot/types-codec'
 
 export type base64string = string
 export type hexString = string
-export type EntropyClass = InstanceType<typeof Entropy>
+export type EntropyInstance = InstanceType<typeof Entropy>
 
 export interface KeyPair {
   public: base64string
