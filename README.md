@@ -58,7 +58,7 @@ ___
 
 ### register
 
-▸ **register**(`params`): `Promise`\<`undefined`\>
+▸ **register**(`params`): `Promise`\<`RegisteredInfo`\>
 
 Registers an address to Entropy using the provided parameters.
 
@@ -70,7 +70,7 @@ Registers an address to Entropy using the provided parameters.
 
 #### Returns
 
-`Promise`\<`undefined`\>
+`Promise`\<`RegisteredInfo`\>
 
 A promise indicating the completion of the registration process.
 
