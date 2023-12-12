@@ -8,22 +8,12 @@
 
 ### Properties
 
-- [address](registration.RegistrationParams.md#address)
 - [freeTx](registration.RegistrationParams.md#freetx)
 - [initialProgram](registration.RegistrationParams.md#initialprogram)
 - [keyVisibility](registration.RegistrationParams.md#keyvisibility)
+- [programModAccount](registration.RegistrationParams.md#programmodaccount)
 
 ## Properties
-
-### address
-
-• **address**: [`Address`](../modules/types.md#address)
-
-#### Defined in
-
-[registration/index.ts:9](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/registration/index.ts#L9)
-
-___
 
 ### freeTx
 
@@ -31,7 +21,7 @@ ___
 
 #### Defined in
 
-[registration/index.ts:6](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/registration/index.ts#L6)
+[registration/index.ts:6](https://github.com/entropyxyz/entropy-js/blob/368842b/src/registration/index.ts#L6)
 
 ___
 
@@ -41,7 +31,7 @@ ___
 
 #### Defined in
 
-[registration/index.ts:7](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/registration/index.ts#L7)
+[registration/index.ts:7](https://github.com/entropyxyz/entropy-js/blob/368842b/src/registration/index.ts#L7)
 
 ___
 
@@ -51,4 +41,14 @@ ___
 
 #### Defined in
 
-[registration/index.ts:8](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/registration/index.ts#L8)
+[registration/index.ts:8](https://github.com/entropyxyz/entropy-js/blob/368842b/src/registration/index.ts#L8)
+
+___
+
+### programModAccount
+
+• **programModAccount**: [`Address`](../modules/types.md#address)
+
+#### Defined in
+
+[registration/index.ts:9](https://github.com/entropyxyz/entropy-js/blob/368842b/src/registration/index.ts#L9)

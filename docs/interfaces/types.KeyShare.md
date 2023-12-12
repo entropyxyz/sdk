@@ -24,4 +24,4 @@
 
 #### Defined in
 
-[types/index.ts:24](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/types/index.ts#L24)
+[types/index.ts:24](https://github.com/entropyxyz/entropy-js/blob/368842b/src/types/index.ts#L24)

@@ -8,11 +8,23 @@
 
 ### Properties
 
+- [account](index.EntropyOpts.md#account)
 - [adapters](index.EntropyOpts.md#adapters)
 - [endpoint](index.EntropyOpts.md#endpoint)
-- [seed](index.EntropyOpts.md#seed)
 
 ## Properties
+
+### account
+
+• `Optional` **account**: [`EntropyAccount`](index.EntropyAccount.md)
+
+account for wallet initialization.
+
+#### Defined in
+
+[index.ts:19](https://github.com/entropyxyz/entropy-js/blob/368842b/src/index.ts#L19)
+
+___
 
 ### adapters
 
@@ -26,7 +38,7 @@ A collection of signing adapters.
 
 #### Defined in
 
-[index.ts:17](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/index.ts#L17)
+[index.ts:23](https://github.com/entropyxyz/entropy-js/blob/368842b/src/index.ts#L23)
 
 ___
 
@@ -38,16 +50,4 @@ local or devnet endpoint for establishing a connection to validators
 
 #### Defined in
 
-[index.ts:15](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/index.ts#L15)
-
-___
-
-### seed
-
-• `Optional` **seed**: `string`
-
-seed for wallet initialization.
-
-#### Defined in
-
-[index.ts:13](https://github.com/entropyxyz/entropy-js/blob/a7aaa0c/src/index.ts#L13)
+[index.ts:21](https://github.com/entropyxyz/entropy-js/blob/368842b/src/index.ts#L21)

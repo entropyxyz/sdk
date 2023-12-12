@@ -19,7 +19,6 @@ export function isHexSee (str: string): boolean {
   return hexPattern.test(stripped)
 }
 
-
 export function stripHexPrefix (str: string): string {
   if (str.startsWith('0x')) return str.slice(2)
   return str
@@ -61,7 +60,7 @@ export async function getApi (): Promise<ApiFactory> {
   }
 }
 
-export async function sendHttpPost (url: string, data: string): Promise<string[] | string | AnyObject> {
+export async function sendHttpPost (url: string, data: any): Promise<any> {
   const headers = {
     'Content-Type': 'application/json',
   }
