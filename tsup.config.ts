@@ -1,15 +1,13 @@
 import { defineConfig } from 'tsup'
 
 export default defineConfig((options) => {
-  let path = `src/index.ts`
-  if (process.env.BUILD) path = `src/${process.env.BUILD}/index.ts`
   return {
-    entry: [path],
+    entry: [`src/index.ts`, 'src/keys/index.ts', 'src/utils/index.ts', 'src/utils/crypto.ts'],
     replaceNodeEnv: true,
     format: ['esm'],
-    external: ['dotenv', 'node:fs', 'fs', '**/*.test.ts', 'src/utils/index.ts'],
     dts: true,
-    sourcemap: true,
+    // todo: env var for this?
+    sourcemap: false,
     clean: true,
     target: 'es2022',
     minify: options.minify,
