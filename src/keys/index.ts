@@ -6,9 +6,7 @@ import {
   keyFromPath,
   keyExtractPath,
 } from '@polkadot/util-crypto'
-import { Keypair } from '@polkadot/util-crypto/types'
 import { Keyring } from '@polkadot/keyring'
-import { KeyringPair } from '@polkadot/keyring/types'
 import { hexToU8a } from '@polkadot/util'
 import { Signer } from '../types'
 
