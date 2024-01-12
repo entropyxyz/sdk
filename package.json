@@ -2,13 +2,12 @@
   "name": "@entropyxyz/entropy-js",
   "version": "0.1.2",
   "description": "JS SDK for entropy blockchain ",
-  "main": "dist/index.cjs",
-  "type": "module",
+  "main": "dist/index.js",
   "files": [
     "dist"
   ],
   "types": "dist/index.d.ts",
-  "module": "dist/index.cjs",
+  "module": "dist/index.js",
   "browser": "dist/index.js",
   "scripts": {
     "test": "yarn test:setup && yarn removedb && jest --runInBand --detectOpenHandles",

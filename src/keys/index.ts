@@ -6,9 +6,7 @@ import {
   keyFromPath,
   keyExtractPath,
 } from '@polkadot/util-crypto'
-import { Keypair } from '@polkadot/util-crypto/types'
 import { Keyring } from '@polkadot/keyring'
-import { KeyringPair } from '@polkadot/keyring/types'
 import { hexToU8a } from '@polkadot/util'
 import { Signer } from '../types'
 
@@ -37,10 +35,10 @@ export function isValidPair (pair: Signer): boolean {
  * @returns A function that takes a `Signer` or seed string and returns a Promise resolving to an object containing the wallet and its associated `Signer`.
  */
 
-function setupGetWallet (): (input: string) => Promise<Signer> | undefined {
+function setupGetWallet (): (input: string) => Promise<Signer | undefined> {
   const keyring = new Keyring({ type: 'sr25519' })
 
-  return async (input: Keypair | string) => {
+  return async (input: string): Promise<Signer | undefined> => {
 
     // do a string typecheck 
     if (typeof input === 'string') {
@@ -62,7 +60,7 @@ function setupGetWallet (): (input: string) => Promise<Signer> | undefined {
  * @returns A Promise resolving to an object containing the wallet and its associated `Signer`, or undefined if the input is invalid.
  */
 
-export const getWallet: (pair: Signer | string) => Promise<{ wallet: KeyringPair, pair: Keypair }> | undefined = setupGetWallet()
+export const getWallet: (input: string) => Promise<Signer | undefined> = setupGetWallet()
 
 /**
  * Generates a new mnemonic phrase or derives a wallet from an existing mnemonic and an optional derivation path.
