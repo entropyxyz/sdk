@@ -153,15 +153,15 @@ export default class SignatureRequestManager {
     auxilaryData?: string[],
     hash?: string
   }): Promise<EncMsg[]> {
-    return await Promise.all(
+    return await Promise.all( 
       validatorsInfo.map(
         async (validator: ValidatorInfo): Promise<EncMsg> => {
-          const txRequestData = {
+          const txRequestData: UserSignatureRequest = {
             message: stripHexPrefix(strippedsigRequestHash),
             validators_info: validatorsInfo,
             timestamp: this.getTimeStamp(),
             auxilary_data: auxilaryData,
-            hash
+            hash: hash
           }
 
           const serverDHKey = await crypto.from_hex(validator.x25519_public_key)
