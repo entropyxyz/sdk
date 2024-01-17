@@ -28,6 +28,14 @@ export interface SigOps {
   type?: string
 }
 
+export interface UserSignatureRequest {
+  message: string;
+  auxilary_data?: Array<string | null>
+  validators_info: ValidatorInfo[]
+  timestamp: { secs_since_epoch: number; nanos_since_epoch: number; }
+  hash: string
+}
+
 /**
  * `SignatureRequestManager` facilitates signature requests using Polkadot/Substrate API.
  * This manager handles transaction signing using pre-defined adapters and cryptographic utilities.
@@ -137,9 +145,13 @@ export default class SignatureRequestManager {
   async formatTxRequests ({
     strippedsigRequestHash,
     validatorsInfo,
+    auxilaryData,
+    hash, 
   }: {
     strippedsigRequestHash: string
     validatorsInfo: Array<ValidatorInfo>
+    auxilaryData?: string[],
+    hash?: string
   }): Promise<EncMsg[]> {
     return await Promise.all(
       validatorsInfo.map(
@@ -148,6 +160,8 @@ export default class SignatureRequestManager {
             message: stripHexPrefix(strippedsigRequestHash),
             validators_info: validatorsInfo,
             timestamp: this.getTimeStamp(),
+            auxilary_data: auxilaryData,
+            hash
           }
 
           const serverDHKey = await crypto.from_hex(validator.x25519_public_key)
