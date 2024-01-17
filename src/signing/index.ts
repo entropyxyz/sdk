@@ -29,10 +29,10 @@ export interface SigOps {
 }
 
 export interface UserSignatureRequest {
-  message: string;
+  message: string
   auxilary_data?: Array<string | null>
   validators_info: ValidatorInfo[]
-  timestamp: { secs_since_epoch: number; nanos_since_epoch: number; }
+  timestamp: { secs_since_epoch: number; nanos_since_epoch: number }
   hash: string
 }
 
@@ -146,14 +146,14 @@ export default class SignatureRequestManager {
     strippedsigRequestHash,
     validatorsInfo,
     auxilaryData,
-    hash, 
+    hash,
   }: {
     strippedsigRequestHash: string
     validatorsInfo: Array<ValidatorInfo>
-    auxilaryData?: string[],
+    auxilaryData?: string[]
     hash?: string
   }): Promise<EncMsg[]> {
-    return await Promise.all( 
+    return await Promise.all(
       validatorsInfo.map(
         async (validator: ValidatorInfo): Promise<EncMsg> => {
           const txRequestData: UserSignatureRequest = {
@@ -161,7 +161,7 @@ export default class SignatureRequestManager {
             validators_info: validatorsInfo,
             timestamp: this.getTimeStamp(),
             auxilary_data: auxilaryData,
-            hash: hash
+            hash: hash,
           }
 
           const serverDHKey = await crypto.from_hex(validator.x25519_public_key)
@@ -217,10 +217,10 @@ export default class SignatureRequestManager {
           ...parsedMsg,
           msg: parsedMsg.msg,
         }
-        const sigProof = await sendHttpPost(
+        const sigProof = (await sendHttpPost(
           `http://${message.url}/user/sign_tx`,
           JSON.stringify(payload)
-        ) as string[]
+        )) as string[]
         sigProof.push(message.tss_account)
         return sigProof
       })
@@ -279,7 +279,7 @@ export default class SignatureRequestManager {
    * @param sigsAndProofs - Arrays of signatures and proofs.
    * @returns The first valid signature after verification.
    */
-  
+
   async verifyAndReduceSignatures (sigsAndProofs: string[][]): Promise<string> {
     const seperatedSigsAndProofs = sigsAndProofs.reduce(
       (a, sp) => {
