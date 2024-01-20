@@ -830,13 +830,29 @@ declare module '@polkadot/api-base/types/errors' {
     };
     programs: {
       /**
+       * No program defined at hash.
+       **/
+      NoProgramDefined: AugmentedError<ApiType>;
+      /**
        * Program modification account doesn't have permission to modify this program.
        **/
       NotAuthorized: AugmentedError<ApiType>;
       /**
+       * Program already set at hash.
+       **/
+      ProgramAlreadySet: AugmentedError<ApiType>;
+      /**
+       * Program is being used by an account
+       **/
+      ProgramInUse: AugmentedError<ApiType>;
+      /**
        * The program length is too long.
        **/
       ProgramLengthExceeded: AugmentedError<ApiType>;
+      /**
+       * User owns too many programs.
+       **/
+      TooManyProgramsOwned: AugmentedError<ApiType>;
       /**
        * Generic error
        **/
@@ -956,12 +972,15 @@ declare module '@polkadot/api-base/types/errors' {
       InvalidSubgroup: AugmentedError<ApiType>;
       IpAddressError: AugmentedError<ApiType>;
       MaxProgramLengthExceeded: AugmentedError<ApiType>;
+      NoProgramSet: AugmentedError<ApiType>;
       NoSyncedValidators: AugmentedError<ApiType>;
+      NotAuthorized: AugmentedError<ApiType>;
       NoThresholdKey: AugmentedError<ApiType>;
       NotInSigningGroup: AugmentedError<ApiType>;
       NotRegistered: AugmentedError<ApiType>;
       NotRegistering: AugmentedError<ApiType>;
       NoVerifyingKey: AugmentedError<ApiType>;
+      ProgramDoesNotExist: AugmentedError<ApiType>;
       SigningGroupError: AugmentedError<ApiType>;
       /**
        * Generic error

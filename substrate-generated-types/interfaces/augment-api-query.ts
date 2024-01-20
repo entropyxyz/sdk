@@ -768,17 +768,13 @@ declare module '@polkadot/api-base/types/storage' {
     };
     programs: {
       /**
-       * A mapping for checking whether a program-modification account is allowed to update a
-       * program on behalf of a signature-request account.
-       * 
-       * If the program-modification account and signature-request account pair is found in storage
-       * then program modification is allowed.
+       * Maps an account to all the programs it owns
        **/
-      allowedToModifyProgram: AugmentedQuery<ApiType, (arg1: AccountId32 | string | Uint8Array, arg2: AccountId32 | string | Uint8Array) => Observable<Option<Null>>, [AccountId32, AccountId32]> & QueryableStorageEntry<ApiType, [AccountId32, AccountId32]>;
+      ownedPrograms: AugmentedQuery<ApiType, (arg: AccountId32 | string | Uint8Array) => Observable<Vec<H256>>, [AccountId32]> & QueryableStorageEntry<ApiType, [AccountId32]>;
       /**
        * Stores the program bytecode for a given signature-request account.
        **/
-      bytecode: AugmentedQuery<ApiType, (arg: AccountId32 | string | Uint8Array) => Observable<Option<Bytes>>, [AccountId32]> & QueryableStorageEntry<ApiType, [AccountId32]>;
+      programs: AugmentedQuery<ApiType, (arg: H256 | string | Uint8Array) => Observable<Option<PalletProgramsProgramInfo>>, [H256]> & QueryableStorageEntry<ApiType, [H256]>;
       /**
        * Generic query
        **/
@@ -1143,7 +1139,10 @@ declare module '@polkadot/api-base/types/storage' {
        * Tracks wether the validator's kvdb is synced
        **/
       isValidatorSynced: AugmentedQuery<ApiType, (arg: AccountId32 | string | Uint8Array) => Observable<bool>, [AccountId32]> & QueryableStorageEntry<ApiType, [AccountId32]>;
-      proactiveRefresh: AugmentedQuery<ApiType, () => Observable<Vec<EntropySharedValidatorInfo>>, []> & QueryableStorageEntry<ApiType, []>;
+      /**
+       * A trigger for the proactive refresh OCW
+       **/
+      proactiveRefresh: AugmentedQuery<ApiType, () => Observable<PalletStakingExtensionRefreshInfo>, []> & QueryableStorageEntry<ApiType, []>;
       /**
        * Stores the relationship between a signing group (u8) and its member's (validator's)
        * threshold server's account.

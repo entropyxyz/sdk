@@ -91,7 +91,7 @@ export default class ProgramManager extends ExtrinsicBaseClass {
   
     const programHex = util.u8aToHex(new Uint8Array(program))
   
-    const tx: SubmittableExtrinsic<'promise'> = this.substrate.tx.programs.updateProgram(
+    const tx: SubmittableExtrinsic<'promise'> = this.substrate.tx.programs.remove(
       programModKey,
       programHex
     )

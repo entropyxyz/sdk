@@ -579,9 +579,13 @@ declare module '@polkadot/api-base/types/submittable' {
     };
     programs: {
       /**
-       * See [`Pallet::update_program`].
+       * See [`Pallet::remove_program`].
        **/
-      updateProgram: AugmentedSubmittable<(sigReqAccount: AccountId32 | string | Uint8Array, newProgram: Bytes | string | Uint8Array) => SubmittableExtrinsic<ApiType>, [AccountId32, Bytes]>;
+      removeProgram: AugmentedSubmittable<(programHash: H256 | string | Uint8Array) => SubmittableExtrinsic<ApiType>, [H256]>;
+      /**
+       * See [`Pallet::set_program`].
+       **/
+      setProgram: AugmentedSubmittable<(newProgram: Bytes | string | Uint8Array, configurationInterface: Bytes | string | Uint8Array) => SubmittableExtrinsic<ApiType>, [Bytes, Bytes]>;
       /**
        * Generic tx
        **/
@@ -683,6 +687,10 @@ declare module '@polkadot/api-base/types/submittable' {
     };
     relayer: {
       /**
+       * See [`Pallet::change_program_instance`].
+       **/
+      changeProgramInstance: AugmentedSubmittable<(sigRequestAccount: AccountId32 | string | Uint8Array, newProgramInstance: Vec<PalletRelayerProgramInstance> | (PalletRelayerProgramInstance | { programPointer?: any; programConfig?: any } | string | Uint8Array)[]) => SubmittableExtrinsic<ApiType>, [AccountId32, Vec<PalletRelayerProgramInstance>]>;
+      /**
        * See [`Pallet::confirm_register`].
        **/
       confirmRegister: AugmentedSubmittable<(sigReqAccount: AccountId32 | string | Uint8Array, signingSubgroup: u8 | AnyNumber | Uint8Array, verifyingKey: Bytes | string | Uint8Array) => SubmittableExtrinsic<ApiType>, [AccountId32, u8, Bytes]>;
@@ -693,7 +701,7 @@ declare module '@polkadot/api-base/types/submittable' {
       /**
        * See [`Pallet::register`].
        **/
-      register: AugmentedSubmittable<(programModificationAccount: AccountId32 | string | Uint8Array, keyVisibility: EntropySharedKeyVisibility | { Public: any } | { Permissioned: any } | { Private: any } | string | Uint8Array, initialProgram: Bytes | string | Uint8Array) => SubmittableExtrinsic<ApiType>, [AccountId32, EntropySharedKeyVisibility, Bytes]>;
+      register: AugmentedSubmittable<(programModificationAccount: AccountId32 | string | Uint8Array, keyVisibility: EntropySharedKeyVisibility | { Public: any } | { Permissioned: any } | { Private: any } | string | Uint8Array, programsData: Vec<PalletRelayerProgramInstance> | (PalletRelayerProgramInstance | { programPointer?: any; programConfig?: any } | string | Uint8Array)[]) => SubmittableExtrinsic<ApiType>, [AccountId32, EntropySharedKeyVisibility, Vec<PalletRelayerProgramInstance>]>;
       /**
        * Generic tx
        **/

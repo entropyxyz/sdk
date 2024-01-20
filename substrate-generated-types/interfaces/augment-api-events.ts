@@ -595,9 +595,13 @@ declare module '@polkadot/api-base/types/events' {
     };
     programs: {
       /**
-       * The bytecode of a program was updated.
+       * The bytecode of a program was created.
        **/
-      ProgramUpdated: AugmentedEvent<ApiType, [programModificationAccount: AccountId32, newProgram: Bytes], { programModificationAccount: AccountId32, newProgram: Bytes }>;
+      ProgramCreated: AugmentedEvent<ApiType, [programModificationAccount: AccountId32, programHash: H256, configurationInterface: Bytes], { programModificationAccount: AccountId32, programHash: H256, configurationInterface: Bytes }>;
+      /**
+       * The bytecode of a program was removed.
+       **/
+      ProgramRemoved: AugmentedEvent<ApiType, [programModificationAccount: AccountId32, oldProgramHash: H256], { programModificationAccount: AccountId32, oldProgramHash: H256 }>;
       /**
        * Generic event
        **/
@@ -693,6 +697,10 @@ declare module '@polkadot/api-base/types/events' {
        * An account registration has failed
        **/
       FailedRegistration: AugmentedEvent<ApiType, [AccountId32]>;
+      /**
+       * An account hash changed their program info [who, new_program_instance]
+       **/
+      ProgramInfoChanged: AugmentedEvent<ApiType, [AccountId32, Vec<PalletRelayerProgramInstance>]>;
       /**
        * An account cancelled their registration
        **/
