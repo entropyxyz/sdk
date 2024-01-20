@@ -598,15 +598,15 @@
   dependencies:
     "@jridgewell/trace-mapping" "0.3.9"
 
-"@entropyxyz/x25519-chacha20poly1305-nodejs@^0.2.0":
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/@entropyxyz/x25519-chacha20poly1305-nodejs/-/x25519-chacha20poly1305-nodejs-0.2.0.tgz#6432385ac5d7d2ee49b9160398c4632a7d962de4"
-  integrity sha512-pqbaVAdrrcYLof4kaY/Mtf1uXb4jSo6cSbRxr4Wa4d5pXZoEYqLmuThMGfDiO2pAsN67CMN9SOWfFX4LwfdevQ==
+"@entropyxyz/entropy-protocol-nodejs@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@entropyxyz/entropy-protocol-nodejs/-/entropy-protocol-nodejs-0.1.0.tgz#2d7e1ab23b53c5c66c57ad9908d7a151479cf994"
+  integrity sha512-XNwEsXYyzZPVfeSPFXjW6KxNHH/Ky1uVwQWe4xz5tq4z47lpnUrHfIXDREsm3fDX2VvrOMDvf7Hpzu2Q40Jb/A==
 
-"@entropyxyz/x25519-chacha20poly1305-web@^0.2.0":
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/@entropyxyz/x25519-chacha20poly1305-web/-/x25519-chacha20poly1305-web-0.2.0.tgz#c8f13b53e5d2d5b377c8d8f3a3ed8feb1fef068b"
-  integrity sha512-NmmXXH87ImR4Fhhhi/BPJdCv+CTWCtxaBOk8mmIfkH19blbv9H24Nr/LQykkoPRPfOxx6NRrvY6DAw4WFV1J8g==
+"@entropyxyz/entropy-protocol-web@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@entropyxyz/entropy-protocol-web/-/entropy-protocol-web-0.1.0.tgz#cb712dd920ededb24f0db7854e8a7a7361e7d301"
+  integrity sha512-fYVg18GQSiB5IvQFticigOX8Df31Jot7YIQuOn6ycXwkLhhXHXSzPlC/rr5rh7PnR44Kse2oa4hG678FAaC8fA==
 
 "@esbuild/android-arm64@0.17.19":
   version "0.17.19"

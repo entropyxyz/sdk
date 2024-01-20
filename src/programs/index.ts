@@ -48,18 +48,40 @@ export default class ProgramManager extends ExtrinsicBaseClass {
    * @alpha
    */
 
-  async get (sigReqAccount = this.signer.wallet.address): Promise<ArrayBuffer> {
-    const responseHexOption = await this.substrate.query.programs.bytecode(
-      sigReqAccount
-    )
-    if (responseHexOption.isEmpty) {
-      throw new Error('No program defined for the given account.')
+  // new get implementation in core does:
+  //  fetch block hash
+  // gets "bytecode address" from program pointer
+  // fetches bytecode 
+
+
+  async get (programPointer: string | Uint8Array): Promise<ArrayBuffer> {
+    // convert programPointer to a format compatible with api
+    const programPointerU8a = typeof programPointer === 'string' ? util.hexToU8a(programPointer) : programPointer
+
+    // fetch the latest block hash
+    // do i need to do this here? 
+
+    // const blockHash = await this.substrate.rpc.chain.getBlockHash()
+
+    // create an API instance at the specific block hash cuz at is deprecated if we try to do programs.programs.at.. 
+    // const apiAtBlockHash = await this.substrate.at(blockHash)
+
+    // maybe can just call directly 
+    // fetch program bytecode using the program pointer at the specific block hash
+    const responseOption = await this.substrate.query.programs.programs(programPointerU8a)
+
+    if (responseOption.isNone) {
+      throw new Error(`No program defined for the given pointer: ${programPointer}`)
     }
-    // @ts-ignore: next line
-    const responseHex = responseHexOption.unwrap().toHex() // Get the hex representation
-    const byteBuffer = hex2buf(responseHex) // Convert hex string to ArrayBuffer
+
+    const programInfo = responseOption.unwrap()
+    const bytecode = programInfo.bytecode
+
+    const byteBuffer = bytecode instanceof Uint8Array ? bytecode.buffer : new Uint8Array(bytecode).buffer
+
     return byteBuffer
   }
+
 
   /**
    * Sets or updates the program of a specified account on Substrate
@@ -76,8 +98,18 @@ export default class ProgramManager extends ExtrinsicBaseClass {
    * @alpha
    */
 
+
+  // rust code authenticates caller identity (ensure signed) and then sets it as programModAccount (new)
+  // combines new program + config interface for a new hash to use as key 
+  // validates new program + config doesnt exceed MAX
+  // allows for reserve deposit 
+  // inserts program into storage with metadata 
+  // adds programhash to list of owned programs by programModAccount 
+  // emits 'programCreated' 
+
   async set (
     program: ArrayBuffer,
+    configurationInterface: string | Uint8Array,
     sigReqAccount = this.signer.wallet.address,
     programModKey?: string
   ): Promise<void> {
@@ -89,18 +121,62 @@ export default class ProgramManager extends ExtrinsicBaseClass {
       throw new Error('Program modification is not authorized for the given account.')
     }
   
-    const programHex = util.u8aToHex(new Uint8Array(program))
-  
-    const tx: SubmittableExtrinsic<'promise'> = this.substrate.tx.programs.remove(
-      programModKey,
-      programHex
+    // convers program and configurationInterface into a pallatable format
+    const programU8a = new Uint8Array(program)
+    const configurationInterfaceU8a = typeof configurationInterface === 'string' ? util.stringToU8a(configurationInterface) : configurationInterface
+
+    // programModKey is the caller of the extrinxic 
+    const tx: SubmittableExtrinsic<'promise'> = this.substrate.tx.programs.setProgram(
+      programU8a,
+      configurationInterfaceU8a
     )
   
     await this.sendAndWaitFor(tx, false, {
       section: 'programs',
-      name: 'ProgramUpdated',
+      name: 'ProgramCreated', 
     })
   }
+
+  // theres likely two removes. one remove from list of programModAccount which is likely just a new SET, and then remove from global registry.. 
+  // caller MUST be programModAccount 
+
+  // rust code does:
+  // authentication 
+  // checks program exists in storage 
+  // confirms caller is programModAccount aka authorized
+  // checks ref counter to see if program is being used 
+  // unreserves deposit if ref counter is 0 
+  // updates owned programs (of program creator?? )
+  // removes program from from global program storage map
+  // emits Program Removed 
+  
+  async remove (
+    programHash: string | Uint8Array,
+    sigReqAccount = this.signer.wallet.address,
+    programModKey?: string
+  ): Promise<void> {
+    programModKey = programModKey || sigReqAccount
+  
+    const isAuthorized = await this.checkAuthorization(programModKey, sigReqAccount)
+  
+    if (!isAuthorized) {
+      throw new Error('Program modification is not authorized for the given account.')
+    }
+
+    // do i need to convert to u8a or just assume we're getting passed a correct hash 
+
+    const programHashU8a = typeof programHash === 'string' ? util.hexToU8a(programHash) : programHash
+
+    const tx: SubmittableExtrinsic<'promise'> = this.substrate.tx.programs.removeProgram(
+      programHashU8a
+    )
+  
+    await this.sendAndWaitFor(tx, false, {
+      section: 'programs',
+      name: 'ProgramRemoved',
+    })
+  }
+  
   /**
    *  Checks if a given program modification account is authorized to modify the program associated with a specific signature request account.
    *
