@@ -150,14 +150,14 @@ export default class SignatureRequestManager {
             timestamp: this.getTimeStamp(),
           }
 
-          const serverDHKey = await crypto.from_hex(validator.x25519_public_key)
+          const serverDHKey = await crypto.fromHex(validator.x25519_public_key)
 
           const formattedValidators = await Promise.all(
             validatorsInfo.map(async (v) => {
               return {
                 ...v,
                 x25519_public_key: Array.from(
-                  await crypto.from_hex(v.x25519_public_key)
+                  await crypto.fromHex(v.x25519_public_key)
                 ),
               }
             })
@@ -171,7 +171,7 @@ export default class SignatureRequestManager {
             (x) => x.charCodeAt(0)
           )
 
-          const encryptedMessage = await crypto.encrypt_and_sign(
+          const encryptedMessage = await crypto.encryptAndSign(
             this.signer.pair.secretKey,
             encoded,
             serverDHKey
