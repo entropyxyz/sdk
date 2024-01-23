@@ -1,7 +1,6 @@
 import { ApiPromise } from '@polkadot/api'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
 import * as util from '@polkadot/util'
-
 import ExtrinsicBaseClass from '../extrinsic'
 import ProgramDevManager from './dev'
 import { Signer } from '../types'
@@ -54,33 +53,33 @@ export default class ProgramManager extends ExtrinsicBaseClass {
   // fetches bytecode 
 
 
-  async get (programPointer: string | Uint8Array): Promise<ArrayBuffer> {
-    // convert programPointer to a format compatible with api
-    const programPointerU8a = typeof programPointer === 'string' ? util.hexToU8a(programPointer) : programPointer
+  // async get (programPointer: string | Uint8Array): Promise<ArrayBuffer> {
+  //   // convert programPointer to a format compatible with api
+  //   const programPointerU8a = typeof programPointer === 'string' ? util.hexToU8a(programPointer) : programPointer
 
-    // fetch the latest block hash
-    // do i need to do this here? 
+  //   // fetch the latest block hash
+  //   // do i need to do this here? 
 
-    // const blockHash = await this.substrate.rpc.chain.getBlockHash()
+  //   // const blockHash = await this.substrate.rpc.chain.getBlockHash()
 
-    // create an API instance at the specific block hash cuz at is deprecated if we try to do programs.programs.at.. 
-    // const apiAtBlockHash = await this.substrate.at(blockHash)
+  //   // create an API instance at the specific block hash cuz at is deprecated if we try to do programs.programs.at.. 
+  //   // const apiAtBlockHash = await this.substrate.at(blockHash)
 
-    // maybe can just call directly 
-    // fetch program bytecode using the program pointer at the specific block hash
-    const responseOption = await this.substrate.query.programs.programs(programPointerU8a)
+  //   // maybe can just call directly 
+  //   // fetch program bytecode using the program pointer at the specific block hash
+  //   const responseOption = await this.substrate.query.programs.programs(programPointerU8a)
 
-    if (responseOption.isNone) {
-      throw new Error(`No program defined for the given pointer: ${programPointer}`)
-    }
+  //   if (responseOption.isNone) {
+  //     throw new Error(`No program defined for the given pointer: ${programPointer}`)
+  //   }
 
-    const programInfo = responseOption.unwrap()
-    const bytecode = programInfo.bytecode
+  //   const programInfo = responseOption.unwrap()
+  //   const bytecode = programInfo.bytecode
 
-    const byteBuffer = bytecode instanceof Uint8Array ? bytecode.buffer : new Uint8Array(bytecode).buffer
+  //   const byteBuffer = bytecode instanceof Uint8Array ? bytecode.buffer : new Uint8Array(bytecode).buffer
 
-    return byteBuffer
-  }
+  //   return byteBuffer
+  // }
 
 
   /**
@@ -150,32 +149,32 @@ export default class ProgramManager extends ExtrinsicBaseClass {
   // removes program from from global program storage map
   // emits Program Removed 
   
-  async remove (
-    programHash: string | Uint8Array,
-    sigReqAccount = this.signer.wallet.address,
-    programModKey?: string
-  ): Promise<void> {
-    programModKey = programModKey || sigReqAccount
+  // async remove (
+  //   programHash: string | Uint8Array,
+  //   sigReqAccount = this.signer.wallet.address,
+  //   programModKey?: string
+  // ): Promise<void> {
+  //   programModKey = programModKey || sigReqAccount
   
-    const isAuthorized = await this.checkAuthorization(programModKey, sigReqAccount)
+  //   const isAuthorized = await this.checkAuthorization(programModKey, sigReqAccount)
   
-    if (!isAuthorized) {
-      throw new Error('Program modification is not authorized for the given account.')
-    }
+  //   if (!isAuthorized) {
+  //     throw new Error('Program modification is not authorized for the given account.')
+  //   }
 
-    // do i need to convert to u8a or just assume we're getting passed a correct hash 
+  //   // do i need to convert to u8a or just assume we're getting passed a correct hash 
 
-    const programHashU8a = typeof programHash === 'string' ? util.hexToU8a(programHash) : programHash
+  //   const programHashU8a = typeof programHash === 'string' ? util.hexToU8a(programHash) : programHash
 
-    const tx: SubmittableExtrinsic<'promise'> = this.substrate.tx.programs.removeProgram(
-      programHashU8a
-    )
+  //   const tx: SubmittableExtrinsic<'promise'> = this.substrate.tx.programs.removeProgram(
+  //     programHashU8a
+  //   )
   
-    await this.sendAndWaitFor(tx, false, {
-      section: 'programs',
-      name: 'ProgramRemoved',
-    })
-  }
+  //   await this.sendAndWaitFor(tx, false, {
+  //     section: 'programs',
+  //     name: 'ProgramRemoved',
+  //   })
+  // }
   
   /**
    *  Checks if a given program modification account is authorized to modify the program associated with a specific signature request account.
