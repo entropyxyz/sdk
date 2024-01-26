@@ -30,12 +30,12 @@ export default class ProgramDev extends ExtrinsicBaseClass {
     super({ substrate, signer })
   }
 
-  async get (programPointer: string): Promise<ProgramInfo> {
+  async get (pointer: string): Promise<ProgramInfo> {
     // fetch program bytecode using the program pointer at the specific block hash
-    const responseOption = await this.substrate.query.programs.programs(programPointer)
+    const responseOption = await this.substrate.query.programs.programs(pointer)
 
     if (responseOption.isNone) {
-      throw new Error(`No program defined for the given pointer: ${programPointer}`)
+      throw new Error(`No program defined for the given pointer: ${pointer}`)
     }
 
     const programInfo = responseOption.toJSON()
@@ -50,7 +50,6 @@ export default class ProgramDev extends ExtrinsicBaseClass {
   ): Promise<string> {
 
     // converts program and configurationInterface into a palatable format
-    const programU8a = new Uint8Array(program)
     const formatedConfig = JSON.stringify(configurationInterface)
     // programModKey is the caller of the extrinsic
     const tx: SubmittableExtrinsic<'promise'> = this.substrate.tx.programs.setProgram(
@@ -69,8 +68,8 @@ export default class ProgramDev extends ExtrinsicBaseClass {
 
   async remove (
     programHash: string | Uint8Array,
-  ): Promise<void> {    const programHashU8a = typeof programHash === 'string' ? util.hexToU8a(programHash) : programHash
-
+  ): Promise<void> {    
+    
     const tx: SubmittableExtrinsic<'promise'> = this.substrate.tx.programs.removeProgram(
       programHash
     )

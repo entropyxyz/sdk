@@ -73,7 +73,7 @@ describe('Core Tests', () => {
 
     console.log('program deploy')
 
-    const hash = await entropy.programs.dev.deploy(dummyProgram)
+    const pointer = await entropy.programs.dev.deploy(dummyProgram)
 
 
     // Pre-registration check
@@ -89,7 +89,7 @@ describe('Core Tests', () => {
     await entropy.register({
       keyVisibility: 'Permissioned',
       freeTx: false,
-      initialPrograms: [{ programPointer: hash, programConfig: '0x' }],
+      initialPrograms: [{ pointer: pointer, config: '0x' }],
       programModAccount: charlieStashAddress,
     })
 

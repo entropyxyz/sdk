@@ -6,8 +6,8 @@ import { Signer } from '../types'
 import { u8aToString, u8aToHex, stringToU8a } from '@polkadot/util'
 
 export interface ProgramData {
-  programPointer: string
-  programConfig?: unknown
+  pointer: string
+  config?: unknown
 }
 
 /**
@@ -26,7 +26,7 @@ export default class ProgramManager extends ExtrinsicBaseClass {
    * @alpha
    */
   dev: ProgramDev
-  constructor({
+  constructor ({
     substrate,
     programModKey,
     programDeployKey,
@@ -61,9 +61,9 @@ export default class ProgramManager extends ExtrinsicBaseClass {
 
     const registeredInfo = registeredOption.unwrap()
     return registeredInfo.programsData.map((program) => ({
-      hash: program.programPointer.toString(),
+      pointer: program.pointer.toString(),
       // double check on how we're passing config
-      config: JSON.parse(u8aToString(program.programConfig)),
+      config: JSON.parse(u8aToString(program.config)),
     }))
   }
 
@@ -108,8 +108,8 @@ export default class ProgramManager extends ExtrinsicBaseClass {
     }
 
     const newProgramInstances = newList.map((data) => ({
-      programPointer: u8aToHex(stringToU8a(data.hash)),
-      programConfig: stringToU8a(JSON.stringify(data.config)),
+      pointer: u8aToHex(stringToU8a(data.pointer)),
+      config: stringToU8a(JSON.stringify(data.config)),
     }))
 
     const tx: SubmittableExtrinsic<'promise'> = this.substrate.tx.relayer.changeProgramInstance(
@@ -130,7 +130,7 @@ export default class ProgramManager extends ExtrinsicBaseClass {
     const currentPrograms = await this.get(sigReqAccount)
     // creates new array that contains all of the currentPrograms except programHashToRemove
     const updatedPrograms = currentPrograms.filter(
-      (program) => program.hash !== programHashToRemove
+      (program) => program.pointer !== programHashToRemove
     )
     await this.set(updatedPrograms, sigReqAccount, programModKey)
   }

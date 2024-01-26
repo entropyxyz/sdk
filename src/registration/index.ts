@@ -2,7 +2,6 @@ import ExtrinsicBaseClass from '../extrinsic'
 import { Signer, Address } from '../types'
 import { ApiPromise } from '@polkadot/api'
 import { ProgramData } from '../programs'
-import {stringToU8a} from '@polkadot/util'
 
 export interface RegistrationParams {
   freeTx?: boolean
@@ -51,7 +50,7 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
    * Registers a user with the given parameters.
    *
    * @param freeTx - Optional. Indicates if the transaction should be free (default: true).
-   * @param initialProgram - Optional. Initial program associated with the user.
+   * @param initialPrograms - Optional. Initial program associated with the user.
    * @param keyVisibility - Key visibility level ('Public', 'Permissioned', 'Private'). Defaults to 'Permissioned'.
    * @param programModAccount - Account authorized to modify programs on behalf of the user.
    *

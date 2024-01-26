@@ -13,7 +13,7 @@ import { EntropyAccount } from '../src'
 describe('Register Tests', () => {
   let entropy
   let isRegisteredBefore
-  let hash
+  let pointer
   beforeAll(async () => {
     jest.setTimeout(300000) // Set timeout for the entire suite
 
@@ -35,7 +35,7 @@ describe('Register Tests', () => {
         './tests/testing-utils/template_barebones.wasm'
       )
       await entropy.ready
-      hash = await entropy.programs.dev.deploy(dummyProgram)
+      pointer = await entropy.programs.dev.deploy(dummyProgram)
     } catch (e) {
       console.error('Error in beforeAll: ', e.message)
     }
@@ -65,7 +65,7 @@ describe('Register Tests', () => {
       programModAccount: charlieStashAddress,
       keyVisibility: 'Permissioned',
       freeTx: false,
-      initialPrograms: [{ programPointer: hash, programConfig: '0x' }],
+      initialPrograms: [{ pointer: pointer, config: '0x' }],
     })
 
     const isRegisteredAfter = await entropy.isRegistered(charlieStashAddress)
@@ -78,7 +78,7 @@ describe('Register Tests', () => {
         programModAccount: charlieStashAddress,
         keyVisibility: 'Permissioned',
         freeTx: true,
-        initialPrograms: [{ programPointer: hash, programConfig: '0x' }],
+        initialPrograms: [{ pointer: pointer, config: '0x' }],
       })
     ).rejects.toThrow('already registered')
   })

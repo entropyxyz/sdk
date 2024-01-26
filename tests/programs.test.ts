@@ -65,8 +65,8 @@ describe('Programs Tests', () => {
     const dummyProgram = readFileSync(
       './tests/testing-utils/template_barebones.wasm'
     )
-    const hash = await entropy.programs.dev.deploy(dummyProgram)
-    const fetchedProgram = await entropy.programs.dev.get(hash)
+    const pointer = await entropy.programs.dev.deploy(dummyProgram)
+    const fetchedProgram = await entropy.programs.dev.get(pointer)
     expect(buf2hex(fetchedProgram.bytecode)).toEqual(buf2hex(dummyProgram))
   })
 })
