@@ -38,9 +38,9 @@ export default class ProgramDev extends ExtrinsicBaseClass {
       throw new Error(`No program defined for the given pointer: ${programPointer}`)
     }
 
-    const programInfo: ProgramInfoJSON= responseOption.toJSON() as ProgramInfoJSON
-    const bytecode = hex2buf(stripHexPrefix(programInfo.bytecode)) // Convert hex string to ArrayBuffer
-    return {...programInfo, bytecode}
+    const programInfo = responseOption.toJSON()
+
+    return this.#formatProgramInfo(programInfo)
   }
 
 
@@ -79,5 +79,11 @@ export default class ProgramDev extends ExtrinsicBaseClass {
       section: 'programs',
       name: 'ProgramRemoved',
     })
+  }
+
+  #formatProgramInfo (programInfo): ProgramInfo {
+    const { configurationInterface, deployer, refCounter } = programInfo
+    const bytecode = hex2buf(stripHexPrefix(programInfo.bytecode)) // Convert hex string to ArrayBuffer
+    return { configurationInterface, deployer, refCounter, bytecode }
   }
 }
