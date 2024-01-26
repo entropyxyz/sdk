@@ -34,8 +34,8 @@ describe('Register Tests', () => {
       const dummyProgram: any = readFileSync(
         './tests/testing-utils/template_barebones.wasm'
       )
-      hash = await entropy.programs.dev.deploy(dummyProgram)
       await entropy.ready
+      hash = await entropy.programs.dev.deploy(dummyProgram)
     } catch (e) {
       console.error('Error in beforeAll: ', e.message)
     }
@@ -55,54 +55,36 @@ describe('Register Tests', () => {
   })
 
   it('should check pre-registration status', async () => {
-    try {
-      // Check if already registered before the test
-      isRegisteredBefore = await entropy.isRegistered(charlieStashAddress)
-      expect(isRegisteredBefore).toBeFalsy()
-    } catch (e) {
-      console.error('Error in pre-registration status check: ', e.message)
-    }
+    // Check if already registered before the test
+    isRegisteredBefore = await entropy.isRegistered(charlieStashAddress)
+    expect(isRegisteredBefore).toBeFalsy()
   })
 
   it('should handle user registration', async () => {
-    try {
-      if (!isRegisteredBefore) {
-        await entropy.register({
-          programModAccount: charlieStashAddress,
-          keyVisibility: 'Permissioned',
-          freeTx: false,
-          initialProgram: [{ hash }],
-        })
+    await entropy.register({
+      programModAccount: charlieStashAddress,
+      keyVisibility: 'Permissioned',
+      freeTx: false,
+      initialPrograms: [{ programPointer: hash, programConfig: '0x' }],
+    })
 
-        const isRegisteredAfter = await entropy.isRegistered(charlieStashAddress)
-        expect(isRegisteredAfter).toBeTruthy()
-      }
-    } catch (e) {
-      console.error('Error in user registration: ', e.message)
-    }
+    const isRegisteredAfter = await entropy.isRegistered(charlieStashAddress)
+    expect(isRegisteredAfter).toBeTruthy()
   })
 
   it('should not allow re-registration', async () => {
-    try {
-      await expect(
-        entropy.register({
-          programModAccount: charlieStashAddress,
-          keyVisibility: 'Permissioned',
-          freeTx: true,
-          initialProgram: [{ hash }],
-        })
-      ).rejects.toThrow('already registered')
-    } catch (e) {
-      console.error('Error in re-registration check: ', e.message)
-    }
+    await expect(
+      entropy.register({
+        programModAccount: charlieStashAddress,
+        keyVisibility: 'Permissioned',
+        freeTx: true,
+        initialPrograms: [{ programPointer: hash, programConfig: '0x' }],
+      })
+    ).rejects.toThrow('already registered')
   })
 
   it('should verify registration status of a new address', async () => {
-    try {
-      const isNewAddressRegistered = await entropy.isRegistered("5FWd3NSnWQ6Ay9CXmw9aTU8ZvDksn7zzzuw5dCKq9R8DsaCo")
-      expect(isNewAddressRegistered).toBeFalsy()
-    } catch (e) {
-      console.error('Error in new address registration check: ', e.message)
-    }
+    const isNewAddressRegistered = await entropy.isRegistered("5FWd3NSnWQ6Ay9CXmw9aTU8ZvDksn7zzzuw5dCKq9R8DsaCo")
+    expect(isNewAddressRegistered).toBeFalsy()
   })
 })

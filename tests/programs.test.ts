@@ -66,7 +66,6 @@ describe('Programs Tests', () => {
       './tests/testing-utils/template_barebones.wasm'
     )
     const hash = await entropy.programs.dev.deploy(dummyProgram)
-    console.log('HASH', hash)
     const fetchedProgram = await entropy.programs.dev.get(hash)
     expect(buf2hex(fetchedProgram.bytecode)).toEqual(buf2hex(dummyProgram))
   })

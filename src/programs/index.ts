@@ -6,8 +6,8 @@ import { Signer } from '../types'
 import { u8aToString, u8aToHex, stringToU8a } from '@polkadot/util'
 
 export interface ProgramData {
-  hash: string
-  config?: unknown
+  programPointer: string
+  programConfig?: unknown
 }
 
 /**
