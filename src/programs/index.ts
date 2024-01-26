@@ -19,8 +19,8 @@ export default class ProgramManager extends ExtrinsicBaseClass {
   /**
    * Creates an instance of ProgramManager.
    * @param {ApiPromise} substrate - Substrate API object
-   * @param {Signer} programModKey - The signer object for the user interfacing with Substrate
-   * @param {Signer} programDeployKey - The signer object for the user interfacing with Substrate
+   * @param {Signer} programModKey - The signer object for the user interfacing with Entropy
+   * @param {Signer} programDeployKey - The signer object for the user interfacing with Entropy
    * @remarks
    * The constructor initializes the Substrate api and the signer.
    * @alpha
@@ -46,14 +46,9 @@ export default class ProgramManager extends ExtrinsicBaseClass {
    * @throws {Error} If no program is defined for the given account.
    * @remarks
    * This method communicates with Substrate to fetch bytecode associated with an account.
-   * The response is then procesed and converted to an ArrayBuffer before being returned
+   * The response is then processed and converted to an ArrayBuffer before being returned
    * @alpha
    */
-
-  // new get implementation in core does:
-  //  we can query registered from relayer pallet
-  // to get programsData which has a store of ProgramData[] { pointer, config}
-  // we can then return the entire set
 
   async get (sigReqAccount: string): Promise<ProgramData[]> {
     const registeredOption = await this.substrate.query.relayer.registered(
@@ -73,7 +68,7 @@ export default class ProgramManager extends ExtrinsicBaseClass {
   }
 
   /**
-   * Sets or updates the program of a specified account on Substrate
+   * Sets or updates the program of a specified account on Entropy.
    * This method allows the current signer or an authorized account to update the program associated with the signer's account or another specified account.
    * @param {ArrayBuffer} program - The program to be set or updated, as an ArrayBuffer.
    * @param {string} [programModKey] - Optional. An authorized account to modify the program, if different from the signer's account.
@@ -81,11 +76,12 @@ export default class ProgramManager extends ExtrinsicBaseClass {
    * @returns {Promise<void>} A promise that resolves when the transaction has been included in the block.
    * @throws {Error} Throws an error if the account is unauthorized or if there's a problem setting the program.
    * @remarks
-   * This method handles the conversion of a program from an ArrayBuffer to a hex string
+   * This method handles the conversion of a program from an ArrayBuffer to a hex string.
    * It checks for authorization if the programModKey is provided, ensuring that only authorized accounts can update the bytecode.
-   * The transaction is created and sent to Substrate. This method then awaits the confirmation event 'ProgramUpdated' to ensure that the update was successful.
+   * The transaction is created and sent to Entropy. This method then awaits the confirmation event 'ProgramUpdated' to ensure that the update was successful.
    * @alpha
    */
+
 
   async set (
     newList: ProgramData[],
@@ -106,7 +102,7 @@ export default class ProgramManager extends ExtrinsicBaseClass {
 
     const isAuthorized =
       registeredInfo.program_modification_account === programModKey
-      
+
     if (!isAuthorized) {
       throw new Error(`Unauthorized modification attempt by ${programModKey}`)
     }
