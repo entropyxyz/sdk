@@ -31,7 +31,8 @@ import Entropy from '@entropyxyz/entropy-js'
 
     const entropyAccount: EntropyAccount = {
       sigRequestKey: signer,
-      programModKey: signer
+      programModKey: signer,
+      programDeployKey: signer,
     }
 
     entropy = new Entropy({ account: entropyAccount})

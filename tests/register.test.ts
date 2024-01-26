@@ -23,7 +23,8 @@ describe('Register Tests', () => {
 
     const entropyAccount: EntropyAccount = {
       sigRequestKey: signer,
-      programModKey: signer
+      programModKey: signer,
+      programDeployKey: signer,
     }
 
     await sleep(30000)

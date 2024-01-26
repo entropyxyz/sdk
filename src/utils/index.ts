@@ -6,6 +6,18 @@ export interface AnyObject {
   [key: string]: number | string | string[] | AnyObject
 }
 
+export function typeofthing (thing) {
+  const thingType = typeof thing
+  if (thingType === 'object') {
+    if (Array.isArray(thing)) return 'array'
+    if (thing === null) return 'null'
+    return thingType
+  } else {
+      return thingType
+  }
+}
+
+
 export function stripHexPrefix (str: string): string {
   if (str.startsWith('0x')) return str.slice(2)
   return str

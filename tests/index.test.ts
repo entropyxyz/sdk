@@ -36,7 +36,8 @@ describe('Core Tests', () => {
 
     const entropyAccount: EntropyAccount = {
       sigRequestKey: signer,
-      programModKey: signer
+      programModKey: signer,
+      programDeployKey: signer,
     }
 
     await sleep(30000)
@@ -66,28 +67,31 @@ describe('Core Tests', () => {
   it('should handle registration, program management, and signing', async () => {
     jest.setTimeout(60000)
 
+    const dummyProgram: any = readFileSync(
+      './tests/testing-utils/template_barebones.wasm'
+    )
+
+    console.log('program deploy')
+
+    const { hash } = entropy.programs.dev.deploy(dummyProgram)
+
+
     // Pre-registration check
     console.log("pre-registration check")
-    try {
-      const preRegistrationStatus = await entropy.isRegistered(
-        charlieStashAddress
-      )
-      expect(preRegistrationStatus).toBeFalsy()
-      const preStringifiedResponse = JSON.stringify(preRegistrationStatus)
-      expect(preStringifiedResponse).toBe('false')
-    } catch (e) {
-      console.error('Error in pre-registration status check:', e.message)
-    }
+    const preRegistrationStatus = await entropy.isRegistered(
+      charlieStashAddress
+    )
+    expect(preRegistrationStatus).toBeFalsy()
+    const preStringifiedResponse = JSON.stringify(preRegistrationStatus)
+    expect(preStringifiedResponse).toBe('false')
 
-    try {
-      await entropy.register({
-        keyVisibility: 'Permissioned',
-        freeTx: false,
-        programModAccount: charlieStashAddress,
-      })
-    } catch (e) {
-      console.error('Error in test:', e.message)
-    }
+    console.log('registration tests')
+    await entropy.register({
+      keyVisibility: 'Permissioned',
+      freeTx: false,
+      programModAccount: charlieStashAddress,
+    })
+
     console.log('verifyingKey:', entropy.account.verifyingKey)
     expect(entropy.account.verifyingKey).toBeTruthy()
     expect(entropy.account.sigRequestKey.wallet.address).toBe(charlieStashAddress)
@@ -98,32 +102,25 @@ describe('Core Tests', () => {
     ).toBeTruthy()
 
     // Post-registration check
-    console.log("post-registration check")
+  console.log("post-registration check")
 
-    try {
-      const postRegistrationStatus = await entropy.isRegistered(
-        charlieStashAddress
-      )
-      expect(postRegistrationStatus).toBeTruthy()
+    const postRegistrationStatus = await entropy.isRegistered(
+      charlieStashAddress
+    )
+    expect(postRegistrationStatus).toBeTruthy()
 
-      const postStringifiedResponse = JSON.stringify(postRegistrationStatus)
+    const postStringifiedResponse = JSON.stringify(postRegistrationStatus)
 
-      if (postStringifiedResponse === 'false') {
-        console.log('is not registered')
-      }
-
-      expect(postStringifiedResponse).toBe('true')
-
-    } catch (e) {
-      console.error('Error in post-registration status check:', e.message)
+    if (postStringifiedResponse === 'false') {
+      console.log('is not registered')
     }
+
+    expect(postStringifiedResponse).toBe('true')
+
 
     // Set a program for the user
     console.log("setting program")
 
-    const dummyProgram: any = readFileSync(
-      './tests/testing-utils/template_barebones.wasm'
-    )
     await entropy.programs.set(dummyProgram)
     // Retrieve the program and compare
     console.log("getting program")

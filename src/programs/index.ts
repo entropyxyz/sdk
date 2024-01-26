@@ -1,7 +1,7 @@
 import { ApiPromise } from '@polkadot/api'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
 import ExtrinsicBaseClass from '../extrinsic'
-import ProgramDevManager from './dev'
+import ProgramDev from './dev'
 import { Signer } from '../types'
 import { u8aToString, u8aToHex, stringToU8a } from '@polkadot/util'
 
@@ -25,7 +25,7 @@ export default class ProgramManager extends ExtrinsicBaseClass {
    * The constructor initializes the Substrate api and the signer.
    * @alpha
    */
-
+  dev: ProgramDev
   constructor({
     substrate,
     programModKey,
@@ -35,8 +35,8 @@ export default class ProgramManager extends ExtrinsicBaseClass {
     programModKey: Signer
     programDeployKey?: Signer
   }) {
-    super({ substrate, signer })
-    this.dev = new ProgramDev(programDeployKey)
+    super({ substrate, signer: programModKey })
+    this.dev = new ProgramDev({substrate, signer: programDeployKey})
   }
 
   /**

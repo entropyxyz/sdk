@@ -31,7 +31,8 @@ describe('Programs Tests', () => {
     const signer = await getWallet(charlieStashSeed)
     const entropyAccount: EntropyAccount = {
       sigRequestKey: signer,
-      programModKey: signer
+      programModKey: signer,
+      programDeployKey: signer
     }
 
     await sleep(30000)
@@ -87,13 +88,13 @@ describe('Programs Tests', () => {
     const dummyProgram = readFileSync(
       './tests/testing-utils/template_barebones.wasm'
     )
-    await entropy.programs.set(dummyProgram, charlieStashAddress)
-    const fetchedProgram = await entropy.programs.get(charlieStashAddress)
+    await entropy.programs.dev.set(dummyProgram, charlieStashAddress)
+    const fetchedProgram = await entropy.programs.dev.get(charlieStashAddress)
     const trimmedBuffer = fetchedProgram.slice(1)
     expect(buf2hex(trimmedBuffer)).toEqual(buf2hex(dummyProgram))
 
     try {
-      await entropy.programs.set(dummyProgram, derivedAddress)
+      await entropy.programs.dev.set(dummyProgram, derivedAddress)
       fail('Expected an error for unauthorized program set')
     } catch (error) {
       expect(error.message).toContain("doesn't have permission")
