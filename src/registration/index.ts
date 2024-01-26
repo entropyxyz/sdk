@@ -60,7 +60,7 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
 
   async register ({
     freeTx = false,
-    initialPrograms,
+    initialPrograms = [],
     keyVisibility = 'Permissioned',
     programModAccount,
   }: RegistrationParams): Promise<RegisteredInfo> {
@@ -115,7 +115,7 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
     const registerTx = this.substrate.tx.relayer.register(
       programModificationAccount,
       keyVisibility,
-      initialPrograms
+      initialPrograms.map((programInfo) => { return {programConfig: programInfo.config, programPointer: programInfo.pointer} })
     )
 
     await this.sendAndWaitFor (registerTx, freeTx, {
