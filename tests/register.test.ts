@@ -1,3 +1,4 @@
+import { readFileSync } from 'fs'
 import Entropy from '../src'
 import {
   sleep,
@@ -12,7 +13,7 @@ import { EntropyAccount } from '../src'
 describe('Register Tests', () => {
   let entropy
   let isRegisteredBefore
-
+  let hash
   beforeAll(async () => {
     jest.setTimeout(300000) // Set timeout for the entire suite
 
@@ -29,6 +30,11 @@ describe('Register Tests', () => {
 
     await sleep(30000)
     entropy = new Entropy({ account: entropyAccount})
+    const dummyProgram: any = readFileSync(
+      './tests/testing-utils/template_barebones.wasm'
+    )
+
+    hash = await entropy.programs.set(dummyProgram)
     await entropy.ready
   })
 
@@ -65,7 +71,7 @@ describe('Register Tests', () => {
         programModAccount: charlieStashAddress,
         keyVisibility: 'Permissioned',
         freeTx: false,
-        initialProgram: '0x',
+        initialProgram: [{ hash }],
       })
 
       const isRegisteredAfter = await entropy.isRegistered(charlieStashAddress)
@@ -78,7 +84,7 @@ describe('Register Tests', () => {
         programModAccount: charlieStashAddress,
         keyVisibility: 'Permissioned',
         freeTx: true,
-        initialProgram: '0x',
+        initialProgram: [{ hash }],
       })
     ).rejects.toThrow('already registered')
   })

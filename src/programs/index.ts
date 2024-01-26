@@ -7,7 +7,7 @@ import { u8aToString, u8aToHex, stringToU8a } from '@polkadot/util'
 
 export interface ProgramData {
   hash: string
-  config: object[]
+  config?: unknown
 }
 
 /**

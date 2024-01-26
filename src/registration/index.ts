@@ -6,7 +6,7 @@ import {stringToU8a} from '@polkadot/util'
 
 export interface RegistrationParams {
   freeTx?: boolean
-  initialProgram?: ProgramData
+  initialPrograms?: ProgramData[]
   keyVisibility?: 'Public' | 'Permissioned' | 'Private'
   programModAccount: Address
 }
@@ -60,8 +60,8 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
    */
 
   async register ({
-    freeTx = true,
-    initialProgram,
+    freeTx = false,
+    initialPrograms,
     keyVisibility = 'Permissioned',
     programModAccount,
   }: RegistrationParams): Promise<RegisteredInfo> {
@@ -112,20 +112,11 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
     )
 
     // Convert the ProgramData to PalletRelayerProgramInstance and wrap it in an array
-    const initialProgramParam = initialProgram
-      ? [
-        {
-          programPointer: initialProgram.hash,
-          programConfig: stringToU8a(JSON.stringify(initialProgram.config))
-          , 
-        },
-      ]
-      : []
 
     const registerTx = this.substrate.tx.relayer.register(
       programModificationAccount,
       keyVisibility,
-      initialProgramParam 
+      initialPrograms
     )
 
     await this.sendAndWaitFor (registerTx, freeTx, {

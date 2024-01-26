@@ -73,7 +73,7 @@ describe('Core Tests', () => {
 
     console.log('program deploy')
 
-    const { hash } = entropy.programs.dev.deploy(dummyProgram)
+    const hash = entropy.programs.dev.deploy(dummyProgram)
 
 
     // Pre-registration check
@@ -89,6 +89,7 @@ describe('Core Tests', () => {
     await entropy.register({
       keyVisibility: 'Permissioned',
       freeTx: false,
+      initialPrograms: [{hash}],
       programModAccount: charlieStashAddress,
     })
 
@@ -121,10 +122,10 @@ describe('Core Tests', () => {
     // Set a program for the user
     console.log("setting program")
 
-    await entropy.programs.set(dummyProgram)
+    const pointer = await entropy.programs.set(dummyProgram)
     // Retrieve the program and compare
     console.log("getting program")
-    const fetchedProgram: ArrayBuffer = await entropy.programs.get()
+    const fetchedProgram: ArrayBuffer = await entropy.programs.get(pointer)
     const trimmedBuffer = fetchedProgram.slice(1)
 
     expect(buf2hex(trimmedBuffer)).toEqual(buf2hex(dummyProgram))
