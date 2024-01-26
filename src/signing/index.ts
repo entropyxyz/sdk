@@ -28,6 +28,14 @@ export interface SigOps {
   type?: string
 }
 
+export interface UserSignatureRequest {
+  message: string
+  auxilary_data?: Array<string | null>
+  validators_info: ValidatorInfo[]
+  timestamp: { secs_since_epoch: number; nanos_since_epoch: number }
+  hash: string
+}
+
 /**
  * `SignatureRequestManager` facilitates signature requests using Polkadot/Substrate API.
  * This manager handles transaction signing using pre-defined adapters and cryptographic utilities.
@@ -137,17 +145,23 @@ export default class SignatureRequestManager {
   async formatTxRequests ({
     strippedsigRequestHash,
     validatorsInfo,
+    auxilaryData,
+    hash,
   }: {
     strippedsigRequestHash: string
     validatorsInfo: Array<ValidatorInfo>
+    auxilaryData?: string[]
+    hash?: string
   }): Promise<EncMsg[]> {
     return await Promise.all(
       validatorsInfo.map(
         async (validator: ValidatorInfo): Promise<EncMsg> => {
-          const txRequestData = {
+          const txRequestData: UserSignatureRequest = {
             message: stripHexPrefix(strippedsigRequestHash),
             validators_info: validatorsInfo,
             timestamp: this.getTimeStamp(),
+            auxilary_data: auxilaryData,
+            hash: hash,
           }
 
           const serverDHKey = await crypto.fromHex(validator.x25519_public_key)
@@ -203,10 +217,10 @@ export default class SignatureRequestManager {
           ...parsedMsg,
           msg: parsedMsg.msg,
         }
-        const sigProof = await sendHttpPost(
+        const sigProof = (await sendHttpPost(
           `http://${message.url}/user/sign_tx`,
           JSON.stringify(payload)
-        ) as string[]
+        )) as string[]
         sigProof.push(message.tss_account)
         return sigProof
       })
@@ -265,7 +279,7 @@ export default class SignatureRequestManager {
    * @param sigsAndProofs - Arrays of signatures and proofs.
    * @returns The first valid signature after verification.
    */
-  
+
   async verifyAndReduceSignatures (sigsAndProofs: string[][]): Promise<string> {
     const seperatedSigsAndProofs = sigsAndProofs.reduce(
       (a, sp) => {
