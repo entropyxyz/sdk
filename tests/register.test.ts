@@ -33,8 +33,11 @@ describe('Register Tests', () => {
     const dummyProgram: any = readFileSync(
       './tests/testing-utils/template_barebones.wasm'
     )
-
-    hash = await entropy.programs.set(dummyProgram)
+    try {
+      hash = await entropy.programs.set(dummyProgram)
+    } catch (e) {
+      throw new Error(`failed to set program: ${e.message}`)
+    }
     await entropy.ready
   })
 
