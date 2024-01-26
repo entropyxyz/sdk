@@ -65,9 +65,9 @@ describe('Programs Tests', () => {
     const dummyProgram = readFileSync(
       './tests/testing-utils/template_barebones.wasm'
     )
-    const hash = await entropy.programs.dev.set(dummyProgram)
+    const hash = await entropy.programs.dev.deploy(dummyProgram)
+    console.log('HASH', hash)
     const fetchedProgram = await entropy.programs.dev.get(hash)
-    const trimmedBuffer = fetchedProgram.slice(1)
-    expect(buf2hex(trimmedBuffer)).toEqual(buf2hex(dummyProgram))
+    expect(buf2hex(fetchedProgram.bytecode)).toEqual(buf2hex(dummyProgram))
   })
 })
