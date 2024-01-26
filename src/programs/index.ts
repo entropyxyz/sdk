@@ -1,11 +1,9 @@
 import { ApiPromise } from '@polkadot/api'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
-import * as util from '@polkadot/util'
 import ExtrinsicBaseClass from '../extrinsic'
 import ProgramDevManager from './dev'
 import { Signer } from '../types'
 import { u8aToString, u8aToHex, stringToU8a } from '@polkadot/util'
-import { hex2buf } from '../utils'
 
 export interface ProgramData {
   hash: string
@@ -58,16 +56,18 @@ export default class ProgramManager extends ExtrinsicBaseClass {
   // we can then return the entire set
 
   async get (sigReqAccount: string): Promise<ProgramData[]> {
-    const registeredOption = await this.substrate.query.relayer.registered(sigReqAccount)
+    const registeredOption = await this.substrate.query.relayer.registered(
+      sigReqAccount
+    )
 
     if (registeredOption.isEmpty) {
       throw new Error(`No programs found for account: ${sigReqAccount}`)
     }
 
     const registeredInfo = registeredOption.unwrap()
-    return registeredInfo.programsData.map(program => ({
+    return registeredInfo.programsData.map((program) => ({
       hash: program.programPointer.toString(),
-      // double check on how we're passing config 
+      // double check on how we're passing config
       config: JSON.parse(u8aToString(program.programConfig)),
     }))
   }
@@ -94,11 +94,24 @@ export default class ProgramManager extends ExtrinsicBaseClass {
   ): Promise<void> {
     programModKey = programModKey || sigReqAccount
 
-    if (!await this.checkAuthorization(programModKey, sigReqAccount)) {
-      throw new Error(`Program Modification Key: ${programModKey} is not authorized to modify programs for User: ${sigReqAccount}.`)
+    const registeredInfoOption = await this.substrate.query.relayer.registered(
+      sigReqAccount
+    )
+
+    if (registeredInfoOption.isEmpty) {
+      throw new Error(`Account not registered: ${sigReqAccount}`)
+    }
+    
+    const registeredInfo = registeredInfoOption.unwrap()
+
+    const isAuthorized =
+      registeredInfo.program_modification_account === programModKey
+      
+    if (!isAuthorized) {
+      throw new Error(`Unauthorized modification attempt by ${programModKey}`)
     }
 
-    const newProgramInstances = newList.map(data => ({
+    const newProgramInstances = newList.map((data) => ({
       programPointer: u8aToHex(stringToU8a(data.hash)),
       programConfig: stringToU8a(JSON.stringify(data.config)),
     }))
@@ -107,7 +120,10 @@ export default class ProgramManager extends ExtrinsicBaseClass {
       sigReqAccount,
       newProgramInstances
     )
-    await this.sendAndWaitFor(tx, false, { section: 'relayer', name: 'changeProgramInstance' })
+    await this.sendAndWaitFor(tx, false, {
+      section: 'relayer',
+      name: 'changeProgramInstance',
+    })
   }
 
   async remove (
@@ -116,8 +132,10 @@ export default class ProgramManager extends ExtrinsicBaseClass {
     programModKey?: string
   ): Promise<void> {
     const currentPrograms = await this.get(sigReqAccount)
-    // creates new array that contains all of the currentPrograms except programHashToRemove 
-    const updatedPrograms = currentPrograms.filter(program => program.hash !== programHashToRemove)
+    // creates new array that contains all of the currentPrograms except programHashToRemove
+    const updatedPrograms = currentPrograms.filter(
+      (program) => program.hash !== programHashToRemove
+    )
     await this.set(updatedPrograms, sigReqAccount, programModKey)
   }
 
@@ -127,40 +145,10 @@ export default class ProgramManager extends ExtrinsicBaseClass {
     programModKey?: string
   ): Promise<void> {
     const currentPrograms = await this.get(sigReqAccount)
-    await this.set([...currentPrograms, newProgram], sigReqAccount, programModKey)
-  }
-
-  /**
-   *  Checks if a given program modification account is authorized to modify the program associated with a specific signature request account.
-   *
-   * @param {string} sigReqAccount - The account for which the program modification is intended.
-   * @param {string} programModKey - The account whose authorization is to be verified.
-   * @returns {Promise<boolean>} - A promise that resolves if the `programModKey` is authorized to modify the program for `sigReqAccount`
-   * @remarks
-   * This method queries Substrate  to determine if the `programModKey` is allowed to modify the program associated with the `sigReqAccount`.
-   * The method utilizes the `allowedToModifyProgram` quert, which returns an optional value. If the value is present (`isSome`), it indicates authorization.
-   * (I'm not sure about this as the blob that's returned is extremely long )
-   * The method unwraps the optional value
-   * @example
-   * ```typescript
-   * const isAuthorized = await checkAuthorization('5FHneW46...HgYb3fW', '5DAAnrj7...P5JT7zP')
-   * console.log(isAuthorized) // Outputs: true or false
-   * ```
-   */
-
-  async checkAuthorization (
-    programModKey: string,
-    sigReqAccount: string
-  ): Promise<boolean> {
-    try {
-      const result = await this.substrate.query.programs.allowedToModifyProgram(
-        programModKey,
-        sigReqAccount
-      )
-      return !result.isEmpty
-    } catch (error) {
-      console.error('Error in checkAuthorization:', error)
-      return false
-    }
+    await this.set(
+      [...currentPrograms, newProgram],
+      sigReqAccount,
+      programModKey
+    )
   }
 }
