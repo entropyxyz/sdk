@@ -158,6 +158,10 @@ declare module '@polkadot/api-base/types/errors' {
        **/
       NotMember: AugmentedError<ApiType>;
       /**
+       * Prime account is not a member
+       **/
+      PrimeAccountNotMember: AugmentedError<ApiType>;
+      /**
        * Proposal must exist
        **/
       ProposalMissing: AugmentedError<ApiType>;
@@ -735,9 +739,9 @@ declare module '@polkadot/api-base/types/errors' {
       /**
        * The amount does not meet the minimum bond to either join or create a pool.
        * 
-       * The depositor can never unbond to a value less than
-       * `Pallet::depositor_min_bond`. The caller does not have nominating
-       * permissions for the pool. Members can never unbond to a value below `MinJoinBond`.
+       * The depositor can never unbond to a value less than `Pallet::depositor_min_bond`. The
+       * caller does not have nominating permissions for the pool. Members can never unbond to a
+       * value below `MinJoinBond`.
        **/
       MinimumBondNotMet: AugmentedError<ApiType>;
       /**
@@ -753,6 +757,10 @@ declare module '@polkadot/api-base/types/errors' {
        * other members to be permissionlessly unbonded.
        **/
       NotDestroying: AugmentedError<ApiType>;
+      /**
+       * No imbalance in the ED deposit for the pool.
+       **/
+      NothingToAdjust: AugmentedError<ApiType>;
       /**
        * Either a) the caller cannot make a valid kick or b) the pool is not destroying.
        **/
@@ -823,6 +831,14 @@ declare module '@polkadot/api-base/types/errors' {
        * Preimage is too large to store on-chain.
        **/
       TooBig: AugmentedError<ApiType>;
+      /**
+       * Too few hashes were requested to be upgraded (i.e. zero).
+       **/
+      TooFew: AugmentedError<ApiType>;
+      /**
+       * More than `MAX_HASH_UPGRADE_BULK_COUNT` hashes were requested to be upgraded at once.
+       **/
+      TooMany: AugmentedError<ApiType>;
       /**
        * Generic error
        **/
@@ -1223,6 +1239,10 @@ declare module '@polkadot/api-base/types/errors' {
        **/
       NotMember: AugmentedError<ApiType>;
       /**
+       * Prime account is not a member
+       **/
+      PrimeAccountNotMember: AugmentedError<ApiType>;
+      /**
        * Proposal must exist
        **/
       ProposalMissing: AugmentedError<ApiType>;
@@ -1274,6 +1294,10 @@ declare module '@polkadot/api-base/types/errors' {
        * The tip was already found/started.
        **/
       AlreadyKnown: AugmentedError<ApiType>;
+      /**
+       * The tip given was too generous.
+       **/
+      MaxTipAmountExceeded: AugmentedError<ApiType>;
       /**
        * The account attempting to retract the tip is not the finder of the tip.
        **/
@@ -1373,6 +1397,22 @@ declare module '@polkadot/api-base/types/errors' {
     };
     treasury: {
       /**
+       * The payment has already been attempted.
+       **/
+      AlreadyAttempted: AugmentedError<ApiType>;
+      /**
+       * The spend is not yet eligible for payout.
+       **/
+      EarlyPayout: AugmentedError<ApiType>;
+      /**
+       * The balance of the asset kind is not convertible to the balance of the native asset.
+       **/
+      FailedToConvertBalance: AugmentedError<ApiType>;
+      /**
+       * The payment has neither failed nor succeeded yet.
+       **/
+      Inconclusive: AugmentedError<ApiType>;
+      /**
        * The spend origin is valid but the amount it is allowed to spend is lower than the
        * amount to be spent.
        **/
@@ -1382,13 +1422,25 @@ declare module '@polkadot/api-base/types/errors' {
        **/
       InsufficientProposersBalance: AugmentedError<ApiType>;
       /**
-       * No proposal or bounty at that index.
+       * No proposal, bounty or spend at that index.
        **/
       InvalidIndex: AugmentedError<ApiType>;
+      /**
+       * The payout was not yet attempted/claimed.
+       **/
+      NotAttempted: AugmentedError<ApiType>;
+      /**
+       * There was some issue with the mechanism of payment.
+       **/
+      PayoutError: AugmentedError<ApiType>;
       /**
        * Proposal has not been approved.
        **/
       ProposalNotApproved: AugmentedError<ApiType>;
+      /**
+       * The spend has expired and cannot be claimed.
+       **/
+      SpendExpired: AugmentedError<ApiType>;
       /**
        * Too many approvals in the queue.
        **/
