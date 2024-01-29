@@ -34,10 +34,6 @@ export default class ProgramDev extends ExtrinsicBaseClass {
     // fetch program bytecode using the program pointer at the specific block hash
     const responseOption = await this.substrate.query.programs.programs(pointer)
 
-    if (responseOption.isNone) {
-      throw new Error(`No program defined for the given pointer: ${pointer}`)
-    }
-
     const programInfo = responseOption.toJSON()
 
     return this.#formatProgramInfo(programInfo)

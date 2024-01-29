@@ -59,8 +59,9 @@ export default class ProgramManager extends ExtrinsicBaseClass {
       throw new Error(`No programs found for account: ${sigReqAccount}`)
     }
 
-    const registeredInfo = registeredOption.unwrap()
-    return registeredInfo.programsData.map((program) => ({
+    const registeredInfo = registeredOption.toJSON()
+    // @ts-ignore: next line :{
+    return (registeredInfo.programsData || []).map((program) => ({
       // pointer: program.pointer.toString(),
       pointer: program.programPointer.toString(),
       // double check on how we're passing config
@@ -99,10 +100,9 @@ export default class ProgramManager extends ExtrinsicBaseClass {
       throw new Error(`Account not registered: ${sigReqAccount}`)
     }
     
-    const registeredInfo = registeredInfoOption.unwrap()
-
-    const isAuthorized =
-      registeredInfo.programModificationAccount.toString() === programModKey
+    const registeredInfo = registeredInfoOption.toJSON()
+    // @ts-ignore: next line :{
+    const isAuthorized = registeredInfo.programModificationAccount === programModKey
 
     if (!isAuthorized) {
       throw new Error(`Unauthorized modification attempt by ${programModKey}`)
