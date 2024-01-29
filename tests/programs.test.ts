@@ -31,7 +31,8 @@ describe('Programs Tests', () => {
     const signer = await getWallet(charlieStashSeed)
     const entropyAccount: EntropyAccount = {
       sigRequestKey: signer,
-      programModKey: signer
+      programModKey: signer,
+      programDeployKey: signer
     }
 
     await sleep(30000)
@@ -60,43 +61,12 @@ describe('Programs Tests', () => {
   it('should handle programs', async () => {
     jest.setTimeout(60000)
 
-    const isRegistered = await entropy.isRegistered(charlieStashAddress)
-    if (!isRegistered) {
-      // Test registration
-
-      await entropy.register({
-        programModAccount: charlieStashAddress,
-        keyVisibility: 'Permissioned',
-        freeTx: false,
-        initialProgram: '0x',
-      })
-
-      return await entropy.registrationManager.checkRegistrationStatus(
-        charlieStashAddress
-      )
-    }
-
-    // // create key to check authorized
-
-    const testMnemonic = mnemonicGenerate()
-    const keyring = new Keyring({ type: 'sr25519' })
-    const keypair = keyring.addFromUri(testMnemonic)
-
-    const derivedAddress = keypair.address
 
     const dummyProgram = readFileSync(
       './tests/testing-utils/template_barebones.wasm'
     )
-    await entropy.programs.set(dummyProgram, charlieStashAddress)
-    const fetchedProgram = await entropy.programs.get(charlieStashAddress)
-    const trimmedBuffer = fetchedProgram.slice(1)
-    expect(buf2hex(trimmedBuffer)).toEqual(buf2hex(dummyProgram))
-
-    try {
-      await entropy.programs.set(dummyProgram, derivedAddress)
-      fail('Expected an error for unauthorized program set')
-    } catch (error) {
-      expect(error.message).toContain("doesn't have permission")
-    }
+    const pointer = await entropy.programs.dev.deploy(dummyProgram)
+    const fetchedProgram = await entropy.programs.dev.get(pointer)
+    expect(buf2hex(fetchedProgram.bytecode)).toEqual(buf2hex(dummyProgram))
   })
 })

@@ -9,12 +9,13 @@ import type { ApiTypes, AugmentedEvent } from '@polkadot/api-base/types';
 import type { Bytes, Null, Option, Result, U8aFixed, Vec, bool, u128, u16, u32, u64, u8 } from '@polkadot/types-codec';
 import type { ITuple } from '@polkadot/types-codec/types';
 import type { AccountId32, H256, Perbill } from '@polkadot/types/interfaces/runtime';
-import type { EntropyRuntimeProxyType, EntropySharedOcwMessageDkg, EntropySharedOcwMessageProactiveRefresh, FrameSupportDispatchDispatchInfo, FrameSupportTokensMiscBalanceStatus, PalletDemocracyMetadataOwner, PalletDemocracyVoteAccountVote, PalletDemocracyVoteThreshold, PalletElectionProviderMultiPhaseElectionCompute, PalletElectionProviderMultiPhasePhase, PalletImOnlineSr25519AppSr25519Public, PalletMultisigTimepoint, PalletNominationPoolsCommissionChangeRate, PalletNominationPoolsPoolState, PalletStakingExposure, PalletStakingExtensionServerInfo, PalletStakingForcing, PalletStakingValidatorPrefs, SpConsensusGrandpaAppPublic, SpNposElectionsElectionScore, SpRuntimeDispatchError } from '@polkadot/types/lookup';
+import { SpRuntimeDispatchError, SpNposElectionsElectionScore, SpConsensusGrandpaAppPublic, FrameSupportDispatchDispatchInfo, FrameSupportTokensMiscBalanceStatus,PalletStakingRewardDestination, PalletStakingValidatorPrefs, PalletStakingForcing,PalletStakingExtensionServerInfo, PalletRelayerProgramInstance, PalletMultisigTimepoint, PalletStakingExposure,PalletNominationPoolsPoolState, PalletNominationPoolsCommissionChangeRate, PalletElectionProviderMultiPhasePhase, PalletElectionProviderMultiPhaseElectionCompute, PalletImOnlineSr25519AppSr25519Public, PalletDemocracyMetadataOwner, PalletDemocracyVoteThreshold, PalletDemocracyVoteAccountVote, EntropyRuntimeProxyType, EntropySharedOcwMessageProactiveRefresh, EntropySharedOcwMessageDkg} from '@polkadot/types/lookup'
+
 
 export type __AugmentedEvent<ApiType extends ApiTypes> = AugmentedEvent<ApiType>;
 
 declare module '@polkadot/api-base/types/events' {
-  interface AugmentedEvents<ApiType extends ApiTypes> {
+  export interface AugmentedEvents<ApiType extends ApiTypes> {
     bagsList: {
       /**
        * Moved an account from one bag to another.
@@ -123,6 +124,10 @@ declare module '@polkadot/api-base/types/events' {
     };
     bounties: {
       /**
+       * A bounty is approved.
+       **/
+      BountyApproved: AugmentedEvent<ApiType, [index: u32], { index: u32 }>;
+      /**
        * A bounty is awarded to a beneficiary.
        **/
       BountyAwarded: AugmentedEvent<ApiType, [index: u32, beneficiary: AccountId32], { index: u32, beneficiary: AccountId32 }>;
@@ -150,6 +155,18 @@ declare module '@polkadot/api-base/types/events' {
        * A bounty proposal was rejected; funds were slashed.
        **/
       BountyRejected: AugmentedEvent<ApiType, [index: u32, bond: u128], { index: u32, bond: u128 }>;
+      /**
+       * A bounty curator is accepted.
+       **/
+      CuratorAccepted: AugmentedEvent<ApiType, [bountyId: u32, curator: AccountId32], { bountyId: u32, curator: AccountId32 }>;
+      /**
+       * A bounty curator is proposed.
+       **/
+      CuratorProposed: AugmentedEvent<ApiType, [bountyId: u32, curator: AccountId32], { bountyId: u32, curator: AccountId32 }>;
+      /**
+       * A bounty curator is unassigned.
+       **/
+      CuratorUnassigned: AugmentedEvent<ApiType, [bountyId: u32], { bountyId: u32 }>;
       /**
        * Generic event
        **/
@@ -500,6 +517,14 @@ declare module '@polkadot/api-base/types/events' {
        **/
       MemberRemoved: AugmentedEvent<ApiType, [poolId: u32, member: AccountId32], { poolId: u32, member: AccountId32 }>;
       /**
+       * Topped up deficit in frozen ED of the reward pool.
+       **/
+      MinBalanceDeficitAdjusted: AugmentedEvent<ApiType, [poolId: u32, amount: u128], { poolId: u32, amount: u128 }>;
+      /**
+       * Claimed excess frozen ED of af the reward pool.
+       **/
+      MinBalanceExcessAdjusted: AugmentedEvent<ApiType, [poolId: u32, amount: u128], { poolId: u32, amount: u128 }>;
+      /**
        * A payout has been made to a member.
        **/
       PaidOut: AugmentedEvent<ApiType, [member: AccountId32, poolId: u32, payout: u128], { member: AccountId32, poolId: u32, payout: u128 }>;
@@ -596,9 +621,13 @@ declare module '@polkadot/api-base/types/events' {
     };
     programs: {
       /**
-       * The bytecode of a program was updated.
+       * The bytecode of a program was created.
        **/
-      ProgramUpdated: AugmentedEvent<ApiType, [programModificationAccount: AccountId32, newProgram: Bytes], { programModificationAccount: AccountId32, newProgram: Bytes }>;
+      ProgramCreated: AugmentedEvent<ApiType, [deployer: AccountId32, programHash: H256, configurationInterface: Bytes], { deployer: AccountId32, programHash: H256, configurationInterface: Bytes }>;
+      /**
+       * The bytecode of a program was removed.
+       **/
+      ProgramRemoved: AugmentedEvent<ApiType, [deployer: AccountId32, oldProgramHash: H256], { deployer: AccountId32, oldProgramHash: H256 }>;
       /**
        * Generic event
        **/
@@ -694,6 +723,10 @@ declare module '@polkadot/api-base/types/events' {
        * An account registration has failed
        **/
       FailedRegistration: AugmentedEvent<ApiType, [AccountId32]>;
+      /**
+       * An account hash changed their program info [who, new_program_instance]
+       **/
+      ProgramInfoChanged: AugmentedEvent<ApiType, [AccountId32, Vec<PalletRelayerProgramInstance>]>;
       /**
        * An account cancelled their registration
        **/
@@ -793,9 +826,9 @@ declare module '@polkadot/api-base/types/events' {
        **/
       PayoutStarted: AugmentedEvent<ApiType, [eraIndex: u32, validatorStash: AccountId32], { eraIndex: u32, validatorStash: AccountId32 }>;
       /**
-       * The nominator has been rewarded by this amount.
+       * The nominator has been rewarded by this amount to this destination.
        **/
-      Rewarded: AugmentedEvent<ApiType, [stash: AccountId32, amount: u128], { stash: AccountId32, amount: u128 }>;
+      Rewarded: AugmentedEvent<ApiType, [stash: AccountId32, dest: PalletStakingRewardDestination, amount: u128], { stash: AccountId32, dest: PalletStakingRewardDestination, amount: u128 }>;
       /**
        * A staker (validator or nominator) has been slashed by the given amount.
        **/
@@ -805,6 +838,14 @@ declare module '@polkadot/api-base/types/events' {
        * era as been reported.
        **/
       SlashReported: AugmentedEvent<ApiType, [validator: AccountId32, fraction: Perbill, slashEra: u32], { validator: AccountId32, fraction: Perbill, slashEra: u32 }>;
+      /**
+       * Targets size limit reached.
+       **/
+      SnapshotTargetsSizeExceeded: AugmentedEvent<ApiType, [size_: u32], { size_: u32 }>;
+      /**
+       * Voters size limit reached.
+       **/
+      SnapshotVotersSizeExceeded: AugmentedEvent<ApiType, [size_: u32], { size_: u32 }>;
       /**
        * A new set of stakers was elected.
        **/
@@ -859,15 +900,15 @@ declare module '@polkadot/api-base/types/events' {
     };
     sudo: {
       /**
-       * The \[sudoer\] just switched identity; the old key is supplied if one existed.
+       * The sudo key has been updated.
        **/
       KeyChanged: AugmentedEvent<ApiType, [oldSudoer: Option<AccountId32>], { oldSudoer: Option<AccountId32> }>;
       /**
-       * A sudo just took place. \[result\]
+       * A sudo call just took place.
        **/
       Sudid: AugmentedEvent<ApiType, [sudoResult: Result<Null, SpRuntimeDispatchError>], { sudoResult: Result<Null, SpRuntimeDispatchError> }>;
       /**
-       * A sudo just took place. \[result\]
+       * A [sudo_as](Pallet::sudo_as) call just took place.
        **/
       SudoAsDone: AugmentedEvent<ApiType, [sudoResult: Result<Null, SpRuntimeDispatchError>], { sudoResult: Result<Null, SpRuntimeDispatchError> }>;
       /**
@@ -1042,6 +1083,14 @@ declare module '@polkadot/api-base/types/events' {
     };
     treasury: {
       /**
+       * A new asset spend proposal has been approved.
+       **/
+      AssetSpendApproved: AugmentedEvent<ApiType, [index: u32, assetKind: Null, amount: u128, beneficiary: AccountId32, validFrom: u32, expireAt: u32], { index: u32, assetKind: Null, amount: u128, beneficiary: AccountId32, validFrom: u32, expireAt: u32 }>;
+      /**
+       * An approved spend was voided.
+       **/
+      AssetSpendVoided: AugmentedEvent<ApiType, [index: u32], { index: u32 }>;
+      /**
        * Some funds have been allocated.
        **/
       Awarded: AugmentedEvent<ApiType, [proposalIndex: u32, award: u128, account: AccountId32], { proposalIndex: u32, award: u128, account: AccountId32 }>;
@@ -1053,6 +1102,14 @@ declare module '@polkadot/api-base/types/events' {
        * Some funds have been deposited.
        **/
       Deposit: AugmentedEvent<ApiType, [value: u128], { value: u128 }>;
+      /**
+       * A payment happened.
+       **/
+      Paid: AugmentedEvent<ApiType, [index: u32, paymentId: Null], { index: u32, paymentId: Null }>;
+      /**
+       * A payment failed and can be retried.
+       **/
+      PaymentFailed: AugmentedEvent<ApiType, [index: u32, paymentId: Null], { index: u32, paymentId: Null }>;
       /**
        * New proposal.
        **/
@@ -1073,6 +1130,11 @@ declare module '@polkadot/api-base/types/events' {
        * We have ended a spend period and will now allocate funds.
        **/
       Spending: AugmentedEvent<ApiType, [budgetRemaining: u128], { budgetRemaining: u128 }>;
+      /**
+       * A spend was processed and removed from the storage. It might have been successfully
+       * paid or it may have expired.
+       **/
+      SpendProcessed: AugmentedEvent<ApiType, [index: u32], { index: u32 }>;
       /**
        * The inactive funds of the pallet have been updated.
        **/

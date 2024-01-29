@@ -44,7 +44,7 @@ export default class ExtrinsicBaseClass {
 
   async sendAndWaitFor (
     call: SubmittableExtrinsic<'promise'>,
-    freeTx = true,
+    freeTx = false,
     filter: EventFilter
   ): Promise<EventRecord> {
     const newCall = freeTx ? await this.handleFreeTx(call) : call

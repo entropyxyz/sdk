@@ -11,6 +11,7 @@ import ProgramManager from './programs'
 export interface EntropyAccount {
   sigRequestKey?: Signer
   programModKey?: Signer | string
+  programDeployKey?: Signer
   verifyingKey?: string
 }
 
@@ -39,7 +40,8 @@ export interface EntropyOpts {
 
     const entropyAccount: EntropyAccount = {
       sigRequestKey: signer,
-      programModKey: signer
+      programModKey: signer,
+      programDeployKey: signer,
     }
 
     const entropy = new Entropy({ account: entropyAccount})
@@ -101,7 +103,8 @@ export default class Entropy {
 
     this.programs = new ProgramManager({
       substrate: this.substrate,
-      signer: programModKeyPair as Signer || this.account.sigRequestKey,
+      programModKey: programModKeyPair as Signer || this.account.sigRequestKey,
+      programDeployKey: this.account.programDeployKey
     })
     if (this.#programReadOnly || this.#allReadOnly) this.programs.set = async () => { throw new Error('Programs is in a read only state: Must pass a valid key pair in initialization.') }
     this.#ready(true)

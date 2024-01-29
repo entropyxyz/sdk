@@ -9,6 +9,17 @@ At the moment this project **does not** adhere to
 
 ## [Unreleased]
 
+### Added
+
+- `entropy.programs.dev` is the new interface to deploying programs
+
+### Changed
+
+- register now takes a list of program pointers instead of a single program bytecode
+- programs class now only deals with registered account program pointers
+- deploying a program now happens under dev programs sub class
+- sign takes a hash function name defined by core protocol for hashing the signature
+
 ## [0.1.2] Amun - 2023-12-12 (entropy-core compatibility: 0.0.9)
 
 ### Added

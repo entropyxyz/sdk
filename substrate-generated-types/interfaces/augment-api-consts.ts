@@ -9,12 +9,12 @@ import type { ApiTypes, AugmentedConst } from '@polkadot/api-base/types';
 import type { Option, U8aFixed, Vec, bool, u128, u16, u32, u64, u8 } from '@polkadot/types-codec';
 import type { Codec } from '@polkadot/types-codec/types';
 import type { Perbill, Percent, Permill } from '@polkadot/types/interfaces/runtime';
-import type { FrameSupportPalletId, FrameSystemLimitsBlockLength, FrameSystemLimitsBlockWeights, SpVersionRuntimeVersion, SpWeightsRuntimeDbWeight, SpWeightsWeightV2Weight } from '@polkadot/types/lookup';
+import { SpWeightsWeightV2Weight, FrameSystemLimitsBlockWeights, FrameSupportPalletId, SpWeightsRuntimeDbWeight, SpVersionRuntimeVersion, FrameSystemLimitsBlockLength} from '@polkadot/types/lookup'
 
 export type __AugmentedConst<ApiType extends ApiTypes> = AugmentedConst<ApiType>;
 
 declare module '@polkadot/api-base/types/consts' {
-  interface AugmentedConsts<ApiType extends ApiTypes> {
+  export interface AugmentedConsts<ApiType extends ApiTypes> {
     babe: {
       /**
        * The amount of time, in slots, that each epoch should last.
@@ -34,6 +34,10 @@ declare module '@polkadot/api-base/types/consts' {
        * Max number of authorities allowed
        **/
       maxAuthorities: u32 & AugmentedConst<ApiType>;
+      /**
+       * The maximum number of nominators for each validator.
+       **/
+      maxNominators: u32 & AugmentedConst<ApiType>;
       /**
        * Generic const
        **/
@@ -260,16 +264,6 @@ declare module '@polkadot/api-base/types/consts' {
        **/
       betterUnsignedThreshold: Perbill & AugmentedConst<ApiType>;
       /**
-       * The maximum number of electable targets to put in the snapshot.
-       **/
-      maxElectableTargets: u16 & AugmentedConst<ApiType>;
-      /**
-       * The maximum number of electing voters to put in the snapshot. At the moment, snapshots
-       * are only over a single block, but once multi-block elections are introduced they will
-       * take place over multiple blocks.
-       **/
-      maxElectingVoters: u32 & AugmentedConst<ApiType>;
-      /**
        * The maximum number of winners that can be elected by this `ElectionProvider`
        * implementation.
        * 
@@ -291,10 +285,6 @@ declare module '@polkadot/api-base/types/consts' {
        * to submit the worker's solution.
        **/
       offchainRepeat: u32 & AugmentedConst<ApiType>;
-      /**
-       * Base deposit for a signed solution.
-       **/
-      signedDepositBase: u128 & AugmentedConst<ApiType>;
       /**
        * Per-byte deposit for a signed solution.
        **/
@@ -411,6 +401,10 @@ declare module '@polkadot/api-base/types/consts' {
        * Max Authorities in use
        **/
       maxAuthorities: u32 & AugmentedConst<ApiType>;
+      /**
+       * The maximum number of nominators for each validator.
+       **/
+      maxNominators: u32 & AugmentedConst<ApiType>;
       /**
        * The maximum number of entries to keep in the set id to session index mapping.
        * 
@@ -662,10 +656,6 @@ declare module '@polkadot/api-base/types/consts' {
        **/
       historyDepth: u32 & AugmentedConst<ApiType>;
       /**
-       * Maximum number of nominations per nominator.
-       **/
-      maxNominations: u32 & AugmentedConst<ApiType>;
-      /**
        * The maximum number of nominators rewarded for each validator.
        * 
        * For each validator only the `$MaxNominatorRewardedPerValidator` biggest stakers can
@@ -747,10 +737,12 @@ declare module '@polkadot/api-base/types/consts' {
     };
     timestamp: {
       /**
-       * The minimum period between blocks. Beware that this is different to the *expected*
-       * period that the block production apparatus provides. Your chosen consensus system will
-       * generally work with this to determine a sensible block time. e.g. For Aura, it will be
-       * double this period on default settings.
+       * The minimum period between blocks.
+       * 
+       * Be aware that this is different to the *expected* period that the block production
+       * apparatus provides. Your chosen consensus system will generally work with this to
+       * determine a sensible block time. For example, in the Aura pallet it will be double this
+       * period on default settings.
        **/
       minimumPeriod: u64 & AugmentedConst<ApiType>;
       /**
@@ -769,6 +761,10 @@ declare module '@polkadot/api-base/types/consts' {
        * Benchmarks depend on this value, be sure to update weights file when changing this value
        **/
       maximumReasonLength: u32 & AugmentedConst<ApiType>;
+      /**
+       * The maximum amount for a single tip.
+       **/
+      maxTipAmount: u128 & AugmentedConst<ApiType>;
       /**
        * The period for which a tip remains open after is has achieved threshold tippers.
        **/
@@ -831,6 +827,10 @@ declare module '@polkadot/api-base/types/consts' {
        * The treasury's pallet id, used for deriving its sovereign account ID.
        **/
       palletId: FrameSupportPalletId & AugmentedConst<ApiType>;
+      /**
+       * The period during which an approved treasury spend has to be claimed.
+       **/
+      payoutPeriod: u32 & AugmentedConst<ApiType>;
       /**
        * Fraction of a proposal's value that should be bonded in order to place the proposal.
        * An accepted proposal gets these back. A rejected proposal does not.
