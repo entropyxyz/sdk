@@ -25,6 +25,7 @@ export interface SigTxOps {
 
 export interface SigOps {
   sigRequestHash: string
+  hash: string
   type?: string
 }
 
@@ -86,6 +87,7 @@ export default class SignatureRequestManager {
     const sigRequestHash = await this.adapters[type].preSign(txParams)
     const signature = await this.sign({
       sigRequestHash,
+      hash: this.adapters[type].hash,
       type,
     })
     if (this.adapters[type].postSign) {
@@ -102,7 +104,7 @@ export default class SignatureRequestManager {
    * @returns A promise resolving to the signed hash as a Uint8Array.
    */
 
-  async sign ({ sigRequestHash }: SigOps): Promise<Uint8Array> {
+  async sign ({ sigRequestHash, hash }: SigOps): Promise<Uint8Array> {
     const strippedsigRequestHash = stripHexPrefix(sigRequestHash)
     const validatorsInfo: Array<ValidatorInfo> = await this.pickValidators(
       strippedsigRequestHash
@@ -111,6 +113,7 @@ export default class SignatureRequestManager {
     const txRequests: Array<EncMsg> = await this.formatTxRequests({
       validatorsInfo: validatorsInfo,
       strippedsigRequestHash,
+      hash,
     })
     const sigs = await this.submitTransactionRequest(txRequests)
     const sig = await this.verifyAndReduceSignatures(sigs)
@@ -161,7 +164,7 @@ export default class SignatureRequestManager {
             validators_info: validatorsInfo,
             timestamp: this.getTimeStamp(),
             auxilary_data: auxilaryData,
-            hash: hash,
+            hash,
           }
 
           const serverDHKey = await crypto.fromHex(validator.x25519_public_key)

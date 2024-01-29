@@ -14,6 +14,7 @@ export async function postSign (sig: Uint8Array): Promise<string> {
 
 export const type = 'eth'
 export const arch = Arch.Evm
+export const hash = 'keccak'
 
 export function pubToAddress (publicKey: string) {
   const hash = keccak256(Buffer.from(publicKey, 'hex'))
