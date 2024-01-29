@@ -11,8 +11,6 @@ import type { Codec } from '@polkadot/types-codec/types';
 import type { Perbill, Percent, Permill } from '@polkadot/types/interfaces/runtime';
 import { SpWeightsWeightV2Weight, FrameSystemLimitsBlockWeights, FrameSupportPalletId, SpWeightsRuntimeDbWeight, SpVersionRuntimeVersion, FrameSystemLimitsBlockLength} from '@polkadot/types/lookup'
 
-
-
 export type __AugmentedConst<ApiType extends ApiTypes> = AugmentedConst<ApiType>;
 
 declare module '@polkadot/api-base/types/consts' {

@@ -11,6 +11,7 @@ import type { ITuple } from '@polkadot/types-codec/types';
 import type { AccountId32, H256, Perbill } from '@polkadot/types/interfaces/runtime';
 import { SpRuntimeDispatchError, SpNposElectionsElectionScore, SpConsensusGrandpaAppPublic, FrameSupportDispatchDispatchInfo, FrameSupportTokensMiscBalanceStatus,PalletStakingRewardDestination, PalletStakingValidatorPrefs, PalletStakingForcing,PalletStakingExtensionServerInfo, PalletRelayerProgramInstance, PalletMultisigTimepoint, PalletStakingExposure,PalletNominationPoolsPoolState, PalletNominationPoolsCommissionChangeRate, PalletElectionProviderMultiPhasePhase, PalletElectionProviderMultiPhaseElectionCompute, PalletImOnlineSr25519AppSr25519Public, PalletDemocracyMetadataOwner, PalletDemocracyVoteThreshold, PalletDemocracyVoteAccountVote, EntropyRuntimeProxyType, EntropySharedOcwMessageProactiveRefresh, EntropySharedOcwMessageDkg} from '@polkadot/types/lookup'
 
+
 export type __AugmentedEvent<ApiType extends ApiTypes> = AugmentedEvent<ApiType>;
 
 declare module '@polkadot/api-base/types/events' {
