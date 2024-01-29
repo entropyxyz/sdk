@@ -62,6 +62,9 @@ export const crypto: CryptoLib = new Proxy({} as CryptoLib, {
         throw new Error('cryptoLib loaded incorrectly')
       }
       if (key === 'verifySignature') return verifySignature
+      if (cryptoLib.X25519Chacha20Poly1305[key]) {
+        return cryptoLib.X25519Chacha20Poly1305[key](...params)
+      }
       if (!cryptoLib[key]) {
         throw new Error(
           `Function "${key as string}" is not available in the crypto library`
@@ -103,6 +106,7 @@ export async function loadCryptoLib () {
   } else {
     cryptoLib = await import('@entropyxyz/entropy-protocol-web')
   }
+
   await cryptoWaitReady()
   isImported = true
   res.resolve()

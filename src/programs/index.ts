@@ -1,13 +1,13 @@
 import { ApiPromise } from '@polkadot/api'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
 import ExtrinsicBaseClass from '../extrinsic'
-import ProgramDevManager from './dev'
+import ProgramDev from './dev'
 import { Signer } from '../types'
 import { u8aToString, u8aToHex, stringToU8a } from '@polkadot/util'
 
 export interface ProgramData {
-  hash: string
-  config: object[]
+  pointer: string
+  config?: unknown
 }
 
 /**
@@ -25,8 +25,8 @@ export default class ProgramManager extends ExtrinsicBaseClass {
    * The constructor initializes the Substrate api and the signer.
    * @alpha
    */
-
-  constructor({
+  dev: ProgramDev
+  constructor ({
     substrate,
     programModKey,
     programDeployKey,
@@ -35,8 +35,8 @@ export default class ProgramManager extends ExtrinsicBaseClass {
     programModKey: Signer
     programDeployKey?: Signer
   }) {
-    super({ substrate, signer })
-    this.dev = new ProgramDev(programDeployKey)
+    super({ substrate, signer: programModKey })
+    this.dev = new ProgramDev({substrate, signer: programDeployKey})
   }
 
   /**
@@ -61,7 +61,8 @@ export default class ProgramManager extends ExtrinsicBaseClass {
 
     const registeredInfo = registeredOption.unwrap()
     return registeredInfo.programsData.map((program) => ({
-      hash: program.programPointer.toString(),
+      // pointer: program.pointer.toString(),
+      pointer: program.programPointer.toString(),
       // double check on how we're passing config
       config: JSON.parse(u8aToString(program.programConfig)),
     }))
@@ -101,14 +102,14 @@ export default class ProgramManager extends ExtrinsicBaseClass {
     const registeredInfo = registeredInfoOption.unwrap()
 
     const isAuthorized =
-      registeredInfo.program_modification_account === programModKey
+      registeredInfo.programModificationAccount.toString() === programModKey
 
     if (!isAuthorized) {
       throw new Error(`Unauthorized modification attempt by ${programModKey}`)
     }
 
     const newProgramInstances = newList.map((data) => ({
-      programPointer: u8aToHex(stringToU8a(data.hash)),
+      programPointer: u8aToHex(stringToU8a(data.pointer)),
       programConfig: stringToU8a(JSON.stringify(data.config)),
     }))
 
@@ -130,7 +131,7 @@ export default class ProgramManager extends ExtrinsicBaseClass {
     const currentPrograms = await this.get(sigReqAccount)
     // creates new array that contains all of the currentPrograms except programHashToRemove
     const updatedPrograms = currentPrograms.filter(
-      (program) => program.hash !== programHashToRemove
+      (program) => program.pointer !== programHashToRemove
     )
     await this.set(updatedPrograms, sigReqAccount, programModKey)
   }

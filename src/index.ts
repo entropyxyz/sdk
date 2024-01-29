@@ -40,7 +40,8 @@ export interface EntropyOpts {
 
     const entropyAccount: EntropyAccount = {
       sigRequestKey: signer,
-      programModKey: signer
+      programModKey: signer,
+      programDeployKey: signer,
     }
 
     const entropy = new Entropy({ account: entropyAccount})

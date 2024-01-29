@@ -25,7 +25,16 @@ export interface SigTxOps {
 
 export interface SigOps {
   sigRequestHash: string
+  hash: string
   type?: string
+}
+
+export interface UserSignatureRequest {
+  message: string
+  auxilary_data?: Array<string | null>
+  validators_info: ValidatorInfo[]
+  timestamp: { secs_since_epoch: number; nanos_since_epoch: number }
+  hash: string
 }
 
 /**
@@ -78,6 +87,7 @@ export default class SignatureRequestManager {
     const sigRequestHash = await this.adapters[type].preSign(txParams)
     const signature = await this.sign({
       sigRequestHash,
+      hash: this.adapters[type].hash,
       type,
     })
     if (this.adapters[type].postSign) {
@@ -94,7 +104,7 @@ export default class SignatureRequestManager {
    * @returns A promise resolving to the signed hash as a Uint8Array.
    */
 
-  async sign ({ sigRequestHash }: SigOps): Promise<Uint8Array> {
+  async sign ({ sigRequestHash, hash }: SigOps): Promise<Uint8Array> {
     const strippedsigRequestHash = stripHexPrefix(sigRequestHash)
     const validatorsInfo: Array<ValidatorInfo> = await this.pickValidators(
       strippedsigRequestHash
@@ -103,6 +113,7 @@ export default class SignatureRequestManager {
     const txRequests: Array<EncMsg> = await this.formatTxRequests({
       validatorsInfo: validatorsInfo,
       strippedsigRequestHash,
+      hash,
     })
     const sigs = await this.submitTransactionRequest(txRequests)
     const sig = await this.verifyAndReduceSignatures(sigs)
@@ -137,17 +148,23 @@ export default class SignatureRequestManager {
   async formatTxRequests ({
     strippedsigRequestHash,
     validatorsInfo,
+    auxilaryData,
+    hash,
   }: {
     strippedsigRequestHash: string
     validatorsInfo: Array<ValidatorInfo>
+    auxilaryData?: string[]
+    hash?: string
   }): Promise<EncMsg[]> {
     return await Promise.all(
       validatorsInfo.map(
         async (validator: ValidatorInfo): Promise<EncMsg> => {
-          const txRequestData = {
+          const txRequestData: UserSignatureRequest = {
             message: stripHexPrefix(strippedsigRequestHash),
             validators_info: validatorsInfo,
             timestamp: this.getTimeStamp(),
+            auxilary_data: auxilaryData,
+            hash,
           }
 
           const serverDHKey = await crypto.fromHex(validator.x25519_public_key)
@@ -203,10 +220,10 @@ export default class SignatureRequestManager {
           ...parsedMsg,
           msg: parsedMsg.msg,
         }
-        const sigProof = await sendHttpPost(
+        const sigProof = (await sendHttpPost(
           `http://${message.url}/user/sign_tx`,
           JSON.stringify(payload)
-        ) as string[]
+        )) as string[]
         sigProof.push(message.tss_account)
         return sigProof
       })
@@ -265,7 +282,7 @@ export default class SignatureRequestManager {
    * @param sigsAndProofs - Arrays of signatures and proofs.
    * @returns The first valid signature after verification.
    */
-  
+
   async verifyAndReduceSignatures (sigsAndProofs: string[][]): Promise<string> {
     const seperatedSigsAndProofs = sigsAndProofs.reduce(
       (a, sp) => {

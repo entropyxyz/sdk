@@ -10,13 +10,15 @@ import type { Data } from '@polkadot/types';
 import type { Bytes, Compact, Null, Option, U8aFixed, Vec, bool, u128, u16, u32, u64, u8 } from '@polkadot/types-codec';
 import type { AnyNumber, IMethod, ITuple } from '@polkadot/types-codec/types';
 import type { AccountId32, Call, H256, MultiAddress, Perbill, Percent } from '@polkadot/types/interfaces/runtime';
+import {  SpNposElectionsElectionScore,SpWeightsWeightV2Weight,EntropyRuntimeOriginCaller,PalletVestingVestingInfo,SpTransactionStorageProofTransactionStorageProof,PalletStakingPalletConfigOpU128,PalletStakingPalletConfigOpU32,SpSessionMembershipProof,PalletDemocracyConviction,PalletElectionProviderMultiPhaseRawSolution,SpConsensusSlotsEquivocationProof,PalletDemocracyVoteAccountVote,EntropySharedKeyVisibility, SpNposElectionsSupport,PalletElectionsPhragmenRenouncing,PalletIdentityJudgement,SpConsensusGrandpaEquivocationProof,PalletIdentityBitFlags,PalletMultisigTimepoint,PalletIdentitySimpleIdentityInfo,PalletImOnlineSr25519AppSr25519Signature,PalletImOnlineHeartbeat,PalletStakingPalletConfigOpPercent, PalletStakingPalletConfigOpPerbill, PalletNominationPoolsBondExtra,PalletNominationPoolsConfigOpU32, PalletNominationPoolsConfigOpU128,PalletNominationPoolsConfigOpPerbill, PalletNominationPoolsCommissionChangeRate, PalletNominationPoolsPoolState, PalletNominationPoolsConfigOpAccountId32, EntropyRuntimeProxyType, PalletNominationPoolsClaimPermission, SpConsensusBabeDigestsNextConfigDescriptor, PalletStakingRewardDestination,  PalletStakingValidatorPrefs, PalletDemocracyMetadataOwner,  FrameSupportPreimagesBounded,PalletElectionProviderMultiPhaseSolutionOrSnapshotSize, EntropyRuntimeSessionKeys,PalletRelayerProgramInstance } from '@polkadot/types/lookup'
+
 
 export type __AugmentedSubmittable = AugmentedSubmittable<() => unknown>;
 export type __SubmittableExtrinsic<ApiType extends ApiTypes> = SubmittableExtrinsic<ApiType>;
 export type __SubmittableExtrinsicFunction<ApiType extends ApiTypes> = SubmittableExtrinsicFunction<ApiType>;
 
 declare module '@polkadot/api-base/types/submittable' {
-  interface AugmentedSubmittables<ApiType extends ApiTypes> {
+  export interface AugmentedSubmittables<ApiType extends ApiTypes> {
     babe: {
       /**
        * See [`Pallet::plan_config_change`].

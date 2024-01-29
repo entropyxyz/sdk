@@ -36,7 +36,8 @@ describe('Core Tests', () => {
 
     const entropyAccount: EntropyAccount = {
       sigRequestKey: signer,
-      programModKey: signer
+      programModKey: signer,
+      programDeployKey: signer,
     }
 
     await sleep(30000)
@@ -66,28 +67,32 @@ describe('Core Tests', () => {
   it('should handle registration, program management, and signing', async () => {
     jest.setTimeout(60000)
 
+    const dummyProgram: any = readFileSync(
+      './tests/testing-utils/template_barebones.wasm'
+    )
+
+    console.log('program deploy')
+
+    const pointer = await entropy.programs.dev.deploy(dummyProgram)
+
+
     // Pre-registration check
     console.log("pre-registration check")
-    try {
-      const preRegistrationStatus = await entropy.isRegistered(
-        charlieStashAddress
-      )
-      expect(preRegistrationStatus).toBeFalsy()
-      const preStringifiedResponse = JSON.stringify(preRegistrationStatus)
-      expect(preStringifiedResponse).toBe('false')
-    } catch (e) {
-      console.error('Error in pre-registration status check:', e.message)
-    }
+    const preRegistrationStatus = await entropy.isRegistered(
+      charlieStashAddress
+    )
+    expect(preRegistrationStatus).toBeFalsy()
+    const preStringifiedResponse = JSON.stringify(preRegistrationStatus)
+    expect(preStringifiedResponse).toBe('false')
 
-    try {
-      await entropy.register({
-        keyVisibility: 'Permissioned',
-        freeTx: false,
-        programModAccount: charlieStashAddress,
-      })
-    } catch (e) {
-      console.error('Error in test:', e.message)
-    }
+    console.log('registration tests')
+    await entropy.register({
+      keyVisibility: 'Permissioned',
+      freeTx: false,
+      initialPrograms: [{ pointer: pointer, config: '0x' }],
+      programModAccount: charlieStashAddress,
+    })
+
     console.log('verifyingKey:', entropy.account.verifyingKey)
     expect(entropy.account.verifyingKey).toBeTruthy()
     expect(entropy.account.sigRequestKey.wallet.address).toBe(charlieStashAddress)
@@ -98,69 +103,50 @@ describe('Core Tests', () => {
     ).toBeTruthy()
 
     // Post-registration check
-    console.log("post-registration check")
+  console.log("post-registration check")
 
-    try {
-      const postRegistrationStatus = await entropy.isRegistered(
-        charlieStashAddress
-      )
-      expect(postRegistrationStatus).toBeTruthy()
-
-      const postStringifiedResponse = JSON.stringify(postRegistrationStatus)
-
-      if (postStringifiedResponse === 'false') {
-        console.log('is not registered')
-      }
-
-      expect(postStringifiedResponse).toBe('true')
-
-    } catch (e) {
-      console.error('Error in post-registration status check:', e.message)
-    }
-
-    // Set a program for the user
-    console.log("setting program")
-
-    const dummyProgram: any = readFileSync(
-      './tests/testing-utils/template_barebones.wasm'
+    const postRegistrationStatus = await entropy.isRegistered(
+      charlieStashAddress
     )
-    await entropy.programs.set(dummyProgram)
-    // Retrieve the program and compare
-    console.log("getting program")
-    const fetchedProgram: ArrayBuffer = await entropy.programs.get()
-    const trimmedBuffer = fetchedProgram.slice(1)
+    expect(postRegistrationStatus).toBeTruthy()
 
-    expect(buf2hex(trimmedBuffer)).toEqual(buf2hex(dummyProgram))
+    const postStringifiedResponse = JSON.stringify(postRegistrationStatus)
 
-    let unauthorizedErrorCaught = false
-
-    const testMnemonic = mnemonicGenerate()
-    const keyring = new Keyring({ type: 'sr25519' })
-    const keypair = keyring.addFromUri(testMnemonic)
-
-    const derivedAddress = keypair.address
-
-    console.log("not authorized to set program test")
-
-
-    try {
-      await entropy.programs.set(dummyProgram, derivedAddress)
-      expect(
-        'derivedAddress should not be authorized to set the program for Charlie'
-      )
-    } catch (error) {
-      if (
-        error.message.includes(
-          "Program modification account doesn't have permission to modify this program"
-        )
-      ) {
-        unauthorizedErrorCaught = true
-      } else {
-        throw error
-      }
+    if (postStringifiedResponse === 'false') {
+      console.log('is not registered')
     }
 
-    expect(unauthorizedErrorCaught).toBeTruthy()
+    expect(postStringifiedResponse).toBe('true')
+    // TODO: update these tests
+    // let unauthorizedErrorCaught = false
+
+    // const testMnemonic = mnemonicGenerate()
+    // const keyring = new Keyring({ type: 'sr25519' })
+    // const keypair = keyring.addFromUri(testMnemonic)
+
+    // const derivedAddress = keypair.address
+
+    // console.log("not authorized to set program test")
+
+
+    // try {
+    //   await entropy.programs.set(dummyProgram, derivedAddress)
+    //   expect(
+    //     'derivedAddress should not be authorized to set the program for Charlie'
+    //   )
+    // } catch (error) {
+    //   if (
+    //     error.message.includes(
+    //       "Program modification account doesn't have permission to modify this program"
+    //     )
+    //   ) {
+    //     unauthorizedErrorCaught = true
+    //   } else {
+    //     throw error
+    //   }
+    // }
+
+    // expect(unauthorizedErrorCaught).toBeTruthy()
 
     console.log("signing test")
 

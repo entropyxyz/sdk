@@ -54,7 +54,7 @@ describe('Crypto Tests', () => {
       34,
     ]
 
-    const result = await crypto.from_hex(mockData.x25519_public_key)
+    const result = await crypto.fromHex(mockData.x25519_public_key)
     expect(result.toString()).toBe(mockReturn.toString())
   })
   it(`encrypts and signs`, async () => {
@@ -125,23 +125,23 @@ describe('Crypto Tests', () => {
       17,
     ])
 
-    const alicePublicKey = await crypto.public_key_from_secret(aliceSecretKey)
+    const alicePublicKey = await crypto.publicKeyFromSecret(aliceSecretKey)
 
-    const serverDHKey = await crypto.from_hex(mockData.x25519_public_key)
+    const serverDHKey = await crypto.fromHex(mockData.x25519_public_key)
     const root = process.cwd()
 
     const thresholdKey = (await readKey(
       `${root + '/tests/testing-utils/test-keys/0'}`
     )) as Uint8Array
 
-    const result = await crypto.encrypt_and_sign(
+    const result = await crypto.encryptAndSign(
       aliceSecretKey,
       thresholdKey,
       alicePublicKey
     )
 
     expect(
-      await crypto.decrypt_and_verify(aliceSecretKey, result)
+      await crypto.decryptAndVerify(aliceSecretKey, result)
     ).toStrictEqual(thresholdKey)
   })
 })
