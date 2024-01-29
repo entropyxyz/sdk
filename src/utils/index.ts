@@ -13,7 +13,7 @@ export function typeofthing (thing) {
     if (thing === null) return 'null'
     return thingType
   } else {
-      return thingType
+    return thingType
   }
 }
 
