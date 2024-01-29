@@ -61,9 +61,10 @@ export default class ProgramManager extends ExtrinsicBaseClass {
 
     const registeredInfo = registeredOption.unwrap()
     return registeredInfo.programsData.map((program) => ({
-      pointer: program.pointer.toString(),
+      // pointer: program.pointer.toString(),
+      pointer: program.programPointer.toString(),
       // double check on how we're passing config
-      config: JSON.parse(u8aToString(program.config)),
+      config: JSON.parse(u8aToString(program.programConfig)),
     }))
   }
 
@@ -101,15 +102,15 @@ export default class ProgramManager extends ExtrinsicBaseClass {
     const registeredInfo = registeredInfoOption.unwrap()
 
     const isAuthorized =
-      registeredInfo.program_modification_account === programModKey
+      registeredInfo.programModificationAccount.toString() === programModKey
 
     if (!isAuthorized) {
       throw new Error(`Unauthorized modification attempt by ${programModKey}`)
     }
 
     const newProgramInstances = newList.map((data) => ({
-      pointer: u8aToHex(stringToU8a(data.pointer)),
-      config: stringToU8a(JSON.stringify(data.config)),
+      programPointer: u8aToHex(stringToU8a(data.pointer)),
+      programConfig: stringToU8a(JSON.stringify(data.config)),
     }))
 
     const tx: SubmittableExtrinsic<'promise'> = this.substrate.tx.relayer.changeProgramInstance(

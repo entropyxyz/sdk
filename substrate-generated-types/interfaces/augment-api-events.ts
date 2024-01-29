@@ -9,11 +9,12 @@ import type { ApiTypes, AugmentedEvent } from '@polkadot/api-base/types';
 import type { Bytes, Null, Option, Result, U8aFixed, Vec, bool, u128, u16, u32, u64, u8 } from '@polkadot/types-codec';
 import type { ITuple } from '@polkadot/types-codec/types';
 import type { AccountId32, H256, Perbill } from '@polkadot/types/interfaces/runtime';
+import { SpRuntimeDispatchError, SpNposElectionsElectionScore, SpConsensusGrandpaAppPublic, FrameSupportDispatchDispatchInfo, FrameSupportTokensMiscBalanceStatus,PalletStakingRewardDestination, PalletStakingValidatorPrefs, PalletStakingForcing,PalletStakingExtensionServerInfo, PalletRelayerProgramInstance, PalletMultisigTimepoint, PalletStakingExposure,PalletNominationPoolsPoolState, PalletNominationPoolsCommissionChangeRate, PalletElectionProviderMultiPhasePhase, PalletElectionProviderMultiPhaseElectionCompute, PalletImOnlineSr25519AppSr25519Public, PalletDemocracyMetadataOwner, PalletDemocracyVoteThreshold, PalletDemocracyVoteAccountVote, EntropyRuntimeProxyType, EntropySharedOcwMessageProactiveRefresh, EntropySharedOcwMessageDkg} from '@polkadot/types/lookup'
 
 export type __AugmentedEvent<ApiType extends ApiTypes> = AugmentedEvent<ApiType>;
 
 declare module '@polkadot/api-base/types/events' {
-  interface AugmentedEvents<ApiType extends ApiTypes> {
+  export interface AugmentedEvents<ApiType extends ApiTypes> {
     bagsList: {
       /**
        * Moved an account from one bag to another.
