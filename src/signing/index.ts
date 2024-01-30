@@ -77,6 +77,8 @@ export default class SignatureRequestManager {
    */
 
   async signTransaction ({ txParams, type }: SigTxOps): Promise<unknown> {
+    console.log("Received transaction params:", txParams)
+    console.log("Transaction type:", type)
     if (!this.adapters[type])
       throw new Error(`No transaction adapter for type: ${type} submit as hash`)
     if (!this.adapters[type].preSign)
@@ -156,6 +158,7 @@ export default class SignatureRequestManager {
     auxilaryData?: string[]
     hash?: string
   }): Promise<EncMsg[]> {
+    console.log("Formatting transaction requests with hash:", strippedsigRequestHash)
     return await Promise.all(
       validatorsInfo.map(
         async (validator: ValidatorInfo): Promise<EncMsg> => {
@@ -220,10 +223,12 @@ export default class SignatureRequestManager {
           ...parsedMsg,
           msg: parsedMsg.msg,
         }
+        console.log(`Sending request to ${message.url}:`, payload)
         const sigProof = (await sendHttpPost(
           `http://${message.url}/user/sign_tx`,
           JSON.stringify(payload)
         )) as string[]
+        console.log(`Response from ${message.url}:`, sigProof)
         sigProof.push(message.tss_account)
         return sigProof
       })
