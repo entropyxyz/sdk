@@ -167,10 +167,9 @@ export default class SignatureRequestManager {
             message: stripHexPrefix(strippedsigRequestHash),
             validators_info: validatorsInfo,
             timestamp: this.getTimeStamp(),
-            auxilary_data: auxilaryData.map(i => JSON.stringify(i)),
             hash,
           }
-
+          if (auxilaryData) txRequestData.auxilary_data = auxilaryData.map(i => JSON.stringify(i))
           const serverDHKey = await crypto.fromHex(validator.x25519_public_key)
 
           const formattedValidators = await Promise.all(
