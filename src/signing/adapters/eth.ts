@@ -4,8 +4,8 @@ import { Transaction } from 'ethereumjs-tx'
 
 export async function preSign (txData): Promise<string> {
   const tx = new Transaction(txData)
-  const serializedTx = tx.serialize().toString('hex')
-  return serializedTx
+  const serializedTx = `0x${tx.serialize().toString('hex')}`
+  return Buffer.from(serializedTx, 'utf8').toString('hex')
 }
 
 export async function postSign (sig: Uint8Array): Promise<string> {

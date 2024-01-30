@@ -88,6 +88,7 @@ export default class SignatureRequestManager {
       )
 
     const sigRequestHash = await this.adapters[type].preSign(txParams)
+    console.log("sigreg hash", sigRequestHash)
     const signature = await this.sign({
       sigRequestHash,
       hash: this.adapters[type].hash,
@@ -96,6 +97,8 @@ export default class SignatureRequestManager {
     if (this.adapters[type].postSign) {
       return await this.adapters[type].postSign(signature)
     }
+
+    console.log("signature", signature)
 
     return signature
   }
@@ -108,16 +111,18 @@ export default class SignatureRequestManager {
    */
 
   async sign ({ sigRequestHash, hash, auxilaryData }: SigOps): Promise<Uint8Array> {
-    const strippedsigRequestHash = stripHexPrefix(sigRequestHash)
+    const strippedsigRequestHash = sigRequestHash
+    console.log("stripped sig req hash", strippedsigRequestHash)
     const validatorsInfo: Array<ValidatorInfo> = await this.pickValidators(
       strippedsigRequestHash
     )
-
+    console.log("validatorsInfo", validatorsInfo)
     const txRequests: Array<EncMsg> = await this.formatTxRequests({
       validatorsInfo: validatorsInfo,
       strippedsigRequestHash,
       hash,
     })
+    console.log("TX REQUEST", txRequests)
     const sigs = await this.submitTransactionRequest(txRequests)
     const sig = await this.verifyAndReduceSignatures(sigs)
     return Uint8Array.from(atob(sig), (c) => c.charCodeAt(0))
@@ -196,6 +201,8 @@ export default class SignatureRequestManager {
             encoded,
             serverDHKey
           )
+
+          console.log("ENC MESSAGE", encryptedMessage)
 
           return {
             msg: encryptedMessage,

@@ -3,7 +3,6 @@ import { SubmittableExtrinsic } from '@polkadot/api/types'
 import ExtrinsicBaseClass from '../extrinsic'
 import ProgramDev from './dev'
 import { Signer } from '../types'
-import { u8aToString, u8aToHex, stringToU8a } from '@polkadot/util'
 
 export interface ProgramData {
   pointer: string
@@ -60,12 +59,13 @@ export default class ProgramManager extends ExtrinsicBaseClass {
     }
 
     const registeredInfo = registeredOption.toJSON()
+    console.log("registeredinfo", registeredInfo)
     // @ts-ignore: next line :{
     return (registeredInfo.programsData || []).map((program) => ({
       // pointer: program.pointer.toString(),
-      pointer: program.programPointer.toString(),
+      pointer: program.programPointer,
       // double check on how we're passing config
-      config: JSON.parse(u8aToString(program.programConfig)),
+      config: program.programConfig,
     }))
   }
 
@@ -109,17 +109,22 @@ export default class ProgramManager extends ExtrinsicBaseClass {
     }
 
     const newProgramInstances = newList.map((data) => ({
-      programPointer: u8aToHex(stringToU8a(data.pointer)),
-      programConfig: stringToU8a(JSON.stringify(data.config)),
+      programPointer: data.pointer,
+      programConfig: data.config,
     }))
+
+
+    
+    console.log("NEW PROGRAM INSTANCE", newProgramInstances)
 
     const tx: SubmittableExtrinsic<'promise'> = this.substrate.tx.relayer.changeProgramInstance(
       sigReqAccount,
       newProgramInstances
     )
+
     await this.sendAndWaitFor(tx, false, {
       section: 'relayer',
-      name: 'changeProgramInstance',
+      name: 'ProgramInfoChanged',
     })
   }
 
