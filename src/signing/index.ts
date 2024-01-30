@@ -27,6 +27,7 @@ export interface SigOps {
   sigRequestHash: string
   hash: string
   type?: string
+  auxilaryData?: unknown[]
 }
 
 export interface UserSignatureRequest {
@@ -106,7 +107,7 @@ export default class SignatureRequestManager {
    * @returns A promise resolving to the signed hash as a Uint8Array.
    */
 
-  async sign ({ sigRequestHash, hash }: SigOps): Promise<Uint8Array> {
+  async sign ({ sigRequestHash, hash, auxilaryData }: SigOps): Promise<Uint8Array> {
     const strippedsigRequestHash = stripHexPrefix(sigRequestHash)
     const validatorsInfo: Array<ValidatorInfo> = await this.pickValidators(
       strippedsigRequestHash
@@ -155,7 +156,7 @@ export default class SignatureRequestManager {
   }: {
     strippedsigRequestHash: string
     validatorsInfo: Array<ValidatorInfo>
-    auxilaryData?: string[]
+    auxilaryData?: unknown[]
     hash?: string
   }): Promise<EncMsg[]> {
     console.log("Formatting transaction requests with hash:", strippedsigRequestHash)
@@ -166,7 +167,7 @@ export default class SignatureRequestManager {
             message: stripHexPrefix(strippedsigRequestHash),
             validators_info: validatorsInfo,
             timestamp: this.getTimeStamp(),
-            auxilary_data: auxilaryData,
+            auxilary_data: auxilaryData.map(i => JSON.stringify(i)),
             hash,
           }
 
