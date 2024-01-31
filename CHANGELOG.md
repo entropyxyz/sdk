@@ -9,9 +9,13 @@ At the moment this project **does not** adhere to
 
 ## [Unreleased]
 
-### Added
+### Breaking Changes:
+- `@entropyxyz/entropy-js` is now `@entropyxyz/SDK`
 
+### Added
+- Update programs and signing (#283):
 - `entropy.programs.dev` is the new interface to deploying programs
+- signing now supports auxilaryData
 
 ### Changed
 
