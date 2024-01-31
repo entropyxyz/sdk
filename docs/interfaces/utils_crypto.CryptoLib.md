@@ -49,7 +49,7 @@ Uses the provided secret key for decryption.
 
 #### Defined in
 
-[utils/crypto.ts:46](https://github.com/entropyxyz/SDK/blob/04833ee/src/utils/crypto.ts#L46)
+[utils/crypto.ts:46](https://github.com/entropyxyz/SDK/blob/1c426d7/src/utils/crypto.ts#L46)
 
 ___
 
@@ -81,7 +81,7 @@ Uses the provided secret key for encryption and the server's Diffie-Hellman (DH)
 
 #### Defined in
 
-[utils/crypto.ts:37](https://github.com/entropyxyz/SDK/blob/04833ee/src/utils/crypto.ts#L37)
+[utils/crypto.ts:37](https://github.com/entropyxyz/SDK/blob/1c426d7/src/utils/crypto.ts#L37)
 
 ___
 
@@ -105,7 +105,7 @@ ___
 
 #### Defined in
 
-[utils/crypto.ts:32](https://github.com/entropyxyz/SDK/blob/04833ee/src/utils/crypto.ts#L32)
+[utils/crypto.ts:32](https://github.com/entropyxyz/SDK/blob/1c426d7/src/utils/crypto.ts#L32)
 
 ___
 
@@ -133,7 +133,7 @@ Derives the public key from the provided secret key.
 
 #### Defined in
 
-[utils/crypto.ts:50](https://github.com/entropyxyz/SDK/blob/04833ee/src/utils/crypto.ts#L50)
+[utils/crypto.ts:50](https://github.com/entropyxyz/SDK/blob/1c426d7/src/utils/crypto.ts#L50)
 
 ___
 
@@ -159,4 +159,4 @@ ___
 
 #### Defined in
 
-[utils/crypto.ts:30](https://github.com/entropyxyz/SDK/blob/04833ee/src/utils/crypto.ts#L30)
+[utils/crypto.ts:30](https://github.com/entropyxyz/SDK/blob/1c426d7/src/utils/crypto.ts#L30)

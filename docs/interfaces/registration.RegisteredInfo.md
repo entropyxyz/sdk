@@ -19,7 +19,7 @@
 
 #### Defined in
 
-[registration/index.ts:14](https://github.com/entropyxyz/SDK/blob/04833ee/src/registration/index.ts#L14)
+[registration/index.ts:14](https://github.com/entropyxyz/SDK/blob/1c426d7/src/registration/index.ts#L14)
 
 ___
 
@@ -29,4 +29,4 @@ ___
 
 #### Defined in
 
-[registration/index.ts:15](https://github.com/entropyxyz/SDK/blob/04833ee/src/registration/index.ts#L15)
+[registration/index.ts:15](https://github.com/entropyxyz/SDK/blob/1c426d7/src/registration/index.ts#L15)

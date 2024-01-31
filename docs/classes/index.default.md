@@ -39,25 +39,16 @@ await entropy.register({
 
 ### Properties
 
-- [#allReadOnly](index.default.md##allreadonly)
-- [#fail](index.default.md##fail)
-- [#programReadOnly](index.default.md##programreadonly)
-- [#ready](index.default.md##ready)
 - [account](index.default.md#account)
 - [isRegistered](index.default.md#isregistered)
-- [programModPublicKey](index.default.md#programmodpublickey)
 - [programs](index.default.md#programs)
 - [ready](index.default.md#ready)
 - [registrationManager](index.default.md#registrationmanager)
-- [sigRequestPublicKey](index.default.md#sigrequestpublickey)
 - [signingManager](index.default.md#signingmanager)
 - [substrate](index.default.md#substrate)
 
 ### Methods
 
-- [#init](index.default.md##init)
-- [#setReadOnlyStates](index.default.md##setreadonlystates)
-- [#setVerfiyingKeys](index.default.md##setverfiyingkeys)
 - [getVerifyingKey](index.default.md#getverifyingkey)
 - [register](index.default.md#register)
 - [sign](index.default.md#sign)
@@ -83,77 +74,9 @@ Initializes an instance of the Entropy class.
 
 #### Defined in
 
-[index.ts:81](https://github.com/entropyxyz/SDK/blob/04833ee/src/index.ts#L81)
+[index.ts:83](https://github.com/entropyxyz/SDK/blob/1c426d7/src/index.ts#L83)
 
 ## Properties
-
-### #allReadOnly
-
-• `Private` **#allReadOnly**: `boolean`
-
-#### Defined in
-
-[index.ts:59](https://github.com/entropyxyz/SDK/blob/04833ee/src/index.ts#L59)
-
-___
-
-### #fail
-
-• `Private` `Optional` **#fail**: (`reason?`: `unknown`) => `void`
-
-#### Type declaration
-
-▸ (`reason?`): `void`
-
-##### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `reason?` | `unknown` |
-
-##### Returns
-
-`void`
-
-#### Defined in
-
-[index.ts:57](https://github.com/entropyxyz/SDK/blob/04833ee/src/index.ts#L57)
-
-___
-
-### #programReadOnly
-
-• `Private` **#programReadOnly**: `boolean`
-
-#### Defined in
-
-[index.ts:58](https://github.com/entropyxyz/SDK/blob/04833ee/src/index.ts#L58)
-
-___
-
-### #ready
-
-• `Private` `Optional` **#ready**: (`value?`: `unknown`) => `void`
-
-#### Type declaration
-
-▸ (`value?`): `void`
-
-##### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `value?` | `unknown` |
-
-##### Returns
-
-`void`
-
-#### Defined in
-
-[index.ts:56](https://github.com/entropyxyz/SDK/blob/04833ee/src/index.ts#L56)
-
-___
 
 ### account
 
@@ -161,7 +84,7 @@ ___
 
 #### Defined in
 
-[index.ts:68](https://github.com/entropyxyz/SDK/blob/04833ee/src/index.ts#L68)
+[index.ts:70](https://github.com/entropyxyz/SDK/blob/1c426d7/src/index.ts#L70)
 
 ___
 
@@ -185,17 +108,7 @@ ___
 
 #### Defined in
 
-[index.ts:65](https://github.com/entropyxyz/SDK/blob/04833ee/src/index.ts#L65)
-
-___
-
-### programModPublicKey
-
-• `Optional` **programModPublicKey**: `string`
-
-#### Defined in
-
-[index.ts:63](https://github.com/entropyxyz/SDK/blob/04833ee/src/index.ts#L63)
+[index.ts:67](https://github.com/entropyxyz/SDK/blob/1c426d7/src/index.ts#L67)
 
 ___
 
@@ -205,7 +118,7 @@ ___
 
 #### Defined in
 
-[index.ts:66](https://github.com/entropyxyz/SDK/blob/04833ee/src/index.ts#L66)
+[index.ts:68](https://github.com/entropyxyz/SDK/blob/1c426d7/src/index.ts#L68)
 
 ___
 
@@ -217,7 +130,7 @@ A promise that resolves once chacha20poly1305 cryptoLib has been loaded
 
 #### Defined in
 
-[index.ts:61](https://github.com/entropyxyz/SDK/blob/04833ee/src/index.ts#L61)
+[index.ts:65](https://github.com/entropyxyz/SDK/blob/1c426d7/src/index.ts#L65)
 
 ___
 
@@ -227,17 +140,7 @@ ___
 
 #### Defined in
 
-[index.ts:64](https://github.com/entropyxyz/SDK/blob/04833ee/src/index.ts#L64)
-
-___
-
-### sigRequestPublicKey
-
-• `Optional` **sigRequestPublicKey**: `string`
-
-#### Defined in
-
-[index.ts:62](https://github.com/entropyxyz/SDK/blob/04833ee/src/index.ts#L62)
+[index.ts:66](https://github.com/entropyxyz/SDK/blob/1c426d7/src/index.ts#L66)
 
 ___
 
@@ -247,7 +150,7 @@ ___
 
 #### Defined in
 
-[index.ts:67](https://github.com/entropyxyz/SDK/blob/04833ee/src/index.ts#L67)
+[index.ts:69](https://github.com/entropyxyz/SDK/blob/1c426d7/src/index.ts#L69)
 
 ___
 
@@ -257,57 +160,9 @@ ___
 
 #### Defined in
 
-[index.ts:69](https://github.com/entropyxyz/SDK/blob/04833ee/src/index.ts#L69)
+[index.ts:71](https://github.com/entropyxyz/SDK/blob/1c426d7/src/index.ts#L71)
 
 ## Methods
-
-### #init
-
-▸ **#init**(`opts`): `Promise`\<`void`\>
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `opts` | [`EntropyOpts`](../interfaces/index.EntropyOpts.md) |
-
-#### Returns
-
-`Promise`\<`void`\>
-
-#### Defined in
-
-[index.ts:92](https://github.com/entropyxyz/SDK/blob/04833ee/src/index.ts#L92)
-
-___
-
-### #setReadOnlyStates
-
-▸ **#setReadOnlyStates**(): `void`
-
-#### Returns
-
-`void`
-
-#### Defined in
-
-[index.ts:143](https://github.com/entropyxyz/SDK/blob/04833ee/src/index.ts#L143)
-
-___
-
-### #setVerfiyingKeys
-
-▸ **#setVerfiyingKeys**(): `Promise`\<`void`\>
-
-#### Returns
-
-`Promise`\<`void`\>
-
-#### Defined in
-
-[index.ts:126](https://github.com/entropyxyz/SDK/blob/04833ee/src/index.ts#L126)
-
-___
 
 ### getVerifyingKey
 
@@ -329,7 +184,7 @@ Retrieves the verifying key associated with the given address's registration rec
 
 #### Defined in
 
-[index.ts:212](https://github.com/entropyxyz/SDK/blob/04833ee/src/index.ts#L212)
+[index.ts:215](https://github.com/entropyxyz/SDK/blob/1c426d7/src/index.ts#L215)
 
 ___
 
@@ -361,7 +216,7 @@ A promise indicating the completion of the registration process.
 
 #### Defined in
 
-[index.ts:183](https://github.com/entropyxyz/SDK/blob/04833ee/src/index.ts#L183)
+[index.ts:186](https://github.com/entropyxyz/SDK/blob/1c426d7/src/index.ts#L186)
 
 ___
 
@@ -391,7 +246,7 @@ for signing. It returns the signature from the first validator after validation.
 
 #### Defined in
 
-[index.ts:256](https://github.com/entropyxyz/SDK/blob/04833ee/src/index.ts#L256)
+[index.ts:259](https://github.com/entropyxyz/SDK/blob/1c426d7/src/index.ts#L259)
 
 ___
 
@@ -432,4 +287,4 @@ Will throw an error if the transaction type does not have a corresponding adapte
 
 #### Defined in
 
-[index.ts:237](https://github.com/entropyxyz/SDK/blob/04833ee/src/index.ts#L237)
+[index.ts:240](https://github.com/entropyxyz/SDK/blob/1c426d7/src/index.ts#L240)

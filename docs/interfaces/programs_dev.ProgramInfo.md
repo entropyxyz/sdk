@@ -27,7 +27,7 @@ The bytecode of the program.
 
 #### Defined in
 
-[programs/dev.ts:18](https://github.com/entropyxyz/SDK/blob/04833ee/src/programs/dev.ts#L18)
+[programs/dev.ts:18](https://github.com/entropyxyz/SDK/blob/1c426d7/src/programs/dev.ts#L18)
 
 ___
 
@@ -39,7 +39,7 @@ Optional. The configuration interface of the program.
 
 #### Defined in
 
-[programs/dev.ts:19](https://github.com/entropyxyz/SDK/blob/04833ee/src/programs/dev.ts#L19)
+[programs/dev.ts:19](https://github.com/entropyxyz/SDK/blob/1c426d7/src/programs/dev.ts#L19)
 
 ___
 
@@ -51,7 +51,7 @@ The address of the deployer of the program.
 
 #### Defined in
 
-[programs/dev.ts:20](https://github.com/entropyxyz/SDK/blob/04833ee/src/programs/dev.ts#L20)
+[programs/dev.ts:20](https://github.com/entropyxyz/SDK/blob/1c426d7/src/programs/dev.ts#L20)
 
 ___
 
@@ -63,4 +63,4 @@ The reference count for the program.
 
 #### Defined in
 
-[programs/dev.ts:21](https://github.com/entropyxyz/SDK/blob/04833ee/src/programs/dev.ts#L21)
+[programs/dev.ts:21](https://github.com/entropyxyz/SDK/blob/1c426d7/src/programs/dev.ts#L21)

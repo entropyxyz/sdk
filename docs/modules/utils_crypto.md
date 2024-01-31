@@ -25,7 +25,7 @@
 
 #### Defined in
 
-[utils/crypto.ts:57](https://github.com/entropyxyz/SDK/blob/04833ee/src/utils/crypto.ts#L57)
+[utils/crypto.ts:57](https://github.com/entropyxyz/SDK/blob/1c426d7/src/utils/crypto.ts#L57)
 
 ___
 
@@ -35,7 +35,7 @@ ___
 
 #### Defined in
 
-[utils/crypto.ts:53](https://github.com/entropyxyz/SDK/blob/04833ee/src/utils/crypto.ts#L53)
+[utils/crypto.ts:53](https://github.com/entropyxyz/SDK/blob/1c426d7/src/utils/crypto.ts#L53)
 
 ## Functions
 
@@ -53,4 +53,4 @@ The imported crypto library.
 
 #### Defined in
 
-[utils/crypto.ts:101](https://github.com/entropyxyz/SDK/blob/04833ee/src/utils/crypto.ts#L101)
+[utils/crypto.ts:101](https://github.com/entropyxyz/SDK/blob/1c426d7/src/utils/crypto.ts#L101)

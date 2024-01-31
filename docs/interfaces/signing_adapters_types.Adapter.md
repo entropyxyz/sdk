@@ -22,7 +22,7 @@
 
 #### Defined in
 
-[signing/adapters/types.ts:5](https://github.com/entropyxyz/SDK/blob/04833ee/src/signing/adapters/types.ts#L5)
+[signing/adapters/types.ts:5](https://github.com/entropyxyz/SDK/blob/1c426d7/src/signing/adapters/types.ts#L5)
 
 ___
 
@@ -32,7 +32,7 @@ ___
 
 #### Defined in
 
-[signing/adapters/types.ts:6](https://github.com/entropyxyz/SDK/blob/04833ee/src/signing/adapters/types.ts#L6)
+[signing/adapters/types.ts:6](https://github.com/entropyxyz/SDK/blob/1c426d7/src/signing/adapters/types.ts#L6)
 
 ___
 
@@ -56,7 +56,7 @@ ___
 
 #### Defined in
 
-[signing/adapters/types.ts:8](https://github.com/entropyxyz/SDK/blob/04833ee/src/signing/adapters/types.ts#L8)
+[signing/adapters/types.ts:8](https://github.com/entropyxyz/SDK/blob/1c426d7/src/signing/adapters/types.ts#L8)
 
 ___
 
@@ -80,7 +80,7 @@ ___
 
 #### Defined in
 
-[signing/adapters/types.ts:7](https://github.com/entropyxyz/SDK/blob/04833ee/src/signing/adapters/types.ts#L7)
+[signing/adapters/types.ts:7](https://github.com/entropyxyz/SDK/blob/1c426d7/src/signing/adapters/types.ts#L7)
 
 ___
 
@@ -90,4 +90,4 @@ ___
 
 #### Defined in
 
-[signing/adapters/types.ts:4](https://github.com/entropyxyz/SDK/blob/04833ee/src/signing/adapters/types.ts#L4)
+[signing/adapters/types.ts:4](https://github.com/entropyxyz/SDK/blob/1c426d7/src/signing/adapters/types.ts#L4)

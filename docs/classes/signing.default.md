@@ -50,7 +50,7 @@ Initializes a new instance of `SignatureRequestManager`.
 
 #### Defined in
 
-[signing/index.ts:61](https://github.com/entropyxyz/SDK/blob/04833ee/src/signing/index.ts#L61)
+[signing/index.ts:61](https://github.com/entropyxyz/SDK/blob/1c426d7/src/signing/index.ts#L61)
 
 ## Properties
 
@@ -64,7 +64,7 @@ Initializes a new instance of `SignatureRequestManager`.
 
 #### Defined in
 
-[signing/index.ts:46](https://github.com/entropyxyz/SDK/blob/04833ee/src/signing/index.ts#L46)
+[signing/index.ts:46](https://github.com/entropyxyz/SDK/blob/1c426d7/src/signing/index.ts#L46)
 
 ___
 
@@ -74,7 +74,7 @@ ___
 
 #### Defined in
 
-[signing/index.ts:47](https://github.com/entropyxyz/SDK/blob/04833ee/src/signing/index.ts#L47)
+[signing/index.ts:47](https://github.com/entropyxyz/SDK/blob/1c426d7/src/signing/index.ts#L47)
 
 ___
 
@@ -84,7 +84,7 @@ ___
 
 #### Defined in
 
-[signing/index.ts:48](https://github.com/entropyxyz/SDK/blob/04833ee/src/signing/index.ts#L48)
+[signing/index.ts:48](https://github.com/entropyxyz/SDK/blob/1c426d7/src/signing/index.ts#L48)
 
 ___
 
@@ -94,7 +94,7 @@ ___
 
 #### Defined in
 
-[signing/index.ts:49](https://github.com/entropyxyz/SDK/blob/04833ee/src/signing/index.ts#L49)
+[signing/index.ts:49](https://github.com/entropyxyz/SDK/blob/1c426d7/src/signing/index.ts#L49)
 
 ## Methods
 
@@ -122,7 +122,7 @@ A promise resolving to an array of encrypted messages for validators.
 
 #### Defined in
 
-[signing/index.ts:156](https://github.com/entropyxyz/SDK/blob/04833ee/src/signing/index.ts#L156)
+[signing/index.ts:156](https://github.com/entropyxyz/SDK/blob/1c426d7/src/signing/index.ts#L156)
 
 ___
 
@@ -145,7 +145,7 @@ An object containing `secs_since_epoch` and `nanos_since_epoch`.
 
 #### Defined in
 
-[signing/index.ts:134](https://github.com/entropyxyz/SDK/blob/04833ee/src/signing/index.ts#L134)
+[signing/index.ts:134](https://github.com/entropyxyz/SDK/blob/1c426d7/src/signing/index.ts#L134)
 
 ___
 
@@ -169,7 +169,7 @@ A promise resolving to an array of validator information.
 
 #### Defined in
 
-[signing/index.ts:247](https://github.com/entropyxyz/SDK/blob/04833ee/src/signing/index.ts#L247)
+[signing/index.ts:247](https://github.com/entropyxyz/SDK/blob/1c426d7/src/signing/index.ts#L247)
 
 ___
 
@@ -193,7 +193,7 @@ A promise resolving to the signed hash as a Uint8Array.
 
 #### Defined in
 
-[signing/index.ts:112](https://github.com/entropyxyz/SDK/blob/04833ee/src/signing/index.ts#L112)
+[signing/index.ts:112](https://github.com/entropyxyz/SDK/blob/1c426d7/src/signing/index.ts#L112)
 
 ___
 
@@ -221,7 +221,7 @@ if an adapter for the transaction type is not found, or if the adapter lacks a p
 
 #### Defined in
 
-[signing/index.ts:81](https://github.com/entropyxyz/SDK/blob/04833ee/src/signing/index.ts#L81)
+[signing/index.ts:81](https://github.com/entropyxyz/SDK/blob/1c426d7/src/signing/index.ts#L81)
 
 ___
 
@@ -245,7 +245,7 @@ A promise that resolves to an array of arrays of signatures in string format.
 
 #### Defined in
 
-[signing/index.ts:221](https://github.com/entropyxyz/SDK/blob/04833ee/src/signing/index.ts#L221)
+[signing/index.ts:221](https://github.com/entropyxyz/SDK/blob/1c426d7/src/signing/index.ts#L221)
 
 ___
 
@@ -269,4 +269,4 @@ The first valid signature after verification.
 
 #### Defined in
 
-[signing/index.ts:293](https://github.com/entropyxyz/SDK/blob/04833ee/src/signing/index.ts#L293)
+[signing/index.ts:293](https://github.com/entropyxyz/SDK/blob/1c426d7/src/signing/index.ts#L293)

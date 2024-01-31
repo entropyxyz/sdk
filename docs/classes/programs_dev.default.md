@@ -25,7 +25,6 @@ Class to handle program-related extrinsic functions.
 
 ### Methods
 
-- [#formatProgramInfo](programs_dev.default.md##formatprograminfo)
 - [deploy](programs_dev.default.md#deploy)
 - [get](programs_dev.default.md#get)
 - [handleFreeTx](programs_dev.default.md#handlefreetx)
@@ -58,7 +57,7 @@ Constructs a ProgramDev instance.
 
 #### Defined in
 
-[programs/dev.ts:38](https://github.com/entropyxyz/SDK/blob/04833ee/src/programs/dev.ts#L38)
+[programs/dev.ts:38](https://github.com/entropyxyz/SDK/blob/1c426d7/src/programs/dev.ts#L38)
 
 ## Properties
 
@@ -72,7 +71,7 @@ Constructs a ProgramDev instance.
 
 #### Defined in
 
-[extrinsic/index.ts:21](https://github.com/entropyxyz/SDK/blob/04833ee/src/extrinsic/index.ts#L21)
+[extrinsic/index.ts:21](https://github.com/entropyxyz/SDK/blob/1c426d7/src/extrinsic/index.ts#L21)
 
 ___
 
@@ -86,33 +85,9 @@ ___
 
 #### Defined in
 
-[extrinsic/index.ts:20](https://github.com/entropyxyz/SDK/blob/04833ee/src/extrinsic/index.ts#L20)
+[extrinsic/index.ts:20](https://github.com/entropyxyz/SDK/blob/1c426d7/src/extrinsic/index.ts#L20)
 
 ## Methods
-
-### #formatProgramInfo
-
-▸ **#formatProgramInfo**(`programInfo`): [`ProgramInfo`](../interfaces/programs_dev.ProgramInfo.md)
-
-Formats program information.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `programInfo` | `any` | The program information in JSON format. |
-
-#### Returns
-
-[`ProgramInfo`](../interfaces/programs_dev.ProgramInfo.md)
-
-- The formatted program information.
-
-#### Defined in
-
-[programs/dev.ts:122](https://github.com/entropyxyz/SDK/blob/04833ee/src/programs/dev.ts#L122)
-
-___
 
 ### deploy
 
@@ -135,7 +110,7 @@ Deploys a new program.
 
 #### Defined in
 
-[programs/dev.ts:72](https://github.com/entropyxyz/SDK/blob/04833ee/src/programs/dev.ts#L72)
+[programs/dev.ts:72](https://github.com/entropyxyz/SDK/blob/1c426d7/src/programs/dev.ts#L72)
 
 ___
 
@@ -159,7 +134,7 @@ Retrieves program information using a program pointer.
 
 #### Defined in
 
-[programs/dev.ts:55](https://github.com/entropyxyz/SDK/blob/04833ee/src/programs/dev.ts#L55)
+[programs/dev.ts:55](https://github.com/entropyxyz/SDK/blob/1c426d7/src/programs/dev.ts#L55)
 
 ___
 
@@ -199,7 +174,7 @@ If the dry run fails or there's insufficient electricity (zaps).
 
 #### Defined in
 
-[extrinsic/index.ts:99](https://github.com/entropyxyz/SDK/blob/04833ee/src/extrinsic/index.ts#L99)
+[extrinsic/index.ts:99](https://github.com/entropyxyz/SDK/blob/1c426d7/src/extrinsic/index.ts#L99)
 
 ___
 
@@ -223,7 +198,7 @@ Removes a program.
 
 #### Defined in
 
-[programs/dev.ts:101](https://github.com/entropyxyz/SDK/blob/04833ee/src/programs/dev.ts#L101)
+[programs/dev.ts:101](https://github.com/entropyxyz/SDK/blob/1c426d7/src/programs/dev.ts#L101)
 
 ___
 
@@ -257,4 +232,4 @@ Will reject the promise if a dispatch error occurs or the filtered event is not 
 
 #### Defined in
 
-[extrinsic/index.ts:45](https://github.com/entropyxyz/SDK/blob/04833ee/src/extrinsic/index.ts#L45)
+[extrinsic/index.ts:45](https://github.com/entropyxyz/SDK/blob/1c426d7/src/extrinsic/index.ts#L45)

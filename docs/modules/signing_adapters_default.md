@@ -22,4 +22,4 @@
 
 #### Defined in
 
-[signing/adapters/default.ts:3](https://github.com/entropyxyz/SDK/blob/04833ee/src/signing/adapters/default.ts#L3)
+[signing/adapters/default.ts:3](https://github.com/entropyxyz/SDK/blob/1c426d7/src/signing/adapters/default.ts#L3)

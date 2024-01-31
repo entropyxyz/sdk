@@ -113,6 +113,8 @@ export default class ProgramDev extends ExtrinsicBaseClass {
   }
 
   /**
+   * @internal
+   *
    * Formats program information.
    * 
    * @param {ProgramInfoJSON} programInfo - The program information in JSON format.

@@ -25,7 +25,7 @@
 
 #### Defined in
 
-[signing/index.ts:13](https://github.com/entropyxyz/SDK/blob/04833ee/src/signing/index.ts#L13)
+[signing/index.ts:13](https://github.com/entropyxyz/SDK/blob/1c426d7/src/signing/index.ts#L13)
 
 ___
 
@@ -35,7 +35,7 @@ ___
 
 #### Defined in
 
-[signing/index.ts:14](https://github.com/entropyxyz/SDK/blob/04833ee/src/signing/index.ts#L14)
+[signing/index.ts:14](https://github.com/entropyxyz/SDK/blob/1c426d7/src/signing/index.ts#L14)
 
 ___
 
@@ -45,7 +45,7 @@ ___
 
 #### Defined in
 
-[signing/index.ts:11](https://github.com/entropyxyz/SDK/blob/04833ee/src/signing/index.ts#L11)
+[signing/index.ts:11](https://github.com/entropyxyz/SDK/blob/1c426d7/src/signing/index.ts#L11)
 
 ___
 
@@ -55,4 +55,4 @@ ___
 
 #### Defined in
 
-[signing/index.ts:12](https://github.com/entropyxyz/SDK/blob/04833ee/src/signing/index.ts#L12)
+[signing/index.ts:12](https://github.com/entropyxyz/SDK/blob/1c426d7/src/signing/index.ts#L12)

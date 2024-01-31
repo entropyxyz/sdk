@@ -25,4 +25,4 @@
 
 #### Defined in
 
-[registration/index.ts:18](https://github.com/entropyxyz/SDK/blob/04833ee/src/registration/index.ts#L18)
+[registration/index.ts:18](https://github.com/entropyxyz/SDK/blob/1c426d7/src/registration/index.ts#L18)

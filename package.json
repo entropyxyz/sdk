@@ -34,7 +34,7 @@
     "generate:pull:remote": "curl -H \"Content-Type: application/json\" -d '{\"id\":\"1\", \"jsonrpc\":\"2.0\", \"method\": \"state_getMetadata\", \"params\":[]}' http://devnet-forfrankie-nodes-617e8e312bab1d9f.elb.us-west-2.amazonaws.com:9944 > entropy-metadata.json",
     "generate:defs": "ts-node --skip-project node_modules/.bin/polkadot-types-from-defs --package substrate-generated-types/interfaces --input ./substrate-generated-types/interfaces --endpoint ./entropy-metadata.json",
     "generate:meta": "ts-node --skip-project node_modules/.bin/polkadot-types-from-chain --package substrate-generated-types/interfaces --endpoint ./entropy-metadata.json --output ./substrate-generated-types/interfaces",
-    "generate:docs": "typedoc --plugin typedoc-plugin-markdown --out docs --entryPointStrategy expand ./src"
+    "generate:docs": "typedoc --excludePrivate --excludeInternal --plugin typedoc-plugin-markdown --out docs --entryPointStrategy expand ./src"
   },
   "repository": {
     "type": "git",

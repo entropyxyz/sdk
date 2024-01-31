@@ -19,22 +19,48 @@ npm i @entropyxyz/SDK --save
 
 NOTICE 
 `endpoint ` defaults to 'ws://127.0.0.1:9944' if no value is provided. 
+**`Remarks`**
 
-```js
-import Entropy from '@entropyxyz/SDK'
+The main interface for users wanting to interact with Entropy.
+This class provides methods to register, check registration status,
+and sign transactions. Users can await the `ready` promise to ensure
+that the class has been initialized before performing operations.
 
-// Initialize entropy
+**`Example`**
 
-const signer = await getWallet(charlieStashSeed)
-const entropyAccount = {
+```typescript
+const signer = await getWallet(charlieStashSeed);
+
+const entropyAccount: EntropyAccount = {
   sigRequestKey: signer,
-  programModKey: signer
-}
+  programModKey: signer,
+};
 
-const entropy = new Entropy({ account: entropyAccount})
-await entropy.ready
+const entropy = new Entropy({ account: entropyAccount });
+await entropy.ready;
 
+await entropy.register({
+  programModAccount: '5Gw3s7q9...',
+  keyVisibility: 'Permissioned',
+  freeTx: false
+});
 ```
+
+## Table of contents
+
+### Constructors
+
+- [constructor](README.md#constructor)
+
+### Properties
+
+- [account](README.md#account)
+- [isRegistered](README.md#isregistered)
+- [programs](README.md#programs)
+- [ready](README.md#ready)
+- [registrationManager](README.md#registrationmanager)
+- [signingManager](README.md#signingmanager)
+- [substrate](README.md#substrate)
 
 ### Methods
 
@@ -47,7 +73,7 @@ await entropy.ready
 
 ### constructor
 
-• **new default**(`opts`): [`default`](README.md)
+• **new default**(`opts`): [`default`](./docs/classes/index.default.md)
 
 Initializes an instance of the Entropy class.
 
@@ -55,31 +81,31 @@ Initializes an instance of the Entropy class.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `opts` | [`EntropyOpts`](docs/interfaces/index.EntropyOpts.md) | The configuration options for the Entropy instance. |
+| `opts` | [`EntropyOpts`](./docs/interfaces/index.EntropyOpts.md) | The configuration options for the Entropy instance. |
 
 #### Returns
 
-[`default`](README.md)
+[`default`](./docs/classes/index.default.md)
 
 #### Defined in
 
-[index.ts:81](https://github.com/entropyxyz/SDK/blob/04833ee/src/index.ts#L81)
+[index.ts:83](https://github.com/entropyxyz/SDK/blob/1c426d7/src/index.ts#L83)
 
 ## Properties
 
 ### account
 
-• `Optional` **account**: [`EntropyAccount`](docs/interfaces/index.EntropyAccount.md)
+• `Optional` **account**: [`EntropyAccount`](./docs/interfaces/index.EntropyAccount.md)
 
 #### Defined in
 
-[index.ts:68](https://github.com/entropyxyz/SDK/blob/04833ee/src/index.ts#L68)
+[index.ts:70](https://github.com/entropyxyz/SDK/blob/1c426d7/src/index.ts#L70)
 
 ___
 
 ### isRegistered
 
-• **isRegistered**: (`address`: [`Address`](docs/modules/types.md#address)) => `Promise`\<`boolean`\>
+• **isRegistered**: (`address`: [`Address`](./docs/modules/types.md#address)) => `Promise`\<`boolean`\>
 
 #### Type declaration
 
@@ -89,7 +115,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `address` | [`Address`](docs/modules/types.md#address) |
+| `address` | [`Address`](./docs/modules/types.md#address) |
 
 ##### Returns
 
@@ -97,17 +123,7 @@ ___
 
 #### Defined in
 
-[index.ts:65](https://github.com/entropyxyz/SDK/blob/04833ee/src/index.ts#L65)
-
-___
-
-### programModPublicKey
-
-• `Optional` **programModPublicKey**: `string`
-
-#### Defined in
-
-[index.ts:63](https://github.com/entropyxyz/SDK/blob/04833ee/src/index.ts#L63)
+[index.ts:67](https://github.com/entropyxyz/SDK/blob/1c426d7/src/index.ts#L67)
 
 ___
 
@@ -117,7 +133,7 @@ ___
 
 #### Defined in
 
-[index.ts:66](https://github.com/entropyxyz/SDK/blob/04833ee/src/index.ts#L66)
+[index.ts:68](https://github.com/entropyxyz/SDK/blob/1c426d7/src/index.ts#L68)
 
 ___
 
@@ -129,7 +145,7 @@ A promise that resolves once chacha20poly1305 cryptoLib has been loaded
 
 #### Defined in
 
-[index.ts:61](https://github.com/entropyxyz/SDK/blob/04833ee/src/index.ts#L61)
+[index.ts:65](https://github.com/entropyxyz/SDK/blob/1c426d7/src/index.ts#L65)
 
 ___
 
@@ -139,17 +155,7 @@ ___
 
 #### Defined in
 
-[index.ts:64](https://github.com/entropyxyz/SDK/blob/04833ee/src/index.ts#L64)
-
-___
-
-### sigRequestPublicKey
-
-• `Optional` **sigRequestPublicKey**: `string`
-
-#### Defined in
-
-[index.ts:62](https://github.com/entropyxyz/SDK/blob/04833ee/src/index.ts#L62)
+[index.ts:66](https://github.com/entropyxyz/SDK/blob/1c426d7/src/index.ts#L66)
 
 ___
 
@@ -159,7 +165,7 @@ ___
 
 #### Defined in
 
-[index.ts:67](https://github.com/entropyxyz/SDK/blob/04833ee/src/index.ts#L67)
+[index.ts:69](https://github.com/entropyxyz/SDK/blob/1c426d7/src/index.ts#L69)
 
 ___
 
@@ -169,57 +175,9 @@ ___
 
 #### Defined in
 
-[index.ts:69](https://github.com/entropyxyz/SDK/blob/04833ee/src/index.ts#L69)
+[index.ts:71](https://github.com/entropyxyz/SDK/blob/1c426d7/src/index.ts#L71)
 
 ## Methods
-
-### #init
-
-▸ **#init**(`opts`): `Promise`\<`void`\>
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `opts` | [`EntropyOpts`](docs/interfaces/index.EntropyOpts.md) |
-
-#### Returns
-
-`Promise`\<`void`\>
-
-#### Defined in
-
-[index.ts:92](https://github.com/entropyxyz/SDK/blob/04833ee/src/index.ts#L92)
-
-___
-
-### #setReadOnlyStates
-
-▸ **#setReadOnlyStates**(): `void`
-
-#### Returns
-
-`void`
-
-#### Defined in
-
-[index.ts:143](https://github.com/entropyxyz/SDK/blob/04833ee/src/index.ts#L143)
-
-___
-
-### #setVerfiyingKeys
-
-▸ **#setVerfiyingKeys**(): `Promise`\<`void`\>
-
-#### Returns
-
-`Promise`\<`void`\>
-
-#### Defined in
-
-[index.ts:126](https://github.com/entropyxyz/SDK/blob/04833ee/src/index.ts#L126)
-
-___
 
 ### getVerifyingKey
 
@@ -231,7 +189,7 @@ Retrieves the verifying key associated with the given address's registration rec
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `address` | [`Address`](docs/modules/types.md#address) | The address for which the verifying key is needed. |
+| `address` | [`Address`](./docs/modules/types.md#address) | The address for which the verifying key is needed. |
 
 #### Returns
 
@@ -241,7 +199,7 @@ Retrieves the verifying key associated with the given address's registration rec
 
 #### Defined in
 
-[index.ts:212](https://github.com/entropyxyz/SDK/blob/04833ee/src/index.ts#L212)
+[index.ts:215](https://github.com/entropyxyz/SDK/blob/1c426d7/src/index.ts#L215)
 
 ___
 
@@ -255,7 +213,7 @@ Registers an address with Entropy using the provided parameters.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `params` | [`RegistrationParams`](docs/interfaces/registration.RegistrationParams.md) & \{ `account?`: [`EntropyAccount`](docs/interfaces/index.EntropyAccount.md)  } | The registration parameters. |
+| `params` | [`RegistrationParams`](./docs/interfaces/registration.RegistrationParams.md) & \{ `account?`: [`EntropyAccount`](./docs/interfaces/index.EntropyAccount.md)  } | The registration parameters. |
 
 #### Returns
 
@@ -273,7 +231,7 @@ A promise indicating the completion of the registration process.
 
 #### Defined in
 
-[index.ts:183](https://github.com/entropyxyz/SDK/blob/04833ee/src/index.ts#L183)
+[index.ts:186](https://github.com/entropyxyz/SDK/blob/1c426d7/src/index.ts#L186)
 
 ___
 
@@ -289,7 +247,7 @@ for signing. It returns the signature from the first validator after validation.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `params` | [`SigOps`](docs/interfaces/signing.SigOps.md) | The signature operation parameters. |
+| `params` | [`SigOps`](./docs/interfaces/signing.SigOps.md) | The signature operation parameters. |
 
 #### Returns
 
@@ -303,7 +261,7 @@ for signing. It returns the signature from the first validator after validation.
 
 #### Defined in
 
-[index.ts:256](https://github.com/entropyxyz/SDK/blob/04833ee/src/index.ts#L256)
+[index.ts:259](https://github.com/entropyxyz/SDK/blob/1c426d7/src/index.ts#L259)
 
 ___
 
@@ -323,7 +281,7 @@ transaction request hash, and if necessary, the `postSign` function of the adapt
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `params` | [`SigTxOps`](docs/interfaces/signing.SigTxOps.md) | The parameters for signing the transaction. |
+| `params` | [`SigTxOps`](./docs/interfaces/signing.SigTxOps.md) | The parameters for signing the transaction. |
 
 #### Returns
 
@@ -344,4 +302,4 @@ Will throw an error if the transaction type does not have a corresponding adapte
 
 #### Defined in
 
-[index.ts:237](https://github.com/entropyxyz/SDK/blob/04833ee/src/index.ts#L237)
+[index.ts:240](https://github.com/entropyxyz/SDK/blob/1c426d7/src/index.ts#L240)

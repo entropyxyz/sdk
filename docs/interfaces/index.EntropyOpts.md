@@ -22,7 +22,7 @@ account for wallet initialization.
 
 #### Defined in
 
-[index.ts:20](https://github.com/entropyxyz/SDK/blob/04833ee/src/index.ts#L20)
+[index.ts:20](https://github.com/entropyxyz/SDK/blob/1c426d7/src/index.ts#L20)
 
 ___
 
@@ -38,7 +38,7 @@ A collection of signing adapters.
 
 #### Defined in
 
-[index.ts:24](https://github.com/entropyxyz/SDK/blob/04833ee/src/index.ts#L24)
+[index.ts:24](https://github.com/entropyxyz/SDK/blob/1c426d7/src/index.ts#L24)
 
 ___
 
@@ -50,4 +50,4 @@ local or devnet endpoint for establishing a connection to validators
 
 #### Defined in
 
-[index.ts:22](https://github.com/entropyxyz/SDK/blob/04833ee/src/index.ts#L22)
+[index.ts:22](https://github.com/entropyxyz/SDK/blob/1c426d7/src/index.ts#L22)
