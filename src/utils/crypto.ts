@@ -22,7 +22,7 @@ loadCryptoLib()
 /**
  * Interface for the cryptographic library, detailing core functionality: encryption, decryption, and key management.
  *
- * @see {@link https://x25519-chacha20poly1305.vercel.app/x25519_chacha20poly1305/}
+ * @see {@link https://www.npmjs.com/package/@entropyxyz/entropy-protocol-nodejs}
  */
 
 export interface CryptoLib {

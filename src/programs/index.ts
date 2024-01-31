@@ -17,9 +17,9 @@ export interface ProgramData {
 export default class ProgramManager extends ExtrinsicBaseClass {
   /**
    * Creates an instance of ProgramManager.
-   * @param {ApiPromise} substrate - Substrate API object
-   * @param {Signer} programModKey - The signer object for the user interfacing with Entropy
-   * @param {Signer} programDeployKey - The signer object for the user interfacing with Entropy
+   * @param {ApiPromise} substrate - Substrate API object.
+   * @param {Signer} programModKey - The signer object for the user interfacing with Entropy.
+   * @param {Signer} programDeployKey - The signer object for the user interfacing with Entropy.
    * @remarks
    * The constructor initializes the Substrate api and the signer.
    * @alpha
@@ -69,20 +69,16 @@ export default class ProgramManager extends ExtrinsicBaseClass {
   }
 
   /**
-   * Sets or updates the program of a specified account on Entropy.
-   * This method allows the current signer or an authorized account to update the program associated with the signer's account or another specified account.
-   * @param {ArrayBuffer} program - The program to be set or updated, as an ArrayBuffer.
-   * @param {string} [programModKey] - Optional. An authorized account to modify the program, if different from the signer's account.
-   * @param {string} [sigReqAccount=this.signer.wallet.address] -The account for which the program will be set or updated. Defaults to the signer's account.
-   * @returns {Promise<void>} A promise that resolves when the transaction has been included in the block.
-   * @throws {Error} Throws an error if the account is unauthorized or if there's a problem setting the program.
+   * Updates the programs of a specified account.
+   * @param {ProgramData[]} newList - Array of new program data to set.
+   * @param {string} [sigReqAccount=this.signer.wallet.address] - The account for which the programs will be updated. Defaults to the signer's account.
+   * @param {string} [programModKey] - Optional. An authorized account to modify the programs, if different from the signer's account.
+   * @returns {Promise<void>} - A Promise that resolves when the programs are successfully updated.
+   * @throws {Error} - If the account is unauthorized or there's a problem updating the programs.
    * @remarks
-   * This method handles the conversion of a program from an ArrayBuffer to a hex string.
-   * It checks for authorization if the programModKey is provided, ensuring that only authorized accounts can update the bytecode.
-   * The transaction is created and sent to Entropy. This method then awaits the confirmation event 'ProgramUpdated' to ensure that the update was successful.
+   * This method replaces the existing programs of an account with a new set. It checks for authorization and sends a transaction to update the state.
    * @alpha
    */
-
 
   async set (
     newList: ProgramData[],
@@ -123,6 +119,17 @@ export default class ProgramManager extends ExtrinsicBaseClass {
     })
   }
 
+  /**
+   * Removes a specific program from an account.
+   * @param {string | Uint8Array} programHashToRemove - The hash of the program to remove.
+   * @param {string} [sigReqAccount=this.signer.wallet.address] - The account from which the program will be removed. Defaults to the signer's account.
+   * @param {string} [programModKey] - Optional. The authorized account to perform the removal, if different from the signer's account.
+   * @returns {Promise<void>} - A Promise resolving when the program is successfully removed.
+   * @remarks
+   * This method removes a specified program from an account's associated programs. It filters out the specified program and updates the state with the remaining programs.
+   * @alpha
+   */
+
   async remove (
     programHashToRemove: string,
     sigReqAccount = this.signer.wallet.address,
@@ -135,6 +142,18 @@ export default class ProgramManager extends ExtrinsicBaseClass {
     )
     await this.set(updatedPrograms, sigReqAccount, programModKey)
   }
+
+  /**
+   * Adds a new program for a specific account.
+   * @param {ProgramData} newProgram - The new program data to add.
+   * @param {string} [sigReqAccount=this.signer.wallet.address] - The account to add the program to. Defaults to the signer's account.
+   * @param {string} [programModKey] - Optional. The authorized account to modify the program, if different from the signer's account.
+   * @returns {Promise<void>} - A promise that resolves when the program is successfully added.
+   * @remarks
+   * This method fetches the current programs of an account, adds the new program, and updates the state with the new set of programs.
+   * It ensures the operation is performed by an authorized account.
+   * @alpha
+   */
 
   async add (
     newProgram: ProgramData,
