@@ -5,8 +5,8 @@ import ProgramDev from './dev'
 import { Signer } from '../types'
 
 export interface ProgramData {
-  pointer: string
-  config?: unknown
+  programPointer: string
+  programConfig?: unknown
 }
 
 /**
@@ -59,13 +59,12 @@ export default class ProgramManager extends ExtrinsicBaseClass {
     }
 
     const registeredInfo = registeredOption.toJSON()
-    console.log("registeredinfo", registeredInfo)
     // @ts-ignore: next line :{
     return (registeredInfo.programsData || []).map((program) => ({
       // pointer: program.pointer.toString(),
-      pointer: program.programPointer,
+      programPointer: program.programPointer,
       // double check on how we're passing config
-      config: program.programConfig,
+      programConfig: program.programConfig,
     }))
   }
 
@@ -109,13 +108,9 @@ export default class ProgramManager extends ExtrinsicBaseClass {
     }
 
     const newProgramInstances = newList.map((data) => ({
-      programPointer: data.pointer,
-      programConfig: data.config,
+      programPointer: data.programPointer,
+      programConfig: data.programConfig,
     }))
-
-
-    
-    console.log("NEW PROGRAM INSTANCE", newProgramInstances)
 
     const tx: SubmittableExtrinsic<'promise'> = this.substrate.tx.relayer.changeProgramInstance(
       sigReqAccount,
@@ -136,7 +131,7 @@ export default class ProgramManager extends ExtrinsicBaseClass {
     const currentPrograms = await this.get(sigReqAccount)
     // creates new array that contains all of the currentPrograms except programHashToRemove
     const updatedPrograms = currentPrograms.filter(
-      (program) => program.pointer !== programHashToRemove
+      (program) => program.programPointer !== programHashToRemove
     )
     await this.set(updatedPrograms, sigReqAccount, programModKey)
   }
