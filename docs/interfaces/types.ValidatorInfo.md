@@ -1,4 +1,4 @@
-[@entropyxyz/entropy-js](../README.md) / [Exports](../modules.md) / [types](../modules/types.md) / ValidatorInfo
+[@entropyxyz/SDK](../README.md) / [Exports](../modules.md) / [types](../modules/types.md) / ValidatorInfo
 
 # Interface: ValidatorInfo
 
@@ -20,7 +20,7 @@
 
 #### Defined in
 
-[types/index.ts:70](https://github.com/entropyxyz/entropy-js/blob/368842b/src/types/index.ts#L70)
+[types/index.ts:27](https://github.com/entropyxyz/SDK/blob/04833ee/src/types/index.ts#L27)
 
 ___
 
@@ -30,7 +30,7 @@ ___
 
 #### Defined in
 
-[types/index.ts:71](https://github.com/entropyxyz/entropy-js/blob/368842b/src/types/index.ts#L71)
+[types/index.ts:28](https://github.com/entropyxyz/SDK/blob/04833ee/src/types/index.ts#L28)
 
 ___
 
@@ -40,4 +40,4 @@ ___
 
 #### Defined in
 
-[types/index.ts:69](https://github.com/entropyxyz/entropy-js/blob/368842b/src/types/index.ts#L69)
+[types/index.ts:26](https://github.com/entropyxyz/SDK/blob/04833ee/src/types/index.ts#L26)

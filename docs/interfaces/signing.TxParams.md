@@ -1,4 +1,4 @@
-[@entropyxyz/entropy-js](../README.md) / [Exports](../modules.md) / [signing](../modules/signing.md) / TxParams
+[@entropyxyz/SDK](../README.md) / [Exports](../modules.md) / [signing](../modules/signing.md) / TxParams
 
 # Interface: TxParams
 

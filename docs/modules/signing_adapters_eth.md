@@ -1,4 +1,4 @@
-[@entropyxyz/entropy-js](../README.md) / [Exports](../modules.md) / signing/adapters/eth
+[@entropyxyz/SDK](../README.md) / [Exports](../modules.md) / signing/adapters/eth
 
 # Module: signing/adapters/eth
 
@@ -7,6 +7,7 @@
 ### Variables
 
 - [arch](signing_adapters_eth.md#arch)
+- [hash](signing_adapters_eth.md#hash)
 - [type](signing_adapters_eth.md#type)
 
 ### Functions
@@ -23,7 +24,17 @@
 
 #### Defined in
 
-[signing/adapters/eth.ts:16](https://github.com/entropyxyz/entropy-js/blob/368842b/src/signing/adapters/eth.ts#L16)
+[signing/adapters/eth.ts:16](https://github.com/entropyxyz/SDK/blob/04833ee/src/signing/adapters/eth.ts#L16)
+
+___
+
+### hash
+
+• `Const` **hash**: ``"keccak"``
+
+#### Defined in
+
+[signing/adapters/eth.ts:17](https://github.com/entropyxyz/SDK/blob/04833ee/src/signing/adapters/eth.ts#L17)
 
 ___
 
@@ -33,7 +44,7 @@ ___
 
 #### Defined in
 
-[signing/adapters/eth.ts:15](https://github.com/entropyxyz/entropy-js/blob/368842b/src/signing/adapters/eth.ts#L15)
+[signing/adapters/eth.ts:15](https://github.com/entropyxyz/SDK/blob/04833ee/src/signing/adapters/eth.ts#L15)
 
 ## Functions
 
@@ -53,7 +64,7 @@ ___
 
 #### Defined in
 
-[signing/adapters/eth.ts:11](https://github.com/entropyxyz/entropy-js/blob/368842b/src/signing/adapters/eth.ts#L11)
+[signing/adapters/eth.ts:11](https://github.com/entropyxyz/SDK/blob/04833ee/src/signing/adapters/eth.ts#L11)
 
 ___
 
@@ -73,7 +84,7 @@ ___
 
 #### Defined in
 
-[signing/adapters/eth.ts:5](https://github.com/entropyxyz/entropy-js/blob/368842b/src/signing/adapters/eth.ts#L5)
+[signing/adapters/eth.ts:5](https://github.com/entropyxyz/SDK/blob/04833ee/src/signing/adapters/eth.ts#L5)
 
 ___
 
@@ -93,4 +104,4 @@ ___
 
 #### Defined in
 
-[signing/adapters/eth.ts:18](https://github.com/entropyxyz/entropy-js/blob/368842b/src/signing/adapters/eth.ts#L18)
+[signing/adapters/eth.ts:19](https://github.com/entropyxyz/SDK/blob/04833ee/src/signing/adapters/eth.ts#L19)

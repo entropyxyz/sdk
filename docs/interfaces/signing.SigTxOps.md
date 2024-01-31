@@ -1,4 +1,4 @@
-[@entropyxyz/entropy-js](../README.md) / [Exports](../modules.md) / [signing](../modules/signing.md) / SigTxOps
+[@entropyxyz/SDK](../README.md) / [Exports](../modules.md) / [signing](../modules/signing.md) / SigTxOps
 
 # Interface: SigTxOps
 
@@ -19,7 +19,7 @@
 
 #### Defined in
 
-[signing/index.ts:22](https://github.com/entropyxyz/entropy-js/blob/368842b/src/signing/index.ts#L22)
+[signing/index.ts:22](https://github.com/entropyxyz/SDK/blob/04833ee/src/signing/index.ts#L22)
 
 ___
 
@@ -29,4 +29,4 @@ ___
 
 #### Defined in
 
-[signing/index.ts:23](https://github.com/entropyxyz/entropy-js/blob/368842b/src/signing/index.ts#L23)
+[signing/index.ts:23](https://github.com/entropyxyz/SDK/blob/04833ee/src/signing/index.ts#L23)

@@ -1,4 +1,4 @@
-[@entropyxyz/entropy-js](../README.md) / [Exports](../modules.md) / keys
+[@entropyxyz/SDK](../README.md) / [Exports](../modules.md) / keys
 
 # Module: keys
 
@@ -14,25 +14,25 @@
 
 ### getWallet
 
-▸ **getWallet**(`pair`): `Promise`\<\{ `pair`: `Keypair` ; `wallet`: `KeyringPair`  }\>
+▸ **getWallet**(`input`): `Promise`\<[`Signer`](../interfaces/types.Signer.md)\>
 
 Retrieves a wallet from a `Signer` object or a seed string.
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `pair` | `string` \| [`Signer`](../interfaces/types.Signer.md) | A `Signer` object or a seed string. |
+| Name | Type |
+| :------ | :------ |
+| `input` | `string` |
 
 #### Returns
 
-`Promise`\<\{ `pair`: `Keypair` ; `wallet`: `KeyringPair`  }\>
+`Promise`\<[`Signer`](../interfaces/types.Signer.md)\>
 
 A Promise resolving to an object containing the wallet and its associated `Signer`, or undefined if the input is invalid.
 
 #### Defined in
 
-[keys/index.ts:65](https://github.com/entropyxyz/entropy-js/blob/368842b/src/keys/index.ts#L65)
+[keys/index.ts:63](https://github.com/entropyxyz/SDK/blob/04833ee/src/keys/index.ts#L63)
 
 ___
 
@@ -56,7 +56,7 @@ A boolean indicating whether the provided object is a valid `Signer` pair.
 
 #### Defined in
 
-[keys/index.ts:22](https://github.com/entropyxyz/entropy-js/blob/368842b/src/keys/index.ts#L22)
+[keys/index.ts:20](https://github.com/entropyxyz/SDK/blob/04833ee/src/keys/index.ts#L20)
 
 ___
 
@@ -81,4 +81,4 @@ A Promise resolving to a `Signer` object containing the generated or derived wal
 
 #### Defined in
 
-[keys/index.ts:75](https://github.com/entropyxyz/entropy-js/blob/368842b/src/keys/index.ts#L75)
+[keys/index.ts:73](https://github.com/entropyxyz/SDK/blob/04833ee/src/keys/index.ts#L73)

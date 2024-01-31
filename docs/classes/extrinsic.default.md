@@ -1,4 +1,4 @@
-[@entropyxyz/entropy-js](../README.md) / [Exports](../modules.md) / [extrinsic](../modules/extrinsic.md) / default
+[@entropyxyz/SDK](../README.md) / [Exports](../modules.md) / [extrinsic](../modules/extrinsic.md) / default
 
 # Class: default
 
@@ -10,6 +10,8 @@ Allows the user to send extrinsics and automatically handles errors, events, and
 ## Hierarchy
 
 - **`default`**
+
+  ↳ [`default`](programs_dev.default.md)
 
   ↳ [`default`](programs.default.md)
 
@@ -53,7 +55,7 @@ Initializes a new instance of the `ExtrinsicBaseClass`.
 
 #### Defined in
 
-[extrinsic/index.ts:30](https://github.com/entropyxyz/entropy-js/blob/368842b/src/extrinsic/index.ts#L30)
+[extrinsic/index.ts:30](https://github.com/entropyxyz/SDK/blob/04833ee/src/extrinsic/index.ts#L30)
 
 ## Properties
 
@@ -63,7 +65,7 @@ Initializes a new instance of the `ExtrinsicBaseClass`.
 
 #### Defined in
 
-[extrinsic/index.ts:21](https://github.com/entropyxyz/entropy-js/blob/368842b/src/extrinsic/index.ts#L21)
+[extrinsic/index.ts:21](https://github.com/entropyxyz/SDK/blob/04833ee/src/extrinsic/index.ts#L21)
 
 ___
 
@@ -73,7 +75,7 @@ ___
 
 #### Defined in
 
-[extrinsic/index.ts:20](https://github.com/entropyxyz/entropy-js/blob/368842b/src/extrinsic/index.ts#L20)
+[extrinsic/index.ts:20](https://github.com/entropyxyz/SDK/blob/04833ee/src/extrinsic/index.ts#L20)
 
 ## Methods
 
@@ -109,7 +111,7 @@ If the dry run fails or there's insufficient electricity (zaps).
 
 #### Defined in
 
-[extrinsic/index.ts:99](https://github.com/entropyxyz/entropy-js/blob/368842b/src/extrinsic/index.ts#L99)
+[extrinsic/index.ts:99](https://github.com/entropyxyz/SDK/blob/04833ee/src/extrinsic/index.ts#L99)
 
 ___
 
@@ -124,7 +126,7 @@ Sends an extrinsic and waits for a specific event or rejects with an error.
 | Name | Type | Default value | Description |
 | :------ | :------ | :------ | :------ |
 | `call` | `SubmittableExtrinsic`\<``"promise"``, `ISubmittableResult`\> | `undefined` | The extrinsic call to send. |
-| `freeTx` | `boolean` | `true` | Optional. Flag indicating if the transaction should be free (default: true). |
+| `freeTx` | `boolean` | `false` | Optional. Flag indicating if the transaction should be free (default: false). |
 | `filter` | [`EventFilter`](../interfaces/types.EventFilter.md) | `undefined` | An event filter to wait for. |
 
 #### Returns
@@ -139,4 +141,4 @@ Will reject the promise if a dispatch error occurs or the filtered event is not 
 
 #### Defined in
 
-[extrinsic/index.ts:45](https://github.com/entropyxyz/entropy-js/blob/368842b/src/extrinsic/index.ts#L45)
+[extrinsic/index.ts:45](https://github.com/entropyxyz/SDK/blob/04833ee/src/extrinsic/index.ts#L45)

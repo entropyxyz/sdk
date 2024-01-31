@@ -1,13 +1,10 @@
-[@entropyxyz/SDK](../README.md) / [Exports](../modules.md) / [registration](../modules/registration.md) / default
+[@entropyxyz/SDK](../README.md) / [Exports](../modules.md) / [programs/dev](../modules/programs_dev.md) / default
 
 # Class: default
 
-[registration](../modules/registration.md).default
+[programs/dev](../modules/programs_dev.md).default
 
-The `RegistrationManager` class provides functionality for user registration using the Polkadot/Substrate API.
-It extends the `ExtrinsicBaseClass` to handle extrinsic submissions and utility methods.
-
-This class includes methods for registering a user, checking if a user is already registered, and listening for registration events.
+Class to handle program-related extrinsic functions.
 
 ## Hierarchy
 
@@ -19,27 +16,29 @@ This class includes methods for registering a user, checking if a user is alread
 
 ### Constructors
 
-- [constructor](registration.default.md#constructor)
+- [constructor](programs_dev.default.md#constructor)
 
 ### Properties
 
-- [signer](registration.default.md#signer)
-- [substrate](registration.default.md#substrate)
+- [signer](programs_dev.default.md#signer)
+- [substrate](programs_dev.default.md#substrate)
 
 ### Methods
 
-- [checkRegistrationStatus](registration.default.md#checkregistrationstatus)
-- [handleFreeTx](registration.default.md#handlefreetx)
-- [register](registration.default.md#register)
-- [sendAndWaitFor](registration.default.md#sendandwaitfor)
+- [#formatProgramInfo](programs_dev.default.md##formatprograminfo)
+- [deploy](programs_dev.default.md#deploy)
+- [get](programs_dev.default.md#get)
+- [handleFreeTx](programs_dev.default.md#handlefreetx)
+- [remove](programs_dev.default.md#remove)
+- [sendAndWaitFor](programs_dev.default.md#sendandwaitfor)
 
 ## Constructors
 
 ### constructor
 
-• **new default**(`«destructured»`): [`default`](registration.default.md)
+• **new default**(`«destructured»`): [`default`](programs_dev.default.md)
 
-Constructs a new instance of the `RegistrationManager` class.
+Constructs a ProgramDev instance.
 
 #### Parameters
 
@@ -51,7 +50,7 @@ Constructs a new instance of the `RegistrationManager` class.
 
 #### Returns
 
-[`default`](registration.default.md)
+[`default`](programs_dev.default.md)
 
 #### Overrides
 
@@ -59,7 +58,7 @@ Constructs a new instance of the `RegistrationManager` class.
 
 #### Defined in
 
-[registration/index.ts:37](https://github.com/entropyxyz/SDK/blob/04833ee/src/registration/index.ts#L37)
+[programs/dev.ts:38](https://github.com/entropyxyz/SDK/blob/04833ee/src/programs/dev.ts#L38)
 
 ## Properties
 
@@ -91,27 +90,76 @@ ___
 
 ## Methods
 
-### checkRegistrationStatus
+### #formatProgramInfo
 
-▸ **checkRegistrationStatus**(`address`): `Promise`\<`boolean`\>
+▸ **#formatProgramInfo**(`programInfo`): [`ProgramInfo`](../interfaces/programs_dev.ProgramInfo.md)
 
-Verifies the registration status of an address.
+Formats program information.
 
 #### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `address` | [`Address`](../modules/types.md#address) | The address for which registration status needs to be checked. |
+| `programInfo` | `any` | The program information in JSON format. |
 
 #### Returns
 
-`Promise`\<`boolean`\>
+[`ProgramInfo`](../interfaces/programs_dev.ProgramInfo.md)
 
-A promise which resolves to `true` if the address is registered, otherwise `false`.
+- The formatted program information.
 
 #### Defined in
 
-[registration/index.ts:144](https://github.com/entropyxyz/SDK/blob/04833ee/src/registration/index.ts#L144)
+[programs/dev.ts:122](https://github.com/entropyxyz/SDK/blob/04833ee/src/programs/dev.ts#L122)
+
+___
+
+### deploy
+
+▸ **deploy**(`program`, `configurationInterface?`): `Promise`\<`string`\>
+
+Deploys a new program.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `program` | `ArrayBuffer` | The program to deploy. |
+| `configurationInterface?` | `unknown` | Optional. The configuration interface of the program. |
+
+#### Returns
+
+`Promise`\<`string`\>
+
+- A Promise resolving to the hash of the deployed program.
+
+#### Defined in
+
+[programs/dev.ts:72](https://github.com/entropyxyz/SDK/blob/04833ee/src/programs/dev.ts#L72)
+
+___
+
+### get
+
+▸ **get**(`pointer`): `Promise`\<[`ProgramInfo`](../interfaces/programs_dev.ProgramInfo.md)\>
+
+Retrieves program information using a program pointer.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `pointer` | `string` | The program pointer. |
+
+#### Returns
+
+`Promise`\<[`ProgramInfo`](../interfaces/programs_dev.ProgramInfo.md)\>
+
+- A Promise resolving to the program information.
+
+#### Defined in
+
+[programs/dev.ts:55](https://github.com/entropyxyz/SDK/blob/04833ee/src/programs/dev.ts#L55)
 
 ___
 
@@ -155,31 +203,27 @@ If the dry run fails or there's insufficient electricity (zaps).
 
 ___
 
-### register
+### remove
 
-▸ **register**(`«destructured»`): `Promise`\<[`RegisteredInfo`](../interfaces/registration.RegisteredInfo.md)\>
+▸ **remove**(`programHash`): `Promise`\<`void`\>
 
-Registers a user with the given parameters.
+Removes a program.
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `«destructured»` | [`RegistrationParams`](../interfaces/registration.RegistrationParams.md) |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `programHash` | `string` \| `Uint8Array` | The hash of the program to remove. |
 
 #### Returns
 
-`Promise`\<[`RegisteredInfo`](../interfaces/registration.RegisteredInfo.md)\>
+`Promise`\<`void`\>
 
-A promise that resolves when the user is successfully registered.
-
-**`Throws`**
-
-If the user is already registered.
+- A Promise resolving when the program is removed.
 
 #### Defined in
 
-[registration/index.ts:59](https://github.com/entropyxyz/SDK/blob/04833ee/src/registration/index.ts#L59)
+[programs/dev.ts:101](https://github.com/entropyxyz/SDK/blob/04833ee/src/programs/dev.ts#L101)
 
 ___
 

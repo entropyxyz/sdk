@@ -1,4 +1,4 @@
-[@entropyxyz/entropy-js](../README.md) / [Exports](../modules.md) / [types](../modules/types.md) / Arch
+[@entropyxyz/SDK](../README.md) / [Exports](../modules.md) / [types](../modules/types.md) / Arch
 
 # Enumeration: Arch
 
@@ -19,7 +19,7 @@
 
 #### Defined in
 
-[types/index.ts:87](https://github.com/entropyxyz/entropy-js/blob/368842b/src/types/index.ts#L87)
+[types/index.ts:42](https://github.com/entropyxyz/SDK/blob/04833ee/src/types/index.ts#L42)
 
 ___
 
@@ -29,4 +29,4 @@ ___
 
 #### Defined in
 
-[types/index.ts:85](https://github.com/entropyxyz/entropy-js/blob/368842b/src/types/index.ts#L85)
+[types/index.ts:40](https://github.com/entropyxyz/SDK/blob/04833ee/src/types/index.ts#L40)

@@ -1,4 +1,4 @@
-[@entropyxyz/entropy-js](../README.md) / [Exports](../modules.md) / [registration](../modules/registration.md) / RegisteredInfo
+[@entropyxyz/SDK](../README.md) / [Exports](../modules.md) / [registration](../modules/registration.md) / RegisteredInfo
 
 # Interface: RegisteredInfo
 
@@ -19,7 +19,7 @@
 
 #### Defined in
 
-[registration/index.ts:13](https://github.com/entropyxyz/entropy-js/blob/368842b/src/registration/index.ts#L13)
+[registration/index.ts:14](https://github.com/entropyxyz/SDK/blob/04833ee/src/registration/index.ts#L14)
 
 ___
 
@@ -29,4 +29,4 @@ ___
 
 #### Defined in
 
-[registration/index.ts:14](https://github.com/entropyxyz/entropy-js/blob/368842b/src/registration/index.ts#L14)
+[registration/index.ts:15](https://github.com/entropyxyz/SDK/blob/04833ee/src/registration/index.ts#L15)

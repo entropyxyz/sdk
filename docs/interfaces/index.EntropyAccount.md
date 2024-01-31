@@ -1,4 +1,4 @@
-[@entropyxyz/entropy-js](../README.md) / [Exports](../modules.md) / [index](../modules/index.md) / EntropyAccount
+[@entropyxyz/SDK](../README.md) / [Exports](../modules.md) / [index](../modules/index.md) / EntropyAccount
 
 # Interface: EntropyAccount
 
@@ -8,11 +8,22 @@
 
 ### Properties
 
+- [programDeployKey](index.EntropyAccount.md#programdeploykey)
 - [programModKey](index.EntropyAccount.md#programmodkey)
 - [sigRequestKey](index.EntropyAccount.md#sigrequestkey)
 - [verifyingKey](index.EntropyAccount.md#verifyingkey)
 
 ## Properties
+
+### programDeployKey
+
+• `Optional` **programDeployKey**: [`Signer`](types.Signer.md)
+
+#### Defined in
+
+[index.ts:14](https://github.com/entropyxyz/SDK/blob/04833ee/src/index.ts#L14)
+
+___
 
 ### programModKey
 
@@ -20,7 +31,7 @@
 
 #### Defined in
 
-[index.ts:13](https://github.com/entropyxyz/entropy-js/blob/368842b/src/index.ts#L13)
+[index.ts:13](https://github.com/entropyxyz/SDK/blob/04833ee/src/index.ts#L13)
 
 ___
 
@@ -30,7 +41,7 @@ ___
 
 #### Defined in
 
-[index.ts:12](https://github.com/entropyxyz/entropy-js/blob/368842b/src/index.ts#L12)
+[index.ts:12](https://github.com/entropyxyz/SDK/blob/04833ee/src/index.ts#L12)
 
 ___
 
@@ -40,4 +51,4 @@ ___
 
 #### Defined in
 
-[index.ts:14](https://github.com/entropyxyz/entropy-js/blob/368842b/src/index.ts#L14)
+[index.ts:15](https://github.com/entropyxyz/SDK/blob/04833ee/src/index.ts#L15)

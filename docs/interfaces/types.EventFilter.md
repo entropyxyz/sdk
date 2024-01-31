@@ -1,4 +1,4 @@
-[@entropyxyz/entropy-js](../README.md) / [Exports](../modules.md) / [types](../modules/types.md) / EventFilter
+[@entropyxyz/SDK](../README.md) / [Exports](../modules.md) / [types](../modules/types.md) / EventFilter
 
 # Interface: EventFilter
 
@@ -19,7 +19,7 @@
 
 #### Defined in
 
-[types/index.ts:80](https://github.com/entropyxyz/entropy-js/blob/368842b/src/types/index.ts#L80)
+[types/index.ts:35](https://github.com/entropyxyz/SDK/blob/04833ee/src/types/index.ts#L35)
 
 ___
 
@@ -29,4 +29,4 @@ ___
 
 #### Defined in
 
-[types/index.ts:79](https://github.com/entropyxyz/entropy-js/blob/368842b/src/types/index.ts#L79)
+[types/index.ts:34](https://github.com/entropyxyz/SDK/blob/04833ee/src/types/index.ts#L34)

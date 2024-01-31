@@ -1,4 +1,4 @@
-[@entropyxyz/entropy-js](../README.md) / [Exports](../modules.md) / [signing/adapters/types](../modules/signing_adapters_types.md) / OptAdapter
+[@entropyxyz/SDK](../README.md) / [Exports](../modules.md) / [signing/adapters/types](../modules/signing_adapters_types.md) / OptAdapter
 
 # Interface: OptAdapter
 
@@ -9,6 +9,7 @@
 ### Properties
 
 - [arch](signing_adapters_types.OptAdapter.md#arch)
+- [hash](signing_adapters_types.OptAdapter.md#hash)
 - [postSign](signing_adapters_types.OptAdapter.md#postsign)
 - [preSign](signing_adapters_types.OptAdapter.md#presign)
 - [type](signing_adapters_types.OptAdapter.md#type)
@@ -21,7 +22,17 @@
 
 #### Defined in
 
-[signing/adapters/types.ts:12](https://github.com/entropyxyz/entropy-js/blob/368842b/src/signing/adapters/types.ts#L12)
+[signing/adapters/types.ts:13](https://github.com/entropyxyz/SDK/blob/04833ee/src/signing/adapters/types.ts#L13)
+
+___
+
+### hash
+
+• `Optional` **hash**: `string`
+
+#### Defined in
+
+[signing/adapters/types.ts:14](https://github.com/entropyxyz/SDK/blob/04833ee/src/signing/adapters/types.ts#L14)
 
 ___
 
@@ -45,7 +56,7 @@ ___
 
 #### Defined in
 
-[signing/adapters/types.ts:14](https://github.com/entropyxyz/entropy-js/blob/368842b/src/signing/adapters/types.ts#L14)
+[signing/adapters/types.ts:16](https://github.com/entropyxyz/SDK/blob/04833ee/src/signing/adapters/types.ts#L16)
 
 ___
 
@@ -69,7 +80,7 @@ ___
 
 #### Defined in
 
-[signing/adapters/types.ts:13](https://github.com/entropyxyz/entropy-js/blob/368842b/src/signing/adapters/types.ts#L13)
+[signing/adapters/types.ts:15](https://github.com/entropyxyz/SDK/blob/04833ee/src/signing/adapters/types.ts#L15)
 
 ___
 
@@ -79,4 +90,4 @@ ___
 
 #### Defined in
 
-[signing/adapters/types.ts:11](https://github.com/entropyxyz/entropy-js/blob/368842b/src/signing/adapters/types.ts#L11)
+[signing/adapters/types.ts:12](https://github.com/entropyxyz/SDK/blob/04833ee/src/signing/adapters/types.ts#L12)

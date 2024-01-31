@@ -1,4 +1,4 @@
-[@entropyxyz/entropy-js](../README.md) / [Exports](../modules.md) / utils/crypto
+[@entropyxyz/SDK](../README.md) / [Exports](../modules.md) / utils/crypto
 
 # Module: utils/crypto
 
@@ -25,7 +25,7 @@
 
 #### Defined in
 
-[utils/crypto.ts:57](https://github.com/entropyxyz/entropy-js/blob/368842b/src/utils/crypto.ts#L57)
+[utils/crypto.ts:57](https://github.com/entropyxyz/SDK/blob/04833ee/src/utils/crypto.ts#L57)
 
 ___
 
@@ -35,7 +35,7 @@ ___
 
 #### Defined in
 
-[utils/crypto.ts:53](https://github.com/entropyxyz/entropy-js/blob/368842b/src/utils/crypto.ts#L53)
+[utils/crypto.ts:53](https://github.com/entropyxyz/SDK/blob/04833ee/src/utils/crypto.ts#L53)
 
 ## Functions
 
@@ -53,4 +53,4 @@ The imported crypto library.
 
 #### Defined in
 
-[utils/crypto.ts:98](https://github.com/entropyxyz/entropy-js/blob/368842b/src/utils/crypto.ts#L98)
+[utils/crypto.ts:101](https://github.com/entropyxyz/SDK/blob/04833ee/src/utils/crypto.ts#L101)
