@@ -1,7 +1,7 @@
 {
   "name": "@entropyxyz/entropy-js",
   "version": "0.1.2",
-  "license": "GPL v3",
+  "license": "ISC",
   "description": "JS SDK for entropy blockchain ",
   "main": "dist/index.js",
   "files": [
@@ -44,20 +44,16 @@
     "@entropyxyz:entropy-js": "https://npm.pkg.github.com"
   },
   "author": "Entropy",
-  "license": "ISC",
   "bugs": {
     "url": "https://github.com/entropyxyz/entropy-js/issues"
   },
   "homepage": "https://github.com/entropyxyz/entropy-js#readme",
   "devDependencies": {
-    "@babel/preset-typescript": "^7.21.0",
-    "@changesets/cli": "^2.26.0",
     "@polkadot/typegen": "^10.11.1",
-    "@tsconfig/node20": "^1.0.1",
     "@types/jest": "^29.4.0",
-    "@types/mocha": "^10.0.0",
     "@typescript-eslint/eslint-plugin": "^5.43.0",
     "@typescript-eslint/parser": "^5.43.0",
+    "depcheck": "^1.4.7",
     "eslint": "^8.27.0",
     "jest": "^29.4.3",
     "prettier": "2.2.1",
@@ -72,11 +68,7 @@
   "dependencies": {
     "@entropyxyz/entropy-protocol-nodejs": "^0.1.0",
     "@entropyxyz/entropy-protocol-web": "^0.1.0",
-    "@ethereumjs/rlp": "^5.0.1",
-    "@ethereumjs/tx": "^5.1.0",
-    "@ethereumjs/util": "^9.0.1",
     "@polkadot/api": "^10.11.1",
-    "@polkadot/typegen": "^10.11.1",
     "@types/node": "^20.10.3",
     "ethereum-cryptography": "^2.1.2",
     "ethereumjs-tx": "^2.1.2"
