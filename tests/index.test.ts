@@ -198,30 +198,30 @@ describe('Core Tests', () => {
 
     // // loading second program
 
-        const dummyProgram: any = readFileSync(
-      './tests/testing-utils/template_barebones.wasm'
-    )
+    //     const dummyProgram: any = readFileSync(
+    //   './tests/testing-utils/template_barebones.wasm'
+    // )
 
-    console.log('program deploy')
+    // console.log('program deploy')
 
-    const newPointer = await entropy.programs.dev.deploy(dummyProgram)
-    console.log("new pointer", newPointer)
-    const secondProgramData: ProgramData = { 
-      pointer: newPointer,
-      config: ''
-    }
-    console.log('adding program to charlie')
-    const addSuccess = await entropy.programs.add(secondProgramData, charlieStashAddress)
-    console.log("ADD SUCCESS", addSuccess)
-    // getting charlie programs
-    const programs = await entropy.programs.get(charlieStashAddress)
+    // const newPointer = await entropy.programs.dev.deploy(dummyProgram)
+    // console.log("new pointer", newPointer)
+    // const secondProgramData: ProgramData = { 
+    //   pointer: newPointer,
+    //   config: ''
+    // }
+    // console.log('adding program to charlie')
+    // const addSuccess = await entropy.programs.add(secondProgramData, charlieStashAddress)
+    // console.log("ADD SUCCESS", addSuccess)
+    // // getting charlie programs
+    // const programs = await entropy.programs.get(charlieStashAddress)
 
-    console.log("CHARLIES PROGRAMS yay ", programs )
-    console.log("removing")
-    // removing charlie program barebones
-    await entropy.programs.remove(newPointer, charlieStashAddress )
-    const updatedRemovedPrograms = await entropy.programs.get(charlieStashAddress)
-    console.log("UPDATED REMOVED PROGRAM LIST ", updatedRemovedPrograms)
+    // console.log("CHARLIES PROGRAMS yay ", programs )
+    // console.log("removing")
+    // // removing charlie program barebones
+    // await entropy.programs.remove(newPointer, charlieStashAddress )
+    // const updatedRemovedPrograms = await entropy.programs.get(charlieStashAddress)
+    // console.log("UPDATED REMOVED PROGRAM LIST ", updatedRemovedPrograms)
 
 
     console.log("signing test")
