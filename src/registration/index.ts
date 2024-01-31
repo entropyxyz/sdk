@@ -23,19 +23,17 @@ export type KeyVisibilityInfo =
 /**
  * The `RegistrationManager` class provides functionality for user registration using the Polkadot/Substrate API.
  * It extends the `ExtrinsicBaseClass` to handle extrinsic submissions and utility methods.
- *
- * Includes registering a user, checking if a user is already registered, and listening for registration events.
- *
+ * 
+ * This class includes methods for registering a user, checking if a user is already registered, and listening for registration events.
  */
 
 export default class RegistrationManager extends ExtrinsicBaseClass {
   /**
    * Constructs a new instance of the `RegistrationManager` class.
    *
-   * @param substrate - The Polkadot/Substrate API instance.
-   * @param signer - The signer used for signing transactions.
+   * @param {ApiPromise} substrate - The Polkadot/Substrate API instance.
+   * @param {Signer} signer - The signer used for signing transactions.
    */
-
   constructor ({
     substrate,
     signer,
@@ -49,7 +47,7 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
   /**
    * Registers a user with the given parameters.
    *
-   * @param freeTx - Optional. Indicates if the transaction should be free (default: true).
+   * @param freeTx - Optional. Indicates if the transaction should be free (default: false).
    * @param initialPrograms - Optional. Initial program associated with the user.
    * @param keyVisibility - Key visibility level ('Public', 'Permissioned', 'Private'). Defaults to 'Permissioned'.
    * @param programModAccount - Account authorized to modify programs on behalf of the user.
@@ -69,6 +67,16 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
     // this is sloppy
     // TODO: store multiple signers via address. and respond accordingly
     // however it should be handled in extrinsic class and not here
+
+
+    /**
+   * Verifies the registration status of an address.
+   *
+   * @param {Address} address - The address for which registration status needs to be checked.
+   * @returns {Promise<boolean>} A promise which resolves to `true` if the address is registered, otherwise `false`.
+   * @remarks
+   * This method queries Entropy to determine if a given address is registered.
+   */
 
     const isCurrentlyRegistered = await this.checkRegistrationStatus(
       this.signer.wallet.address

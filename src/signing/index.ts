@@ -37,12 +37,11 @@ export interface UserSignatureRequest {
   timestamp: { secs_since_epoch: number; nanos_since_epoch: number }
   hash: string
 }
-
 /**
  * `SignatureRequestManager` facilitates signature requests using Polkadot/Substrate API.
  * This manager handles transaction signing using pre-defined adapters and cryptographic utilities.
- *
  */
+
 export default class SignatureRequestManager {
   adapters: { [key: string | number]: Adapter }
   crypto: CryptoLib
@@ -51,11 +50,12 @@ export default class SignatureRequestManager {
 
   /**
    * Initializes a new instance of `SignatureRequestManager`.
-   *
-   * @param signer - The signer for authorizing transactions.
-   * @param substrate - Instance of the Polkadot/Substrate API.
-   * @param adapters - Set of adapters for handling different types of transactions.
-   * @param crypto - Instance of CryptoLib for cryptographic operations.
+   * 
+   * @param {Config} config - Configuration settings for the manager.
+   * @param {Signer} config.signer - The signer for authorizing transactions.
+   * @param {ApiPromise} config.substrate - Instance of the Polkadot/Substrate API.
+   * @param {Adapter[]} config.adapters - Set of adapters for handling different types of transactions.
+   * @param {CryptoLib} config.crypto - Instance of CryptoLib for cryptographic operations.
    */
 
   constructor ({ signer, substrate, adapters, crypto }: Config) {
@@ -70,11 +70,12 @@ export default class SignatureRequestManager {
 
   /**
    * Signs a transaction using the appropriate adapter.
-   *
-   * @param txParams - The parameters of the transaction to be signed.
-   * @param type - The type of transaction.
-   * @returns A promise resolving with the signed transaction.
-   * @throws Error if an adapter for the transaction type is not found.
+   * 
+   * @param {SigTxOps} sigTxOps - Parameters for the transaction signature operation.
+   * @param {TxParams} sigTxOps.txParams - The parameters of the transaction to be signed.
+   * @param {string} [sigTxOps.type] - The type of transaction.
+   * @returns {Promise<unknown>} A promise resolving with the signed transaction.
+   * @throws {Error} if an adapter for the transaction type is not found, or if the adapter lacks a preSign function.
    */
 
   async signTransaction ({ txParams, type }: SigTxOps): Promise<unknown> {
@@ -99,9 +100,13 @@ export default class SignatureRequestManager {
 
   /**
    * Signs a given signature request hash.
-   *
-   * @param sigRequestHash - The hash of the signature request to be signed.
-   * @returns A promise resolving to the signed hash as a Uint8Array.
+   * 
+   * @param {SigOps} sigOps - Parameters for the signature operation.
+   * @param {string} sigOps.sigRequestHash - The hash of the signature request to be signed.
+   * @param {string} [sigOps.hash] - The hash type.
+   * @param {string} [sigOps.type] - The type of signature operation.
+   * @param {unknown[]} [sigOps.auxilaryData] - Additional data for the signature operation.
+   * @returns {Promise<Uint8Array>} A promise resolving to the signed hash as a Uint8Array.
    */
 
   async sign ({ sigRequestHash, hash, auxilaryData }: SigOps): Promise<Uint8Array> {
@@ -139,10 +144,13 @@ export default class SignatureRequestManager {
 
   /**
    * Generates transaction requests formatted for validators.
-   *
-   * @param strippedsigRequestHash - Stripped signature request hash.
-   * @param validatorsInfo - Information about the validators.
-   * @returns A promise resolving to an array of encrypted messages for validators.
+   * 
+   * @param {object} params - Parameters for generating the transaction request.
+   * @param {string} params.strippedsigRequestHash - Stripped signature request hash.
+   * @param {ValidatorInfo[]} params.validatorsInfo - Information about the validators.
+   * @param {unknown[]} [params.auxilaryData] - Additional data for the transaction request.
+   * @param {string} [params.hash] - The hash type.
+   * @returns {Promise<EncMsg[]>} A promise resolving to an array of encrypted messages for validators.
    */
 
   async formatTxRequests ({
@@ -205,9 +213,9 @@ export default class SignatureRequestManager {
 
   /**
    * Sends transaction requests and retrieves the associated signatures.
-   *
-   * @param txReq - An array of encrypted messages to send as transaction requests.
-   * @returns A promise that resolves to an array of arrays of signatures in string format.
+   * 
+   * @param {EncMsg[]} txReq - An array of encrypted messages to send as transaction requests.
+   * @returns {Promise<string[][]>} A promise that resolves to an array of arrays of signatures in string format.
    */
 
   async submitTransactionRequest (txReq: Array<EncMsg>): Promise<string[][]> {
@@ -231,9 +239,9 @@ export default class SignatureRequestManager {
 
   /**
    * Selects validators based on the signature request.
-   *
-   * @param sigRequest - The signature request hash.
-   * @returns A promise resolving to an array of validator information.
+   * 
+   * @param {string} sigRequest - The signature request hash.
+   * @returns {Promise<ValidatorInfo[]>} A promise resolving to an array of validator information.
    */
 
   async pickValidators (sigRequest: string): Promise<ValidatorInfo[]> {
