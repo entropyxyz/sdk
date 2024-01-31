@@ -36,7 +36,7 @@ export default class ExtrinsicBaseClass {
    * Sends an extrinsic and waits for a specific event or rejects with an error.
    *
    * @param call - The extrinsic call to send.
-   * @param freeTx - Optional. Flag indicating if the transaction should be free (default: true).
+   * @param freeTx - Optional. Flag indicating if the transaction should be free (default: false).
    * @param filter - An event filter to wait for.
    * @returns A promise that resolves with the filtered event record.
    * @throws {Error} Will reject the promise if a dispatch error occurs or the filtered event is not found.
