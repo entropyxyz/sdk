@@ -14,11 +14,11 @@ export const whitelisted_test_evm_address =
 
 
 /// A transaction request that satisfies the test whitelisted constraints
-export const whitelisted_test_tx_req = {
-  to: whitelisted_test_evm_address,
-  value: 1, 
-  chainId: 1,
-  nonce: 1,
-  data: '0x' + Buffer.from('Created On Entropy').toString('hex'),
-}
+// export const whitelisted_test_tx_req = {
+//   to: whitelisted_test_evm_address,
+//   value: 1, 
+//   chainId: 1,
+//   nonce: 1,
+//   data: '0x' + Buffer.from('Created On Entropy').toString('hex'),
+// }
 

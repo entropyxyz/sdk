@@ -111,11 +111,11 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
     )
 
     // Convert the ProgramData to PalletRelayerProgramInstance and wrap it in an array
-
     const registerTx = this.substrate.tx.relayer.register(
       programModificationAccount,
       keyVisibility,
-      initialPrograms.map((programInfo) => { return {programConfig: programInfo.config, programPointer: programInfo.pointer} })
+      // initialPrograms
+      initialPrograms.map((programInfo) => { return {programPointer: programInfo.programPointer, programConfig: programInfo.programConfig} })
     )
 
     await this.sendAndWaitFor (registerTx, freeTx, {

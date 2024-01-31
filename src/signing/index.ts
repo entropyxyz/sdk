@@ -27,6 +27,7 @@ export interface SigOps {
   sigRequestHash: string
   hash: string
   type?: string
+  auxilaryData?: unknown[]
 }
 
 export interface UserSignatureRequest {
@@ -93,7 +94,6 @@ export default class SignatureRequestManager {
     if (this.adapters[type].postSign) {
       return await this.adapters[type].postSign(signature)
     }
-
     return signature
   }
 
@@ -104,15 +104,15 @@ export default class SignatureRequestManager {
    * @returns A promise resolving to the signed hash as a Uint8Array.
    */
 
-  async sign ({ sigRequestHash, hash }: SigOps): Promise<Uint8Array> {
-    const strippedsigRequestHash = stripHexPrefix(sigRequestHash)
+  async sign ({ sigRequestHash, hash, auxilaryData }: SigOps): Promise<Uint8Array> {
+    const strippedsigRequestHash = sigRequestHash
     const validatorsInfo: Array<ValidatorInfo> = await this.pickValidators(
       strippedsigRequestHash
     )
-
     const txRequests: Array<EncMsg> = await this.formatTxRequests({
       validatorsInfo: validatorsInfo,
       strippedsigRequestHash,
+      auxilaryData,
       hash,
     })
     const sigs = await this.submitTransactionRequest(txRequests)
@@ -153,7 +153,7 @@ export default class SignatureRequestManager {
   }: {
     strippedsigRequestHash: string
     validatorsInfo: Array<ValidatorInfo>
-    auxilaryData?: string[]
+    auxilaryData?: unknown[]
     hash?: string
   }): Promise<EncMsg[]> {
     return await Promise.all(
@@ -163,10 +163,9 @@ export default class SignatureRequestManager {
             message: stripHexPrefix(strippedsigRequestHash),
             validators_info: validatorsInfo,
             timestamp: this.getTimeStamp(),
-            auxilary_data: auxilaryData,
             hash,
           }
-
+          if (auxilaryData) txRequestData.auxilary_data = auxilaryData.map(i => JSON.stringify(i))
           const serverDHKey = await crypto.fromHex(validator.x25519_public_key)
 
           const formattedValidators = await Promise.all(
