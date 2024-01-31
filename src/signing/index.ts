@@ -120,6 +120,7 @@ export default class SignatureRequestManager {
     const txRequests: Array<EncMsg> = await this.formatTxRequests({
       validatorsInfo: validatorsInfo,
       strippedsigRequestHash,
+      auxilaryData,
       hash,
     })
     console.log("TX REQUEST", txRequests)
