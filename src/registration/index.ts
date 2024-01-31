@@ -114,8 +114,8 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
     const registerTx = this.substrate.tx.relayer.register(
       programModificationAccount,
       keyVisibility,
-      initialPrograms
-      // initialPrograms.map((programInfo) => { return {programPointer: programInfo.programPointer, programConfig: programInfo.programConfig} })
+      // initialPrograms
+      initialPrograms.map((programInfo) => { return {programPointer: programInfo.programPointer, programConfig: programInfo.programConfig} })
     )
 
     await this.sendAndWaitFor (registerTx, freeTx, {

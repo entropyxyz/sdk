@@ -140,7 +140,6 @@ describe('Core Tests', () => {
       './tests/testing-utils/template_basic_transaction.wasm'
     )
 
-    console.log('program deploy')
   
     const pointer = await entropy.programs.dev.deploy(basicTxProgram)
 const config = `
@@ -158,7 +157,6 @@ const byteArray = encoder.encode(config)
 // convert u8a to hex
 const programConfig = util.u8aToHex(new Uint8Array(byteArray))
 
-console.log({programConfig})
 
 
     const programData: ProgramData = {
@@ -167,10 +165,8 @@ console.log({programConfig})
     }
 
 
-    console.log({programData})
   
     // Pre-registration check
-    console.log("pre-registration check")
     const preRegistrationStatus = await entropy.isRegistered(
       charlieStashAddress
     )
@@ -179,7 +175,6 @@ console.log({programConfig})
     const preStringifiedResponse = JSON.stringify(preRegistrationStatus)
     expect(preStringifiedResponse).toBe('false')
   
-    console.log('registration tests')
 
 
 
@@ -191,7 +186,6 @@ console.log({programConfig})
       programModAccount: charlieStashAddress,
     })
   
-    console.log('verifyingKey:', entropy.account.verifyingKey)
     expect(entropy.account.verifyingKey).toBeTruthy()
     expect(entropy.account.sigRequestKey.wallet.address).toBe(charlieStashAddress)
     expect(
@@ -201,7 +195,6 @@ console.log({programConfig})
     ).toBeTruthy()
   
     // Post-registration check
-  console.log("post-registration check")
   
     const postRegistrationStatus = await entropy.isRegistered(
       charlieStashAddress
@@ -222,28 +215,20 @@ console.log({programConfig})
       './tests/testing-utils/template_barebones.wasm'
     )
 
-    console.log('program deploy')
 
     const newPointer = await entropy.programs.dev.deploy(dummyProgram)
-    console.log("new pointer", newPointer)
     const secondProgramData: ProgramData = { 
       programPointer: newPointer,
       programConfig: ''
     }
-    console.log('adding program to charlie')
-    const addSuccess = await entropy.programs.add(secondProgramData, charlieStashAddress)
-    console.log("ADD SUCCESS", addSuccess)
+   await entropy.programs.add(secondProgramData, charlieStashAddress)
     // getting charlie programs
     const programs = await entropy.programs.get(charlieStashAddress)
 
-    console.log("CHARLIES PROGRAMS yay ", programs )
-    console.log("removing")
+    console.log("CHARLIES PROGRAMS", programs )
     // removing charlie program barebones
     await entropy.programs.remove(newPointer, charlieStashAddress )
     const updatedRemovedPrograms = await entropy.programs.get(charlieStashAddress)
-
-
-    console.log("signing test")
   
      const basicTx = {
       to: "0x772b9a9e8aa1c9db861c6611a82d251db4fac990",

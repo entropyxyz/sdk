@@ -65,7 +65,7 @@ describe('Register Tests', () => {
       programModAccount: charlieStashAddress,
       keyVisibility: 'Permissioned',
       freeTx: false,
-      initialPrograms: [{ pointer: pointer, config: '0x' }],
+      initialPrograms: [{ programPointer: pointer, programConfig: '0x' }],
     })
 
     const isRegisteredAfter = await entropy.isRegistered(charlieStashAddress)
@@ -78,7 +78,7 @@ describe('Register Tests', () => {
         programModAccount: charlieStashAddress,
         keyVisibility: 'Permissioned',
         freeTx: true,
-        initialPrograms: [{ pointer: pointer, config: '0x' }],
+        initialPrograms: [{ programPointer: pointer, programConfig: '0x' }],
       })
     ).rejects.toThrow('already registered')
   })

@@ -78,8 +78,6 @@ export default class SignatureRequestManager {
    */
 
   async signTransaction ({ txParams, type }: SigTxOps): Promise<unknown> {
-    console.log("Received transaction params:", txParams)
-    console.log("Transaction type:", type)
     if (!this.adapters[type])
       throw new Error(`No transaction adapter for type: ${type} submit as hash`)
     if (!this.adapters[type].preSign)
@@ -88,7 +86,6 @@ export default class SignatureRequestManager {
       )
 
     const sigRequestHash = await this.adapters[type].preSign(txParams)
-    console.log("sigreg hash", sigRequestHash)
     const signature = await this.sign({
       sigRequestHash,
       hash: this.adapters[type].hash,
@@ -97,9 +94,6 @@ export default class SignatureRequestManager {
     if (this.adapters[type].postSign) {
       return await this.adapters[type].postSign(signature)
     }
-
-    console.log("signature", signature)
-
     return signature
   }
 
@@ -112,18 +106,15 @@ export default class SignatureRequestManager {
 
   async sign ({ sigRequestHash, hash, auxilaryData }: SigOps): Promise<Uint8Array> {
     const strippedsigRequestHash = sigRequestHash
-    console.log("stripped sig req hash", strippedsigRequestHash)
     const validatorsInfo: Array<ValidatorInfo> = await this.pickValidators(
       strippedsigRequestHash
     )
-    console.log("validatorsInfo", validatorsInfo)
     const txRequests: Array<EncMsg> = await this.formatTxRequests({
       validatorsInfo: validatorsInfo,
       strippedsigRequestHash,
       auxilaryData,
       hash,
     })
-    console.log("TX REQUEST", txRequests)
     const sigs = await this.submitTransactionRequest(txRequests)
     const sig = await this.verifyAndReduceSignatures(sigs)
     return Uint8Array.from(atob(sig), (c) => c.charCodeAt(0))
@@ -165,7 +156,6 @@ export default class SignatureRequestManager {
     auxilaryData?: unknown[]
     hash?: string
   }): Promise<EncMsg[]> {
-    console.log("Formatting transaction requests with hash:", strippedsigRequestHash)
     return await Promise.all(
       validatorsInfo.map(
         async (validator: ValidatorInfo): Promise<EncMsg> => {
@@ -203,8 +193,6 @@ export default class SignatureRequestManager {
             serverDHKey
           )
 
-          console.log("ENC MESSAGE", encryptedMessage)
-
           return {
             msg: encryptedMessage,
             url: validator.ip_address,
@@ -231,12 +219,10 @@ export default class SignatureRequestManager {
           ...parsedMsg,
           msg: parsedMsg.msg,
         }
-        console.log(`Sending request to ${message.url}:`, payload)
         const sigProof = (await sendHttpPost(
           `http://${message.url}/user/sign_tx`,
           JSON.stringify(payload)
         )) as string[]
-        console.log(`Response from ${message.url}:`, sigProof)
         sigProof.push(message.tss_account)
         return sigProof
       })
