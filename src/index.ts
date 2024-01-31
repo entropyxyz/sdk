@@ -53,7 +53,7 @@ export interface EntropyOpts {
  */
 
 export default class Entropy {
-   /** @internal */
+  /** @internal */
   #ready?: (value?: unknown) => void
   /** @internal */
   #fail?: (reason?: unknown) => void
