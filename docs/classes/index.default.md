@@ -1,4 +1,4 @@
-[@entropyxyz/SDK](../README.md) / [Exports](../modules.md) / [index](../modules/index.md) / default
+[@entropyxyz/sdk](../README.md) / [Exports](../modules.md) / [index](../modules/index.md) / default
 
 # Class: default
 
@@ -74,7 +74,7 @@ Initializes an instance of the Entropy class.
 
 #### Defined in
 
-[index.ts:83](https://github.com/entropyxyz/SDK/blob/1c426d7/src/index.ts#L83)
+[index.ts:83](https://github.com/entropyxyz/sdk/blob/1c426d7/src/index.ts#L83)
 
 ## Properties
 
@@ -84,7 +84,7 @@ Initializes an instance of the Entropy class.
 
 #### Defined in
 
-[index.ts:70](https://github.com/entropyxyz/SDK/blob/1c426d7/src/index.ts#L70)
+[index.ts:70](https://github.com/entropyxyz/sdk/blob/1c426d7/src/index.ts#L70)
 
 ___
 
@@ -108,7 +108,7 @@ ___
 
 #### Defined in
 
-[index.ts:67](https://github.com/entropyxyz/SDK/blob/1c426d7/src/index.ts#L67)
+[index.ts:67](https://github.com/entropyxyz/sdk/blob/1c426d7/src/index.ts#L67)
 
 ___
 
@@ -118,7 +118,7 @@ ___
 
 #### Defined in
 
-[index.ts:68](https://github.com/entropyxyz/SDK/blob/1c426d7/src/index.ts#L68)
+[index.ts:68](https://github.com/entropyxyz/sdk/blob/1c426d7/src/index.ts#L68)
 
 ___
 
@@ -130,7 +130,7 @@ A promise that resolves once chacha20poly1305 cryptoLib has been loaded
 
 #### Defined in
 
-[index.ts:65](https://github.com/entropyxyz/SDK/blob/1c426d7/src/index.ts#L65)
+[index.ts:65](https://github.com/entropyxyz/sdk/blob/1c426d7/src/index.ts#L65)
 
 ___
 
@@ -140,7 +140,7 @@ ___
 
 #### Defined in
 
-[index.ts:66](https://github.com/entropyxyz/SDK/blob/1c426d7/src/index.ts#L66)
+[index.ts:66](https://github.com/entropyxyz/sdk/blob/1c426d7/src/index.ts#L66)
 
 ___
 
@@ -150,7 +150,7 @@ ___
 
 #### Defined in
 
-[index.ts:69](https://github.com/entropyxyz/SDK/blob/1c426d7/src/index.ts#L69)
+[index.ts:69](https://github.com/entropyxyz/sdk/blob/1c426d7/src/index.ts#L69)
 
 ___
 
@@ -160,7 +160,7 @@ ___
 
 #### Defined in
 
-[index.ts:71](https://github.com/entropyxyz/SDK/blob/1c426d7/src/index.ts#L71)
+[index.ts:71](https://github.com/entropyxyz/sdk/blob/1c426d7/src/index.ts#L71)
 
 ## Methods
 
@@ -184,7 +184,7 @@ Retrieves the verifying key associated with the given address's registration rec
 
 #### Defined in
 
-[index.ts:215](https://github.com/entropyxyz/SDK/blob/1c426d7/src/index.ts#L215)
+[index.ts:215](https://github.com/entropyxyz/sdk/blob/1c426d7/src/index.ts#L215)
 
 ___
 
@@ -216,7 +216,7 @@ A promise indicating the completion of the registration process.
 
 #### Defined in
 
-[index.ts:186](https://github.com/entropyxyz/SDK/blob/1c426d7/src/index.ts#L186)
+[index.ts:186](https://github.com/entropyxyz/sdk/blob/1c426d7/src/index.ts#L186)
 
 ___
 
@@ -246,7 +246,7 @@ for signing. It returns the signature from the first validator after validation.
 
 #### Defined in
 
-[index.ts:259](https://github.com/entropyxyz/SDK/blob/1c426d7/src/index.ts#L259)
+[index.ts:259](https://github.com/entropyxyz/sdk/blob/1c426d7/src/index.ts#L259)
 
 ___
 
@@ -287,4 +287,4 @@ Will throw an error if the transaction type does not have a corresponding adapte
 
 #### Defined in
 
-[index.ts:240](https://github.com/entropyxyz/SDK/blob/1c426d7/src/index.ts#L240)
+[index.ts:240](https://github.com/entropyxyz/sdk/blob/1c426d7/src/index.ts#L240)

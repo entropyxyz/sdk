@@ -1,4 +1,4 @@
-[@entropyxyz/SDK](../README.md) / [Exports](../modules.md) / index
+[@entropyxyz/sdk](../README.md) / [Exports](../modules.md) / index
 
 # Module: index
 

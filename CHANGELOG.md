@@ -12,7 +12,7 @@ At the moment this project **does not** adhere to
 ## [0.1.3] Bes - 2024-01-31 (entropy-core compatibility: 0.0.10)
 
 ### Breaking Changes:
-- `@entropyxyz/entropy-js` is now `@entropyxyz/SDK`
+- `@entropyxyz/entropy-js` is now `@entropyxyz/sdk`
 
 ### Added
 - Update programs and signing (#283):

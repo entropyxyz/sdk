@@ -1,4 +1,4 @@
-[@entropyxyz/SDK](../README.md) / [Exports](../modules.md) / [registration](../modules/registration.md) / default
+[@entropyxyz/sdk](../README.md) / [Exports](../modules.md) / [registration](../modules/registration.md) / default
 
 # Class: default
 
@@ -59,7 +59,7 @@ Constructs a new instance of the `RegistrationManager` class.
 
 #### Defined in
 
-[registration/index.ts:37](https://github.com/entropyxyz/SDK/blob/1c426d7/src/registration/index.ts#L37)
+[registration/index.ts:37](https://github.com/entropyxyz/sdk/blob/1c426d7/src/registration/index.ts#L37)
 
 ## Properties
 
@@ -73,7 +73,7 @@ Constructs a new instance of the `RegistrationManager` class.
 
 #### Defined in
 
-[extrinsic/index.ts:21](https://github.com/entropyxyz/SDK/blob/1c426d7/src/extrinsic/index.ts#L21)
+[extrinsic/index.ts:21](https://github.com/entropyxyz/sdk/blob/1c426d7/src/extrinsic/index.ts#L21)
 
 ___
 
@@ -87,7 +87,7 @@ ___
 
 #### Defined in
 
-[extrinsic/index.ts:20](https://github.com/entropyxyz/SDK/blob/1c426d7/src/extrinsic/index.ts#L20)
+[extrinsic/index.ts:20](https://github.com/entropyxyz/sdk/blob/1c426d7/src/extrinsic/index.ts#L20)
 
 ## Methods
 
@@ -111,7 +111,7 @@ A promise which resolves to `true` if the address is registered, otherwise `fals
 
 #### Defined in
 
-[registration/index.ts:144](https://github.com/entropyxyz/SDK/blob/1c426d7/src/registration/index.ts#L144)
+[registration/index.ts:144](https://github.com/entropyxyz/sdk/blob/1c426d7/src/registration/index.ts#L144)
 
 ___
 
@@ -151,7 +151,7 @@ If the dry run fails or there's insufficient electricity (zaps).
 
 #### Defined in
 
-[extrinsic/index.ts:99](https://github.com/entropyxyz/SDK/blob/1c426d7/src/extrinsic/index.ts#L99)
+[extrinsic/index.ts:99](https://github.com/entropyxyz/sdk/blob/1c426d7/src/extrinsic/index.ts#L99)
 
 ___
 
@@ -179,7 +179,7 @@ If the user is already registered.
 
 #### Defined in
 
-[registration/index.ts:59](https://github.com/entropyxyz/SDK/blob/1c426d7/src/registration/index.ts#L59)
+[registration/index.ts:59](https://github.com/entropyxyz/sdk/blob/1c426d7/src/registration/index.ts#L59)
 
 ___
 
@@ -213,4 +213,4 @@ Will reject the promise if a dispatch error occurs or the filtered event is not 
 
 #### Defined in
 
-[extrinsic/index.ts:45](https://github.com/entropyxyz/SDK/blob/1c426d7/src/extrinsic/index.ts#L45)
+[extrinsic/index.ts:45](https://github.com/entropyxyz/sdk/blob/1c426d7/src/extrinsic/index.ts#L45)

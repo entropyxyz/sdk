@@ -1,4 +1,4 @@
-[@entropyxyz/SDK](../README.md) / [Exports](../modules.md) / [programs/dev](../modules/programs_dev.md) / default
+[@entropyxyz/sdk](../README.md) / [Exports](../modules.md) / [programs/dev](../modules/programs_dev.md) / default
 
 # Class: default
 
@@ -57,7 +57,7 @@ Constructs a ProgramDev instance.
 
 #### Defined in
 
-[programs/dev.ts:38](https://github.com/entropyxyz/SDK/blob/1c426d7/src/programs/dev.ts#L38)
+[programs/dev.ts:38](https://github.com/entropyxyz/sdk/blob/1c426d7/src/programs/dev.ts#L38)
 
 ## Properties
 
@@ -71,7 +71,7 @@ Constructs a ProgramDev instance.
 
 #### Defined in
 
-[extrinsic/index.ts:21](https://github.com/entropyxyz/SDK/blob/1c426d7/src/extrinsic/index.ts#L21)
+[extrinsic/index.ts:21](https://github.com/entropyxyz/sdk/blob/1c426d7/src/extrinsic/index.ts#L21)
 
 ___
 
@@ -85,7 +85,7 @@ ___
 
 #### Defined in
 
-[extrinsic/index.ts:20](https://github.com/entropyxyz/SDK/blob/1c426d7/src/extrinsic/index.ts#L20)
+[extrinsic/index.ts:20](https://github.com/entropyxyz/sdk/blob/1c426d7/src/extrinsic/index.ts#L20)
 
 ## Methods
 
@@ -110,7 +110,7 @@ Deploys a new program.
 
 #### Defined in
 
-[programs/dev.ts:72](https://github.com/entropyxyz/SDK/blob/1c426d7/src/programs/dev.ts#L72)
+[programs/dev.ts:72](https://github.com/entropyxyz/sdk/blob/1c426d7/src/programs/dev.ts#L72)
 
 ___
 
@@ -134,7 +134,7 @@ Retrieves program information using a program pointer.
 
 #### Defined in
 
-[programs/dev.ts:55](https://github.com/entropyxyz/SDK/blob/1c426d7/src/programs/dev.ts#L55)
+[programs/dev.ts:55](https://github.com/entropyxyz/sdk/blob/1c426d7/src/programs/dev.ts#L55)
 
 ___
 
@@ -174,7 +174,7 @@ If the dry run fails or there's insufficient electricity (zaps).
 
 #### Defined in
 
-[extrinsic/index.ts:99](https://github.com/entropyxyz/SDK/blob/1c426d7/src/extrinsic/index.ts#L99)
+[extrinsic/index.ts:99](https://github.com/entropyxyz/sdk/blob/1c426d7/src/extrinsic/index.ts#L99)
 
 ___
 
@@ -198,7 +198,7 @@ Removes a program.
 
 #### Defined in
 
-[programs/dev.ts:101](https://github.com/entropyxyz/SDK/blob/1c426d7/src/programs/dev.ts#L101)
+[programs/dev.ts:101](https://github.com/entropyxyz/sdk/blob/1c426d7/src/programs/dev.ts#L101)
 
 ___
 
@@ -232,4 +232,4 @@ Will reject the promise if a dispatch error occurs or the filtered event is not 
 
 #### Defined in
 
-[extrinsic/index.ts:45](https://github.com/entropyxyz/SDK/blob/1c426d7/src/extrinsic/index.ts#L45)
+[extrinsic/index.ts:45](https://github.com/entropyxyz/sdk/blob/1c426d7/src/extrinsic/index.ts#L45)

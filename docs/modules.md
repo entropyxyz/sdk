@@ -1,6 +1,6 @@
-[@entropyxyz/SDK](README.md) / Exports
+[@entropyxyz/sdk](README.md) / Exports
 
-# @entropyxyz/SDK
+# @entropyxyz/sdk
 
 ## Table of contents
 
