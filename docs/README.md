@@ -1,172 +1,173 @@
-@entropyxyz/entropy-js / [Exports](modules.md)
+@entropyxyz/SDK / [Exports](modules.md)
 
-# entropy-js
+# SDK
 
-`entropy-js` is a collection of TS packages that allow you to interact with the Entropy network. This is currently in **alpha** release.
+` @entropyxyz/SDK` is a collection of TS packages that allow you to interact with the Entropy network. This is currently in **alpha** release.
 
 ![EN-Backgrounds-2023-7-5_11-35-31](https://github.com/entropyxyz/entropy-js/assets/62079777/070ebeb6-6c70-4087-b901-9f82ee724dbf)
 
 ### Installation
 yarn:
 ```js
-yarn add @entropyxyz/entropy-js
+yarn add @entropyxyz/SDK
 ```
 
 npm:
 ```js
-npm i @entropyxyz/entropy-js --save
+npm i @entropyxyz/SDK --save
 ```
 
 ### Usage
 
 NOTICE 
 `endpoint ` defaults to 'ws://127.0.0.1:9944' if no value is provided. 
+**`Remarks`**
 
-```js
-import Entropy from '@entropyxyz/entropy-js'
+The main interface for users wanting to interact with Entropy.
+This class provides methods to register, check registration status,
+and sign transactions. Users can await the `ready` promise to ensure
+that the class has been initialized before performing operations.
 
-// initialize entropy 
+**`Example`**
 
-  const signer = await getWallet(charlieStashSeed)
+```typescript
+const signer = await getWallet(charlieStashSeed);
 
-    const entropyAccount: EntropyAccount = {
-      sigRequestKey: signer,
-      programModKey: signer,
-      programDeployKey: signer,
-    }
+const entropyAccount: EntropyAccount = {
+  sigRequestKey: signer,
+  programModKey: signer,
+};
 
-    entropy = new Entropy({ account: entropyAccount})
-    await entropy.ready
+const entropy = new Entropy({ account: entropyAccount });
+await entropy.ready;
 
+await entropy.register({
+  programModAccount: '5Gw3s7q9...',
+  keyVisibility: 'Permissioned',
+  freeTx: false
+});
 ```
 
-# Register
+## Table of contents
 
-▸ **init**(address): `Promise`\<`boolean`\>
+### Constructors
+
+- [constructor](README.md#constructor)
+
+### Properties
+
+- [account](README.md#account)
+- [isRegistered](README.md#isregistered)
+- [programs](README.md#programs)
+- [ready](README.md#ready)
+- [registrationManager](README.md#registrationmanager)
+- [signingManager](README.md#signingmanager)
+- [substrate](README.md#substrate)
+
+### Methods
+
+- [getVerifyingKey](README.md#getverifyingkey)
+- [register](README.md#register)
+- [sign](README.md#sign)
+- [signTransaction](README.md#signtransaction)
+
+## Constructors
+
+### constructor
+
+• **new default**(`opts`): [`default`](./docs/classes/index.default.md)
+
+Initializes an instance of the Entropy class.
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `address` | Address |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `opts` | [`EntropyOpts`](./docs/interfaces/index.EntropyOpts.md) | The configuration options for the Entropy instance. |
 
 #### Returns
+
+[`default`](./docs/classes/index.default.md)
+
+#### Defined in
+
+[index.ts:83](https://github.com/entropyxyz/SDK/blob/1c426d7/src/index.ts#L83)
+
+## Properties
+
+### account
+
+• `Optional` **account**: [`EntropyAccount`](./docs/interfaces/index.EntropyAccount.md)
+
+#### Defined in
+
+[index.ts:70](https://github.com/entropyxyz/SDK/blob/1c426d7/src/index.ts#L70)
+
+___
+
+### isRegistered
+
+• **isRegistered**: (`address`: [`Address`](./docs/modules/types.md#address)) => `Promise`\<`boolean`\>
+
+#### Type declaration
+
+▸ (`address`): `Promise`\<`boolean`\>
+
+##### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `address` | [`Address`](./docs/modules/types.md#address) |
+
+##### Returns
 
 `Promise`\<`boolean`\>
 
 #### Defined in
 
-[index.ts:47](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/index.ts#L47)
+[index.ts:67](https://github.com/entropyxyz/SDK/blob/1c426d7/src/index.ts#L67)
 
 ___
 
-### register
+### programs
 
-▸ **register**(`params`): `Promise`\<`undefined`\>
-
-Registers an address to Entropy using the provided parameters.
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `params` | [`RegistrationParams`](./docs/interfaces/registration.RegistrationParams.md) |
-
-#### Returns
-
-`Promise`\<`undefined`\>
-
-A promise indicating the completion of the registration process.
-
-**`Throws`**
-
-Throws if the provided address format is not compatible.
-
-**`Throws`**
-
-Throws if the address being registered is already in use.
-
-#### Example(s)
-```js
- const address = entropy.account?.wallet.address
- console.log({ address })
-
-// Can do a pre-check to see if the address is registered 
-
- const isRegistered = await entropy.registrationManager.checkRegistrationStatus(address)
- console.log(isRegistered)
-
-// Register the address
-
- await entropy.register({
-        address,
-        keyVisibility: 'Permissioned',
-        freeTx: false,
-      })
-
-// Check post-registration    
-
- const postRegistrationStatus = await entropy.isRegistered(address)
- console.log(postRegistrationStatus)
-
- ```     
+• **programs**: [`default`](programs.default.md)
 
 #### Defined in
 
-[index.ts:103](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/index.ts#L103)
+[index.ts:68](https://github.com/entropyxyz/SDK/blob/1c426d7/src/index.ts#L68)
 
 ___
 
-# ProgramMananger
+### ready
 
-- [get](programs.default.md#get)
-- [handleFreeTx](programs.default.md#handlefreetx)
-- [sendAndWaitFor](programs.default.md#sendandwaitfor)
-- [set](programs.default.md#set)
+• **ready**: `Promise`\<`boolean`\>
 
-## Constructors
-
-• **new default**(`«destructured»`): [`default`](programs.default.md)
-
-Creates an instance of ProgramManager.
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `«destructured»` | `Object` |
-| › `signer` | [`Signer`](../interfaces/types.Signer.md) |
-| › `substrate` | `ApiPromise` |
-
-#### Returns
-
-[`default`](programs.default.md)
-
-**`Remarks`**
-
-The constructor initializes the Substrate api and the signer.
-
-#### Overrides
-
-[default](extrinsic.default.md).[constructor](extrinsic.default.md#constructor)
+A promise that resolves once chacha20poly1305 cryptoLib has been loaded
 
 #### Defined in
 
-[programs/index.ts:22](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/programs/index.ts#L22)
+[index.ts:65](https://github.com/entropyxyz/SDK/blob/1c426d7/src/index.ts#L65)
 
-## Properties
+___
 
-### signer
+### registrationManager
 
-• **signer**: [`Signer`](../interfaces/types.Signer.md)
-
-#### Inherited from
-
-[default](extrinsic.default.md).[signer](extrinsic.default.md#signer)
+• **registrationManager**: [`default`](registration.default.md)
 
 #### Defined in
 
-[extrinsic/index.ts:21](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/extrinsic/index.ts#L21)
+[index.ts:66](https://github.com/entropyxyz/SDK/blob/1c426d7/src/index.ts#L66)
+
+___
+
+### signingManager
+
+• **signingManager**: [`default`](signing.default.md)
+
+#### Defined in
+
+[index.ts:69](https://github.com/entropyxyz/SDK/blob/1c426d7/src/index.ts#L69)
 
 ___
 
@@ -174,181 +175,95 @@ ___
 
 • **substrate**: `ApiPromise`
 
-#### Inherited from
-
-[default](extrinsic.default.md).[substrate](extrinsic.default.md#substrate)
-
 #### Defined in
 
-[extrinsic/index.ts:20](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/extrinsic/index.ts#L20)
+[index.ts:71](https://github.com/entropyxyz/SDK/blob/1c426d7/src/index.ts#L71)
 
 ## Methods
 
-### get
+### getVerifyingKey
 
-▸ **get**(`deployKey?`): `Promise`\<`ArrayBuffer`\>
+▸ **getVerifyingKey**(`address`): `Promise`\<`string`\>
 
-Retrieves the program associated with a given deployKey (account)
+Retrieves the verifying key associated with the given address's registration record.
 
 #### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `deployKey` | `string` | The account key, defaulting to the signer's wallet address if not provided. |
+| `address` | [`Address`](./docs/modules/types.md#address) | The address for which the verifying key is needed. |
 
 #### Returns
 
-`Promise`\<`ArrayBuffer`\>
+`Promise`\<`string`\>
 
-- The program as an ArrayBuffer.
+- A promise resolving to the verifying key.
 
-**`Throws`**
-
-If no program is defined for the given account.
-
-**`Remarks`**
-
-This method communicates with substrate to fetch bytecode associated with an account. 
-The response is then processed and converted to an ArrayBuffer before being returned
-
-#### Example(s)
-```js 
- // get program
- const fetchedProgram: ArrayBuffer = await entropy.programs.get(entropy.account?.wallet.address)
-```
 #### Defined in
 
-[programs/index.ts:39](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/programs/index.ts#L39)
+[index.ts:215](https://github.com/entropyxyz/SDK/blob/1c426d7/src/index.ts#L215)
 
 ___
 
-### handleFreeTx
+### register
 
-▸ **handleFreeTx**(`call`): `Promise`\<`SubmittableExtrinsic`\<``"promise"``, `ISubmittableResult`\>\>
+▸ **register**(`params`): `Promise`\<`void`\>
 
-Prepares a free transaction, performs a dry run, and ensures its viability.
-
-In this system:
-- **Electricity** represents an energy unit allowing certain transactions to bypass traditional fees.
-- An account's **Zaps** represent the available electricity it has. Consuming zaps results in transaction execution without fees.
-- **Batteries** are rechargeable units in an account that generate zaps over time.
-
-This method leverages the `callUsingElectricity` from the `freeTx` module to create a transaction that utilizes zaps.
-A dry run is then performed to ensure its success when broadcasted.
+Registers an address with Entropy using the provided parameters.
 
 #### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `call` | `SubmittableExtrinsic`\<``"promise"``, `ISubmittableResult`\> | The extrinsic intended for execution. |
-
-#### Returns
-
-`Promise`\<`SubmittableExtrinsic`\<``"promise"``, `ISubmittableResult`\>\>
-
-A promise resolving to a transaction prepared to use electricity.
-
-**`Throws`**
-
-If the dry run fails or there's insufficient electricity (zaps).
-
-#### Inherited from
-
-[default](extrinsic.default.md).[handleFreeTx](extrinsic.default.md#handlefreetx)
-
-#### Defined in
-
-[extrinsic/index.ts:99](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/extrinsic/index.ts#L99)
-___
-
-### set
-
-▸ **set**(`program`): `Promise`\<`void`\>
-
-Sets or updates a program for the current signer's account on Substrate.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `program` | `ArrayBuffer` | The program to be set or updated, as an ArrayBuffer. |
+| `params` | [`RegistrationParams`](./docs/interfaces/registration.RegistrationParams.md) & { `account?`: [`EntropyAccount`](./docs/interfaces/index.EntropyAccount.md)  } | The registration parameters. |
 
 #### Returns
 
 `Promise`\<`void`\>
 
+A promise indicating the completion of the registration process.
+
 **`Throws`**
 
-If there's an issue setting the program.
+- If the provided address format is incompatible.
 
-**`Remarks`**
+**`Throws`**
 
-This method takes a program in the form of an ArrayBuffer, converts it (so it can be passed to Substrate), and prepares a transaction to set or update the program 
-for the associated account. After preparing the transaction, it's sent to Substrate, and the method waits for a confirmation event.
-
-#### Examples(s)
-
-```js
-/**
- * Replace 'program' with the actual program ArrayBuffer, variable, or path.
- * For example, if you have the program in a file named 'userProgram.wasm', it would be:
- * const userProgram: any = require('./path_to/userProgram.wasm')
- * If you have an ArrayBuffer or binary data, it could be directly assigned as follows:
- * const userProgram: ArrayBuffer = new ArrayBuffer() 
- */
-
- const userProgram = program
- await entropy.programs.set(userProgram)
- console.log("Program set successfully.")
-```
+- If the address is already registered or if there's a problem during registration.
 
 #### Defined in
 
-[programs/index.ts:63](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/programs/index.ts#L63)
+[index.ts:186](https://github.com/entropyxyz/SDK/blob/1c426d7/src/index.ts#L186)
 
 ___
 
-# sign
+### sign
 
 ▸ **sign**(`params`): `Promise`\<`Uint8Array`\>
 
-The `sign` method is tasked with signing a `sigRequestHash`, which is essentially a hash of the
-request that needs signing. It does so by obtaining validator information based on the hash,
-formatting transaction requests for these validators, and then submitting these requests for the
-validators to sign.
-
-The process in detail:
-1. The method removes any hex prefix from the request hash.
-2. Determines a set of validators corresponding to the stripped request hash. These validators
-   are tasked with validating and signing the transaction.
-3. For each of these validators, the method constructs a transaction request. This request encompasses:
-   - The stripped transaction request hash.
-   - Information regarding all the chosen validators.
-   - A timestamp.
-4. Transaction requests are individually encrypted and signed for each validator using their respective public keys.
-5. These encrypted and signed transaction requests are dispatched to the individual validators.
-6. The method then awaits the validators' signatures on the requests.
-7. Once received, the signature from the first validator is extracted and returned.
+Signs a signature request hash. This method involves various steps including validator
+selection, transaction request formatting, and submission of these requests to validators
+for signing. It returns the signature from the first validator after validation.
 
 #### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `params` | [`SigOps`](./docs/interfaces/signing.SigOps.md) | An object `sigRequestHash`, representing the hash of the request awaiting signature. |
+| `params` | [`SigOps`](./docs/interfaces/signing.SigOps.md) | The signature operation parameters. |
 
 #### Returns
 
 `Promise`\<`Uint8Array`\>
 
-A promise which, when resolved, produces a Uint8Array with the signature of the first validator.
+- A promise resolving to the signed hash as a Uint8Array.
 
 **`Throws`**
 
-Throws an error if there's an error at any stage in the signing routine.
+- If there's an error in the signing routine.
 
 #### Defined in
 
-[index.ts:163](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/index.ts#L163)
+[index.ts:259](https://github.com/entropyxyz/SDK/blob/1c426d7/src/index.ts#L259)
 
 ___
 
@@ -368,28 +283,25 @@ transaction request hash, and if necessary, the `postSign` function of the adapt
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `params` | [`SigTxOps`](./docs/interfaces/signing.SigTxOps.md) | An object that encapsulates all the required parameters for signing. |
+| `params` | [`SigTxOps`](./docs/interfaces/signing.SigTxOps.md) | The parameters for signing the transaction. |
 
 #### Returns
 
 `Promise`\<`unknown`\>
+
+- A promise resolving to the transaction signature.
 
 A promise that returns the transaction signature. Note that the structure
          and format of this signature may differ based on the adapter.
 
 **`Throws`**
 
+- If no adapter is found for the specified transaction type.
+
+**`Throws`**
+
 Will throw an error if the transaction type does not have a corresponding adapter.
-
-#### Examples(s)
-
-```js
-  const signature: Uint8Array = await entropy.sign({
-    sigRequestHash: serializedTx,
-  })
-
-```
 
 #### Defined in
 
-[index.ts:132](https://github.com/entropyxyz/entropy-js/blob/b4c1b9b/src/index.ts#L132)
+[index.ts:240](https://github.com/entropyxyz/SDK/blob/1c426d7/src/index.ts#L240)

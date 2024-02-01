@@ -1,4 +1,4 @@
-[@entropyxyz/entropy-js](../README.md) / [Exports](../modules.md) / [programs](../modules/programs.md) / default
+[@entropyxyz/SDK](../README.md) / [Exports](../modules.md) / [programs](../modules/programs.md) / default
 
 # Class: default
 
@@ -22,14 +22,16 @@ The ProgramManager class provides an interface to interact with Entropy Programs
 
 ### Properties
 
+- [dev](programs.default.md#dev)
 - [signer](programs.default.md#signer)
 - [substrate](programs.default.md#substrate)
 
 ### Methods
 
-- [checkAuthorization](programs.default.md#checkauthorization)
+- [add](programs.default.md#add)
 - [get](programs.default.md#get)
 - [handleFreeTx](programs.default.md#handlefreetx)
+- [remove](programs.default.md#remove)
 - [sendAndWaitFor](programs.default.md#sendandwaitfor)
 - [set](programs.default.md#set)
 
@@ -39,23 +41,18 @@ The ProgramManager class provides an interface to interact with Entropy Programs
 
 • **new default**(`«destructured»`): [`default`](programs.default.md)
 
-Creates an instance of ProgramManager.
-
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `«destructured»` | `Object` |
-| › `signer` | [`Signer`](../interfaces/types.Signer.md) |
+| › `programDeployKey?` | [`Signer`](../interfaces/types.Signer.md) |
+| › `programModKey` | [`Signer`](../interfaces/types.Signer.md) |
 | › `substrate` | `ApiPromise` |
 
 #### Returns
 
 [`default`](programs.default.md)
-
-**`Remarks`**
-
-The constructor initializes the Substrate api and the signer.
 
 #### Overrides
 
@@ -63,9 +60,37 @@ The constructor initializes the Substrate api and the signer.
 
 #### Defined in
 
-[programs/index.ts:23](https://github.com/entropyxyz/entropy-js/blob/368842b/src/programs/index.ts#L23)
+[programs/index.ts:28](https://github.com/entropyxyz/SDK/blob/1c426d7/src/programs/index.ts#L28)
 
 ## Properties
+
+### dev
+
+• **dev**: [`default`](programs_dev.default.md)
+
+Creates an instance of ProgramManager.
+
+**`Param`**
+
+Substrate API object.
+
+**`Param`**
+
+The signer object for the user interfacing with Entropy.
+
+**`Param`**
+
+The signer object for the user interfacing with Entropy.
+
+**`Remarks`**
+
+The constructor initializes the Substrate api and the signer.
+
+#### Defined in
+
+[programs/index.ts:27](https://github.com/entropyxyz/SDK/blob/1c426d7/src/programs/index.ts#L27)
+
+___
 
 ### signer
 
@@ -77,7 +102,7 @@ The constructor initializes the Substrate api and the signer.
 
 #### Defined in
 
-[extrinsic/index.ts:21](https://github.com/entropyxyz/entropy-js/blob/368842b/src/extrinsic/index.ts#L21)
+[extrinsic/index.ts:21](https://github.com/entropyxyz/SDK/blob/1c426d7/src/extrinsic/index.ts#L21)
 
 ___
 
@@ -91,52 +116,44 @@ ___
 
 #### Defined in
 
-[extrinsic/index.ts:20](https://github.com/entropyxyz/entropy-js/blob/368842b/src/extrinsic/index.ts#L20)
+[extrinsic/index.ts:20](https://github.com/entropyxyz/SDK/blob/1c426d7/src/extrinsic/index.ts#L20)
 
 ## Methods
 
-### checkAuthorization
+### add
 
-▸ **checkAuthorization**(`programModAccount`, `sigReqAccount`): `Promise`\<`boolean`\>
+▸ **add**(`newProgram`, `sigReqAccount?`, `programModKey?`): `Promise`\<`void`\>
 
-Checks if a given program modification account is authorized to modify the program associated with a specific signature request account.
+Adds a new program for a specific account.
 
 #### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `programModAccount` | `string` | The account whose authorization is to be verified. |
-| `sigReqAccount` | `string` | The account for which the program modification is intended. |
+| `newProgram` | [`ProgramData`](../interfaces/programs.ProgramData.md) | The new program data to add. |
+| `sigReqAccount?` | `string` | The account to add the program to. Defaults to the signer's account. |
+| `programModKey?` | `string` | Optional. The authorized account to modify the program, if different from the signer's account. |
 
 #### Returns
 
-`Promise`\<`boolean`\>
+`Promise`\<`void`\>
 
-- A promise that resolves if the `programModAccount` is authorized to modify the program for `sigReqAccount`
+- A promise that resolves when the program is successfully added.
 
 **`Remarks`**
 
-This method queries Substrate  to determine if the `programModAccount` is allowed to modify the program associated with the `sigReqAccount`.
-The method utilizes the `allowedToModifyProgram` quert, which returns an optional value. If the value is present (`isSome`), it indicates authorization.
-(I'm not sure about this as the blob that's returned is extremely long )
-The method unwraps the optional value
-
-**`Example`**
-
-```typescript
-const isAuthorized = await checkAuthorization('5FHneW46...HgYb3fW', '5DAAnrj7...P5JT7zP')
-console.log(isAuthorized) // Outputs: true or false
-```
+This method fetches the current programs of an account, adds the new program, and updates the state with the new set of programs.
+It ensures the operation is performed by an authorized account.
 
 #### Defined in
 
-[programs/index.ts:117](https://github.com/entropyxyz/entropy-js/blob/368842b/src/programs/index.ts#L117)
+[programs/index.ts:158](https://github.com/entropyxyz/SDK/blob/1c426d7/src/programs/index.ts#L158)
 
 ___
 
 ### get
 
-▸ **get**(`sigReqAccount?`): `Promise`\<`ArrayBuffer`\>
+▸ **get**(`sigReqAccount`): `Promise`\<[`ProgramData`](../interfaces/programs.ProgramData.md)[]\>
 
 Retrieves the program associated with a given sigReqAccount (account)
 
@@ -148,7 +165,7 @@ Retrieves the program associated with a given sigReqAccount (account)
 
 #### Returns
 
-`Promise`\<`ArrayBuffer`\>
+`Promise`\<[`ProgramData`](../interfaces/programs.ProgramData.md)[]\>
 
 - The program as an ArrayBuffer.
 
@@ -159,11 +176,11 @@ If no program is defined for the given account.
 **`Remarks`**
 
 This method communicates with Substrate to fetch bytecode associated with an account.
-The response is then procesed and converted to an ArrayBuffer before being returned
+The response is then processed and converted to an ArrayBuffer before being returned
 
 #### Defined in
 
-[programs/index.ts:46](https://github.com/entropyxyz/entropy-js/blob/368842b/src/programs/index.ts#L46)
+[programs/index.ts:52](https://github.com/entropyxyz/SDK/blob/1c426d7/src/programs/index.ts#L52)
 
 ___
 
@@ -203,7 +220,37 @@ If the dry run fails or there's insufficient electricity (zaps).
 
 #### Defined in
 
-[extrinsic/index.ts:99](https://github.com/entropyxyz/entropy-js/blob/368842b/src/extrinsic/index.ts#L99)
+[extrinsic/index.ts:99](https://github.com/entropyxyz/SDK/blob/1c426d7/src/extrinsic/index.ts#L99)
+
+___
+
+### remove
+
+▸ **remove**(`programHashToRemove`, `sigReqAccount?`, `programModKey?`): `Promise`\<`void`\>
+
+Removes a specific program from an account.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `programHashToRemove` | `string` | The hash of the program to remove. |
+| `sigReqAccount?` | `string` | The account from which the program will be removed. Defaults to the signer's account. |
+| `programModKey?` | `string` | Optional. The authorized account to perform the removal, if different from the signer's account. |
+
+#### Returns
+
+`Promise`\<`void`\>
+
+- A Promise resolving when the program is successfully removed.
+
+**`Remarks`**
+
+This method removes a specified program from an account's associated programs. It filters out the specified program and updates the state with the remaining programs.
+
+#### Defined in
+
+[programs/index.ts:133](https://github.com/entropyxyz/SDK/blob/1c426d7/src/programs/index.ts#L133)
 
 ___
 
@@ -218,7 +265,7 @@ Sends an extrinsic and waits for a specific event or rejects with an error.
 | Name | Type | Default value | Description |
 | :------ | :------ | :------ | :------ |
 | `call` | `SubmittableExtrinsic`\<``"promise"``, `ISubmittableResult`\> | `undefined` | The extrinsic call to send. |
-| `freeTx` | `boolean` | `true` | Optional. Flag indicating if the transaction should be free (default: true). |
+| `freeTx` | `boolean` | `false` | Optional. Flag indicating if the transaction should be free (default: false). |
 | `filter` | [`EventFilter`](../interfaces/types.EventFilter.md) | `undefined` | An event filter to wait for. |
 
 #### Returns
@@ -237,41 +284,38 @@ Will reject the promise if a dispatch error occurs or the filtered event is not 
 
 #### Defined in
 
-[extrinsic/index.ts:45](https://github.com/entropyxyz/entropy-js/blob/368842b/src/extrinsic/index.ts#L45)
+[extrinsic/index.ts:45](https://github.com/entropyxyz/SDK/blob/1c426d7/src/extrinsic/index.ts#L45)
 
 ___
 
 ### set
 
-▸ **set**(`program`, `sigReqAccount?`, `programModAccount?`): `Promise`\<`void`\>
+▸ **set**(`newList`, `sigReqAccount?`, `programModKey?`): `Promise`\<`void`\>
 
-Sets or updates the program of a specified account on Substrate
-This method allows the current signer or an authorized account to update the program associated with the signer's account or another specified account.
+Updates the programs of a specified account.
 
 #### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `program` | `ArrayBuffer` | The program to be set or updated, as an ArrayBuffer. |
-| `sigReqAccount?` | `string` | The account for which the program will be set or updated. Defaults to the signer's account. |
-| `programModAccount?` | `string` | Optional. An authorized account to modify the program, if different from the signer's account. |
+| `newList` | [`ProgramData`](../interfaces/programs.ProgramData.md)[] | Array of new program data to set. |
+| `sigReqAccount?` | `string` | The account for which the programs will be updated. Defaults to the signer's account. |
+| `programModKey?` | `string` | Optional. An authorized account to modify the programs, if different from the signer's account. |
 
 #### Returns
 
 `Promise`\<`void`\>
 
-A promise that resolves when the transaction has been included in the block.
+- A Promise that resolves when the programs are successfully updated.
 
 **`Throws`**
 
-Throws an error if the account is unauthorized or if there's a problem setting the program.
+- If the account is unauthorized or there's a problem updating the programs.
 
 **`Remarks`**
 
-This method handles the conversion of a program from an ArrayBuffer to a hex string
-It checks for authorization if the programModAccount is provided, ensuring that only authorized accounts can update the bytecode.
-The transaction is created and sent to Substrate. This method then awaits the confirmation event 'ProgramUpdated' to ensure that the update was successful.
+This method replaces the existing programs of an account with a new set. It checks for authorization and sends a transaction to update the state.
 
 #### Defined in
 
-[programs/index.ts:74](https://github.com/entropyxyz/entropy-js/blob/368842b/src/programs/index.ts#L74)
+[programs/index.ts:83](https://github.com/entropyxyz/SDK/blob/1c426d7/src/programs/index.ts#L83)

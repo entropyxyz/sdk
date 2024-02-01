@@ -1,4 +1,4 @@
-[@entropyxyz/entropy-js](../README.md) / [Exports](../modules.md) / signing
+[@entropyxyz/SDK](../README.md) / [Exports](../modules.md) / signing
 
 # Module: signing
 
@@ -14,3 +14,4 @@
 - [SigOps](../interfaces/signing.SigOps.md)
 - [SigTxOps](../interfaces/signing.SigTxOps.md)
 - [TxParams](../interfaces/signing.TxParams.md)
+- [UserSignatureRequest](../interfaces/signing.UserSignatureRequest.md)

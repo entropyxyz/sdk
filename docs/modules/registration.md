@@ -1,4 +1,4 @@
-[@entropyxyz/entropy-js](../README.md) / [Exports](../modules.md) / registration
+[@entropyxyz/SDK](../README.md) / [Exports](../modules.md) / registration
 
 # Module: registration
 
@@ -25,4 +25,4 @@
 
 #### Defined in
 
-[registration/index.ts:17](https://github.com/entropyxyz/entropy-js/blob/368842b/src/registration/index.ts#L17)
+[registration/index.ts:18](https://github.com/entropyxyz/SDK/blob/1c426d7/src/registration/index.ts#L18)

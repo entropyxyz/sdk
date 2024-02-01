@@ -1,4 +1,4 @@
-[@entropyxyz/entropy-js](../README.md) / [Exports](../modules.md) / [utils/crypto](../modules/utils_crypto.md) / CryptoLib
+[@entropyxyz/SDK](../README.md) / [Exports](../modules.md) / [utils/crypto](../modules/utils_crypto.md) / CryptoLib
 
 # Interface: CryptoLib
 
@@ -8,23 +8,26 @@ Interface for the cryptographic library, detailing core functionality: encryptio
 
 **`See`**
 
-[https://x25519-chacha20poly1305.vercel.app/x25519_chacha20poly1305/](https://x25519-chacha20poly1305.vercel.app/x25519_chacha20poly1305/)
+[https://www.npmjs.com/package/@entropyxyz/entropy-protocol-nodejs](https://www.npmjs.com/package/@entropyxyz/entropy-protocol-nodejs)
 
 ## Table of contents
 
 ### Properties
 
-- [decrypt\_and\_verify](utils_crypto.CryptoLib.md#decrypt_and_verify)
-- [encrypt\_and\_sign](utils_crypto.CryptoLib.md#encrypt_and_sign)
-- [from\_hex](utils_crypto.CryptoLib.md#from_hex)
-- [public\_key\_from\_secret](utils_crypto.CryptoLib.md#public_key_from_secret)
+- [decryptAndVerify](utils_crypto.CryptoLib.md#decryptandverify)
+- [encryptAndSign](utils_crypto.CryptoLib.md#encryptandsign)
+- [fromHex](utils_crypto.CryptoLib.md#fromhex)
+- [publicKeyFromSecret](utils_crypto.CryptoLib.md#publickeyfromsecret)
 - [verifySignature](utils_crypto.CryptoLib.md#verifysignature)
 
 ## Properties
 
-### decrypt\_and\_verify
+### decryptAndVerify
 
-• **decrypt\_and\_verify**: (`secretKey`: `Uint8Array`, `msg`: `string`) => `Promise`\<`string`\>
+• **decryptAndVerify**: (`secretKey`: `Uint8Array`, `msg`: `string`) => `Promise`\<`string`\>
+
+Decrypts a provided message and verifies its authenticity.
+Uses the provided secret key for decryption.
 
 #### Type declaration
 
@@ -46,13 +49,16 @@ Uses the provided secret key for decryption.
 
 #### Defined in
 
-[utils/crypto.ts:46](https://github.com/entropyxyz/entropy-js/blob/368842b/src/utils/crypto.ts#L46)
+[utils/crypto.ts:46](https://github.com/entropyxyz/SDK/blob/1c426d7/src/utils/crypto.ts#L46)
 
 ___
 
-### encrypt\_and\_sign
+### encryptAndSign
 
-• **encrypt\_and\_sign**: (`secretKey`: `Uint8Array`, `encoded`: `Uint8Array`, `serverDHKey`: `Uint8Array`) => `Promise`\<`string`\>
+• **encryptAndSign**: (`secretKey`: `Uint8Array`, `encoded`: `Uint8Array`, `serverDHKey`: `Uint8Array`) => `Promise`\<`string`\>
+
+Encrypts the provided message and signs it using the X25519 and ChaCha20Poly1305 algorithms.
+Uses the provided secret key for encryption and the server's Diffie-Hellman (DH) key for the signature.
 
 #### Type declaration
 
@@ -75,13 +81,13 @@ Uses the provided secret key for encryption and the server's Diffie-Hellman (DH)
 
 #### Defined in
 
-[utils/crypto.ts:37](https://github.com/entropyxyz/entropy-js/blob/368842b/src/utils/crypto.ts#L37)
+[utils/crypto.ts:37](https://github.com/entropyxyz/SDK/blob/1c426d7/src/utils/crypto.ts#L37)
 
 ___
 
-### from\_hex
+### fromHex
 
-• **from\_hex**: (`input`: `string`) => `Uint8Array`
+• **fromHex**: (`input`: `string`) => `Uint8Array`
 
 #### Type declaration
 
@@ -99,13 +105,15 @@ ___
 
 #### Defined in
 
-[utils/crypto.ts:32](https://github.com/entropyxyz/entropy-js/blob/368842b/src/utils/crypto.ts#L32)
+[utils/crypto.ts:32](https://github.com/entropyxyz/SDK/blob/1c426d7/src/utils/crypto.ts#L32)
 
 ___
 
-### public\_key\_from\_secret
+### publicKeyFromSecret
 
-• **public\_key\_from\_secret**: (`secretKey`: `Uint8Array`) => `Promise`\<`Uint8Array`\>
+• **publicKeyFromSecret**: (`secretKey`: `Uint8Array`) => `Promise`\<`Uint8Array`\>
+
+Derives the public key from the provided secret key.
 
 #### Type declaration
 
@@ -125,7 +133,7 @@ Derives the public key from the provided secret key.
 
 #### Defined in
 
-[utils/crypto.ts:50](https://github.com/entropyxyz/entropy-js/blob/368842b/src/utils/crypto.ts#L50)
+[utils/crypto.ts:50](https://github.com/entropyxyz/SDK/blob/1c426d7/src/utils/crypto.ts#L50)
 
 ___
 
@@ -151,4 +159,4 @@ ___
 
 #### Defined in
 
-[utils/crypto.ts:30](https://github.com/entropyxyz/entropy-js/blob/368842b/src/utils/crypto.ts#L30)
+[utils/crypto.ts:30](https://github.com/entropyxyz/SDK/blob/1c426d7/src/utils/crypto.ts#L30)

@@ -1,4 +1,4 @@
-[@entropyxyz/entropy-js](../README.md) / [Exports](../modules.md) / [registration](../modules/registration.md) / RegistrationParams
+[@entropyxyz/SDK](../README.md) / [Exports](../modules.md) / [registration](../modules/registration.md) / RegistrationParams
 
 # Interface: RegistrationParams
 
@@ -9,7 +9,7 @@
 ### Properties
 
 - [freeTx](registration.RegistrationParams.md#freetx)
-- [initialProgram](registration.RegistrationParams.md#initialprogram)
+- [initialPrograms](registration.RegistrationParams.md#initialprograms)
 - [keyVisibility](registration.RegistrationParams.md#keyvisibility)
 - [programModAccount](registration.RegistrationParams.md#programmodaccount)
 
@@ -21,17 +21,17 @@
 
 #### Defined in
 
-[registration/index.ts:6](https://github.com/entropyxyz/entropy-js/blob/368842b/src/registration/index.ts#L6)
+[registration/index.ts:7](https://github.com/entropyxyz/SDK/blob/1c426d7/src/registration/index.ts#L7)
 
 ___
 
-### initialProgram
+### initialPrograms
 
-• `Optional` **initialProgram**: `string`
+• `Optional` **initialPrograms**: [`ProgramData`](programs.ProgramData.md)[]
 
 #### Defined in
 
-[registration/index.ts:7](https://github.com/entropyxyz/entropy-js/blob/368842b/src/registration/index.ts#L7)
+[registration/index.ts:8](https://github.com/entropyxyz/SDK/blob/1c426d7/src/registration/index.ts#L8)
 
 ___
 
@@ -41,7 +41,7 @@ ___
 
 #### Defined in
 
-[registration/index.ts:8](https://github.com/entropyxyz/entropy-js/blob/368842b/src/registration/index.ts#L8)
+[registration/index.ts:9](https://github.com/entropyxyz/SDK/blob/1c426d7/src/registration/index.ts#L9)
 
 ___
 
@@ -51,4 +51,4 @@ ___
 
 #### Defined in
 
-[registration/index.ts:9](https://github.com/entropyxyz/entropy-js/blob/368842b/src/registration/index.ts#L9)
+[registration/index.ts:10](https://github.com/entropyxyz/SDK/blob/1c426d7/src/registration/index.ts#L10)

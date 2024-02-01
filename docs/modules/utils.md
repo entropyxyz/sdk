@@ -1,4 +1,4 @@
-[@entropyxyz/entropy-js](../README.md) / [Exports](../modules.md) / utils
+[@entropyxyz/SDK](../README.md) / [Exports](../modules.md) / utils
 
 # Module: utils
 
@@ -11,21 +11,11 @@
 ### Functions
 
 - [buf2hex](utils.md#buf2hex)
-- [decodeArrayBufferToString](utils.md#decodearraybuffertostring)
-- [getApi](utils.md#getapi)
 - [hex2buf](utils.md#hex2buf)
-- [hexStringToIntArray](utils.md#hexstringtointarray)
-- [hexToBase64](utils.md#hextobase64)
-- [hexToBase64remove](utils.md#hextobase64remove)
-- [isHexSee](utils.md#ishexsee)
-- [isPublicKey](utils.md#ispublickey)
 - [isValidSubstrateAddress](utils.md#isvalidsubstrateaddress)
-- [readKey](utils.md#readkey)
 - [sendHttpPost](utils.md#sendhttppost)
-- [sleep](utils.md#sleep)
-- [stringToU8Array](utils.md#stringtou8array)
 - [stripHexPrefix](utils.md#striphexprefix)
-- [u8ArrayToString](utils.md#u8arraytostring)
+- [typeofthing](utils.md#typeofthing)
 
 ## Functions
 
@@ -45,41 +35,7 @@
 
 #### Defined in
 
-[utils/index.ts:149](https://github.com/entropyxyz/entropy-js/blob/368842b/src/utils/index.ts#L149)
-
-___
-
-### decodeArrayBufferToString
-
-▸ **decodeArrayBufferToString**(`buf`): `string`
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `buf` | `ArrayBuffer` |
-
-#### Returns
-
-`string`
-
-#### Defined in
-
-[utils/index.ts:145](https://github.com/entropyxyz/entropy-js/blob/368842b/src/utils/index.ts#L145)
-
-___
-
-### getApi
-
-▸ **getApi**(): `Promise`\<`ApiFactory`\>
-
-#### Returns
-
-`Promise`\<`ApiFactory`\>
-
-#### Defined in
-
-[utils/index.ts:46](https://github.com/entropyxyz/entropy-js/blob/368842b/src/utils/index.ts#L46)
+[utils/index.ts:79](https://github.com/entropyxyz/SDK/blob/1c426d7/src/utils/index.ts#L79)
 
 ___
 
@@ -99,107 +55,7 @@ ___
 
 #### Defined in
 
-[utils/index.ts:155](https://github.com/entropyxyz/entropy-js/blob/368842b/src/utils/index.ts#L155)
-
-___
-
-### hexStringToIntArray
-
-▸ **hexStringToIntArray**(`hexString`): `number`[]
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `hexString` | `string` |
-
-#### Returns
-
-`number`[]
-
-#### Defined in
-
-[utils/index.ts:177](https://github.com/entropyxyz/entropy-js/blob/368842b/src/utils/index.ts#L177)
-
-___
-
-### hexToBase64
-
-▸ **hexToBase64**(`str`): `string`
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `str` | `string` |
-
-#### Returns
-
-`string`
-
-#### Defined in
-
-[utils/index.ts:172](https://github.com/entropyxyz/entropy-js/blob/368842b/src/utils/index.ts#L172)
-
-___
-
-### hexToBase64remove
-
-▸ **hexToBase64remove**(`str`): `string`
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `str` | `string` |
-
-#### Returns
-
-`string`
-
-#### Defined in
-
-[utils/index.ts:163](https://github.com/entropyxyz/entropy-js/blob/368842b/src/utils/index.ts#L163)
-
-___
-
-### isHexSee
-
-▸ **isHexSee**(`str`): `boolean`
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `str` | `string` |
-
-#### Returns
-
-`boolean`
-
-#### Defined in
-
-[utils/index.ts:16](https://github.com/entropyxyz/entropy-js/blob/368842b/src/utils/index.ts#L16)
-
-___
-
-### isPublicKey
-
-▸ **isPublicKey**(`str`): `boolean`
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `str` | `string` |
-
-#### Returns
-
-`boolean`
-
-#### Defined in
-
-[utils/index.ts:10](https://github.com/entropyxyz/entropy-js/blob/368842b/src/utils/index.ts#L10)
+[utils/index.ts:85](https://github.com/entropyxyz/SDK/blob/1c426d7/src/utils/index.ts#L85)
 
 ___
 
@@ -219,27 +75,7 @@ ___
 
 #### Defined in
 
-[utils/index.ts:27](https://github.com/entropyxyz/entropy-js/blob/368842b/src/utils/index.ts#L27)
-
-___
-
-### readKey
-
-▸ **readKey**(`path`): `Promise`\<`Uint8Array`\>
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `path` | `string` |
-
-#### Returns
-
-`Promise`\<`Uint8Array`\>
-
-#### Defined in
-
-[utils/index.ts:106](https://github.com/entropyxyz/entropy-js/blob/368842b/src/utils/index.ts#L106)
+[utils/index.ts:26](https://github.com/entropyxyz/SDK/blob/1c426d7/src/utils/index.ts#L26)
 
 ___
 
@@ -260,47 +96,7 @@ ___
 
 #### Defined in
 
-[utils/index.ts:63](https://github.com/entropyxyz/entropy-js/blob/368842b/src/utils/index.ts#L63)
-
-___
-
-### sleep
-
-▸ **sleep**(`delay`): `void`
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `delay` | `number` |
-
-#### Returns
-
-`void`
-
-#### Defined in
-
-[utils/index.ts:37](https://github.com/entropyxyz/entropy-js/blob/368842b/src/utils/index.ts#L37)
-
-___
-
-### stringToU8Array
-
-▸ **stringToU8Array**(`str`): `Uint8Array`
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `str` | `string` |
-
-#### Returns
-
-`Uint8Array`
-
-#### Defined in
-
-[utils/index.ts:140](https://github.com/entropyxyz/entropy-js/blob/368842b/src/utils/index.ts#L140)
+[utils/index.ts:36](https://github.com/entropyxyz/SDK/blob/1c426d7/src/utils/index.ts#L36)
 
 ___
 
@@ -320,24 +116,24 @@ ___
 
 #### Defined in
 
-[utils/index.ts:22](https://github.com/entropyxyz/entropy-js/blob/368842b/src/utils/index.ts#L22)
+[utils/index.ts:21](https://github.com/entropyxyz/SDK/blob/1c426d7/src/utils/index.ts#L21)
 
 ___
 
-### u8ArrayToString
+### typeofthing
 
-▸ **u8ArrayToString**(`array`): `string`
+▸ **typeofthing**(`thing`): ``"string"`` \| ``"number"`` \| ``"bigint"`` \| ``"boolean"`` \| ``"symbol"`` \| ``"undefined"`` \| ``"object"`` \| ``"function"`` \| ``"array"`` \| ``"null"``
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `array` | `Uint8Array` |
+| `thing` | `any` |
 
 #### Returns
 
-`string`
+``"string"`` \| ``"number"`` \| ``"bigint"`` \| ``"boolean"`` \| ``"symbol"`` \| ``"undefined"`` \| ``"object"`` \| ``"function"`` \| ``"array"`` \| ``"null"``
 
 #### Defined in
 
-[utils/index.ts:136](https://github.com/entropyxyz/entropy-js/blob/368842b/src/utils/index.ts#L136)
+[utils/index.ts:9](https://github.com/entropyxyz/SDK/blob/1c426d7/src/utils/index.ts#L9)

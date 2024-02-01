@@ -1,4 +1,4 @@
-[@entropyxyz/entropy-js](../README.md) / [Exports](../modules.md) / index
+[@entropyxyz/SDK](../README.md) / [Exports](../modules.md) / index
 
 # Module: index
 

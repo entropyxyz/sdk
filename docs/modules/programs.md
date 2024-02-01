@@ -1,4 +1,4 @@
-[@entropyxyz/entropy-js](../README.md) / [Exports](../modules.md) / programs
+[@entropyxyz/SDK](../README.md) / [Exports](../modules.md) / programs
 
 # Module: programs
 
@@ -7,3 +7,7 @@
 ### Classes
 
 - [default](../classes/programs.default.md)
+
+### Interfaces
+
+- [ProgramData](../interfaces/programs.ProgramData.md)

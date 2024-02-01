@@ -1,4 +1,4 @@
-[@entropyxyz/entropy-js](../README.md) / [Exports](../modules.md) / [types](../modules/types.md) / EncMsg
+[@entropyxyz/SDK](../README.md) / [Exports](../modules.md) / [types](../modules/types.md) / EncMsg
 
 # Interface: EncMsg
 
@@ -20,7 +20,7 @@
 
 #### Defined in
 
-[types/index.ts:97](https://github.com/entropyxyz/entropy-js/blob/368842b/src/types/index.ts#L97)
+[types/index.ts:46](https://github.com/entropyxyz/SDK/blob/1c426d7/src/types/index.ts#L46)
 
 ___
 
@@ -30,7 +30,7 @@ ___
 
 #### Defined in
 
-[types/index.ts:99](https://github.com/entropyxyz/entropy-js/blob/368842b/src/types/index.ts#L99)
+[types/index.ts:48](https://github.com/entropyxyz/SDK/blob/1c426d7/src/types/index.ts#L48)
 
 ___
 
@@ -40,4 +40,4 @@ ___
 
 #### Defined in
 
-[types/index.ts:98](https://github.com/entropyxyz/entropy-js/blob/368842b/src/types/index.ts#L98)
+[types/index.ts:47](https://github.com/entropyxyz/SDK/blob/1c426d7/src/types/index.ts#L47)

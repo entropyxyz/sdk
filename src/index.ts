@@ -53,14 +53,16 @@ export interface EntropyOpts {
  */
 
 export default class Entropy {
+  /** @internal */
   #ready?: (value?: unknown) => void
+  /** @internal */
   #fail?: (reason?: unknown) => void
+  /** @internal */
   #programReadOnly: boolean
+  /** @internal */
   #allReadOnly: boolean
   /** A promise that resolves once chacha20poly1305 cryptoLib has been loaded */
   ready: Promise<boolean>
-  public sigRequestPublicKey?: string
-  public programModPublicKey?: string
   registrationManager: RegistrationManager
   isRegistered: (address: Address) => Promise<boolean>
   programs: ProgramManager
@@ -140,6 +142,7 @@ export default class Entropy {
   }
 
 
+  /** @internal */
   #setReadOnlyStates (): void {
   // the readOnly state will not allow for write functions
     this.#programReadOnly = false

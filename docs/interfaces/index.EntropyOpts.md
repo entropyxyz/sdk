@@ -1,4 +1,4 @@
-[@entropyxyz/entropy-js](../README.md) / [Exports](../modules.md) / [index](../modules/index.md) / EntropyOpts
+[@entropyxyz/SDK](../README.md) / [Exports](../modules.md) / [index](../modules/index.md) / EntropyOpts
 
 # Interface: EntropyOpts
 
@@ -22,7 +22,7 @@ account for wallet initialization.
 
 #### Defined in
 
-[index.ts:19](https://github.com/entropyxyz/entropy-js/blob/368842b/src/index.ts#L19)
+[index.ts:20](https://github.com/entropyxyz/SDK/blob/1c426d7/src/index.ts#L20)
 
 ___
 
@@ -38,7 +38,7 @@ A collection of signing adapters.
 
 #### Defined in
 
-[index.ts:23](https://github.com/entropyxyz/entropy-js/blob/368842b/src/index.ts#L23)
+[index.ts:24](https://github.com/entropyxyz/SDK/blob/1c426d7/src/index.ts#L24)
 
 ___
 
@@ -50,4 +50,4 @@ local or devnet endpoint for establishing a connection to validators
 
 #### Defined in
 
-[index.ts:21](https://github.com/entropyxyz/entropy-js/blob/368842b/src/index.ts#L21)
+[index.ts:22](https://github.com/entropyxyz/SDK/blob/1c426d7/src/index.ts#L22)

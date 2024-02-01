@@ -1,5 +1,5 @@
 {
-  "name": "@entropyxyz/entropy-js",
+  "name": "@entropyxyz/SDK",
   "version": "0.1.2",
   "license": "ISC",
   "description": "JS SDK for entropy blockchain ",
@@ -34,20 +34,20 @@
     "generate:pull:remote": "curl -H \"Content-Type: application/json\" -d '{\"id\":\"1\", \"jsonrpc\":\"2.0\", \"method\": \"state_getMetadata\", \"params\":[]}' http://devnet-forfrankie-nodes-617e8e312bab1d9f.elb.us-west-2.amazonaws.com:9944 > entropy-metadata.json",
     "generate:defs": "ts-node --skip-project node_modules/.bin/polkadot-types-from-defs --package substrate-generated-types/interfaces --input ./substrate-generated-types/interfaces --endpoint ./entropy-metadata.json",
     "generate:meta": "ts-node --skip-project node_modules/.bin/polkadot-types-from-chain --package substrate-generated-types/interfaces --endpoint ./entropy-metadata.json --output ./substrate-generated-types/interfaces",
-    "generate:docs": "typedoc --plugin typedoc-plugin-markdown --out docs --entryPointStrategy expand ./src"
+    "generate:docs": "typedoc --excludePrivate --excludeInternal --plugin typedoc-plugin-markdown --out docs --entryPointStrategy expand ./src"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/entropyxyz/entropy-js.git"
+    "url": "git+https://github.com/entropyxyz/SDK.git"
   },
   "publishConfig": {
-    "@entropyxyz:entropy-js": "https://npm.pkg.github.com"
+    "@entropyxyz:SDK": "https://npm.pkg.github.com"
   },
   "author": "Entropy",
   "bugs": {
-    "url": "https://github.com/entropyxyz/entropy-js/issues"
+    "url": "https://github.com/entropyxyz/SDK/issues"
   },
-  "homepage": "https://github.com/entropyxyz/entropy-js#readme",
+  "homepage": "https://github.com/entropyxyz/SDK#readme",
   "devDependencies": {
     "@polkadot/typegen": "^10.11.1",
     "@types/jest": "^29.4.0",

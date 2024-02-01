@@ -1,4 +1,4 @@
-[@entropyxyz/entropy-js](../README.md) / [Exports](../modules.md) / [utils](../modules/utils.md) / AnyObject
+[@entropyxyz/SDK](../README.md) / [Exports](../modules.md) / [utils](../modules/utils.md) / AnyObject
 
 # Interface: AnyObject
 
