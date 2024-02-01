@@ -1,4 +1,4 @@
-[@entropyxyz/SDK](../README.md) / [Exports](../modules.md) / programs/dev
+[@entropyxyz/sdk](../README.md) / [Exports](../modules.md) / programs/dev
 
 # Module: programs/dev
 

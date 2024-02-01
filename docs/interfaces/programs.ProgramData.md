@@ -1,4 +1,4 @@
-[@entropyxyz/SDK](../README.md) / [Exports](../modules.md) / [programs](../modules/programs.md) / ProgramData
+[@entropyxyz/sdk](../README.md) / [Exports](../modules.md) / [programs](../modules/programs.md) / ProgramData
 
 # Interface: ProgramData
 
@@ -19,7 +19,7 @@
 
 #### Defined in
 
-[programs/index.ts:9](https://github.com/entropyxyz/SDK/blob/1c426d7/src/programs/index.ts#L9)
+[programs/index.ts:9](https://github.com/entropyxyz/sdk/blob/1c426d7/src/programs/index.ts#L9)
 
 ___
 
@@ -29,4 +29,4 @@ ___
 
 #### Defined in
 
-[programs/index.ts:8](https://github.com/entropyxyz/SDK/blob/1c426d7/src/programs/index.ts#L8)
+[programs/index.ts:8](https://github.com/entropyxyz/sdk/blob/1c426d7/src/programs/index.ts#L8)

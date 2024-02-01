@@ -1,4 +1,4 @@
-[@entropyxyz/SDK](../README.md) / [Exports](../modules.md) / signing/adapters/types
+[@entropyxyz/sdk](../README.md) / [Exports](../modules.md) / signing/adapters/types
 
 # Module: signing/adapters/types
 

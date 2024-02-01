@@ -1,4 +1,4 @@
-[@entropyxyz/SDK](../README.md) / [Exports](../modules.md) / [signing/adapters/types](../modules/signing_adapters_types.md) / OptAdapter
+[@entropyxyz/sdk](../README.md) / [Exports](../modules.md) / [signing/adapters/types](../modules/signing_adapters_types.md) / OptAdapter
 
 # Interface: OptAdapter
 
@@ -22,7 +22,7 @@
 
 #### Defined in
 
-[signing/adapters/types.ts:13](https://github.com/entropyxyz/SDK/blob/1c426d7/src/signing/adapters/types.ts#L13)
+[signing/adapters/types.ts:13](https://github.com/entropyxyz/sdk/blob/1c426d7/src/signing/adapters/types.ts#L13)
 
 ___
 
@@ -32,7 +32,7 @@ ___
 
 #### Defined in
 
-[signing/adapters/types.ts:14](https://github.com/entropyxyz/SDK/blob/1c426d7/src/signing/adapters/types.ts#L14)
+[signing/adapters/types.ts:14](https://github.com/entropyxyz/sdk/blob/1c426d7/src/signing/adapters/types.ts#L14)
 
 ___
 
@@ -56,7 +56,7 @@ ___
 
 #### Defined in
 
-[signing/adapters/types.ts:16](https://github.com/entropyxyz/SDK/blob/1c426d7/src/signing/adapters/types.ts#L16)
+[signing/adapters/types.ts:16](https://github.com/entropyxyz/sdk/blob/1c426d7/src/signing/adapters/types.ts#L16)
 
 ___
 
@@ -80,7 +80,7 @@ ___
 
 #### Defined in
 
-[signing/adapters/types.ts:15](https://github.com/entropyxyz/SDK/blob/1c426d7/src/signing/adapters/types.ts#L15)
+[signing/adapters/types.ts:15](https://github.com/entropyxyz/sdk/blob/1c426d7/src/signing/adapters/types.ts#L15)
 
 ___
 
@@ -90,4 +90,4 @@ ___
 
 #### Defined in
 
-[signing/adapters/types.ts:12](https://github.com/entropyxyz/SDK/blob/1c426d7/src/signing/adapters/types.ts#L12)
+[signing/adapters/types.ts:12](https://github.com/entropyxyz/sdk/blob/1c426d7/src/signing/adapters/types.ts#L12)

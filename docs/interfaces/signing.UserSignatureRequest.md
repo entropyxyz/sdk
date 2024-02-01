@@ -1,4 +1,4 @@
-[@entropyxyz/SDK](../README.md) / [Exports](../modules.md) / [signing](../modules/signing.md) / UserSignatureRequest
+[@entropyxyz/sdk](../README.md) / [Exports](../modules.md) / [signing](../modules/signing.md) / UserSignatureRequest
 
 # Interface: UserSignatureRequest
 
@@ -22,7 +22,7 @@
 
 #### Defined in
 
-[signing/index.ts:35](https://github.com/entropyxyz/SDK/blob/1c426d7/src/signing/index.ts#L35)
+[signing/index.ts:35](https://github.com/entropyxyz/sdk/blob/1c426d7/src/signing/index.ts#L35)
 
 ___
 
@@ -32,7 +32,7 @@ ___
 
 #### Defined in
 
-[signing/index.ts:38](https://github.com/entropyxyz/SDK/blob/1c426d7/src/signing/index.ts#L38)
+[signing/index.ts:38](https://github.com/entropyxyz/sdk/blob/1c426d7/src/signing/index.ts#L38)
 
 ___
 
@@ -42,7 +42,7 @@ ___
 
 #### Defined in
 
-[signing/index.ts:34](https://github.com/entropyxyz/SDK/blob/1c426d7/src/signing/index.ts#L34)
+[signing/index.ts:34](https://github.com/entropyxyz/sdk/blob/1c426d7/src/signing/index.ts#L34)
 
 ___
 
@@ -59,7 +59,7 @@ ___
 
 #### Defined in
 
-[signing/index.ts:37](https://github.com/entropyxyz/SDK/blob/1c426d7/src/signing/index.ts#L37)
+[signing/index.ts:37](https://github.com/entropyxyz/sdk/blob/1c426d7/src/signing/index.ts#L37)
 
 ___
 
@@ -69,4 +69,4 @@ ___
 
 #### Defined in
 
-[signing/index.ts:36](https://github.com/entropyxyz/SDK/blob/1c426d7/src/signing/index.ts#L36)
+[signing/index.ts:36](https://github.com/entropyxyz/sdk/blob/1c426d7/src/signing/index.ts#L36)

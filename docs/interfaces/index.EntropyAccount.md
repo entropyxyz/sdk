@@ -1,4 +1,4 @@
-[@entropyxyz/SDK](../README.md) / [Exports](../modules.md) / [index](../modules/index.md) / EntropyAccount
+[@entropyxyz/sdk](../README.md) / [Exports](../modules.md) / [index](../modules/index.md) / EntropyAccount
 
 # Interface: EntropyAccount
 
@@ -21,7 +21,7 @@
 
 #### Defined in
 
-[index.ts:14](https://github.com/entropyxyz/SDK/blob/1c426d7/src/index.ts#L14)
+[index.ts:14](https://github.com/entropyxyz/sdk/blob/1c426d7/src/index.ts#L14)
 
 ___
 
@@ -31,7 +31,7 @@ ___
 
 #### Defined in
 
-[index.ts:13](https://github.com/entropyxyz/SDK/blob/1c426d7/src/index.ts#L13)
+[index.ts:13](https://github.com/entropyxyz/sdk/blob/1c426d7/src/index.ts#L13)
 
 ___
 
@@ -41,7 +41,7 @@ ___
 
 #### Defined in
 
-[index.ts:12](https://github.com/entropyxyz/SDK/blob/1c426d7/src/index.ts#L12)
+[index.ts:12](https://github.com/entropyxyz/sdk/blob/1c426d7/src/index.ts#L12)
 
 ___
 
@@ -51,4 +51,4 @@ ___
 
 #### Defined in
 
-[index.ts:15](https://github.com/entropyxyz/SDK/blob/1c426d7/src/index.ts#L15)
+[index.ts:15](https://github.com/entropyxyz/sdk/blob/1c426d7/src/index.ts#L15)

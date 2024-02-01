@@ -1,4 +1,4 @@
-[@entropyxyz/SDK](../README.md) / [Exports](../modules.md) / signing/adapters/default
+[@entropyxyz/sdk](../README.md) / [Exports](../modules.md) / signing/adapters/default
 
 # Module: signing/adapters/default
 
@@ -22,4 +22,4 @@
 
 #### Defined in
 
-[signing/adapters/default.ts:3](https://github.com/entropyxyz/SDK/blob/1c426d7/src/signing/adapters/default.ts#L3)
+[signing/adapters/default.ts:3](https://github.com/entropyxyz/sdk/blob/1c426d7/src/signing/adapters/default.ts#L3)

@@ -1,4 +1,4 @@
-[@entropyxyz/SDK](../README.md) / [Exports](../modules.md) / keys
+[@entropyxyz/sdk](../README.md) / [Exports](../modules.md) / keys
 
 # Module: keys
 
@@ -32,7 +32,7 @@ A Promise resolving to an object containing the wallet and its associated `Signe
 
 #### Defined in
 
-[keys/index.ts:63](https://github.com/entropyxyz/SDK/blob/1c426d7/src/keys/index.ts#L63)
+[keys/index.ts:63](https://github.com/entropyxyz/sdk/blob/1c426d7/src/keys/index.ts#L63)
 
 ___
 
@@ -56,7 +56,7 @@ A boolean indicating whether the provided object is a valid `Signer` pair.
 
 #### Defined in
 
-[keys/index.ts:20](https://github.com/entropyxyz/SDK/blob/1c426d7/src/keys/index.ts#L20)
+[keys/index.ts:20](https://github.com/entropyxyz/sdk/blob/1c426d7/src/keys/index.ts#L20)
 
 ___
 
@@ -81,4 +81,4 @@ A Promise resolving to a `Signer` object containing the generated or derived wal
 
 #### Defined in
 
-[keys/index.ts:73](https://github.com/entropyxyz/SDK/blob/1c426d7/src/keys/index.ts#L73)
+[keys/index.ts:73](https://github.com/entropyxyz/sdk/blob/1c426d7/src/keys/index.ts#L73)

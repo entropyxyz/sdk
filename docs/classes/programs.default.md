@@ -1,4 +1,4 @@
-[@entropyxyz/SDK](../README.md) / [Exports](../modules.md) / [programs](../modules/programs.md) / default
+[@entropyxyz/sdk](../README.md) / [Exports](../modules.md) / [programs](../modules/programs.md) / default
 
 # Class: default
 
@@ -60,7 +60,7 @@ The ProgramManager class provides an interface to interact with Entropy Programs
 
 #### Defined in
 
-[programs/index.ts:28](https://github.com/entropyxyz/SDK/blob/1c426d7/src/programs/index.ts#L28)
+[programs/index.ts:28](https://github.com/entropyxyz/sdk/blob/1c426d7/src/programs/index.ts#L28)
 
 ## Properties
 
@@ -88,7 +88,7 @@ The constructor initializes the Substrate api and the signer.
 
 #### Defined in
 
-[programs/index.ts:27](https://github.com/entropyxyz/SDK/blob/1c426d7/src/programs/index.ts#L27)
+[programs/index.ts:27](https://github.com/entropyxyz/sdk/blob/1c426d7/src/programs/index.ts#L27)
 
 ___
 
@@ -102,7 +102,7 @@ ___
 
 #### Defined in
 
-[extrinsic/index.ts:21](https://github.com/entropyxyz/SDK/blob/1c426d7/src/extrinsic/index.ts#L21)
+[extrinsic/index.ts:21](https://github.com/entropyxyz/sdk/blob/1c426d7/src/extrinsic/index.ts#L21)
 
 ___
 
@@ -116,7 +116,7 @@ ___
 
 #### Defined in
 
-[extrinsic/index.ts:20](https://github.com/entropyxyz/SDK/blob/1c426d7/src/extrinsic/index.ts#L20)
+[extrinsic/index.ts:20](https://github.com/entropyxyz/sdk/blob/1c426d7/src/extrinsic/index.ts#L20)
 
 ## Methods
 
@@ -147,7 +147,7 @@ It ensures the operation is performed by an authorized account.
 
 #### Defined in
 
-[programs/index.ts:158](https://github.com/entropyxyz/SDK/blob/1c426d7/src/programs/index.ts#L158)
+[programs/index.ts:158](https://github.com/entropyxyz/sdk/blob/1c426d7/src/programs/index.ts#L158)
 
 ___
 
@@ -180,7 +180,7 @@ The response is then processed and converted to an ArrayBuffer before being retu
 
 #### Defined in
 
-[programs/index.ts:52](https://github.com/entropyxyz/SDK/blob/1c426d7/src/programs/index.ts#L52)
+[programs/index.ts:52](https://github.com/entropyxyz/sdk/blob/1c426d7/src/programs/index.ts#L52)
 
 ___
 
@@ -220,7 +220,7 @@ If the dry run fails or there's insufficient electricity (zaps).
 
 #### Defined in
 
-[extrinsic/index.ts:99](https://github.com/entropyxyz/SDK/blob/1c426d7/src/extrinsic/index.ts#L99)
+[extrinsic/index.ts:99](https://github.com/entropyxyz/sdk/blob/1c426d7/src/extrinsic/index.ts#L99)
 
 ___
 
@@ -250,7 +250,7 @@ This method removes a specified program from an account's associated programs. I
 
 #### Defined in
 
-[programs/index.ts:133](https://github.com/entropyxyz/SDK/blob/1c426d7/src/programs/index.ts#L133)
+[programs/index.ts:133](https://github.com/entropyxyz/sdk/blob/1c426d7/src/programs/index.ts#L133)
 
 ___
 
@@ -284,7 +284,7 @@ Will reject the promise if a dispatch error occurs or the filtered event is not 
 
 #### Defined in
 
-[extrinsic/index.ts:45](https://github.com/entropyxyz/SDK/blob/1c426d7/src/extrinsic/index.ts#L45)
+[extrinsic/index.ts:45](https://github.com/entropyxyz/sdk/blob/1c426d7/src/extrinsic/index.ts#L45)
 
 ___
 
@@ -318,4 +318,4 @@ This method replaces the existing programs of an account with a new set. It chec
 
 #### Defined in
 
-[programs/index.ts:83](https://github.com/entropyxyz/SDK/blob/1c426d7/src/programs/index.ts#L83)
+[programs/index.ts:83](https://github.com/entropyxyz/sdk/blob/1c426d7/src/programs/index.ts#L83)

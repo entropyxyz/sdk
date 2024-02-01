@@ -1,4 +1,4 @@
-[@entropyxyz/SDK](../README.md) / [Exports](../modules.md) / extrinsic
+[@entropyxyz/sdk](../README.md) / [Exports](../modules.md) / extrinsic
 
 # Module: extrinsic
 
