@@ -243,7 +243,7 @@ const programConfig = util.u8aToHex(new Uint8Array(byteArray))
 
     // encoding signature
     console.log("SIGGGG", signature)
-    expect(signature.length).toBe(130)
+    expect(signature.length).toBe(228)
     // await disconnect(charlieStashEntropy.substrate)
   })
   

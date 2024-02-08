@@ -93,7 +93,7 @@ export default class SignatureRequestManager {
       type,
     })
     if (this.adapters[type].postSign) {
-      return await this.adapters[type].postSign(signature)
+      return await this.adapters[type].postSign(signature, txParams)
     }
     return signature
   }
