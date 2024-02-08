@@ -110,7 +110,7 @@ export default class SignatureRequestManager {
    */
 
   async sign ({ sigRequestHash, hash, auxilaryData }: SigOps): Promise<Uint8Array> {
-    const strippedsigRequestHash = sigRequestHash
+    const strippedsigRequestHash = stripHexPrefix(sigRequestHash)
     const validatorsInfo: Array<ValidatorInfo> = await this.pickValidators(
       strippedsigRequestHash
     )
