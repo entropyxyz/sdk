@@ -9,6 +9,17 @@ At the moment this project **does not** adhere to
 
 ## [Unreleased]
 
+
+## [0.1.4] Bacchus - 2024-01-09 (entropy-core compatibility: 0.0.10)
+
+### Changed
+
+- the signTransaction:eth adapter now return the serialized raw transaction string (#292)
+
+### Fixed
+
+- sigRequest may now be hex prefixed and not cause internal issues where choosing validators returns undefined. (#293)
+
 ## [0.1.3] Bes - 2024-01-31 (entropy-core compatibility: 0.0.10)
 
 ### Breaking Changes:
