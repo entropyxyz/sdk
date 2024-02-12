@@ -92,37 +92,41 @@ export default class Entropy {
   }
 
   async #init (opts: EntropyOpts) {
+
     this.account = opts.account
     this.#setReadOnlyStates()
 
     const wsProvider = new WsProvider(opts.endpoint)
     this.substrate = new ApiPromise({ provider: wsProvider })
+    console.log('almost ready?', opts.endpoint, this.substrate.isReady)
     await this.substrate.isReady
-
-    this.registrationManager = new RegistrationManager({
+    console.log('almost ready??')
+    if (!this.#allReadOnly) this.registrationManager = new RegistrationManager({
       substrate: this.substrate,
       signer: {wallet: this.account.sigRequestKey.wallet, pair: this.account.sigRequestKey.pair},
     })
-    this.signingManager = new SignatureRequestManager({
+    if (!this.#allReadOnly) this.signingManager = new SignatureRequestManager({
       signer: {wallet: this.account.sigRequestKey.wallet, pair: this.account.sigRequestKey.pair},
       substrate: this.substrate,
       adapters: opts.adapters,
       crypto,
     })
+    console.log('almost ready???')
 
-    const programModKeyPair = isValidPair(this.account.programModKey as Signer) ? this.account.programModKey : undefined
+    const programModKeyPair = isValidPair(this.account?.programModKey as Signer) ? this.account.programModKey : undefined
 
-    this.programs = new ProgramManager({
+    if (!this.#allReadOnly || !this.#programReadOnly) this.programs = new ProgramManager({
       substrate: this.substrate,
       programModKey: programModKeyPair as Signer || this.account.sigRequestKey,
       programDeployKey: this.account.programDeployKey
     })
     if (this.#programReadOnly || this.#allReadOnly) this.programs.set = async () => { throw new Error('Programs is in a read only state: Must pass a valid key pair in initialization.') }
-    this.#ready(true)
-    this.isRegistered = this.registrationManager.checkRegistrationStatus.bind(
+    if (!this.#allReadOnly) this.isRegistered = this.registrationManager.checkRegistrationStatus.bind(
       this.registrationManager
     )
-    this.#setVerfiyingKeys()
+    if (!this.#allReadOnly) this.#setVerfiyingKeys()
+    console.log('almost ready')
+    this.#ready(true)
   }
 
   async #setVerfiyingKeys (): Promise<void> {
@@ -144,14 +148,17 @@ export default class Entropy {
 
   /** @internal */
   #setReadOnlyStates (): void {
+    // TODO: account for deploy key only
   // the readOnly state will not allow for write functions
     this.#programReadOnly = false
     this.#allReadOnly = false
 
     if (!this.account) {
       this.#allReadOnly = true
+      return
     } else if (!this.account.sigRequestKey && !this.account.programModKey) {
       this.#allReadOnly = true
+      return
     }
 
 
