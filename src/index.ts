@@ -103,7 +103,9 @@ export default class Entropy {
     await this.substrate.isReady
 
     if (!this.#allReadOnly) {
-
+      // TODO: if the account is registered and the program mod key
+      // is not provided if the registered account has the same program mod key
+      // auto fill program mod key
       this.registrationManager = new RegistrationManager({
         substrate: this.substrate,
         signer: {wallet: this.account.sigRequestKey.wallet, pair: this.account.sigRequestKey.pair},
@@ -120,10 +122,10 @@ export default class Entropy {
         crypto,
       })
       const programModKeyPair = isValidPair(this.account?.programModKey as Signer) ? this.account.programModKey : undefined
-      if (!this.#programReadOnly && programModKeyPair) {
+      if (!this.#programReadOnly) {
         this.programs = new ProgramManager({
           substrate: this.substrate,
-          programModKey: programModKeyPair as Signer || this.account.sigRequestKey,
+          programModKey: programModKeyPair as Signer|| this.account.sigRequestKey,
           programDeployKey: this.account.programDeployKey
         })
       } else if (this.account.programDeployKey) {
@@ -138,19 +140,22 @@ export default class Entropy {
             throw new Error('entropy was not Initialized with valid key pairs for this operation')
           }
         })
-
-
       } else {
+        this.programs = new Proxy(new ProgramManager({
+          substrate: this.substrate,
+          programModKey: this.account.sigRequestKey,
+        }), {
+          get: (programs, key) => {
+            if(key === 'get') return programs.get
+            throw new Error('entropy was not Initialized with valid key pairs for this operation')
+          }
+        })
 
       }
 
       this.#setVerfiyingKeys()
 
-    } {
-
     }
-
-
 
     this.#ready(true)
   }
@@ -174,7 +179,6 @@ export default class Entropy {
 
   /** @internal */
   #setReadOnlyStates (): void {
-    // TODO: account for deploy key only
   // the readOnly state will not allow for write functions
     this.#programReadOnly = false
     this.#allReadOnly = false
@@ -183,16 +187,19 @@ export default class Entropy {
       this.#programReadOnly = true
       this.#allReadOnly = true
       return
-    } else if (!this.account.sigRequestKey && !this.account.programModKey) {
+    } else if (!this.account.sigRequestKey && !this.account.programModKey && !this.account.programDeployKey) {
       this.#programReadOnly = true
       this.#allReadOnly = true
       return
+    } else if (!this.account.sigRequestKey && !this.account.programModKey && this.account.programDeployKey) {
+      this.account.sigRequestKey = this.account.programDeployKey
+      this.account.programModKey = this.account.programDeployKey
     }
 
 
-    if (typeof this.account.sigRequestKey !== 'object') {
+    if (this.account.sigRequestKey && typeof this.account.sigRequestKey === 'string') {
       throw new Error('AccountTypeError: sigRequestKey can not be a string')
-    } else if (!isValidPair({ wallet: this.account.sigRequestKey.wallet, pair: this.account.sigRequestKey.pair})) {
+    } else if (this.account.sigRequestKey && !isValidPair({ wallet: this.account.sigRequestKey.wallet, pair: this.account.sigRequestKey.pair})) {
       throw new Error('AccountTypeError: sigRequestKey not a valid signing pair')
     }
 
@@ -202,6 +209,7 @@ export default class Entropy {
       }
       this.#programReadOnly = true
     }
+
   }
 
 
