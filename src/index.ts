@@ -91,8 +91,8 @@ export default class Entropy {
     })
   }
 
-  async #init(opts: EntropyOpts) {
-    this.account = opts.account;
+  async #init (opts: EntropyOpts) {
+    this.account = opts.account
     this.#setReadOnlyStates()
 
     const wsProvider = new WsProvider(opts.endpoint)
