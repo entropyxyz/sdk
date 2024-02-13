@@ -24,10 +24,7 @@
     "burn": "rm -Rf node_modules && yarn cache clean --all && yarn install",
     "removedb": "rm -rf .entropy",
     "bundle": "tsup",
-    "bundle:watch": "tsup --watch",
-    "bundle:node": "tsup --platform node ",
-    "bundle:browser": "tsup --platform browser",
-    "bundle:prod": "tsup --minify",
+    "bundle:prod": "tsup --minify --env.NODE_ENV production",
     "find-deadcode": "ts-prune",
     "build:generate": "yarn generate:defs && yarn generate:meta",
     "generate:pull:local": "curl -H \"Content-Type: application/json\" -d '{\"id\":\"1\", \"jsonrpc\":\"2.0\", \"method\": \"state_getMetadata\", \"params\":[]}' http://localhost:9944 > entropy-metadata.json",
@@ -68,7 +65,7 @@
   "dependencies": {
     "@entropyxyz/entropy-protocol-nodejs": "^0.1.0",
     "@entropyxyz/entropy-protocol-web": "^0.1.0",
-    "@polkadot/api": "^10.11.1",
+    "@polkadot/api": "^10.11.2",
     "@types/node": "^20.10.3",
     "ethereum-cryptography": "^2.1.2",
     "ethereumjs-tx": "^2.1.2"

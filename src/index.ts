@@ -7,6 +7,8 @@ import { Adapter } from './signing/adapters/types'
 import { isValidPair } from './keys'
 import { Signer, Address } from './types'
 import ProgramManager from './programs'
+let production = false
+if (process.env.NODE_ENV === 'production') production = true
 
 export interface EntropyAccount {
   sigRequestKey?: Signer
@@ -97,35 +99,59 @@ export default class Entropy {
     this.#setReadOnlyStates()
 
     const wsProvider = new WsProvider(opts.endpoint)
-    this.substrate = new ApiPromise({ provider: wsProvider })
-    console.log('almost ready?', opts.endpoint, this.substrate.isReady)
+    this.substrate = new ApiPromise({ provider: wsProvider, noInitWarn: production })
     await this.substrate.isReady
-    console.log('almost ready??')
-    if (!this.#allReadOnly) this.registrationManager = new RegistrationManager({
-      substrate: this.substrate,
-      signer: {wallet: this.account.sigRequestKey.wallet, pair: this.account.sigRequestKey.pair},
-    })
-    if (!this.#allReadOnly) this.signingManager = new SignatureRequestManager({
-      signer: {wallet: this.account.sigRequestKey.wallet, pair: this.account.sigRequestKey.pair},
-      substrate: this.substrate,
-      adapters: opts.adapters,
-      crypto,
-    })
-    console.log('almost ready???')
 
-    const programModKeyPair = isValidPair(this.account?.programModKey as Signer) ? this.account.programModKey : undefined
+    if (!this.#allReadOnly) {
 
-    if (!this.#allReadOnly || !this.#programReadOnly) this.programs = new ProgramManager({
-      substrate: this.substrate,
-      programModKey: programModKeyPair as Signer || this.account.sigRequestKey,
-      programDeployKey: this.account.programDeployKey
-    })
-    if (this.#programReadOnly || this.#allReadOnly) this.programs.set = async () => { throw new Error('Programs is in a read only state: Must pass a valid key pair in initialization.') }
-    if (!this.#allReadOnly) this.isRegistered = this.registrationManager.checkRegistrationStatus.bind(
-      this.registrationManager
-    )
-    if (!this.#allReadOnly) this.#setVerfiyingKeys()
-    console.log('almost ready')
+      this.registrationManager = new RegistrationManager({
+        substrate: this.substrate,
+        signer: {wallet: this.account.sigRequestKey.wallet, pair: this.account.sigRequestKey.pair},
+      })
+
+      this.isRegistered = this.registrationManager.checkRegistrationStatus.bind(
+        this.registrationManager
+      )
+
+      this.signingManager = new SignatureRequestManager({
+        signer: {wallet: this.account.sigRequestKey.wallet, pair: this.account.sigRequestKey.pair},
+        substrate: this.substrate,
+        adapters: opts.adapters,
+        crypto,
+      })
+      const programModKeyPair = isValidPair(this.account?.programModKey as Signer) ? this.account.programModKey : undefined
+      if (!this.#programReadOnly && programModKeyPair) {
+        this.programs = new ProgramManager({
+          substrate: this.substrate,
+          programModKey: programModKeyPair as Signer || this.account.sigRequestKey,
+          programDeployKey: this.account.programDeployKey
+        })
+      } else if (this.account.programDeployKey) {
+
+        this.programs = new Proxy(new ProgramManager({
+          substrate: this.substrate,
+          programModKey: this.account.programDeployKey,
+          programDeployKey: this.account.programDeployKey
+        }), {
+          get: (programs, key) => {
+            if(key === 'dev') return programs.dev
+            throw new Error('entropy was not Initialized with valid key pairs for this operation')
+          }
+        })
+
+
+      } else {
+
+      }
+
+      this.#setVerfiyingKeys()
+
+    } {
+
+    }
+
+
+
     this.#ready(true)
   }
 
@@ -154,9 +180,11 @@ export default class Entropy {
     this.#allReadOnly = false
 
     if (!this.account) {
+      this.#programReadOnly = true
       this.#allReadOnly = true
       return
     } else if (!this.account.sigRequestKey && !this.account.programModKey) {
+      this.#programReadOnly = true
       this.#allReadOnly = true
       return
     }
