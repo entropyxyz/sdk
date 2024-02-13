@@ -180,5 +180,29 @@ const programConfig = util.u8aToHex(new Uint8Array(byteArray))
     // await disconnect(charlieStashEntropy.substrate)
   })
   
+  it('should handle allow for instantiation with no accounts', async () => {
+    entropy = new Entropy({})
+    await entropy.ready
+  })
+  it('should handle allow for instantiation with only programDeployKey', async () => {
+    const signer = await getWallet(charlieStashSeed)
+    entropy = new Entropy({account: {programDeployKey: signer}})
+
+    await entropy.ready
+  })
+  it('allow for instantiation with only sigRequestKey', async () => {
+    const signer = await getWallet(charlieStashSeed)
+    entropy = new Entropy({account: {sigRequestKey: signer}})
+    await entropy.ready
+  })
+  it('allow for instantiation with only sigRequestKey && programModKey as address', async () => {
+    const signer = await getWallet(charlieStashSeed)
+    entropy = new Entropy({account: {sigRequestKey: signer, programModKey: charlieStashAddress}})
+    expect(() => {
+      entropy.programs.set
+    }).toThrow()
+    await entropy.ready
+  })
+
 })
 
