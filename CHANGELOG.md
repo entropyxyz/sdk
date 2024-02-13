@@ -9,6 +9,10 @@ At the moment this project **does not** adhere to
 
 ## [Unreleased]
 
+### Fixed
+- read only state now works properly so you no longer need to pass an account object
+- no logging in prod
+
 
 ## [0.1.4] Bacchus - 2024-01-09 (entropy-core compatibility: 0.0.10)
 
