@@ -101,7 +101,7 @@ export default class Entropy {
     const wsProvider = new WsProvider(opts.endpoint)
     this.substrate = new ApiPromise({ provider: wsProvider, noInitWarn: production })
     await this.substrate.isReady
-
+    console.log('allReadOnly:', this.#allReadOnly, 'programReadOnly', this.#programReadOnly)
     if (!this.#allReadOnly) {
       // TODO: if the account is registered and the program mod key
       // is not provided if the registered account has the same program mod key
@@ -150,7 +150,6 @@ export default class Entropy {
             throw new Error('entropy was not Initialized with valid key pairs for this operation')
           }
         })
-
       }
 
       this.#setVerfiyingKeys()
@@ -202,6 +201,8 @@ export default class Entropy {
     } else if (this.account.sigRequestKey && !isValidPair({ wallet: this.account.sigRequestKey.wallet, pair: this.account.sigRequestKey.pair})) {
       throw new Error('AccountTypeError: sigRequestKey not a valid signing pair')
     }
+
+    if (!this.account.programModKey) this.#programReadOnly = true
 
     if (typeof this.account.programModKey === 'string') {
       if (!isValidSubstrateAddress(this.account.programModKey)) {

@@ -1,3 +1,5 @@
+process.env.NODE_ENV = 'production'
+
 import { readFileSync } from 'fs'
 import { EntropyAccount } from '../src'
 import Entropy from '../src'
@@ -177,31 +179,40 @@ const programConfig = util.u8aToHex(new Uint8Array(byteArray))
     // encoding signature
     console.log("SIGGGG", signature)
     expect(signature.length).toBe(228)
+    await disconnect(entropy.substrate)
     // await disconnect(charlieStashEntropy.substrate)
   })
   
   it('should handle allow for instantiation with no accounts', async () => {
+    console.log('should handle allow for instantiation with no accounts')
     entropy = new Entropy({})
-    await entropy.ready
+    expect(await entropy.ready).toBeTruthy()
+    await disconnect(entropy.substrate)
   })
   it('should handle allow for instantiation with only programDeployKey', async () => {
+    console.log('should handle allow for instantiation with only programDeployKey')
     const signer = await getWallet(charlieStashSeed)
     entropy = new Entropy({account: {programDeployKey: signer}})
 
     await entropy.ready
+    expect(entropy.account.sigRequestKey.wallet.address).toEqual(charlieStashAddress)
+    await disconnect(entropy.substrate)
   })
   it('allow for instantiation with only sigRequestKey', async () => {
+    console.log('allow for instantiation with only sigRequestKey')
     const signer = await getWallet(charlieStashSeed)
     entropy = new Entropy({account: {sigRequestKey: signer}})
     await entropy.ready
+    await disconnect(entropy.substrate)
   })
   it('allow for instantiation with only sigRequestKey && programModKey as address', async () => {
+    console.log('allow for instantiation with only sigRequestKey && programModKey as address')
     const signer = await getWallet(charlieStashSeed)
     entropy = new Entropy({account: {sigRequestKey: signer, programModKey: charlieStashAddress}})
-    expect(() => {
-      entropy.programs.set
-    }).toThrow()
+    expect(entropy.programs.set).toThrow('entropy was not Initialized with valid key pairs for this operation')
+
     await entropy.ready
+    await disconnect(entropy.substrate)
   })
 
 })
