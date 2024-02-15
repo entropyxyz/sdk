@@ -208,12 +208,18 @@ const programConfig = util.u8aToHex(new Uint8Array(byteArray))
   it('allow for instantiation with only sigRequestKey && programModKey as address', async () => {
     console.log('allow for instantiation with only sigRequestKey && programModKey as address')
     const signer = await getWallet(charlieStashSeed)
-    entropy = new Entropy({account: {sigRequestKey: signer, programModKey: charlieStashAddress}})
-    expect(entropy.programs.set).toThrow('entropy was not Initialized with valid key pairs for this operation')
-
+    entropy = new Entropy({ account: { sigRequestKey: signer, programModKey: charlieStashAddress } })
+    await entropy.ready
+    let newList: ProgramData = {
+      programPointer: '0x3873f6f91334cfb6cad84f94aa1e1025069405a4ea3577a818a5ad8d0e26bb39', 
+      programConfig: '0x' 
+    }
+     expect(() => {
+      const test = entropy.programs.add(newList, entropy.account.sigRequestKey.wallet.address, charlieStashAddress)
+    }).toThrow('entropy was not Initialized with valid key pairs for this operation')
+  
     await entropy.ready
     await disconnect(entropy.substrate)
   })
-
 })
 

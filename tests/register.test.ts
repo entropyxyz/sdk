@@ -44,14 +44,19 @@ describe('Register Tests', () => {
   afterAll(async () => {
     try {
       await disconnect(entropy.substrate)
+      spawnSync(
+        'docker',
+        ['compose', '--file', 'tests/docker-compose.yaml', 'down'],
+        { shell: true, stdio: 'inherit' }
+      )
+      spawnSync(
+        'docker',
+        ['compose', '--file', 'tests/docker-compose.yaml', 'logs'],
+        { shell: true, stdio: 'inherit' }
+      )
     } catch (e) {
-      console.error('Error during disconnect in afterAll: ', e.message)
+      console.error('Error in afterAll: ', e.message)
     }
-    spawnSync(
-      'docker',
-      ['compose', '--file', 'tests/docker-compose.yaml', 'down'],
-      { shell: true, stdio: 'inherit' }
-    )
   })
 
   it('should check pre-registration status', async () => {
