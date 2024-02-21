@@ -15,36 +15,37 @@ npm:
 npm i @entropyxyz/sdk --save
 ```
 
-### Usage
+### Usage 
 
-NOTICE 
-`endpoint ` defaults to 'ws://127.0.0.1:9944' if no value is provided. 
-**`Remarks`**
+The SDK provides an Entropy class, which you use to perform actions such as registering, checking registration status, and authenticating transactions. Ensure the class is fully initialized by waiting for the ready promise before calling any methods.
 
-The main interface for users wanting to interact with Entropy.
-This class provides methods to register, check registration status,
-and sign transactions. Users can await the `ready` promise to ensure
-that the class has been initialized before performing operations.
+**NOTICE** `endpoint ` by default, connects to a local node at 'ws://127.0.0.1:9944' unless specified otherwise.
+
 
 **`Example`**
 
 ```typescript
-const signer = await getWallet(charlieStashSeed);
+const signer = await getWallet(charlieStashSeed)
 
 const entropyAccount: EntropyAccount = {
   sigRequestKey: signer,
   programModKey: signer,
-};
+}
 
-const entropy = new Entropy({ account: entropyAccount });
-await entropy.ready;
+const entropy = new Entropy({ account: entropyAccount })
+await entropy.ready
+
+
 
 await entropy.register({
-  programModAccount: '5Gw3s7q9...',
-  keyVisibility: 'Permissioned',
-  freeTx: false
-});
+      keyVisibility: 'Permissioned',
+      freeTx: false,
+      initialPrograms: [programData],
+      programModAccount: charlieStashAddress,
+    })
 ```
+
+The above demonstrates how to initialize Entropy and perform
 
 ## Table of contents
 
