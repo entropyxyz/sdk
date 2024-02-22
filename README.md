@@ -22,11 +22,10 @@ npm i @entropyxyz/sdk --save
 #### NOTICE 
 `endpoint ` defaults to 'ws://127.0.0.1:9944' if no value is provided. 
 
-**`Remarks`**
 
-The main interface for interact with Entropy.
-This class provides methods to register, check registration status,
-and sign transactions. Users can await the `ready` promise to ensure
+The main interface to interact with Entropy.
+This class provides methods to register, check registration status, interact with programs,
+and sign transactions. Users should await the `ready` promise to ensure
 that the class has been initialized before performing operations.
 
 Below is an example that instantiates Entropy, deploys a program, registers using the deployed program, and signs a transaction. 
@@ -91,10 +90,9 @@ const programData: ProgramData = {
 // attempt user registration
 
 await entropy.register({
-// insert address to specify ProgramModAccount
       keyVisibility: 'Permissioned',
       initialPrograms: [programData],
-      programModAccount: '5Gw3s7q9...',
+      programModAccount: 'insert ProgramModAccount address'
     })
 
 // basic transaction composition
@@ -139,8 +137,6 @@ const signature = await entropy.signTransaction({txParams: basicTx, type: 'eth' 
     - [signTransaction](README.md#signtransaction)
 
 - [substrate](README.md#substrate)
-
-### Methods
 
 ## Constructors
 
