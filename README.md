@@ -205,36 +205,6 @@ For an overview of definitions read: [Terminology](https://github.com/entropyxyz
 
 ___
 
-### isRegistered
-
-• **isRegistered**: (`address`: [`Address`](./docs/modules/types.md#address)) => `Promise`\<`boolean`\>
-
-#### Type declaration
-
-▸ (`address`): `Promise`\<`boolean`\>
-
-##### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `address` | [`Address`](./docs/modules/types.md#address) |
-
-##### Returns
-
-`Promise`\<`boolean`\>
-
-**`Example`**
-
-``` typescript
-await entropy.isRegistered(`insert address`)
-```
-
-#### Defined in
-
-[index.ts:67](https://github.com/entropyxyz/sdk/blob/1c426d7/src/index.ts#L67)
-
-___
-
 ### programs
 
 • **programs**: [`default`](programs.default.md)
@@ -311,78 +281,6 @@ ___
 
 [index.ts:66](https://github.com/entropyxyz/sdk/blob/1c426d7/src/index.ts#L66)
 
-___
-
-### signingManager
-
-• **signingManager**: [`default`](signing.default.md)
-**`Example`**
-
-``` typescript 
-// signing manager
-
-await entropy.signingManager.sign({
-      sigRequestHash,
-      hash: this.adapters[type].hash,
-      type,
-    })
-``` 
-
-#### Defined in
-
-[index.ts:69](https://github.com/entropyxyz/sdk/blob/1c426d7/src/index.ts#L69)
-
-___
-
-### substrate
-
-• **substrate**: `ApiPromise`
-
-**`Example`**
-``` typescript 
-  // a simple get balance for user
-
-    const accountInfo = await entropy.substrate.query.system.account(address)
-
-    const freeBalance = hexToBigInt(accountInfo.data.free)
-
-    console.log(`Address ${selectedAccount.address} has a balance of: ${freeBalance.toString()} bits`)
-```
-#### Defined in
-
-[index.ts:71](https://github.com/entropyxyz/sdk/blob/1c426d7/src/index.ts#L71)
-
-## Methods
-
-### getVerifyingKey
-
-▸ **getVerifyingKey**(`address`): `Promise`\<`string`\>
-
-Retrieves the verifying key associated with the given address's registration record.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `address` | [`Address`](./docs/modules/types.md#address) | The address for which the verifying key is needed. |
-
-#### Returns
-
-`Promise`\<`string`\>
-
-- A promise resolving to the verifying key.
-
-**`Example`**
-
-``` typescript 
-const verifyingKey = await entropy.getVerifyingKey(address)
-```
-
-#### Defined in
-
-[index.ts:215](https://github.com/entropyxyz/sdk/blob/1c426d7/src/index.ts#L215)
-
-___
 
 ### register
 
@@ -430,11 +328,94 @@ await entropy.register({
     })
  ```
 
+
 #### Defined in
 
 [index.ts:186](https://github.com/entropyxyz/sdk/blob/1c426d7/src/index.ts#L186)
 
 ___
+
+### isRegistered
+
+• **isRegistered**: (`address`: [`Address`](./docs/modules/types.md#address)) => `Promise`\<`boolean`\>
+
+#### Type declaration
+
+▸ (`address`): `Promise`\<`boolean`\>
+
+##### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `address` | [`Address`](./docs/modules/types.md#address) |
+
+##### Returns
+
+`Promise`\<`boolean`\>
+
+**`Example`**
+
+``` typescript
+await entropy.isRegistered(`insert address`)
+```
+
+#### Defined in
+
+[index.ts:67](https://github.com/entropyxyz/sdk/blob/1c426d7/src/index.ts#L67)
+
+___
+
+
+### getVerifyingKey
+
+▸ **getVerifyingKey**(`address`): `Promise`\<`string`\>
+
+Retrieves the verifying key associated with the given address's registration record.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `address` | [`Address`](./docs/modules/types.md#address) | The address for which the verifying key is needed. |
+
+#### Returns
+
+`Promise`\<`string`\>
+
+- A promise resolving to the verifying key.
+
+**`Example`**
+
+``` typescript 
+const verifyingKey = await entropy.getVerifyingKey(address)
+```
+
+#### Defined in
+
+[index.ts:215](https://github.com/entropyxyz/sdk/blob/1c426d7/src/index.ts#L215)
+
+___
+
+### signingManager
+
+• **signingManager**: [`default`](signing.default.md)
+**`Example`**
+
+``` typescript 
+// signing manager
+
+await entropy.signingManager.sign({
+      sigRequestHash,
+      hash: this.adapters[type].hash,
+      type,
+    })
+``` 
+
+#### Defined in
+
+[index.ts:69](https://github.com/entropyxyz/sdk/blob/1c426d7/src/index.ts#L69)
+
+
 
 ### sign
 
@@ -526,3 +507,26 @@ await entropy.signingManager.sign({
 #### Defined in
 
 [index.ts:240](https://github.com/entropyxyz/sdk/blob/1c426d7/src/index.ts#L240)
+
+
+___
+
+### substrate
+
+• **substrate**: `ApiPromise`
+
+**`Example`**
+``` typescript 
+  // a simple get balance for user
+
+    const accountInfo = await entropy.substrate.query.system.account(address)
+
+    const freeBalance = hexToBigInt(accountInfo.data.free)
+
+    console.log(`Address ${selectedAccount.address} has a balance of: ${freeBalance.toString()} bits`)
+```
+#### Defined in
+
+[index.ts:71](https://github.com/entropyxyz/sdk/blob/1c426d7/src/index.ts#L71)
+
+
