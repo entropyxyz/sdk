@@ -137,7 +137,6 @@ const signature = await entropy.signTransaction({txParams: basicTx, type: 'eth' 
 
 ## Constructors
 
-### constructor
 
 • **new default**(`opts`): [`default`](./docs/classes/index.default.md)
 
@@ -148,6 +147,14 @@ Initializes an instance of the Entropy class.
 | Name | Type | Description |
 | :------ | :------ | :------ |
 | `opts` | [`EntropyOpts`](./docs/interfaces/index.EntropyOpts.md) | The configuration options for the Entropy instance. |
+
+**`Example`**
+
+``` typescript
+new Entropy({ account: entropyAccount })
+
+await entropy.ready
+```
 
 #### Returns
 
@@ -165,9 +172,11 @@ Initializes an instance of the Entropy class.
 
 • `Optional` **account**: [`EntropyAccount`](./docs/interfaces/index.EntropyAccount.md)
 
+
 **`Example`**
 
 ``` typescript
+
 export interface EntropyAccount {
   sigRequestKey?: Signer
   programModKey?: Signer | string
@@ -175,6 +184,20 @@ export interface EntropyAccount {
   verifyingKey?: string
 }
 ```
+
+Here's an overview of what each field means. 
+
+sigRequestKey or 'Signing Key'is the account on the Entropy  that is used to initate signing requests
+
+programModKey or 'Program Modification Account' is  the account on the Entropy chain which may update the programs for a particular user / organization / entity.
+
+programDeployKey or 'Deploy Key' is the key used to deploy a program that can be used to remove a program
+
+verifyingKey is the key verification key that corresponds to a signer. 
+
+For an overview of definitions read: [Terminology](https://github.com/entropyxyz/entropy-docs/blob/master/docs/02-Terminology.md)
+
+
 
 #### Defined in
 
@@ -218,7 +241,9 @@ ___
 
 There are two main flows for interfacing with Entropy Programs: dev and user. 
 
-A program can be deployed by anyone, which means they do not have to be registered with Entropy in order to deploy programs. The program is written to a global registry in which users can reference and add the program to their personal store by specifying the pointer's hash and a configuration. 
+A program can be deployed by anyone without having to register with Entropy first. After being deployed, the program then gets stored in the Programs storage slot with the key being a hash of(bytecode + configuration_interface).  The hash is used by a user to point to the programs they want assigned to their key, everytime a program is referenced the ref counter increments. 
+
+Here's a deeper overview of programs: [programs](https://github.com/entropyxyz/entropy-docs/blob/master/docs/06-ProgramFeatures.md)
 
 
 **`Dev Example`**
@@ -363,7 +388,14 @@ ___
 
 ▸ **register**(`params`): `Promise`\<`void`\>
 
-Registers an address with Entropy using the provided parameters.
+
+The user registers to Entropy by submitting a transaction from the 'signature request account' containing a 'program modification account', initial 'ProgramsData', and chosen key visibility mode.
+
+ProgramsData - Is multiple Programs Instances. Which contain the program_pointer (the hash of the program you want to use) and the program_config for that program. On the evaluation of a signature request a threshold server will run all the programs and pass through the program config for that program.
+
+The register method Registers an address with Entropy using the provided parameters.
+
+for a more detail overview on registering read: [register](https://github.com/entropyxyz/entropy-docs/blob/master/docs/05-Register.md)
 
 #### Parameters
 
@@ -411,6 +443,8 @@ ___
 Signs a signature request hash. This method involves various steps including validator
 selection, transaction request formatting, and submission of these requests to validators
 for signing. It returns the signature from the first validator after validation.
+
+for a more detailed overview of signing read: [signing](https://github.com/entropyxyz/entropy-docs/blob/master/docs/08-Sign.md)
 
 #### Parameters
 
