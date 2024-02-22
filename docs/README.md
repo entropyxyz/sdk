@@ -19,11 +19,12 @@ npm i @entropyxyz/sdk --save
 
 ### Usage
 
-NOTICE 
+#### NOTICE 
 `endpoint ` defaults to 'ws://127.0.0.1:9944' if no value is provided. 
+
 **`Remarks`**
 
-The main interface for users wanting to interact with Entropy.
+The main interface for interact with Entropy.
 This class provides methods to register, check registration status,
 and sign transactions. Users can await the `ready` promise to ensure
 that the class has been initialized before performing operations.
@@ -121,19 +122,25 @@ const signature = await entropy.signTransaction({txParams: basicTx, type: 'eth' 
 ### Properties
 
 - [account](README.md#account)
-- [isRegistered](README.md#isregistered)
-- [programs](README.md#programs)
 - [ready](README.md#ready)
+- [programManager](README.md#programs)
+  - Flows: 
+    - [Dev](README.md#dev-example)
+    - [User](README.md#user-example)
 - [registrationManager](README.md#registrationmanager)
+  - Methods:
+    - [isRegistered](README.md#isregistered) - Checks if an address is already registered.
+    - [getVerifyingKey](README.md#getverifyingkey) - Retrieves the verifying key for a registered address.
+    - [register](README.md#register) - Registers an address with the necessary parameters.
+
 - [signingManager](README.md#signingmanager)
+  - Methods:
+    - [sign](README.md#sign)
+    - [signTransaction](README.md#signtransaction)
+
 - [substrate](README.md#substrate)
 
 ### Methods
-
-- [getVerifyingKey](README.md#getverifyingkey)
-- [register](README.md#register)
-- [sign](README.md#sign)
-- [signTransaction](README.md#signtransaction)
 
 ## Constructors
 
@@ -202,10 +209,44 @@ For an overview of definitions read: [Terminology](https://github.com/entropyxyz
 #### Defined in
 
 [index.ts:70](https://github.com/entropyxyz/sdk/blob/1c426d7/src/index.ts#L70)
+___
+
+
+### ready
+
+• **ready**: `Promise`\<`boolean`\>
+
+A promise that resolves once chacha20poly1305 cryptoLib has been loaded
+
+
+#### Defined in
+
+[index.ts:65](https://github.com/entropyxyz/sdk/blob/1c426d7/src/index.ts#L65)
 
 ___
 
-### programs
+### programManager
+
+The ProgramManager provides interfaces to interact with Entropy Programs. It facilitates various operations such as retrieving, setting, adding, and removing programs associated with a user account. 
+
+Features
+Alpha Release: This feature is currently in alpha and is subject to changes.
+Dev and User Flows: Supports both development and user-level interactions with programs on the Entropy network.
+Methods
+constructor
+Creates an instance of ProgramManager for interacting with Entropy programs.
+
+```typescript
+constructor({
+  substrate: ApiPromise,
+  programModKey: Signer,
+  programDeployKey?: Signer
+})
+```
+
+substrate: Instance of ApiPromise from @polkadot/api.
+programModKey: Signer object for program modification.
+programDeployKey: Optional signer object for deploying programs.
 
 • **programs**: [`default`](programs.default.md)
 
@@ -216,7 +257,7 @@ A program can be deployed by anyone without having to register with Entropy firs
 Here's a deeper overview of programs: [programs](https://github.com/entropyxyz/entropy-docs/blob/master/docs/06-ProgramFeatures.md)
 
 
-**`Dev Example`**
+###  **`Dev Example`**
 
 ```typescript 
 // to deploy a program
@@ -232,7 +273,7 @@ const fetchedProgram = await entropy.programs.dev.get('insert pointer hash')
 await entropy.programs.dev.remove('insert pointer hash')
 ```
 
-**`User Example`**
+### **`User Example`**
 
 ```typescript
 // set a program to user list
@@ -257,20 +298,6 @@ await entropy.programs.remove('list of program hashes', sigReqAccount, programMo
 
 [index.ts:68](https://github.com/entropyxyz/sdk/blob/1c426d7/src/index.ts#L68)
 
-___
-
-### ready
-
-• **ready**: `Promise`\<`boolean`\>
-
-A promise that resolves once chacha20poly1305 cryptoLib has been loaded
-
-
-#### Defined in
-
-[index.ts:65](https://github.com/entropyxyz/sdk/blob/1c426d7/src/index.ts#L65)
-
-___
 
 ### registrationManager
 
