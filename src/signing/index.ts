@@ -250,10 +250,17 @@ export default class SignatureRequestManager {
       const keyGroup = group[1]
       // omg polkadot type gen is a head ache
       // @ts-ignore: next line
+      const groupLength = keyGroup.unwrap().length
+      // @ts-ignore: next line
       const index = parseInt(sigRequest, 16) % keyGroup.unwrap().length
+      console.log('index, groupLength, parseInt(sigRequest, 16):', index, groupLength, Math.ceil(parseInt(sigRequest, 16)))
+      console.log('sigRequest:', sigRequest)
+
+      if (Number.isNaN(index) || index === undefined) throw new Error(`invalid index for sig group ${index}`)
+
       // omg polkadot type gen is a head ache
       // @ts-ignore: next line
-      return keyGroup.unwrap()[index]
+      return keyGroup.unwrap()[parseInt(index)]
     })
 
     const rawValidatorInfo = await Promise.all(
@@ -279,7 +286,7 @@ export default class SignatureRequestManager {
         }
       }
     )
-
+    console.log('validatorsInfo:', validatorsInfo)
     return validatorsInfo
   }
 

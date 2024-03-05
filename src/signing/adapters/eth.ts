@@ -1,6 +1,9 @@
 import { Arch } from '../../types'
 import { keccak256 } from "ethereum-cryptography/keccak.js"
 import { Transaction } from 'ethereumjs-tx'
+import { encode } from 'rlp'
+import { stripHexPrefix } from '../../utils'
+
 
 export interface EthSignature {
   r: string
@@ -9,15 +12,27 @@ export interface EthSignature {
 }
 
 export async function preSign (txParams): Promise<string> {
-  const tx = new Transaction(txParams)
-  const serializedTx = `0x${tx.serialize().toString('hex')}`
-  return Buffer.from(serializedTx, 'utf8').toString('hex')
+  // nonce, gasprice, startgas, to, value, data, chainId, 0, 0
+  const { nonce, gasprice, startgas, gasLimit, to, value, data, chainId } = txParams
+  const tx = [
+    stripHexPrefix(nonce),
+    stripHexPrefix(gasprice) || stripHexPrefix(startgas),
+    stripHexPrefix(gasLimit),
+    stripHexPrefix(to),
+    stripHexPrefix(value),
+    stripHexPrefix(data),
+    stripHexPrefix(chainId),
+    0,
+    0
+  ]
+  return encode(tx).toString('hex')
 }
 
 export async function postSign (sig: Uint8Array, txParams): Promise<string> {
   const buffSig = Buffer.from(sig)
-  const rsv = extractRSV(buffSig)
-  const tx = new Transaction({...txParams, ...rsv})
+  const vrs = extractRSV(buffSig, parseInt(txParams.chainId))
+  const tx = new Transaction({...txParams, ...vrs}, {chain: txParams.chainId})
+  console.log('tx', tx.toJSON())
   return `0x${tx.serialize().toString('hex')}`
 }
 
@@ -30,10 +45,24 @@ export function pubToAddress (publicKey: string) {
   return `0x${hash.slice(-20)}`
 }
 
-export function extractRSV (sig: Buffer): EthSignature {
+export function extractRSV (sig: Buffer, chainId): EthSignature {
   const r = `0x${sig.slice(0, 32).toString('hex')}`
   const s = `0x${sig.slice(32, 64).toString('hex')}`
-  const v = sig.readUInt8(64) ? '0x1c' : '0x1b'
-
-  return { r, s, v }
+  let v
+  console.log('last bit', sig.readUInt8(64))
+  if (sig.readUInt8(64)) {
+    if (chainId === 1 || chainId === 61) {
+      v = '0x1c'
+    } else {
+      v = `0x${(chainId * 2 + 36).toString(16)}`
+    }
+  } else {
+    if (chainId === 1 || chainId === 61) {
+      v = '0x1b'
+    } else {
+      v = `0x${(chainId * 2 + 35).toString(16)}`
+    }
+  }
+  console.log('v value', v, sig.readUInt8(64))
+  return { v, r, s }
 }
