@@ -252,7 +252,7 @@ export default class SignatureRequestManager {
       // @ts-ignore: next line
       const groupLength = keyGroup.unwrap().length
       // @ts-ignore: next line
-      const index = parseInt(sigRequest, 16) % keyGroup.unwrap().length
+      const index = BigInt(`0x${sigRequest}`) % BigInt(keyGroup.unwrap().length)
       console.log('index, groupLength, parseInt(sigRequest, 16):', index, groupLength, Math.ceil(parseInt(sigRequest, 16)))
       console.log('sigRequest:', sigRequest)
 
@@ -260,13 +260,13 @@ export default class SignatureRequestManager {
 
       // omg polkadot type gen is a head ache
       // @ts-ignore: next line
-      return keyGroup.unwrap()[parseInt(index)]
+      return keyGroup.unwrap().reverse()[parseInt(index)]
     })
 
     const rawValidatorInfo = await Promise.all(
-      stashKeys.map((stashKey) =>
-        this.substrate.query.stakingExtension.thresholdServers(stashKey)
-      )
+      stashKeys.map((stashKey) => {
+        return this.substrate.query.stakingExtension.thresholdServers(stashKey)
+      })
     )
     const validatorsInfo: Array<ValidatorInfo> = rawValidatorInfo.map(
       (validator) => {

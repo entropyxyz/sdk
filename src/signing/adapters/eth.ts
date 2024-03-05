@@ -13,23 +13,22 @@ export interface EthSignature {
 
 export async function preSign (txParams): Promise<string> {
   // nonce, gasprice, startgas, to, value, data, chainId, 0, 0
-  const { nonce, gasprice, startgas, gasLimit, to, value, data, chainId } = txParams
+  const { nonce, gasprice, startGas, gasLimit, to, value, data, chainId } = txParams
   const tx = [
+    stripHexPrefix(chainId),
     stripHexPrefix(nonce),
-    stripHexPrefix(gasprice) || stripHexPrefix(startgas),
-    stripHexPrefix(gasLimit),
+    stripHexPrefix(gasprice),
+    stripHexPrefix(gasLimit) || stripHexPrefix(startGas),
     stripHexPrefix(to),
     stripHexPrefix(value),
     stripHexPrefix(data),
-    stripHexPrefix(chainId),
-    0,
-    0
   ]
   return encode(tx).toString('hex')
 }
 
 export async function postSign (sig: Uint8Array, txParams): Promise<string> {
   const buffSig = Buffer.from(sig)
+  console.log('buffsig:', buffSig.toString('hex'))
   const vrs = extractRSV(buffSig, parseInt(txParams.chainId))
   const tx = new Transaction({...txParams, ...vrs}, {chain: txParams.chainId})
   console.log('tx', tx.toJSON())
