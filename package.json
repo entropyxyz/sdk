@@ -68,10 +68,13 @@
   "dependencies": {
     "@entropyxyz/entropy-protocol-nodejs": "^0.1.0",
     "@entropyxyz/entropy-protocol-web": "^0.1.0",
+    "@ethereumjs/common": "^4.2.0",
+    "@ethereumjs/tx": "^5.2.1",
     "@polkadot/api": "^10.11.1",
     "@types/node": "^20.10.3",
     "ethereum-cryptography": "^2.1.2",
-    "ethereumjs-tx": "^2.1.2"
+    "ethereumjs-tx": "^2.1.2",
+    "ethers": "^5.7.2"
   },
   "directories": {
     "example": "examples"

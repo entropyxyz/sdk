@@ -4,6 +4,7 @@ export interface Adapter {
   type: string
   arch: Arch
   hash: string
+  pubToAddress: (pubKey: string) => string
   preSign: (sigReq: TxParams) => Promise<string>
   postSign: (sig: Uint8Array, txParams:   TxParams) => Promise<unknown>
 }
@@ -12,6 +13,7 @@ export interface OptAdapter {
   type: string
   arch?: Arch
   hash?: string
+  pubToAddress?: (pubKey: string) => string
   preSign?: (sigReq: TxParams) => Promise<string>
   postSign?: (sig: Uint8Array, txParams:   TxParams) => Promise<unknown>
 }
