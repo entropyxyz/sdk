@@ -7,7 +7,8 @@ import { Adapter } from './signing/adapters/types'
 import { isValidPair } from './keys'
 import { Signer, Address } from './types'
 import ProgramManager from './programs'
-
+import { runDkgProtocol, ValidatorInfo } from '@entropyxyz/entropy-protocol-nodejs'
+import { fromHex } from '@entropyxyz/entropy-protocol-nodejs'
 export interface EntropyAccount {
   sigRequestKey?: Signer
   programModKey?: Signer | string
@@ -33,21 +34,21 @@ export interface EntropyOpts {
  *
  * @example
  * ```typescript
- * const signer = await getWallet(charlieStashSeed);
+ * const signer = await getWallet(charlieStashSeed)
  *
  * const entropyAccount: EntropyAccount = {
  *   sigRequestKey: signer,
  *   programModKey: signer,
- * };
+ * }
  *
  * const entropy = new Entropy({ account: entropyAccount });
- * await entropy.ready;
+ * await entropy.ready
  *
- * await entropy.register({ 
- *   programModAccount: '5Gw3s7q9...', 
- *   keyVisibility: 'Permissioned', 
- *   freeTx: false 
- * });
+ * await entropy.register({
+ *   programModAccount: '5Gw3s7q9...',
+ *   keyVisibility: 'Permissioned',
+ *   freeTx: false
+ * })
  * ```
  * @alpha
  */
@@ -79,7 +80,6 @@ export default class Entropy {
    * @param {Adapter[]} [opts.adapters] - A collection of signing adapters for handling various transaction types.
    */
 
-
   constructor (opts: EntropyOpts) {
     this.ready = new Promise((resolve, reject) => {
       this.#ready = resolve
@@ -101,23 +101,37 @@ export default class Entropy {
 
     this.registrationManager = new RegistrationManager({
       substrate: this.substrate,
-      signer: {wallet: this.account.sigRequestKey.wallet, pair: this.account.sigRequestKey.pair},
+      signer: {
+        wallet: this.account.sigRequestKey.wallet,
+        pair: this.account.sigRequestKey.pair,
+      },
     })
     this.signingManager = new SignatureRequestManager({
-      signer: {wallet: this.account.sigRequestKey.wallet, pair: this.account.sigRequestKey.pair},
+      signer: {
+        wallet: this.account.sigRequestKey.wallet,
+        pair: this.account.sigRequestKey.pair,
+      },
       substrate: this.substrate,
       adapters: opts.adapters,
       crypto,
     })
 
-    const programModKeyPair = isValidPair(this.account.programModKey as Signer) ? this.account.programModKey : undefined
+    const programModKeyPair = isValidPair(this.account.programModKey as Signer)
+      ? this.account.programModKey
+      : undefined
 
     this.programs = new ProgramManager({
       substrate: this.substrate,
-      programModKey: programModKeyPair as Signer || this.account.sigRequestKey,
-      programDeployKey: this.account.programDeployKey
+      programModKey:
+        (programModKeyPair as Signer) || this.account.sigRequestKey,
+      programDeployKey: this.account.programDeployKey,
     })
-    if (this.#programReadOnly || this.#allReadOnly) this.programs.set = async () => { throw new Error('Programs is in a read only state: Must pass a valid key pair in initialization.') }
+    if (this.#programReadOnly || this.#allReadOnly)
+      this.programs.set = async () => {
+        throw new Error(
+          'Programs is in a read only state: Must pass a valid key pair in initialization.'
+        )
+      }
     this.#ready(true)
     this.isRegistered = this.registrationManager.checkRegistrationStatus.bind(
       this.registrationManager
@@ -141,10 +155,9 @@ export default class Entropy {
     }
   }
 
-
   /** @internal */
   #setReadOnlyStates (): void {
-  // the readOnly state will not allow for write functions
+    // the readOnly state will not allow for write functions
     this.#programReadOnly = false
     this.#allReadOnly = false
 
@@ -154,11 +167,17 @@ export default class Entropy {
       this.#allReadOnly = true
     }
 
-
     if (typeof this.account.sigRequestKey !== 'object') {
       throw new Error('AccountTypeError: sigRequestKey can not be a string')
-    } else if (!isValidPair({ wallet: this.account.sigRequestKey.wallet, pair: this.account.sigRequestKey.pair})) {
-      throw new Error('AccountTypeError: sigRequestKey not a valid signing pair')
+    } else if (
+      !isValidPair({
+        wallet: this.account.sigRequestKey.wallet,
+        pair: this.account.sigRequestKey.pair,
+      })
+    ) {
+      throw new Error(
+        'AccountTypeError: sigRequestKey not a valid signing pair'
+      )
     }
 
     if (typeof this.account.programModKey === 'string') {
@@ -168,7 +187,6 @@ export default class Entropy {
       this.#programReadOnly = true
     }
   }
-
 
   /**
    * Registers an address with Entropy using the provided parameters.
@@ -187,7 +205,10 @@ export default class Entropy {
     params: RegistrationParams & { account?: EntropyAccount }
   ): Promise<void> {
     await this.ready
-    if (this.#allReadOnly) throw new Error('Initialized in read only state: can not use write functions')
+    if (this.#allReadOnly)
+      throw new Error(
+        'Initialized in read only state: can not use write functions'
+      )
     const account = params.account || this.account
 
     if (!account) {
@@ -198,11 +219,88 @@ export default class Entropy {
       params.programModAccount &&
       !isValidSubstrateAddress(params.programModAccount)
     ) {
-      throw new TypeError('Incompatible address type')
+      throw new TypeError('Incompatible address type') 
     }
-    await this.registrationManager.register(params)
-    this.account.verifyingKey = await this.getVerifyingKey(this.account.sigRequestKey.wallet.address)
 
+    if (params.keyVisibility === 'Private') {
+      await this.participateInDkgForPrivateVisibility(
+        this.account.sigRequestKey.wallet.address
+      )
+      
+      await this.registrationManager.register(params)
+      this.account.verifyingKey = await this.getVerifyingKey(
+        this.account.sigRequestKey.wallet.address
+      )
+    } 
+  }
+
+  async participateInDkgForPrivateVisibility (address: string): Promise<void> {
+    const blockNumber = await this.substrate.rpc.chain.getHeader().then((header) => header.number.toNumber())
+    const validatorsInfo = await this.getDKGCommittee(blockNumber + 1)
+    if (validatorsInfo.length === 0) {
+      throw new Error('No validators info available for DKG.')
+    }
+
+    const selectedValidatorAccountId = await this.selectValidatorFromSubgroup(0, blockNumber)
+    const selectedValidatorInfo = validatorsInfo.find(v => v.getTssAccount().toString() === selectedValidatorAccountId)
+
+    if (!selectedValidatorInfo) {
+      throw new Error('Selected validator info not found.')
+    }
+
+    await runDkgProtocol([selectedValidatorInfo], this.account.sigRequestKey.pair.secretKey)
+    console.log('DKG Protocol completed for address:', address)
+  }
+
+  async getDKGCommittee (blockNumber: number): Promise<ValidatorInfo[]> {
+    const validatorsInfo: ValidatorInfo[] = []
+    const SIGNING_PARTY_SIZE = 2
+
+    for (let i = 0; i < SIGNING_PARTY_SIZE; i++) {
+      try {
+        const accountId = await this.selectValidatorFromSubgroup(i, blockNumber)
+        const serverInfoOption = await this.substrate.query.stakingExtension.thresholdServers(accountId)
+
+        if (serverInfoOption.isNone) {
+          throw new Error("Stash Fetch Error")
+        }
+
+        const serverInfo = serverInfoOption.unwrap()
+        validatorsInfo.push(new ValidatorInfo(fromHex(serverInfo.x25519PublicKey.toString()), serverInfo.endpoint.toString(), fromHex(serverInfo.tssAccount.toString())))
+      } catch (error) {
+        console.error(`Error fetching validator info: ${error}`)
+        throw error
+      }
+    }
+
+    return validatorsInfo
+  }
+  async selectValidatorFromSubgroup (signingGroup: number, blockNumber: number): Promise<string> {
+    try {
+      const subgroupInfo = await this.substrate.query.stakingExtension.signingGroups(signingGroup)
+      if (subgroupInfo.isNone || subgroupInfo.unwrap().isEmpty) {
+        throw new Error("Subgroup Fetch Error")
+      }
+
+      const subgroupAddresses = subgroupInfo.unwrap()
+
+      for (let attempt = 0; attempt < subgroupAddresses.length; attempt++) {
+        const selectionIndex = blockNumber % subgroupAddresses.length
+        const address = subgroupAddresses[selectionIndex]
+
+        const isSynced = await this.substrate.query.stakingExtension.isValidatorSynced(address)
+        if (isSynced) {
+          return address.toString()
+        } else {
+          subgroupAddresses.splice(selectionIndex, 1)
+        }
+      }
+
+      throw new Error("No synced validators found in the subgroup.")
+    } catch (error) {
+      console.error(`Error selecting validator from subgroup: ${error}`)
+      throw error
+    }
   }
 
   /**
@@ -211,9 +309,11 @@ export default class Entropy {
    * @param {Address} address - The address for which the verifying key is needed.
    * @returns {Promise<string>} - A promise resolving to the verifying key.
    */
-  
+
   async getVerifyingKey (address: Address): Promise<string> {
-    const registeredInfo = await this.substrate.query.relayer.registered(address)
+    const registeredInfo = await this.substrate.query.relayer.registered(
+      address
+    )
     // @ts-ignore: next line
     return registeredInfo.toHuman().verifyingKey
   }
@@ -239,7 +339,10 @@ export default class Entropy {
 
   async signTransaction (params: SigTxOps): Promise<unknown> {
     await this.ready
-    if (this.#allReadOnly) throw new Error('Initialized in read only state: can not use write functions')
+    if (this.#allReadOnly)
+      throw new Error(
+        'Initialized in read only state: can not use write functions'
+      )
     return this.signingManager.signTransaction(params)
   }
 
@@ -258,7 +361,10 @@ export default class Entropy {
 
   async sign (params: SigOps): Promise<Uint8Array> {
     await this.ready
-    if (this.#allReadOnly) throw new Error('Initialized in read only state: can not use write functions')
+    if (this.#allReadOnly)
+      throw new Error(
+        'Initialized in read only state: can not use write functions'
+      )
     return this.signingManager.sign(params)
   }
 }
