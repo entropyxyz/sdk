@@ -7,8 +7,7 @@ import { Adapter } from './signing/adapters/types'
 import { isValidPair } from './keys'
 import { Signer, Address } from './types'
 import ProgramManager from './programs'
-import { runDkgProtocol, ValidatorInfo } from '@entropyxyz/entropy-protocol-nodejs'
-import { fromHex } from '@entropyxyz/entropy-protocol-nodejs'
+import { runDkgProtocol, ValidatorInfo, fromHex } from '@entropyxyz/entropy-protocol-nodejs'
 export interface EntropyAccount {
   sigRequestKey?: Signer
   programModKey?: Signer | string
@@ -41,7 +40,7 @@ export interface EntropyOpts {
  *   programModKey: signer,
  * }
  *
- * const entropy = new Entropy({ account: entropyAccount });
+ * const entropy = new Entropy({ account: entropyAccount })
  * await entropy.ready
  *
  * await entropy.register({
@@ -235,7 +234,9 @@ export default class Entropy {
   }
 
   async participateInDkgForPrivateVisibility (address: string): Promise<void> {
+    console.log("PRIVATE REGISTER")
     const blockNumber = await this.substrate.rpc.chain.getHeader().then((header) => header.number.toNumber())
+    console.log("block", blockNumber)
     const validatorsInfo = await this.getDKGCommittee(blockNumber + 1)
     if (validatorsInfo.length === 0) {
       throw new Error('No validators info available for DKG.')
@@ -253,25 +254,33 @@ export default class Entropy {
   }
 
   async getDKGCommittee (blockNumber: number): Promise<ValidatorInfo[]> {
+    console.log("GET DKG COMMITTEE")
     const validatorsInfo: ValidatorInfo[] = []
     const SIGNING_PARTY_SIZE = 2
 
     for (let i = 0; i < SIGNING_PARTY_SIZE; i++) {
       try {
         const accountId = await this.selectValidatorFromSubgroup(i, blockNumber)
+        console.log({accountId})
         const serverInfoOption = await this.substrate.query.stakingExtension.thresholdServers(accountId)
 
         if (serverInfoOption.isNone) {
           throw new Error("Stash Fetch Error")
         }
 
+        console.log("pre server info")
+        
         const serverInfo = serverInfoOption.unwrap()
-        validatorsInfo.push(new ValidatorInfo(fromHex(serverInfo.x25519PublicKey.toString()), serverInfo.endpoint.toString(), fromHex(serverInfo.tssAccount.toString())))
+        console.log("PubKey", serverInfo.x25519PublicKey.toString())
+        console.log("endpoint", serverInfo.endpoint.toString())
+        console.log("tss", serverInfo.tssAccount.toString())
+        validatorsInfo.push(new ValidatorInfo(fromHex(serverInfo.x25519PublicKey.toString()), serverInfo.endpoint.toString(), serverInfo.tssAccount))
       } catch (error) {
         console.error(`Error fetching validator info: ${error}`)
         throw error
       }
     }
+    console.log("ABOUT TO CONSOLE VALIDATOR INFO")
 
     return validatorsInfo
   }
@@ -279,30 +288,36 @@ export default class Entropy {
     try {
       const subgroupInfo = await this.substrate.query.stakingExtension.signingGroups(signingGroup)
       if (subgroupInfo.isNone || subgroupInfo.unwrap().isEmpty) {
-        throw new Error("Subgroup Fetch Error")
+        throw new Error("Subgroup information not available or empty.")
       }
-
-      const subgroupAddresses = subgroupInfo.unwrap()
-
-      for (let attempt = 0; attempt < subgroupAddresses.length; attempt++) {
+      const subgroupAddresses = subgroupInfo.unwrap().toArray() 
+  
+      while (subgroupAddresses.length > 0) {
         const selectionIndex = blockNumber % subgroupAddresses.length
         const address = subgroupAddresses[selectionIndex]
-
-        const isSynced = await this.substrate.query.stakingExtension.isValidatorSynced(address)
-        if (isSynced) {
-          return address.toString()
-        } else {
+  
+        try {
+          const isSynced = await this.substrate.query.stakingExtension.isValidatorSynced(address)
+          
+          if (isSynced) {
+            console.log(`Address ${address.toString()} is synced.`)
+            return address.toString()
+          } else {
+            subgroupAddresses.splice(selectionIndex, 1) 
+            blockNumber++
+            console.log(`Address ${address.toString()} is not synced. Trying next validator.`)
+          }
+        } catch (error) {
+          console.error(`Error checking sync status for address ${address.toString()}:`, error)
           subgroupAddresses.splice(selectionIndex, 1)
         }
       }
-
       throw new Error("No synced validators found in the subgroup.")
     } catch (error) {
-      console.error(`Error selecting validator from subgroup: ${error}`)
+      console.error("Failed to select a validator:", error)
       throw error
     }
   }
-
   /**
    * Retrieves the verifying key associated with the given address's registration record.
    *
@@ -316,6 +331,13 @@ export default class Entropy {
     )
     // @ts-ignore: next line
     return registeredInfo.toHuman().verifyingKey
+  }
+
+  async getKeyVisibility ( address: Address): Promise<string> {
+    const registeredInfo = await this.substrate.query.relayer.registered(address)
+    
+    // @ts-ignore: next line
+    return registeredInfo.toHuman().keyVisibility 
   }
 
   /**
@@ -343,8 +365,19 @@ export default class Entropy {
       throw new Error(
         'Initialized in read only state: can not use write functions'
       )
-    return this.signingManager.signTransaction(params)
+
+    const keyVisibilityInfo = await this.getKeyVisibility(this.account.sigRequestKey.wallet.address) 
+
+    if (keyVisibilityInfo === 'Private') {
+      return this.signingManager.privateSign(params)
+    } else {
+      return this.signingManager.signTransaction(params)
+    }
   }
+
+  
+
+
 
   /**
    * Signs a signature request hash. This method involves various steps including validator
@@ -365,6 +398,8 @@ export default class Entropy {
       throw new Error(
         'Initialized in read only state: can not use write functions'
       )
+
+
     return this.signingManager.sign(params)
   }
 }

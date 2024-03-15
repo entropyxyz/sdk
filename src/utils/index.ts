@@ -1,6 +1,8 @@
 import { decodeAddress, encodeAddress } from '@polkadot/keyring'
 import { hexToU8a, isHex } from '@polkadot/util'
 import { Address } from '../types'
+import { ValidatorInfo } from '../types'
+import { ApiPromise } from '@polkadot/api'
 
 export interface AnyObject {
   [key: string]: number | string | string[] | AnyObject
@@ -16,7 +18,6 @@ export function typeofthing (thing) {
     return thingType
   }
 }
-
 
 export function stripHexPrefix (str: string): string {
   if (str.startsWith('0x')) return str.slice(2)
@@ -88,4 +89,38 @@ export function hex2buf (hex: string): ArrayBuffer {
     bytes[i] = parseInt(hex.slice(i * 2, i * 2 + 2), 16)
   }
   return bytes.buffer
+}
+
+export async function pickValidatorsBySignature (
+  substrate: ApiPromise,
+  sigRequest: string
+): Promise<ValidatorInfo[]> {
+  const entries = await substrate.query.stakingExtension.signingGroups.entries()
+  const stashKeys = entries.map((group) => {
+    const keyGroup = group[1]
+    const index = parseInt(sigRequest, 16) % keyGroup.unwrap().length
+    return keyGroup.unwrap()[index]
+  })
+
+  const rawValidatorInfo = await Promise.all(
+    stashKeys.map((stashKey) =>
+      substrate.query.stakingExtension.thresholdServers(stashKey)
+    )
+  )
+
+  const validatorsInfo: ValidatorInfo[] = rawValidatorInfo.map((validator) => {
+    const validatorHuman = validator.toHuman() as { 
+      x25519PublicKey: string
+      endpoint: string
+      tssAccount: string
+    }
+
+    return {
+      x25519_public_key: validatorHuman.x25519PublicKey,
+      ip_address: validatorHuman.endpoint,
+      tss_account: validatorHuman.tssAccount,
+    }
+  })
+
+  return validatorsInfo
 }

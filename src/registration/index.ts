@@ -59,7 +59,7 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
   async register ({
     freeTx = false,
     initialPrograms = [],
-    keyVisibility = 'Permissioned',
+    keyVisibility,
     programModAccount,
   }: RegistrationParams): Promise<RegisteredInfo> {
     const programModificationAccount = programModAccount
@@ -133,6 +133,8 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
 
     return registered
   }
+
+  
 
   /**
    * Verifies the registration status of an address.

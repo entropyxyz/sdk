@@ -179,7 +179,7 @@ const programConfig = util.u8aToHex(new Uint8Array(byteArray))
 
 
     await entropy.register({
-      keyVisibility: 'Permissioned',
+      keyVisibility: 'Private',
       freeTx: false,
       // initialPrograms: [{ pointer: programData.pointer, config: programData.config }],
       initialPrograms: [programData],
@@ -238,7 +238,9 @@ const programConfig = util.u8aToHex(new Uint8Array(byteArray))
       data: '0x' + Buffer.from('Created On Entropy').toString('hex'),
     }
   
-    const signature = await entropy.signTransaction({txParams: basicTx, type: 'eth' }) as string
+    // const signature = await entropy.signTransaction({txParams: basicTx, type: 'eth' }) as string
+    const signature = await entropy.signingManager.privateSign({txParams: basicTx, type: 'eth' }) as string
+
   
 
     // encoding signature
