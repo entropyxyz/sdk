@@ -14,7 +14,7 @@ export interface EthSignature {
 }
 
 export async function preSign (txParams): Promise<string> {
-    const common = Common.custom({ chainId: txParams.chainId }, { hardfork: txParams.hardfork || 'spuriousDragon' });
+    const common = Common.custom({ chainId: txParams.chainId, hardfork: txParams.hardfork || 'London' });
   // nonce, gasprice, startgas, to, value, data, chainId, 0, 0
   // const { nonce, gasprice, startGas, gasLimit, to, value, data, chainId } = txParams
   // const tx = [
@@ -29,11 +29,11 @@ export async function preSign (txParams): Promise<string> {
   //   0
   // ]
   // return encode(tx).toString('hex')
-  return '0x' + Buffer.from(FeeMarketEIP1559Transaction.fromTxData(txParams, { common }).serialize()).toString('hex')
+  return '0x' + Buffer.from(FeeMarketEIP1559Transaction.fromTxData({...txParams}, { common }).getMessageToSign()).toString('hex')
 }
 
 export async function postSign (sig: Uint8Array, txParams): Promise<string> {
-  const common = Common.custom({ chainId: txParams.chainId }, { hardfork: txParams.hardfork || 'spuriousDragon' });
+  const common = Common.custom({ chainId: txParams.chainId, hardfork: txParams.hardfork || 'London' });
   const buffSig = Buffer.from(sig)
   console.log('buffsig:', buffSig.toString('hex'))
   const vrs = extractRSV(buffSig, parseInt(txParams.chainId))
@@ -51,8 +51,8 @@ export function pubToAddress (publicKey: string) {
 export function extractRSV (sig: Buffer, chainId): EthSignature {
   const r = `0x${sig.slice(0, 32).toString('hex')}`
   const s = `0x${sig.slice(32, 64).toString('hex')}`
-  const v = sig.readUInt8(64)
+  const yParity = parseInt(sig.toString('hex').slice(-2), 16) % 2
 
   console.log('last bit', sig.readUInt8(64), sig.slice(0, 32).toString('hex'))
-  return { v, r, s }
+  return { yParity, r, s }
 }
