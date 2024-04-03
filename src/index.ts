@@ -80,7 +80,7 @@ export default class Entropy {
    */
 
 
-  constructor (opts: EntropyOpts) {
+  constructor (opts: EntropyOpts = { endpoint: 'ws://127.0.0.1:9944' }) {
     this.ready = new Promise((resolve, reject) => {
       this.#ready = resolve
       this.#fail = reject

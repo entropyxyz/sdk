@@ -9,6 +9,9 @@ At the moment this project **does not** adhere to
 
 ## [Unreleased]
 
+### Changed
+
+- constructor now optionally takes an object instead of requiring `opts`
 
 ## [0.1.4] Bacchus - 2024-01-09 (entropy-core compatibility: 0.0.10)
 
