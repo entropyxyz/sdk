@@ -8,7 +8,6 @@ At the moment this project **does not** adhere to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-
 ### Changed
 
 - constructor now optionally takes an object instead of requiring `opts`
@@ -21,6 +20,7 @@ At the moment this project **does not** adhere to
 
 ### Fixed
 
+- no longer get warnings from polkadotjs on types
 - sigRequest may now be hex prefixed and not cause internal issues where choosing validators returns undefined. (#293)
 
 ## [0.1.3] Bes - 2024-01-31 (entropy-core compatibility: 0.0.10)
