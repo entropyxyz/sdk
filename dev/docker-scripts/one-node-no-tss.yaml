@@ -1,0 +1,24 @@
+# Docker Compose file for making an Entropy blockchain network.
+# Currently, it's intended for LOCAL DEVNET FUNCTIONALITY ONLY.
+# Things will get better and more generic, but for the moment
+# this iteration is for simplifying the dogfooding and testing
+# workflows our engineers use, and trying to cut down on some
+# of the more complicated test code that spins up this kind of
+# environment for their tests. Eventually, we will converge on
+# a more canonical set of environments and configuration files.
+---
+version: "3.8"
+name: entropy-devnet-local
+
+services:
+  alice-chain-node:
+    image: entropyxyz/entropy:$ENTROPY_CORE_VERSION
+    ports:
+      - "127.0.0.1:9944:9944/tcp"   # "RPC Port."
+    command:
+      - "--chain"
+      - "devnet-local"
+      - "--rpc-port"
+      - "9944"
+      - "--rpc-cors"
+      - "all"
