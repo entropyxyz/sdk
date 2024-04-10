@@ -12,7 +12,7 @@ import { Keyring } from '@polkadot/api'
 import { getWallet } from '../src/keys'
 import { mnemonicGenerate } from '@polkadot/util-crypto'
 import { buf2hex } from '../src/utils'
-import { spawnSync } from 'child_process'
+import { execFileSync } from 'child_process'
 import { Transaction } from 'ethereumjs-tx'
 import { preSign } from '../src/signing/adapters/eth'
 import { ProgramData } from '../src/programs'
@@ -25,10 +25,10 @@ describe('Core Tests', () => {
   beforeAll(async () => {
     jest.setTimeout(300000) // Give us five minutes to spin up.
     try {
-      spawnSync(
-        'docker',
-        ['compose', '--file', 'tests/docker-compose.yaml', 'up', '--detach'],
-        { shell: true, stdio: 'inherit' } // Use shell's search path.
+      execFileSync(
+        'dev/bin/spin-up.sh',
+        ['two-nodes'],
+        { shell: true, cwd: process.cwd(), stdio: 'inherit' } // Use shell's search path.
       )
     } catch (e) {
       console.error('Error in beforeAll: ', e.message)
@@ -51,15 +51,10 @@ describe('Core Tests', () => {
   afterAll(async () => {
     try {
       await disconnect(entropy.substrate)
-      spawnSync(
-        'docker',
-        ['compose', '--file', 'tests/docker-compose.yaml', 'down'],
-        { shell: true, stdio: 'inherit' }
-      )
-      spawnSync(
-        'docker',
-        ['compose', '--file', 'tests/docker-compose.yaml', 'logs'],
-        { shell: true, stdio: 'inherit' }
+      execFileSync(
+        'dev/bin/spin-down.sh',
+        ['two-nodes'],
+        { shell: true, cwd: process.cwd(), stdio: 'inherit' }
       )
     } catch (e) {
       console.error('Error in afterAll: ', e.message)
