@@ -19,7 +19,7 @@ describe('Register Tests', () => {
 
     // Spin up the test environment
       execFileSync(
-        '/dev/bin/spin-up.sh',
+        'dev/bin/spin-up.sh',
         ['two-nodes'],
         { shell: true, cwd: process.cwd(), stdio: 'inherit' } // Use shell's search path.
       )
