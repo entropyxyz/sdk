@@ -45,7 +45,7 @@ export interface EntropyOpts {
  *
  * await entropy.register({ 
  *   programModAccount: '5Gw3s7q9...', 
- *   keyVisibility: 'Permissioned', 
+ *   keyVisibility: 'Public',
  *   freeTx: false 
  * });
  * ```
@@ -175,7 +175,7 @@ export default class Entropy {
    *
    * @param {RegistrationParams & { account?: EntropyAccount }} params - The registration parameters.
    * @param {Address} params.programModAccount - The address authorized to set programs on behalf of the user.
-   * @param {'Private' | 'Public' | 'Permissioned'} [params.keyVisibility] - Visibility setting for the key.
+   * @param {'Private' | 'Public' } [params.keyVisibility] - Visibility setting for the key.
    * @param {boolean} [params.freeTx] - Indicates if the registration transaction should be free.
    * @param {ProgramData[]} [params.initialPrograms] - Optional initial programs associated with the user.
    * @returns {Promise<void>} A promise indicating the completion of the registration process.

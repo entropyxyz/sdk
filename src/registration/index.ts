@@ -6,7 +6,7 @@ import { ProgramData } from '../programs'
 export interface RegistrationParams {
   freeTx?: boolean
   initialPrograms?: ProgramData[]
-  keyVisibility?: 'Public' | 'Permissioned' | 'Private'
+  keyVisibility?: 'Public' | 'Private'
   programModAccount: Address
 }
 
@@ -17,7 +17,6 @@ export interface RegisteredInfo {
 
 export type KeyVisibilityInfo =
   | { public: null }
-  | { permissioned: null }
   | { private: null }
 
 /**
@@ -49,7 +48,7 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
    *
    * @param freeTx - Optional. Indicates if the transaction should be free (default: false).
    * @param initialPrograms - Optional. Initial program associated with the user.
-   * @param keyVisibility - Key visibility level ('Public', 'Permissioned', 'Private'). Defaults to 'Permissioned'.
+   * @param keyVisibility - Key visibility level ('Public', 'Private'). Defaults to 'Public'.
    * @param programModAccount - Account authorized to modify programs on behalf of the user.
    *
    * @returns A promise that resolves when the user is successfully registered.
@@ -59,7 +58,7 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
   async register ({
     freeTx = false,
     initialPrograms = [],
-    keyVisibility = 'Permissioned',
+    keyVisibility = 'Public',
     programModAccount,
   }: RegistrationParams): Promise<RegisteredInfo> {
     const programModificationAccount = programModAccount
