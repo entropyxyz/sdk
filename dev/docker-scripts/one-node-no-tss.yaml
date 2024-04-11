@@ -6,6 +6,15 @@
 # of the more complicated test code that spins up this kind of
 # environment for their tests. Eventually, we will converge on
 # a more canonical set of environments and configuration files.
+
+
+
+
+# TODO: GET THIS WORKING WOOPS
+
+
+
+
 ---
 version: "3.8"
 name: entropy-devnet-local
