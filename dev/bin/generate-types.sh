@@ -9,6 +9,6 @@ curl -H "Content-Type: application/json" -d '{"id":"1", "jsonrpc":"2.0", "method
 # node --experimental-specifier-resolution=node --loader ts-node/esm  node_modules/.bin/polkadot-types-from-chain --endpoint ./entropy-metadata.json --output ./substrate-generated-types/interfaces
 
 # "generate:defs":
-ts-node --skip-project node_modules/.bin/polkadot-types-from-defs --package ./node_modules/@polkadot/types/ --input ./substrate-generated-types --endpoint entropy-metadata.json
+ts-node --skip-project node_modules/.bin/polkadot-types-from-defs --package ./node_modules/@polkadot/types/ --input ./substrate-generated-types --endpoint entropy-metadata.json &&
 # "generate:meta":
 ts-node --skip-project node_modules/.bin/polkadot-types-from-chain --package ./node_modules/@polkadot/types/ --endpoint entropy-metadata.json --output ./substrate-generated-types
