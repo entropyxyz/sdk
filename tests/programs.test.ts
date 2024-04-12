@@ -20,7 +20,7 @@ describe('Programs Tests', () => {
     jest.setTimeout(300000) // Give us five minutes to spin up.
     try {
       execFileSync(
-        '/dev/spin-up.sh',
+        'dev/spin-up.sh',
         ['two-nodes'],
         { shell: true, cwd: process.cwd(), stdio: 'inherit' } // Use shell's search path.
       )
