@@ -80,7 +80,7 @@ export default class Entropy {
    */
 
 
-  constructor (opts: EntropyOpts = { endpoint: 'ws://127.0.0.1:9944', noInitWarn: true }) {
+  constructor (opts: EntropyOpts = { endpoint: 'ws://127.0.0.1:9944' }) {
     this.ready = new Promise((resolve, reject) => {
       this.#ready = resolve
       this.#fail = reject
@@ -96,7 +96,7 @@ export default class Entropy {
     this.#setReadOnlyStates()
 
     const wsProvider = new WsProvider(opts.endpoint)
-    this.substrate = new ApiPromise({ provider: wsProvider })
+    this.substrate = new ApiPromise({ provider: wsProvider, noInitWarn: true })
     await this.substrate.isReady
 
     this.registrationManager = new RegistrationManager({
