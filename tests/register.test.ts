@@ -52,7 +52,7 @@ describe('Register Tests', () => {
       console.error('Error during disconnect in afterAll: ', e.message)
     }
     execFileSync(
-      'dev/spin-down.sh',
+      'dev/bin/spin-down.sh',
       ['two-nodes'],
       { shell: true, cwd: process.cwd(), stdio: 'inherit' } // Use shell's search path.
     )
