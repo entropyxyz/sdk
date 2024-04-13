@@ -6,7 +6,7 @@ import {
   charlieStashSeed,
   charlieStashAddress,
 } from './testing-utils'
-import { spawnSync } from 'child_process'
+import { execFileSync } from 'child_process'
 import { getWallet } from '../src/keys'
 import { EntropyAccount } from '../src'
 
@@ -18,7 +18,11 @@ describe('Register Tests', () => {
     jest.setTimeout(300000) // Set timeout for the entire suite
 
     // Spin up the test environment
-    spawnSync('docker', ['compose', '--file', 'tests/docker-compose.yaml', 'up', '--detach'], { shell: true, stdio: 'inherit' })
+      execFileSync(
+        'dev/bin/spin-up.sh',
+        ['two-nodes'],
+        { shell: true, cwd: process.cwd(), stdio: 'inherit' } // Use shell's search path.
+      )
 
     try {
       const signer = await getWallet(charlieStashSeed)
@@ -47,10 +51,10 @@ describe('Register Tests', () => {
     } catch (e) {
       console.error('Error during disconnect in afterAll: ', e.message)
     }
-    spawnSync(
-      'docker',
-      ['compose', '--file', 'tests/docker-compose.yaml', 'down'],
-      { shell: true, stdio: 'inherit' }
+    execFileSync(
+      'dev/bin/spin-down.sh',
+      ['two-nodes'],
+      { shell: true, cwd: process.cwd(), stdio: 'inherit' } // Use shell's search path.
     )
   })
 
@@ -63,7 +67,7 @@ describe('Register Tests', () => {
   it('should handle user registration', async () => {
     await entropy.register({
       programModAccount: charlieStashAddress,
-      keyVisibility: 'Permissioned',
+      keyVisibility: 'Public',
       freeTx: false,
       initialPrograms: [{ programPointer: pointer, programConfig: '0x' }],
     })
@@ -76,7 +80,7 @@ describe('Register Tests', () => {
     await expect(
       entropy.register({
         programModAccount: charlieStashAddress,
-        keyVisibility: 'Permissioned',
+        keyVisibility: 'Public',
         freeTx: true,
         initialPrograms: [{ programPointer: pointer, programConfig: '0x' }],
       })
