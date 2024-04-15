@@ -66,7 +66,7 @@ export default class ExtrinsicBaseClass {
             }
           }
           if (status.isInBlock || status.isFinalized) {
-            const record = res.findRecord(filter.section, filter.name)
+            const record: EventRecord = res.findRecord(filter.section, filter.name)
             if (record) {
               resolve(record)
             } else {

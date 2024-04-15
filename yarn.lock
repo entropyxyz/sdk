@@ -1197,7 +1197,7 @@
     rxjs "^7.8.1"
     tslib "^2.6.2"
 
-"@polkadot/types@10.12.6":
+"@polkadot/types@10.12.6", "@polkadot/types@^10.12.6":
   version "10.12.6"
   resolved "https://registry.yarnpkg.com/@polkadot/types/-/types-10.12.6.tgz#548843577d4ed04258eda39041402c789de679cf"
   integrity sha512-ByjvZkKJclHSWEETk1m9HPYn/IdIyjWONOdy7Ih+/Nd0wVIahvXDYbV4CXe25xO0RhfFJzkGIZP+LFHL5F63Uw==
