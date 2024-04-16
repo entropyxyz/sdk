@@ -33,9 +33,11 @@ Below is an example that instantiates Entropy, deploys a program, registers usin
 **`Example`**
 
 ```typescript
-// get a Signer object from seed using util function
+import Entropy, { getWallet } from '@entropyxyz/sdk'
 
-const signer = await getWallet(charlieStashSeed)
+// get a Signer object from seed using util function
+const seed = crypto.randomBytes(32).toString('hex')
+const signer = await getWallet(seed)
 
 // create an Entropy Account object
 
@@ -55,8 +57,8 @@ await entropy.ready
 // path to program wasm file
 
 const basicTxProgram: any = readFileSync(
-      './tests/testing-utils/template_basic_transaction.wasm'
-    )
+  './tests/testing-utils/template_basic_transaction.wasm'
+)
 
 // returns pointer hash
 

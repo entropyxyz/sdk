@@ -1,6 +1,6 @@
 import { readFileSync } from 'fs'
 import { EntropyAccount } from '../src'
-import Entropy from '../src'
+import Entropy, { getWallet } from '../src'
 import {
   sleep,
   disconnect,
@@ -9,7 +9,6 @@ import {
   whitelisted_test_evm_address,
 } from './testing-utils'
 import { Keyring } from '@polkadot/api'
-import { getWallet } from '../src/keys'
 import { mnemonicGenerate } from '@polkadot/util-crypto'
 import { buf2hex } from '../src/utils'
 import { execFileSync } from 'child_process'

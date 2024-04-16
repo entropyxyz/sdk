@@ -4,7 +4,7 @@ import RegistrationManager, { RegistrationParams } from './registration'
 import SignatureRequestManager, { SigOps, SigTxOps } from './signing'
 import { crypto } from './utils/crypto'
 import { Adapter } from './signing/adapters/types'
-import { isValidPair } from './keys'
+import { isValidPair, getWallet } from './keys'
 import { Signer, Address } from './types'
 import ProgramManager from './programs'
 
@@ -261,4 +261,8 @@ export default class Entropy {
     if (this.#allReadOnly) throw new Error('Initialized in read only state: can not use write functions')
     return this.signingManager.sign(params)
   }
+}
+
+export {
+  getWallet
 }

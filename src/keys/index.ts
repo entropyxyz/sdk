@@ -30,7 +30,7 @@ export function isValidPair (pair: Signer): boolean {
 }
 
 /**
- *  Function to create a function that retrieves a wallet from a `Signer` object or a seed string.
+ *  Function to create a function that retrieves a wallet from a `Signer` seed string.
  * 
  * @returns A function that takes a `Signer` or seed string and returns a Promise resolving to an object containing the wallet and its associated `Signer`.
  */
@@ -54,9 +54,9 @@ function setupGetWallet (): (input: string) => Promise<Signer | undefined> {
 }
 
 /**
- * Retrieves a wallet from a `Signer` object or a seed string.
+ * Retrieves a wallet from a `Signer` seed string.
  * 
- * @param pair - A `Signer` object or a seed string.
+ * @param pair - A `Signer` seed string (32 bytes, hex encoded)
  * @returns A Promise resolving to an object containing the wallet and its associated `Signer`, or undefined if the input is invalid.
  */
 
