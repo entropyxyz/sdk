@@ -1,15 +1,26 @@
 {
   "compilerOptions": {
-    "target": "ES6",
+    "target": "es2022",
+    "module": "es2022",
+    "moduleResolution": "node",
     "skipLibCheck": true,
     "noEmit": true,
     "incremental": true,
-    "typeRoots": ["node_modules/@types", "@types/", "@polkadot/types/*", "substrate-generated-types/interfaces"],
-    "tsBuildInfoFile": ".tsbuildinfo",
-    "moduleResolution": "node",
-    "module": "Node16"
+    "typeRoots": [
+      "node_modules/@types",
+      "@types/",
+      "@polkadot/types/*",
+      "substrate-generated-types/interfaces"
+    ],
+    "tsBuildInfoFile": ".tsbuildinfo"
   },
-  "exclude": ["node_modules", "dist", "build", "examples", "old", "substrate-generated-types"],
+  "exclude": [
+    "dev",
+    "dist",
+    "docs",
+    "node_modules",
+    "substrate-generated-types"
+  ],
   "ts-node": {
     "experimentalSpecifierResolution": "node"
   }
