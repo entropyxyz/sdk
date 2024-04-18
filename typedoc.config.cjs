@@ -7,13 +7,16 @@ module.exports = {
   excludePrivate: true,
   excludeInternal: true,
   plugin: [
-    '@mxssfd/typedoc-theme'
+    '@mxssfd/typedoc-theme',
+    'typedoc-plugin-rename-defaults'
   ],
   theme: 'my-theme',
 
   entryPoints: [
-    './src/index.ts'
-    // './src/keys/index.ts'
+    'src/index.ts'
+    // 'src/keys/index.ts',
+    // 'src/utils/index.ts',
+    // 'src/utils/crypto.ts'
   ],
   // entryPointStrategy: 'expand',
 
