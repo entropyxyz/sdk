@@ -3,12 +3,19 @@
 // see: https://typedoc.org/options/
 
 module.exports = {
-  entryPoints: ['./src'],
-  entryPointStrategy: 'expand',
-  plugin: [
-    'typedoc-plugin-markdown'
-  ],
+  tsconfig: './tsconfig.json',
   excludePrivate: true,
   excludeInternal: true,
-  out: 'docs'
+  plugin: [
+    '@mxssfd/typedoc-theme'
+  ],
+  theme: 'my-theme',
+
+  entryPoints: [
+    './src/index.ts'
+    // './src/keys/index.ts'
+  ],
+  // entryPointStrategy: 'expand',
+
+  out: './docs'
 }
