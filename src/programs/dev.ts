@@ -16,7 +16,7 @@ import * as util from '@polkadot/util'
  */
 export interface ProgramInfo {
   bytecode: ArrayBuffer
-  configurationInterface?: unknown
+  interfaceDescription?: unknown
   deployer: string
   refCounter: number
 }
@@ -122,8 +122,8 @@ export default class ProgramDev extends ExtrinsicBaseClass {
    */
   
   #formatProgramInfo (programInfo): ProgramInfo {
-    const { configurationInterface, deployer, refCounter } = programInfo
+    const { interfaceDescription, deployer, refCounter } = programInfo
     const bytecode = hex2buf(stripHexPrefix(programInfo.bytecode)) // Convert hex string to ArrayBuffer
-    return { configurationInterface, deployer, refCounter, bytecode }
+    return { interfaceDescription, deployer, refCounter, bytecode }
   }
 }

@@ -32,6 +32,7 @@ export interface SigOps {
 
 export interface UserSignatureRequest {
   message: string
+  signature_request_account?: string
   auxilary_data?: Array<string | null>
   validators_info: ValidatorInfo[]
   timestamp: { secs_since_epoch: number; nanos_since_epoch: number }
@@ -109,13 +110,20 @@ export default class SignatureRequestManager {
    * @returns {Promise<Uint8Array>} A promise resolving to the signed hash as a Uint8Array.
    */
 
+  /** 'Public Access Mode', the UserSignatureRequest given when requesting a signature with the 'sign_tx' 
+   * http endpoint must now contain an additional field, signature_request_account: AccountId32. In private and 
+   * permissioned modes, this must be identical to the account used to sign the SignedMessage containing the signature request. 
+   * In public access mode this may be an Entropy account owned by someone else. **/
+
   async sign ({ sigRequestHash, hash, auxilaryData }: SigOps): Promise<Uint8Array> {
     const strippedsigRequestHash = stripHexPrefix(sigRequestHash)
     const validatorsInfo: Array<ValidatorInfo> = await this.pickValidators(
       strippedsigRequestHash
     )
+    let signature_request_account
     const txRequests: Array<EncMsg> = await this.formatTxRequests({
       validatorsInfo: validatorsInfo,
+      signature_request_account,
       strippedsigRequestHash,
       auxilaryData,
       hash,
@@ -155,11 +163,13 @@ export default class SignatureRequestManager {
 
   async formatTxRequests ({
     strippedsigRequestHash,
+    signature_request_account,
     validatorsInfo,
     auxilaryData,
     hash,
   }: {
     strippedsigRequestHash: string
+    signature_request_account: string
     validatorsInfo: Array<ValidatorInfo>
     auxilaryData?: unknown[]
     hash?: string
@@ -169,6 +179,7 @@ export default class SignatureRequestManager {
         async (validator: ValidatorInfo): Promise<EncMsg> => {
           const txRequestData: UserSignatureRequest = {
             message: stripHexPrefix(strippedsigRequestHash),
+            signature_request_account,
             validators_info: validatorsInfo,
             timestamp: this.getTimeStamp(),
             hash,
