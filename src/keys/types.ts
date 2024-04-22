@@ -11,10 +11,13 @@
  * either paring of keys or single key
  *
  * */
+
+import { Keys } from "@polkadot/types/interfaces/types"
+import { Signer } from "@polkadot/api/types"
 export type RegisteredAccountType = 'Private' | 'Public'
 
 export interface AllBaseKeys {
-  keyShare?: string | ArrayBuffer?
+  keyShare?: string | ArrayBuffer
   programModKey?: string
   programDeployKey?: string
   deviceKey?: string
@@ -38,13 +41,13 @@ export interface AuthorizedDeviceKey extends Keys {
 }
 
 export const enum EntropyAccountType {
-  PROGRAM_DEV_ACCOUNT = 'PROGRAM_DEV_ACCOUNT'
-  REGISTERED_ACCOUNT = 'REGISTERED_ACCOUNT'
+  PROGRAM_DEV_ACCOUNT = 'PROGRAM_DEV_ACCOUNT',
+  REGISTERED_ACCOUNT = 'REGISTERED_ACCOUNT',
   CONSUMER_ACCOOUNT = 'CONSUMER_ACCOOUNT'
 }
 
 export interface EntropyAccountJSON {
-  keyShare?: string | ArrayBuffer?
+  keyShare?: string | ArrayBuffer
   registeringKey?: string
   programDeployKey?: string
   deviceKey?: string
