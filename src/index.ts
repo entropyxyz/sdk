@@ -1,4 +1,5 @@
 import { ApiPromise, WsProvider } from '@polkadot/api'
+import Clarify from 'clarify-error'
 import { isValidSubstrateAddress } from './utils'
 import RegistrationManager, { RegistrationParams } from './registration'
 import SignatureRequestManager, { SigOps, SigTxOps } from './signing'
@@ -8,11 +9,17 @@ import { isValidPair, getWallet } from './keys'
 import { Signer, Address } from './types'
 import ProgramManager from './programs'
 
-// TODO: docs
+// TODO: docs - way more detail
+// TODO: are all of these fields really optional?
+// QUESTION: why are some of these strings, some objects?
 export interface EntropyAccount {
+  /** Signing object used for requests, use getWallet to build */
   sigRequestKey?: Signer
+  /** Signing object used for modifiying programs, use getWallet to build */
   programModKey?: Signer | string
+  /** Signing object used for deploying programs, use getWallet to build */
   programDeployKey?: Signer
+  /** Key used to verify ..... what? */
   verifyingKey?: string
 }
 
@@ -22,6 +29,9 @@ export interface EntropyOpts {
   /** The endpoint for connecting to validators, either local or devnet.
    *
    * @defaultValue `ws://127.0.0.1:9944` */
+  // TODO: is endpoint really optional? seems kinda necessary
+  // QUESTION: where is the default set? ... leave a comment
+  // TODO: did you know that in polkadot this is `string | [string]` ?!
   endpoint?: string
   /** A collection of signing adapters for handling various transaction types. */
   adapters?: { [key: string | number]: Adapter }
@@ -102,7 +112,10 @@ class Entropy {
 
     const wsProvider = new WsProvider(opts.endpoint)
     this.substrate = new ApiPromise({ provider: wsProvider })
-    await this.substrate.isReady
+    await this.substrate.isReadyOrError // help errors surface
+      .catch(err => {
+        throw Clarify(err, 'subtrate startup failed')
+      })
 
     this.registrationManager = new RegistrationManager({
       substrate: this.substrate,

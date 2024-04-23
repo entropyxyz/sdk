@@ -12,7 +12,10 @@ try {
 
   const entropy = new Entropy({ account: entropyAccount })
   await entropy.ready
-    .catch(err => console.error('ready failed', err))
+    .catch(err => {
+      console.log('no ready')
+      console.log(err)
+    })
 
   console.log('DONE')
 

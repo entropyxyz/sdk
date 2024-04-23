@@ -68,6 +68,7 @@
     "@entropyxyz/entropy-protocol-web": "^0.1.0",
     "@polkadot/api": "^10.11.1",
     "@types/node": "^20.10.3",
+    "clarify-error": "^1.0.0",
     "ethereum-cryptography": "^2.1.2",
     "ethereumjs-tx": "^2.1.2"
   },
