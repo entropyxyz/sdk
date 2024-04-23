@@ -518,10 +518,10 @@ export default class Entropy {
   async participateInDkgForPrivateVisibility (address: string): Promise<void> {
     const blockNumber = await this.fetchBlockNumber()
 
-    const validatorsInfo = await this.getDKGCommittee(blockNumber)
+    const validatorsInfo = await this.getDKGCommittee(blockNumber + 1)
 
     const validatorMappings = validatorsInfo.map(validator => ({
-      publicKey: validator.getX25519PublicKey(), 
+      publicKey: encodeAddress(validator.getX25519PublicKey(), 42), 
       ipAddress: validator.getIpAddress(),
       tssAccount: encodeAddress(validator.getTssAccount(), 42),
     }))
@@ -531,7 +531,7 @@ export default class Entropy {
     console.log("Validator Mappings", validatorMappings)
 
 
-    const selectedValidatorAccountId = await this.selectValidatorFromSubgroup(0, blockNumber)
+    const selectedValidatorAccountId = await this.selectValidatorFromSubgroup(1, blockNumber)
 
     console.log("check account id", selectedValidatorAccountId)
     console.log("hex to u8a validator accout",  decodeAddress(selectedValidatorAccountId))
