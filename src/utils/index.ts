@@ -116,6 +116,17 @@ export function stripHexPrefix (str: string): string {
   return str
 }
 
+export function arraysEqual (a: Uint8Array, b: Uint8Array): boolean {
+  if (a.length !== b.length) return false
+  for (let i = 0; i < a.length; i++) {
+    if (a[i] !== b[i]) return false
+  }
+  return true
+}
+export function convertToSS58 (u8a: Uint8Array, prefix = 42): string {
+  return encodeAddress(u8a, prefix);
+}
+
 export function isValidSubstrateAddress (address: Address) {
   try {
     encodeAddress(isHex(address) ? hexToU8a(address) : decodeAddress(address))

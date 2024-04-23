@@ -33,21 +33,21 @@
 //  *
 //  * @example
 //  * ```typescript
-//  * const signer = await getWallet(charlieStashSeed);
+//  * const signer = await getWallet(charlieStashSeed)
 //  *
 //  * const entropyAccount: EntropyAccount = {
 //  *   sigRequestKey: signer,
 //  *   programModKey: signer,
-//  * };
+//  * }
 //  *
-//  * const entropy = new Entropy({ account: entropyAccount });
-//  * await entropy.ready;
+//  * const entropy = new Entropy({ account: entropyAccount })
+//  * await entropy.ready
 //  *
-//  * await entropy.register({ 
-//  *   programModAccount: '5Gw3s7q9...', 
+//  * await entropy.register({
+//  *   programModAccount: '5Gw3s7q9...',
 //  *   keyVisibility: 'Public',
-//  *   freeTx: false 
-//  * });
+//  *   freeTx: false
+//  * })
 //  * ```
 //  * @alpha
 //  */
@@ -78,7 +78,6 @@
 //    * @param {string} [opts.endpoint] - The endpoint for connecting to validators, either local or devnet.
 //    * @param {Adapter[]} [opts.adapters] - A collection of signing adapters for handling various transaction types.
 //    */
-
 
 //   constructor (opts: EntropyOpts) {
 //     this.ready = new Promise((resolve, reject) => {
@@ -141,7 +140,6 @@
 //     }
 //   }
 
-
 //   /** @internal */
 //   #setReadOnlyStates (): void {
 //   // the readOnly state will not allow for write functions
@@ -153,7 +151,6 @@
 //     } else if (!this.account.sigRequestKey && !this.account.programModKey) {
 //       this.#allReadOnly = true
 //     }
-
 
 //     if (typeof this.account.sigRequestKey !== 'object') {
 //       throw new Error('AccountTypeError: sigRequestKey can not be a string')
@@ -168,7 +165,6 @@
 //       this.#programReadOnly = true
 //     }
 //   }
-
 
 //   /**
 //    * Registers an address with Entropy using the provided parameters.
@@ -211,7 +207,7 @@
 //    * @param {Address} address - The address for which the verifying key is needed.
 //    * @returns {Promise<string>} - A promise resolving to the verifying key.
 //    */
-  
+
 //   async getVerifyingKey (address: Address): Promise<string> {
 //     const registeredInfo = await this.substrate.query.relayer.registered(address)
 //     // @ts-ignore: next line
@@ -263,7 +259,6 @@
 //   }
 // }
 
-
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import { isValidSubstrateAddress } from './utils'
 import RegistrationManager, { RegistrationParams } from './registration'
@@ -273,8 +268,15 @@ import { Adapter } from './signing/adapters/types'
 import { isValidPair } from './keys'
 import { Signer, Address } from './types'
 import ProgramManager from './programs'
-import { runDkgProtocol, ValidatorInfo, fromHex } from '@entropyxyz/entropy-protocol-nodejs'
+import {
+  runDkgProtocol,
+  ValidatorInfo,
+} from '@entropyxyz/entropy-protocol-nodejs'
 import { Option } from '@polkadot/types'
+import * as util from '@polkadot/util'
+import { decodeAddress, encodeAddress} from '@polkadot/util-crypto'
+import { hexToU8a } from '@polkadot/util'
+import { arraysEqual } from './utils'
 
 export interface EntropyAccount {
   sigRequestKey?: Signer
@@ -503,14 +505,9 @@ export default class Entropy {
 
   async fetchBlockNumber (): Promise<number> {
     try {
+      const blockdos = await this.substrate.rpc.chain.getHeader()
 
-      const latestHeaderHash = await this.substrate.rpc.chain.getBlockHash()
-      console.log("latest", latestHeaderHash)
-      const block = await this.substrate.derive.chain.getHeader(latestHeaderHash)
-
-      const blockNumber = block.number.toNumber()
-
-      console.log('Latest Block Number:', blockNumber)
+      const blockNumber = blockdos.number.toNumber()
       return blockNumber
     } catch (error) {
       console.error('Error fetching the block number:', error)
@@ -519,75 +516,92 @@ export default class Entropy {
   }
 
   async participateInDkgForPrivateVisibility (address: string): Promise<void> {
-    console.log('PRIVATE REGISTER')
-    // const blockNumber = await this.substrate.rpc.chain.getHeader().then((header) => header.number)
-
     const blockNumber = await this.fetchBlockNumber()
 
+    const validatorsInfo = await this.getDKGCommittee(blockNumber)
 
-    // console.log("block", blockNumber)
-    const validatorsInfo = await this.getDKGCommittee(
-      blockNumber + 1
-    )
-    if (validatorsInfo.length === 0) {
-      throw new Error('No validators info available for DKG.')
-    }
+    const validatorMappings = validatorsInfo.map(validator => ({
+      publicKey: validator.getX25519PublicKey(), 
+      ipAddress: validator.getIpAddress(),
+      tssAccount: encodeAddress(validator.getTssAccount(), 42),
+    }))
 
-    const selectedValidatorAccountId = await this.selectValidatorFromSubgroup(
-      0,
-      blockNumber
+
+
+    console.log("Validator Mappings", validatorMappings)
+
+
+    const selectedValidatorAccountId = await this.selectValidatorFromSubgroup(0, blockNumber)
+
+    console.log("check account id", selectedValidatorAccountId)
+    console.log("hex to u8a validator accout",  decodeAddress(selectedValidatorAccountId))
+
+
+    const selectedValidatorInfo = validatorsInfo.find(validator =>
+      arraysEqual(validator.getTssAccount(), decodeAddress(selectedValidatorAccountId))
     )
-    const selectedValidatorInfo = validatorsInfo.find(
-      (v) => v.getTssAccount().toString() === selectedValidatorAccountId
-    )
+
+    console.log(selectedValidatorInfo.getTssAccount())
+    console.log(selectedValidatorInfo.getIpAddress())
+    console.log(selectedValidatorInfo.getX25519PublicKey())
 
     if (!selectedValidatorInfo) {
       throw new Error('Selected validator info not found.')
     }
 
-    await runDkgProtocol(
+
+    const huh = await runDkgProtocol(
       [selectedValidatorInfo],
       this.account.sigRequestKey.pair.secretKey
     )
+
+
+    console.log("huh", huh)
     console.log('DKG Protocol completed for address:', address)
   }
 
   async getDKGCommittee (blockNumber: number): Promise<ValidatorInfo[]> {
-    console.log('GET DKG COMMITTEE')
     const validatorsInfo: ValidatorInfo[] = []
     const SIGNING_PARTY_SIZE = 2
 
     for (let i = 0; i < SIGNING_PARTY_SIZE; i++) {
       try {
         const accountId = await this.selectValidatorFromSubgroup(i, blockNumber)
-        console.log({ accountId })
-        const serverInfoOption = (await this.substrate.query.stakingExtension.thresholdServers(
+        console.log('Account ID:', { accountId })
+        const serverInfoOption = ((await this.substrate.query.stakingExtension.thresholdServers(
           accountId
-        )) as unknown as Option<any>
+        )) as unknown) as Option<any>
+
+        console.log('Server Info Option:', serverInfoOption.toHuman())
 
         if (serverInfoOption.isNone) {
-          throw new Error('Stash Fetch Error')
+          console.error('Stash Fetch Error')
+          continue
         }
 
-        console.log('pre server info')
-
         const serverInfo = serverInfoOption.unwrap()
-        console.log('PubKey', serverInfo.x25519PublicKey.toString())
-        console.log('endpoint', serverInfo.endpoint.toString())
-        console.log('tss', serverInfo.tssAccount.toString())
-        validatorsInfo.push(
-          new ValidatorInfo(
-            fromHex(serverInfo.x25519PublicKey.toString()),
-            serverInfo.endpoint.toString(),
-            serverInfo.tssAccount
+        try {
+          const validatorInfo = new ValidatorInfo(
+            new Uint8Array(serverInfo.x25519PublicKey),
+            serverInfo.endpoint.toHuman(),
+            new Uint8Array(serverInfo.tssAccount)
           )
-        )
+
+          validatorsInfo.push(validatorInfo)
+
+          // to check we can get info back from getters 
+
+          console.log('Public Key:', validatorInfo.getX25519PublicKey())
+          console.log('IP Address:', validatorInfo.getIpAddress())
+          console.log('TSS Account:', validatorInfo.getTssAccount())
+
+        } catch (error) {
+          console.error('Error creating ValidatorInfo:', error)
+        }
       } catch (error) {
-        console.error(`Error fetching validator info: ${error}`)
-        throw error
+        console.error(`Error fetching validator info for group ${i}:`, error)
       }
     }
-    console.log('ABOUT TO CONSOLE VALIDATOR INFO')
 
     return validatorsInfo
   }
@@ -596,9 +610,9 @@ export default class Entropy {
     blockNumber: number
   ): Promise<string> {
     try {
-      const subgroupInfo = (await this.substrate.query.stakingExtension.signingGroups(
+      const subgroupInfo = ((await this.substrate.query.stakingExtension.signingGroups(
         signingGroup
-      )) as unknown as Option<any>
+      )) as unknown) as Option<any>
       if (subgroupInfo.isNone || subgroupInfo.unwrap().isEmpty) {
         throw new Error('Subgroup information not available or empty.')
       }
