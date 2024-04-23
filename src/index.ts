@@ -531,27 +531,27 @@ export default class Entropy {
     console.log("Validator Mappings", validatorMappings)
 
 
-    const selectedValidatorAccountId = await this.selectValidatorFromSubgroup(0, blockNumber)
+    // const selectedValidatorAccountId = await this.selectValidatorFromSubgroup(0, blockNumber)
 
-    console.log("check account id", selectedValidatorAccountId)
-    console.log("hex to u8a validator accout",  decodeAddress(selectedValidatorAccountId))
+    // console.log("check account id", selectedValidatorAccountId)
+    // console.log("hex to u8a validator accout",  decodeAddress(selectedValidatorAccountId))
 
 
-    const selectedValidatorInfo = validatorsInfo.find(validator =>
-      arraysEqual(validator.getTssAccount(), decodeAddress(selectedValidatorAccountId))
-    )
+    // const selectedValidatorInfo = validatorsInfo.find(validator =>
+    //   arraysEqual(validator.getTssAccount(), decodeAddress(selectedValidatorAccountId))
+    // )
 
-    console.log(selectedValidatorInfo.getTssAccount())
-    console.log(selectedValidatorInfo.getIpAddress())
-    console.log(selectedValidatorInfo.getX25519PublicKey())
+    // console.log(selectedValidatorInfo.getTssAccount())
+    // console.log(selectedValidatorInfo.getIpAddress())
+    // console.log(selectedValidatorInfo.getX25519PublicKey())
 
-    if (!selectedValidatorInfo) {
-      throw new Error('Selected validator info not found.')
-    }
+    // if (!selectedValidatorInfo) {
+    //   throw new Error('Selected validator info not found.')
+    // }
 
 
     const huh = await runDkgProtocol(
-      [selectedValidatorInfo],
+      [validatorsInfo[1]],
       this.account.sigRequestKey.pair.secretKey
     )
 
@@ -566,10 +566,10 @@ export default class Entropy {
 
     for (let i = 0; i < SIGNING_PARTY_SIZE; i++) {
       try {
-        const accountId = await this.selectValidatorFromSubgroup(i, blockNumber)
-        console.log('Account ID:', { accountId })
+        const validatorId = await this.selectValidatorFromSubgroup(i, blockNumber)
+        console.log('Account ID:', { validatorId })
         const serverInfoOption = ((await this.substrate.query.stakingExtension.thresholdServers(
-          accountId
+          validatorId
         )) as unknown) as Option<any>
 
         console.log('Server Info Option:', serverInfoOption.toHuman())
