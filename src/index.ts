@@ -531,7 +531,7 @@ export default class Entropy {
     console.log("Validator Mappings", validatorMappings)
 
 
-    const selectedValidatorAccountId = await this.selectValidatorFromSubgroup(1, blockNumber)
+    const selectedValidatorAccountId = await this.selectValidatorFromSubgroup(0, blockNumber)
 
     console.log("check account id", selectedValidatorAccountId)
     console.log("hex to u8a validator accout",  decodeAddress(selectedValidatorAccountId))
@@ -582,9 +582,9 @@ export default class Entropy {
         const serverInfo = serverInfoOption.unwrap()
         try {
           const validatorInfo = new ValidatorInfo(
-            new Uint8Array(serverInfo.x25519PublicKey),
+            serverInfo.x25519PublicKey,
             serverInfo.endpoint.toHuman(),
-            new Uint8Array(serverInfo.tssAccount)
+            serverInfo.tssAccount
           )
 
           validatorsInfo.push(validatorInfo)
