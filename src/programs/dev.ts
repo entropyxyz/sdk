@@ -6,22 +6,22 @@ import { hex2buf, stripHexPrefix } from '../utils'
 import * as util from '@polkadot/util'
 
 /**
+ * @remarks
  * Represents program information.
- * 
- * @interface ProgramInfo
- * @property {ArrayBuffer} bytecode - The bytecode of the program.
- * @property {unknown} [configurationInterface] - Optional. The configuration interface of the program.
- * @property {string} deployer - The address of the deployer of the program.
- * @property {number} refCounter - The reference count for the program.
  */
 export interface ProgramInfo {
+  /** The bytecode of the program. */
   bytecode: ArrayBuffer
+  /** The configuration interface of the program. */
   configurationInterface?: unknown
+  /** The address of the deployer of the program. */
   deployer: string
+  /** The reference count for the program. */
   refCounter: number
 }
 
 /**
+ * @remarks
  * Class to handle program-related extrinsic functions.
  * 
  * @extends ExtrinsicBaseClass

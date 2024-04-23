@@ -11,6 +11,7 @@ interface Decoded extends RegistryError {
 }
 
 /**
+ * @remarks
  * A utility class to simplify extrinsic operations with the Polkadot/Substrate API.
  * Allows the user to send extrinsics and automatically handles errors, events, and certain special conditions like free transactions.
  * 

@@ -43,6 +43,7 @@ export interface UserSignatureRequest {
   hash: string
 }
 /**
+ * @remarks
  * `SignatureRequestManager` facilitates signature requests using Polkadot/Substrate API.
  * This manager handles transaction signing using pre-defined adapters and cryptographic utilities.
  */

@@ -8,6 +8,7 @@ import { isValidPair, getWallet } from './keys'
 import { Signer, Address } from './types'
 import ProgramManager from './programs'
 
+// TODO: docs
 export interface EntropyAccount {
   sigRequestKey?: Signer
   programModKey?: Signer | string
@@ -66,6 +67,7 @@ class Entropy {
   /** An async getter to test if an address is registered */
   isRegistered: (address: Address) => Promise<boolean>
 
+  // QUESTION - should these be hidden properties?
   /** The RegistrationManager instance responsible for ... TODO: */
   registrationManager: RegistrationManager
   /** The ProgramManager instance responsible for ... TODO: */

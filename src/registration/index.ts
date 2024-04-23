@@ -27,7 +27,9 @@ export type KeyVisibilityInfo =
   | { permissioned: null }
   | { private: null }
 
+
 /**
+ * @remarks
  * The `RegistrationManager` class provides functionality for user registration using the Polkadot/Substrate API.
  * It extends the `ExtrinsicBaseClass` to handle extrinsic submissions and utility methods.
  * 

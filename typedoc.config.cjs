@@ -13,8 +13,13 @@ module.exports = {
   },
   plugin: [
     '@mxssfd/typedoc-theme',
-    'typedoc-plugin-rename-defaults'
+    'typedoc-plugin-rename-defaults',
+    // 'typedoc-plugin-missing-exports'
   ],
+  /* typedoc-plugin-missing-exports config */
+  // internalModule: 'internal',
+  // placeInternalsInOwningModule: true,
+
   theme: 'my-theme',
 
   entryPoints: [
