@@ -30,7 +30,7 @@ export function isValidPair (pair: Signer): boolean {
 }
 
 /**
- *  Function to create a function that retrieves a wallet from a `Signer` object or a seed string.
+ *  Function to create a function that retrieves a wallet from a `Signer` seed string.
  * 
  * @returns A function that takes a `Signer` or seed string and returns a Promise resolving to an object containing the wallet and its associated `Signer`.
  */
@@ -38,8 +38,7 @@ export function isValidPair (pair: Signer): boolean {
 function setupGetWallet (): (input: string) => Promise<Signer | undefined> {
   const keyring = new Keyring({ type: 'sr25519' })
 
-  return async (input: string): Promise<Signer | undefined> => {
-
+  return async function getWallet (input: string): Promise<Signer | undefined> {
     // do a string typecheck 
     if (typeof input === 'string') {
       await cryptoWaitReady() 
@@ -48,7 +47,7 @@ function setupGetWallet (): (input: string) => Promise<Signer | undefined> {
       const wallet = keyring.addFromPair(pair)
       return { wallet, pair }
     } else {
-      throw new Error('input is not a string')
+      throw new Error('input is not a string (32 bytes hex encoded)')
     }
   }
 }
@@ -56,10 +55,9 @@ function setupGetWallet (): (input: string) => Promise<Signer | undefined> {
 /**
  * Retrieves a wallet from a `Signer` object or a seed string.
  * 
- * @param pair - A `Signer` object or a seed string.
+ * @param pair - A `Signer` seed string (base64, hex encoded)
  * @returns A Promise resolving to an object containing the wallet and its associated `Signer`, or undefined if the input is invalid.
  */
-
 export const getWallet: (input: string) => Promise<Signer | undefined> = setupGetWallet()
 
 /**

@@ -12,9 +12,11 @@ export interface ProgramData {
 /**
  * @remarks
  * The ProgramManager class provides an interface to interact with Entropy Programs.
+ *
+ *
  * @alpha
  */
-export default class ProgramManager extends ExtrinsicBaseClass {
+class ProgramManager extends ExtrinsicBaseClass {
   /**
    * Creates an instance of ProgramManager.
    * @param {ApiPromise} substrate - Substrate API object.
@@ -168,3 +170,5 @@ export default class ProgramManager extends ExtrinsicBaseClass {
     )
   }
 }
+
+export default ProgramManager

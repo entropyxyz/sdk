@@ -4,9 +4,16 @@ import { ApiPromise } from '@polkadot/api'
 import { ProgramData } from '../programs'
 
 export interface RegistrationParams {
+  /** Indicates if the registration transaction should be free. */
   freeTx?: boolean
+
+  /** initial programs associated with the user. */
   initialPrograms?: ProgramData[]
+
+  /** Visibility setting for the key. */
   keyVisibility?: 'Public' | 'Permissioned' | 'Private'
+
+  /** The address authorized to set programs on behalf of the user. */
   programModAccount: Address
 }
 
@@ -27,7 +34,7 @@ export type KeyVisibilityInfo =
  * This class includes methods for registering a user, checking if a user is already registered, and listening for registration events.
  */
 
-export default class RegistrationManager extends ExtrinsicBaseClass {
+class RegistrationManager extends ExtrinsicBaseClass {
   /**
    * Constructs a new instance of the `RegistrationManager` class.
    *
@@ -146,3 +153,5 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
     return !!isRegistered.toJSON()
   }
 }
+
+export default RegistrationManager

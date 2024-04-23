@@ -1,5 +1,7 @@
-const Entropy = require('../dist/index.cjs').default
-const { getWallet } = require('../dist/keys/index.cjs')
+const {
+  default: Entropy,
+  getWallet
+} = require('../dist/index.cjs')
 
 async function start () {
   const seed = '98fb1f513a1d979aab3e77e4cb447fc7b0d724924314af4fb8f12e0140adc584'

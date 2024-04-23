@@ -27,7 +27,7 @@ export interface ProgramInfo {
  * @extends ExtrinsicBaseClass
  */
 
-export default class ProgramDev extends ExtrinsicBaseClass {
+class ProgramDev extends ExtrinsicBaseClass {
   /**
    * Constructs a ProgramDev instance.
    * 
@@ -127,3 +127,5 @@ export default class ProgramDev extends ExtrinsicBaseClass {
     return { configurationInterface, deployer, refCounter, bytecode }
   }
 }
+
+export default ProgramDev

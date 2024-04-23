@@ -26,10 +26,9 @@ deployed program, and signs a transaction.
 import Entropy, { makeSeed, getWallet } from '@entropyxyz/sdk'
 
 const seed = makeSeed()
-const signer = await getWallet(seed) // TODO rename getSigner?
+const signer = await getWallet(seed)
 
 // create an Entropy Account object
-
 const entropyAccount = {
   sigRequestKey: signer,
   programModKey: signer

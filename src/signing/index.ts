@@ -19,13 +19,18 @@ export interface TxParams {
 }
 
 export interface SigTxOps {
+  /** Transaction-specific parameters. */
   txParams: TxParams
+  /** The type of the transaction for adapter selection. */
   type?: string
 }
 
 export interface SigOps {
+  /** The hash of the signature request to be signed. */
   sigRequestHash: string
+  /** The hash type. */
   hash: string
+  /** The type of signature operation. */
   type?: string
   auxilaryData?: unknown[]
 }
@@ -42,7 +47,7 @@ export interface UserSignatureRequest {
  * This manager handles transaction signing using pre-defined adapters and cryptographic utilities.
  */
 
-export default class SignatureRequestManager {
+class SignatureRequestManager {
   adapters: { [key: string | number]: Adapter }
   crypto: CryptoLib
   signer: Signer
@@ -102,9 +107,6 @@ export default class SignatureRequestManager {
    * Signs a given signature request hash.
    * 
    * @param {SigOps} sigOps - Parameters for the signature operation.
-   * @param {string} sigOps.sigRequestHash - The hash of the signature request to be signed.
-   * @param {string} [sigOps.hash] - The hash type.
-   * @param {string} [sigOps.type] - The type of signature operation.
    * @param {unknown[]} [sigOps.auxilaryData] - Additional data for the signature operation.
    * @returns {Promise<Uint8Array>} A promise resolving to the signed hash as a Uint8Array.
    */
@@ -334,3 +336,5 @@ export default class SignatureRequestManager {
     return seperatedSigsAndProofs.sigs[first]
   }
 }
+
+export default SignatureRequestManager

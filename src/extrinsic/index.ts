@@ -16,7 +16,7 @@ interface Decoded extends RegistryError {
  * 
 */
 
-export default class ExtrinsicBaseClass {
+class ExtrinsicBaseClass {
   substrate: ApiPromise
   signer: Signer
 
@@ -107,3 +107,5 @@ export default class ExtrinsicBaseClass {
     return freeTxWrapper
   }
 }
+
+export default ExtrinsicBaseClass
