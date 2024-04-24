@@ -32,23 +32,22 @@ describe('Programs Tests', () => {
     const entropyAccount: EntropyAccount = {
       sigRequestKey: signer,
       programModKey: signer,
-      programDeployKey: signer
+      programDeployKey: signer,
     }
 
     await sleep(30000)
-    entropy = new Entropy({ account: entropyAccount})
+    entropy = new Entropy({ account: entropyAccount })
     await entropy.ready
   })
 
   afterAll(async () => {
     try {
       await disconnect(entropy.substrate)
-      execFileSync(
-        'dev/bin/spin-down.sh',
-        ['two-nodes'],
-        { shell: true, cwd: process.cwd(), stdio: 'inherit' }
-      )
-
+      execFileSync('dev/bin/spin-down.sh', ['two-nodes'], {
+        shell: true,
+        cwd: process.cwd(),
+        stdio: 'inherit',
+      })
     } catch (e) {
       console.error('Error in afterAll: ', e.message)
     }
@@ -56,7 +55,6 @@ describe('Programs Tests', () => {
 
   it('should handle programs', async () => {
     jest.setTimeout(60000)
-
 
     const dummyProgram = readFileSync(
       './tests/testing-utils/template_barebones.wasm'

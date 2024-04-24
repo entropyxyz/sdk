@@ -17,7 +17,6 @@ export function typeofthing (thing) {
   }
 }
 
-
 export function stripHexPrefix (str: string): string {
   if (str.startsWith('0x')) return str.slice(2)
   return str

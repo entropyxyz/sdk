@@ -5,7 +5,7 @@ export interface Adapter {
   arch: Arch
   hash: string
   preSign: (sigReq: TxParams) => Promise<string>
-  postSign: (sig: Uint8Array, txParams:   TxParams) => Promise<unknown>
+  postSign: (sig: Uint8Array, txParams: TxParams) => Promise<unknown>
 }
 
 export interface OptAdapter {
@@ -13,5 +13,5 @@ export interface OptAdapter {
   arch?: Arch
   hash?: string
   preSign?: (sigReq: TxParams) => Promise<string>
-  postSign?: (sig: Uint8Array, txParams:   TxParams) => Promise<unknown>
+  postSign?: (sig: Uint8Array, txParams: TxParams) => Promise<unknown>
 }

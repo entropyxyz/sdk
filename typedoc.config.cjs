@@ -9,7 +9,7 @@ module.exports = {
   validation: {
     notExported: true,
     invalidLink: true,
-    notDocumented: true
+    notDocumented: true,
   },
   plugin: [
     '@mxssfd/typedoc-theme',
@@ -30,5 +30,5 @@ module.exports = {
   ],
   // entryPointStrategy: 'expand',
 
-  out: './docs'
+  out: './docs',
 }

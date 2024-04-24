@@ -1,9 +1,10 @@
 # Hello sdk dev!
 
 ### When updating core version:
+
 - [ ] change docker version in ./bin/ENTROPY_CORE_VERSION.sh
 - [ ] generate types
-  this usually can be done through `yarn generate:types` however if it fails because of docker you may need to call the spin-up script directly from the root directory and then call the generate types script and then the spin down script:
+      this usually can be done through `yarn generate:types` however if it fails because of docker you may need to call the spin-up script directly from the root directory and then call the generate types script and then the spin down script:
   - `dev/bin/spin-up.sh two-nodes`
   - `dev/bin/generate-types.sh`
   - `dev/bin/spin-down.sh two-nodes`

@@ -18,7 +18,7 @@ npm i @entropyxyz/sdk
 ## Example Usage
 
 This example that instantiates Entropy, deploys a program, registers using the
-deployed program, and signs a transaction. 
+deployed program, and signs a transaction.
 
 ### 1. Start Entropy
 
@@ -31,7 +31,7 @@ const signer = await getWallet(seed)
 // create an Entropy Account object
 const entropyAccount = {
   sigRequestKey: signer,
-  programModKey: signer
+  programModKey: signer,
 }
 
 const entropy = new Entropy({ account: entropyAccount })
@@ -42,7 +42,6 @@ await entropy.ready
 
 NOTE: Users should await the `ready` promise to ensure that the class has been
 initialized before performing operations.
-
 
 ### 2. Deploy a program
 
@@ -74,14 +73,14 @@ const config = `{
   ]
 }`
 
-// converts config to bytes 
+// converts config to bytes
 const encoder = new TextEncoder()
 const byteArray = encoder.encode(config)
 
 // converts U8Array to hex
 const programConfig = util.u8aToHex(new Uint8Array(byteArray))
 
-// construct Program Data 
+// construct Program Data
 const programData = {
   programPointer,
   programConfig,
@@ -91,7 +90,7 @@ const programData = {
 const res = await entropy.register({
   keyVisibility: 'Permissioned',
   initialPrograms: [programData],
-  programModAccount: 'insert ProgramModAccount address'
+  programModAccount: 'insert ProgramModAccount address',
   // TODO what is programModAccount?
 })
 // on success, returns ...
@@ -132,10 +131,10 @@ const basicTx = {
   // TODO what?
 }
 
-// get entropy signature 
+// get entropy signature
 const signature = await entropy.signTransaction({
   txParams: basicTx,
-  type: 'eth'
+  type: 'eth',
 })
 
 // TODO show this can be signed by a different Entropy instance?
@@ -156,12 +155,9 @@ npx serve docs
 
 See [dev/](./dev/README.md)
 
-
-----
+---
 
 ## WIP
 
 - find out what to do with this:
-  > `endpoint` defaults to `ws://127.0.0.1:9944` if no value is provided. 
-
-
+  > `endpoint` defaults to `ws://127.0.0.1:9944` if no value is provided.

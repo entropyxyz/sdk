@@ -37,7 +37,7 @@ class ProgramManager extends ExtrinsicBaseClass {
     programDeployKey?: Signer
   }) {
     super({ substrate, signer: programModKey })
-    this.dev = new ProgramDev({substrate, signer: programDeployKey})
+    this.dev = new ProgramDev({ substrate, signer: programDeployKey })
   }
 
   /**
@@ -96,10 +96,11 @@ class ProgramManager extends ExtrinsicBaseClass {
     if (registeredInfoOption.isEmpty) {
       throw new Error(`Account not registered: ${sigReqAccount}`)
     }
-    
+
     const registeredInfo = registeredInfoOption.toJSON()
     // @ts-ignore: next line :{
-    const isAuthorized = registeredInfo.programModificationAccount === programModKey
+    const isAuthorized =
+      registeredInfo.programModificationAccount === programModKey
 
     if (!isAuthorized) {
       throw new Error(`Unauthorized modification attempt by ${programModKey}`)
