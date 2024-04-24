@@ -16,7 +16,7 @@ import { execFileSync } from 'child_process'
 import { Transaction } from 'ethereumjs-tx'
 import { preSign } from '../src/signing/adapters/eth'
 import { ProgramData } from '../src/programs'
-import { stringToU8a} from '@polkadot/util'
+import { stringToU8a } from '@polkadot/util'
 import * as util from '@polkadot/util'
 
 describe('Core Tests', () => {
@@ -43,19 +43,18 @@ describe('Core Tests', () => {
     }
 
     await sleep(30000)
-    entropy = new Entropy({ account: entropyAccount})
+    entropy = new Entropy({ account: entropyAccount })
     await entropy.ready
-
   })
 
   afterAll(async () => {
     try {
       await disconnect(entropy.substrate)
-      execFileSync(
-        'dev/bin/spin-down.sh',
-        ['two-nodes'],
-        { shell: true, cwd: process.cwd(), stdio: 'inherit' }
-      )
+      execFileSync('dev/bin/spin-down.sh', ['two-nodes'], {
+        shell: true,
+        cwd: process.cwd(),
+        stdio: 'inherit',
+      })
     } catch (e) {
       console.error('Error in afterAll: ', e.message)
     }
@@ -71,7 +70,6 @@ describe('Core Tests', () => {
   //   console.log('program deploy')
 
   //   const pointer = await entropy.programs.dev.deploy(dummyProgram)
-
 
   //   // Pre-registration check
   //   console.log("pre-registration check")
@@ -117,10 +115,7 @@ describe('Core Tests', () => {
 
   //   console.log("signing test")
 
-
-    // const signature = await entropy.signTransaction({txParams: whitelisted_test_tx_req, type: 'eth'}) as string
-
-
+  // const signature = await entropy.signTransaction({txParams: whitelisted_test_tx_req, type: 'eth'}) as string
 
   //   // encoding signature
   //   console.log("SIGGGG", signature)
@@ -130,37 +125,32 @@ describe('Core Tests', () => {
 
   it('should handle registration, program management, and signing', async () => {
     jest.setTimeout(60000)
-  
+
     const basicTxProgram: any = readFileSync(
       './tests/testing-utils/template_basic_transaction.wasm'
     )
 
-  
     const pointer = await entropy.programs.dev.deploy(basicTxProgram)
-const config = `
+    const config = `
     {
         "allowlisted_addresses": [
             "772b9a9e8aa1c9db861c6611a82d251db4fac990"
         ]
     }
 `
-// convert to bytes 
+    // convert to bytes
 
-const encoder = new TextEncoder()
-const byteArray = encoder.encode(config)
+    const encoder = new TextEncoder()
+    const byteArray = encoder.encode(config)
 
-// convert u8a to hex
-const programConfig = util.u8aToHex(new Uint8Array(byteArray))
-
-
+    // convert u8a to hex
+    const programConfig = util.u8aToHex(new Uint8Array(byteArray))
 
     const programData: ProgramData = {
       programPointer: pointer,
       programConfig: programConfig,
     }
 
-
-  
     // Pre-registration check
     const preRegistrationStatus = await entropy.isRegistered(
       charlieStashAddress
@@ -169,9 +159,6 @@ const programConfig = util.u8aToHex(new Uint8Array(byteArray))
     expect(preRegistrationStatus).toBeFalsy()
     const preStringifiedResponse = JSON.stringify(preRegistrationStatus)
     expect(preStringifiedResponse).toBe('false')
-  
-
-
 
     await entropy.register({
       keyVisibility: 'Permissioned',
@@ -180,67 +167,70 @@ const programConfig = util.u8aToHex(new Uint8Array(byteArray))
       initialPrograms: [programData],
       programModAccount: charlieStashAddress,
     })
-  
+
     expect(entropy.account.verifyingKey).toBeTruthy()
-    expect(entropy.account.sigRequestKey.wallet.address).toBe(charlieStashAddress)
+    expect(entropy.account.sigRequestKey.wallet.address).toBe(
+      charlieStashAddress
+    )
     expect(
       await entropy.registrationManager.checkRegistrationStatus(
         charlieStashAddress
       )
     ).toBeTruthy()
-  
+
     // Post-registration check
-  
+
     const postRegistrationStatus = await entropy.isRegistered(
       charlieStashAddress
     )
     expect(postRegistrationStatus).toBeTruthy()
-  
+
     const postStringifiedResponse = JSON.stringify(postRegistrationStatus)
-  
+
     if (postStringifiedResponse === 'false') {
       console.log('is not registered')
     }
-  
+
     expect(postStringifiedResponse).toBe('true')
 
     //  loading second program
 
-        const dummyProgram: any = readFileSync(
+    const dummyProgram: any = readFileSync(
       './tests/testing-utils/template_barebones.wasm'
     )
 
-
     const newPointer = await entropy.programs.dev.deploy(dummyProgram)
-    const secondProgramData: ProgramData = { 
+    const secondProgramData: ProgramData = {
       programPointer: newPointer,
-      programConfig: ''
+      programConfig: '',
     }
-   await entropy.programs.add(secondProgramData, charlieStashAddress)
+    await entropy.programs.add(secondProgramData, charlieStashAddress)
     // getting charlie programs
     const programs = await entropy.programs.get(charlieStashAddress)
 
-    console.log("CHARLIES PROGRAMS", programs )
+    console.log('CHARLIES PROGRAMS', programs)
     // removing charlie program barebones
-    await entropy.programs.remove(newPointer, charlieStashAddress )
-    const updatedRemovedPrograms = await entropy.programs.get(charlieStashAddress)
-  
-     const basicTx = {
-      to: "0x772b9a9e8aa1c9db861c6611a82d251db4fac990",
+    await entropy.programs.remove(newPointer, charlieStashAddress)
+    const updatedRemovedPrograms = await entropy.programs.get(
+      charlieStashAddress
+    )
+
+    const basicTx = {
+      to: '0x772b9a9e8aa1c9db861c6611a82d251db4fac990',
       value: 1,
       chainId: 1,
       nonce: 1,
       data: '0x' + Buffer.from('Created On Entropy').toString('hex'),
     }
-  
-    const signature = await entropy.signTransaction({txParams: basicTx, type: 'eth' }) as string
-  
+
+    const signature = (await entropy.signTransaction({
+      txParams: basicTx,
+      type: 'eth',
+    })) as string
 
     // encoding signature
-    console.log("SIGGGG", signature)
+    console.log('SIGGGG', signature)
     expect(signature.length).toBe(228)
     // await disconnect(charlieStashEntropy.substrate)
   })
-  
 })
-

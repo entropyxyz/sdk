@@ -140,9 +140,9 @@ describe('Crypto Tests', () => {
       alicePublicKey
     )
 
-    expect(
-      await crypto.decryptAndVerify(aliceSecretKey, result)
-    ).toStrictEqual(thresholdKey)
+    expect(await crypto.decryptAndVerify(aliceSecretKey, result)).toStrictEqual(
+      thresholdKey
+    )
   })
 })
 

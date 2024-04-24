@@ -23,7 +23,7 @@ export type KeyVisibilityInfo =
 /**
  * The `RegistrationManager` class provides functionality for user registration using the Polkadot/Substrate API.
  * It extends the `ExtrinsicBaseClass` to handle extrinsic submissions and utility methods.
- * 
+ *
  * This class includes methods for registering a user, checking if a user is already registered, and listening for registration events.
  */
 
@@ -68,15 +68,14 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
     // TODO: store multiple signers via address. and respond accordingly
     // however it should be handled in extrinsic class and not here
 
-
     /**
-   * Verifies the registration status of an address.
-   *
-   * @param {Address} address - The address for which registration status needs to be checked.
-   * @returns {Promise<boolean>} A promise which resolves to `true` if the address is registered, otherwise `false`.
-   * @remarks
-   * This method queries Entropy to determine if a given address is registered.
-   */
+     * Verifies the registration status of an address.
+     *
+     * @param {Address} address - The address for which registration status needs to be checked.
+     * @returns {Promise<boolean>} A promise which resolves to `true` if the address is registered, otherwise `false`.
+     * @remarks
+     * This method queries Entropy to determine if a given address is registered.
+     */
 
     const isCurrentlyRegistered = await this.checkRegistrationStatus(
       this.signer.wallet.address
@@ -123,10 +122,15 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
       programModificationAccount,
       keyVisibility,
       // initialPrograms
-      initialPrograms.map((programInfo) => { return {programPointer: programInfo.programPointer, programConfig: programInfo.programConfig} })
+      initialPrograms.map((programInfo) => {
+        return {
+          programPointer: programInfo.programPointer,
+          programConfig: programInfo.programConfig,
+        }
+      })
     )
 
-    await this.sendAndWaitFor (registerTx, freeTx, {
+    await this.sendAndWaitFor(registerTx, freeTx, {
       section: 'relayer',
       name: 'SignalRegister',
     })

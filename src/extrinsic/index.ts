@@ -13,8 +13,8 @@ interface Decoded extends RegistryError {
 /**
  * A utility class to simplify extrinsic operations with the Polkadot/Substrate API.
  * Allows the user to send extrinsics and automatically handles errors, events, and certain special conditions like free transactions.
- * 
-*/
+ *
+ */
 
 export default class ExtrinsicBaseClass {
   substrate: ApiPromise
@@ -22,7 +22,7 @@ export default class ExtrinsicBaseClass {
 
   /**
    * Initializes a new instance of the `ExtrinsicBaseClass`.
-   * 
+   *
    * @param substrate - The instance of the Polkadot/Substrate API.
    * @param signer - The signer object containing the wallet and other signing-related functionalities.
    */

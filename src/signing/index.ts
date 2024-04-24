@@ -50,7 +50,7 @@ export default class SignatureRequestManager {
 
   /**
    * Initializes a new instance of `SignatureRequestManager`.
-   * 
+   *
    * @param {Config} config - Configuration settings for the manager.
    * @param {Signer} config.signer - The signer for authorizing transactions.
    * @param {ApiPromise} config.substrate - Instance of the Polkadot/Substrate API.
@@ -70,7 +70,7 @@ export default class SignatureRequestManager {
 
   /**
    * Signs a transaction using the appropriate adapter.
-   * 
+   *
    * @param {SigTxOps} sigTxOps - Parameters for the transaction signature operation.
    * @param {TxParams} sigTxOps.txParams - The parameters of the transaction to be signed.
    * @param {string} [sigTxOps.type] - The type of transaction.
@@ -100,7 +100,7 @@ export default class SignatureRequestManager {
 
   /**
    * Signs a given signature request hash.
-   * 
+   *
    * @param {SigOps} sigOps - Parameters for the signature operation.
    * @param {string} sigOps.sigRequestHash - The hash of the signature request to be signed.
    * @param {string} [sigOps.hash] - The hash type.
@@ -109,7 +109,11 @@ export default class SignatureRequestManager {
    * @returns {Promise<Uint8Array>} A promise resolving to the signed hash as a Uint8Array.
    */
 
-  async sign ({ sigRequestHash, hash, auxilaryData }: SigOps): Promise<Uint8Array> {
+  async sign ({
+    sigRequestHash,
+    hash,
+    auxilaryData,
+  }: SigOps): Promise<Uint8Array> {
     const strippedsigRequestHash = stripHexPrefix(sigRequestHash)
     const validatorsInfo: Array<ValidatorInfo> = await this.pickValidators(
       strippedsigRequestHash
@@ -144,7 +148,7 @@ export default class SignatureRequestManager {
 
   /**
    * Generates transaction requests formatted for validators.
-   * 
+   *
    * @param {object} params - Parameters for generating the transaction request.
    * @param {string} params.strippedsigRequestHash - Stripped signature request hash.
    * @param {ValidatorInfo[]} params.validatorsInfo - Information about the validators.
@@ -173,7 +177,10 @@ export default class SignatureRequestManager {
             timestamp: this.getTimeStamp(),
             hash,
           }
-          if (auxilaryData) txRequestData.auxilary_data = auxilaryData.map(i => JSON.stringify(i))
+          if (auxilaryData)
+            txRequestData.auxilary_data = auxilaryData.map((i) =>
+              JSON.stringify(i)
+            )
           const serverDHKey = await crypto.fromHex(validator.x25519_public_key)
 
           const formattedValidators = await Promise.all(
@@ -213,7 +220,7 @@ export default class SignatureRequestManager {
 
   /**
    * Sends transaction requests and retrieves the associated signatures.
-   * 
+   *
    * @param {EncMsg[]} txReq - An array of encrypted messages to send as transaction requests.
    * @returns {Promise<string[][]>} A promise that resolves to an array of arrays of signatures in string format.
    */
@@ -239,7 +246,7 @@ export default class SignatureRequestManager {
 
   /**
    * Selects validators based on the signature request.
-   * 
+   *
    * @param {string} sigRequest - The signature request hash.
    * @returns {Promise<ValidatorInfo[]>} A promise resolving to an array of validator information.
    */

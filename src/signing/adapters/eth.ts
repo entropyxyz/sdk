@@ -1,5 +1,5 @@
 import { Arch } from '../../types'
-import { keccak256 } from "ethereum-cryptography/keccak.js"
+import { keccak256 } from 'ethereum-cryptography/keccak.js'
 import { Transaction } from 'ethereumjs-tx'
 
 export interface EthSignature {
@@ -17,7 +17,7 @@ export async function preSign (txParams): Promise<string> {
 export async function postSign (sig: Uint8Array, txParams): Promise<string> {
   const buffSig = Buffer.from(sig)
   const rsv = extractRSV(buffSig)
-  const tx = new Transaction({...txParams, ...rsv})
+  const tx = new Transaction({ ...txParams, ...rsv })
   return `0x${tx.serialize().toString('hex')}`
 }
 

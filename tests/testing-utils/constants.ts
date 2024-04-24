@@ -7,18 +7,14 @@ export const charlieStashSeed =
 export const charlieStashAddress =
   '5Ck5SLSHYac6WFt5UZRSsdJjwmpSZq85fd5TRNAdZQVzEAPT'
 
-
-
 export const whitelisted_test_evm_address =
   '0x772b9a9e8aa1c9db861c6611a82d251db4fac990'
-
 
 /// A transaction request that satisfies the test whitelisted constraints
 // export const whitelisted_test_tx_req = {
 //   to: whitelisted_test_evm_address,
-//   value: 1, 
+//   value: 1,
 //   chainId: 1,
 //   nonce: 1,
 //   data: '0x' + Buffer.from('Created On Entropy').toString('hex'),
 // }
-

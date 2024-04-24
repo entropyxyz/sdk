@@ -14,22 +14,22 @@
     "test": "yarn test:setup && yarn removedb && jest --runInBand --detectOpenHandles",
     "test:setup": "docker version && [ \"$(cat .nvmrc)\" = \"$(node --version)\" ] && echo \"\\nCORRECT NODE VERSION\\n\" || { echo \"\\nINCOREECT NODE VERSION\\n\"; exit 1; }",
     "test:log": "yarn removedb && jest --runInBand --detectOpenHandles --silent=false --verbose",
-    "lint:ts": "tsc",
-    "lint:eslint": "eslint . --ext .ts",
     "lint": "yarn lint:ts && yarn lint:eslint",
-    "lint:fix": "eslint . --ext .ts --fix",
-    "prettier:fix": "prettier --write . --ignore-path .gitignore",
-    "prettier": "prettier --check .",
+    "lint:ts": "tsc",
+    "lint:eslint": "eslint . --ext .ts --fix",
+    "prettier": "prettier --write . --ignore-path .gitignore",
     "peek": "tsc --build --clean",
     "burn": "rm -Rf node_modules && yarn cache clean --all && yarn install",
-    "removedb": "rm -rf .entropy",
     "bundle": "tsup",
     "bundle:watch": "tsup --watch",
     "bundle:node": "tsup --platform node ",
     "bundle:browser": "tsup --platform browser",
-    "bundle:prod": "tsup --minify",
     "find-deadcode": "ts-prune",
-    "generate:types": "dev/bin/generate-types.sh"
+    "generate:types": "dev/bin/generate-types.sh",
+    "prepare": "husky",
+    "postinstall": "husky",
+    "prepack": "pinst --disable",
+    "postpack": "pinst --enable"
   },
   "repository": {
     "type": "git",
@@ -50,7 +50,10 @@
     "@typescript-eslint/parser": "^5.43.0",
     "depcheck": "^1.4.7",
     "eslint": "^8.27.0",
+    "husky": "^9.0.11",
     "jest": "^29.4.3",
+    "lint-staged": ">=10",
+    "pinst": "^3.0.0",
     "prettier": "2.2.1",
     "ts-jest": "^29.0.5",
     "ts-node": "^10.9.1",
@@ -68,7 +71,8 @@
     "ethereum-cryptography": "^2.1.2",
     "ethereumjs-tx": "^2.1.2"
   },
-  "directories": {
-    "example": "examples"
+  "lint-staged": {
+    "*.ts": "eslint --fix",
+    "*.{js,ts,json,md}": "prettier --write"
   }
 }

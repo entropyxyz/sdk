@@ -1,0 +1,2 @@
+npx tsc && echo "✔ tsc..." && \
+npx lint-staged

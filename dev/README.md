@@ -1,9 +1,10 @@
 # Hello sdk dev!
 
-### When updating core version:
+## When updating core version:
+
 - [ ] change docker version in ./bin/ENTROPY_CORE_VERSION.sh
 - [ ] generate types
-  this usually can be done through `yarn generate:types` however if it fails because of docker you may need to call the spin-up script directly from the root directory and then call the generate types script and then the spin down script:
+      this usually can be done through `yarn generate:types` however if it fails because of docker you may need to call the spin-up script directly from the root directory and then call the generate types script and then the spin down script:
   - `dev/bin/spin-up.sh two-nodes`
   - `dev/bin/generate-types.sh`
   - `dev/bin/spin-down.sh two-nodes`
@@ -12,10 +13,29 @@
 - [ ] run `yarn test`
 - [ ] push up and PR
 
-### When publishing
+## Linting
 
-- [ ] run: `yarn burn`
-- [ ] run: `yarn lint --fix`
-- [ ] run: `yarn bundle`
-- [ ] run: `yarn version --patch` (or whatever)
-- [ ] run: `npm publish`
+We've got automated linting set up as a pre-commit hook.
+Setup
+
+- dependencies: `husky`, `pinst`, `lint-staged`
+- files: `.husky/`
+
+If you are blocked from committing, you can skip these hooks
+```bash
+git commit --no-verify
+```
+
+## Publishing
+
+Always publish from `stable` branch
+
+```bash
+git checkout stable
+yarn burn
+yarn
+yarn bundle
+yarn version --patch # patch|minor|major
+npm publish
+git push origin stable --tags
+```

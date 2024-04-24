@@ -7,7 +7,7 @@ import * as util from '@polkadot/util'
 
 /**
  * Represents program information.
- * 
+ *
  * @interface ProgramInfo
  * @property {ArrayBuffer} bytecode - The bytecode of the program.
  * @property {unknown} [configurationInterface] - Optional. The configuration interface of the program.
@@ -23,21 +23,21 @@ export interface ProgramInfo {
 
 /**
  * Class to handle program-related extrinsic functions.
- * 
+ *
  * @extends ExtrinsicBaseClass
  */
 
 export default class ProgramDev extends ExtrinsicBaseClass {
   /**
    * Constructs a ProgramDev instance.
-   * 
+   *
    * @param {ApiPromise} substrate - The Substrate API instance.
    * @param {Signer} signer - The Signer instance.
    */
 
   constructor ({
     substrate,
-    signer
+    signer,
   }: {
     substrate: ApiPromise
     signer: Signer
@@ -47,7 +47,7 @@ export default class ProgramDev extends ExtrinsicBaseClass {
 
   /**
    * Retrieves program information using a program pointer.
-   * 
+   *
    * @param {string} pointer - The program pointer.
    * @returns {Promise<ProgramInfo>} - A Promise resolving to the program information.
    */
@@ -63,7 +63,7 @@ export default class ProgramDev extends ExtrinsicBaseClass {
 
   /**
    * Deploys a new program.
-   * 
+   *
    * @param {ArrayBuffer} program - The program to deploy.
    * @param {unknown} [configurationInterface] - Optional. The configuration interface of the program.
    * @returns {Promise<string>} - A Promise resolving to the hash of the deployed program.
@@ -71,9 +71,8 @@ export default class ProgramDev extends ExtrinsicBaseClass {
 
   async deploy (
     program: ArrayBuffer,
-    configurationInterface?: unknown,
+    configurationInterface?: unknown
   ): Promise<string> {
-
     // converts program and configurationInterface into a palatable format
     const formatedConfig = JSON.stringify(configurationInterface)
     // programModKey is the caller of the extrinsic
@@ -86,22 +85,19 @@ export default class ProgramDev extends ExtrinsicBaseClass {
       section: 'programs',
       name: 'ProgramCreated',
     })
-    const programHash  = record.event.data[1].toHex()
+    const programHash = record.event.data[1].toHex()
 
     return programHash
   }
 
   /**
    * Removes a program.
-   * 
+   *
    * @param {string | Uint8Array} programHash - The hash of the program to remove.
    * @returns {Promise<void>} - A Promise resolving when the program is removed.
    */
 
-  async remove (
-    programHash: string | Uint8Array,
-  ): Promise<void> {    
-    
+  async remove (programHash: string | Uint8Array): Promise<void> {
     const tx: SubmittableExtrinsic<'promise'> = this.substrate.tx.programs.removeProgram(
       programHash
     )
@@ -116,11 +112,11 @@ export default class ProgramDev extends ExtrinsicBaseClass {
    * @internal
    *
    * Formats program information.
-   * 
+   *
    * @param {ProgramInfoJSON} programInfo - The program information in JSON format.
    * @returns {ProgramInfo} - The formatted program information.
    */
-  
+
   #formatProgramInfo (programInfo): ProgramInfo {
     const { configurationInterface, deployer, refCounter } = programInfo
     const bytecode = hex2buf(stripHexPrefix(programInfo.bytecode)) // Convert hex string to ArrayBuffer
