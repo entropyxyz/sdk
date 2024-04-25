@@ -173,8 +173,11 @@ const programConfig = util.u8aToHex(new Uint8Array(byteArray))
       initialPrograms: [programData],
       programModAccount: charlieStashAddress,
     })
+
   
     expect(entropy.account.verifyingKey).toBeTruthy()
+    const verifyingKey = entropy.account.verifyingKey
+    console.log("verifying key:", verifyingKey)
     expect(entropy.account.sigRequestKey.wallet.address).toBe(charlieStashAddress)
     expect(
       await entropy.registrationManager.checkRegistrationStatus(
@@ -209,13 +212,14 @@ const programConfig = util.u8aToHex(new Uint8Array(byteArray))
       programPointer: newPointer,
       programConfig: ''
     }
-   await entropy.programs.add(secondProgramData, charlieStashAddress)
+   await entropy.programs.add(secondProgramData, charlieStashAddress, verifyingKey)
     // getting charlie programs
     const programs = await entropy.programs.get(charlieStashAddress)
 
     console.log("CHARLIES PROGRAMS", programs )
+
     // removing charlie program barebones
-    await entropy.programs.remove(newPointer, charlieStashAddress )
+    await entropy.programs.remove(newPointer, charlieStashAddress, verifyingKey)
     const updatedRemovedPrograms = await entropy.programs.get(charlieStashAddress)
   
      const basicTx = {

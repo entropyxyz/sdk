@@ -114,7 +114,8 @@ export default class Entropy {
     this.programs = new ProgramManager({
       substrate: this.substrate,
       programModKey: programModKeyPair as Signer || this.account.sigRequestKey,
-      programDeployKey: this.account.programDeployKey
+      programDeployKey: this.account.programDeployKey,
+      verifyingKey: this.account.verifyingKey
     })
     if (this.#programReadOnly || this.#allReadOnly) this.programs.set = async () => { throw new Error('Programs is in a read only state: Must pass a valid key pair in initialization.') }
     this.#ready(true)
@@ -126,7 +127,7 @@ export default class Entropy {
 
   async #setVerifyingKeys (): Promise<void> {
     if (this.account) {
-      this.subscribeToAccountRegisteredEvents();
+      this.subscribeToAccountRegisteredEvents()
     }
   }
 

@@ -25,17 +25,22 @@ export default class ProgramManager extends ExtrinsicBaseClass {
    * @alpha
    */
   dev: ProgramDev
+  verifyingKey: string
   constructor ({
     substrate,
     programModKey,
     programDeployKey,
+    verifyingKey
   }: {
     substrate: ApiPromise
     programModKey: Signer
     programDeployKey?: Signer
+    verifyingKey: string
   }) {
     super({ substrate, signer: programModKey })
     this.dev = new ProgramDev({substrate, signer: programDeployKey})
+    this.verifyingKey = verifyingKey
+
   }
 
   /**
@@ -140,6 +145,8 @@ export default class ProgramManager extends ExtrinsicBaseClass {
     const updatedPrograms = currentPrograms.filter(
       (program) => program.programPointer !== programHashToRemove
     )
+
+
     await this.set(updatedPrograms, sigReqAccount, verifyingKey)
   }
 
