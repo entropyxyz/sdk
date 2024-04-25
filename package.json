@@ -60,15 +60,6 @@
     "typedoc-plugin-markdown": "^3.17.0",
     "typescript": "^4.9.5"
   },
-  "resolutions": {
-    "@polkadot/api": "^10.13.1",
-    "@polkadot/api-derive":"^10.13.1",
-    "@polkadot/types":"^10.13.1",
-    "@polkadot/types-known": "^10.13.1",
-    "@polkadot/rpc-core": "^10.13.1",
-    "@polkadot/types-codec": "^10.13.1",
-    "@polkadot/types-create": "^10.13.1"
-  },
   "dependencies": {
     "@entropyxyz/entropy-protocol-nodejs": "^0.1.0",
     "@entropyxyz/entropy-protocol-web": "^0.1.0",
