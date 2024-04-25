@@ -121,22 +121,12 @@ export default class Entropy {
     this.isRegistered = this.registrationManager.checkRegistrationStatus.bind(
       this.registrationManager
     )
-    this.#setVerfiyingKeys()
+    this.#setVerifyingKeys()
   }
 
-  async #setVerfiyingKeys (): Promise<void> {
-    // if an account was provided
+  async #setVerifyingKeys (): Promise<void> {
     if (this.account) {
-      // and their is a sigRequest key
-      if (this.account.sigRequestKey) {
-        const address = this.account.sigRequestKey.wallet.address
-        // check if it is registered
-        if (await this.isRegistered(address)) {
-          // then get the verifyingKey from the registration record
-          // on chain and set it on the account object
-          this.account.verifyingKey = await this.getVerifyingKey(address)
-        }
-      }
+      this.subscribeToAccountRegisteredEvents();
     }
   }
 
@@ -179,6 +169,25 @@ export default class Entropy {
    * @throws {Error} - If the address is already registered or if there's a problem during registration.
    */
 
+  async subscribeToAccountRegisteredEvents () {
+    await this.substrate.isReady; // Ensure the API is ready
+
+    this.substrate.query.system.events((events) => {
+      events.forEach((record) => {
+        const { event } = record;
+        if (event.section === 'Registry' && event.method === 'AccountRegistered') {
+          const [accountId, verifyingKeyBytes] = event.data;
+          // checks if the event is for the current account
+          if (this.account && this.account.sigRequestKey && this.account.sigRequestKey.wallet.address === accountId.toString()) {
+            const verifyingKey = verifyingKeyBytes.toString()
+            this.account.verifyingKey = verifyingKey
+            console.log(`Account ID: ${accountId.toString()}, Verifying Key: ${verifyingKey}`)
+          }
+        }
+      })
+    })
+  }
+
   async register (
     params: RegistrationParams & { account?: EntropyAccount }
   ): Promise<void> {
@@ -197,21 +206,7 @@ export default class Entropy {
       throw new TypeError('Incompatible address type')
     }
     await this.registrationManager.register(params)
-    this.account.verifyingKey = await this.getVerifyingKey(this.account.sigRequestKey.wallet.address)
-
-  }
-
-  /**
-   * Retrieves the verifying key associated with the given address's registration record.
-   *
-   * @param {Address} address - The address for which the verifying key is needed.
-   * @returns {Promise<string>} - A promise resolving to the verifying key.
-   */
-
-  async getVerifyingKey (address: Address): Promise<string> {
-    const registeredInfo = await this.substrate.query.relayer.registered(address)
-    // @ts-ignore: next line
-    return registeredInfo.toHuman().verifyingKey
+    this.subscribeToAccountRegisteredEvents()
   }
 
   /**
