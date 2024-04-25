@@ -33,11 +33,11 @@ export interface SigOps {
 
 export interface UserSignatureRequest {
   message: string
-  auxilary_data?: Array<string | null>
-  validators_info: ValidatorInfo[]
+  auxilaryData?: Array<string | null>
+  validatorsInfo: ValidatorInfo[]
   timestamp: { secs_since_epoch: number; nanos_since_epoch: number }
   hash: string
-  signatureVerifyingKey: Uint8Array
+  signatureRequestAccount: Uint8Array
 }
 /**
  * `SignatureRequestManager` facilitates signature requests using Polkadot/Substrate API.
@@ -121,10 +121,10 @@ export default class SignatureRequestManager {
     const validatorsInfo: Array<ValidatorInfo> = await this.pickValidators(
       strippedsigRequestHash
     )
-    let signatureVerifyingKey
+    let signatureRequestAccount
     const txRequests: Array<EncMsg> = await this.formatTxRequests({
       validatorsInfo: validatorsInfo,
-      signatureVerifyingKey,
+      signatureRequestAccount,
       strippedsigRequestHash,
       auxilaryData,
       hash,
@@ -164,13 +164,13 @@ export default class SignatureRequestManager {
 
   async formatTxRequests ({
     strippedsigRequestHash,
-    signatureVerifyingKey,
+    signatureRequestAccount,
     validatorsInfo,
     auxilaryData,
     hash,
   }: {
     strippedsigRequestHash: string
-    signatureVerifyingKey: Uint8Array
+    signatureRequestAccount: Uint8Array
     validatorsInfo: Array<ValidatorInfo>
     auxilaryData?: unknown[]
     hash?: string
@@ -180,12 +180,12 @@ export default class SignatureRequestManager {
         async (validator: ValidatorInfo): Promise<EncMsg> => {
           const txRequestData: UserSignatureRequest = {
             message: stripHexPrefix(strippedsigRequestHash),
-            signatureVerifyingKey,
-            validators_info: validatorsInfo,
+            signatureRequestAccount,
+            validatorsInfo: validatorsInfo,
             timestamp: this.getTimeStamp(),
             hash,
           }
-          if (auxilaryData) txRequestData.auxilary_data = auxilaryData.map(i => JSON.stringify(i))
+          if (auxilaryData) txRequestData.auxilaryData = auxilaryData.map(i => JSON.stringify(i))
           const serverDHKey = await crypto.fromHex(validator.x25519_public_key)
 
           const formattedValidators = await Promise.all(
