@@ -135,7 +135,7 @@ describe('Core Tests', () => {
       './tests/testing-utils/template_basic_transaction.wasm'
     )
 
-  
+  // developer deployed 
     const pointer = await entropy.programs.dev.deploy(basicTxProgram)
 const config = `
     {
