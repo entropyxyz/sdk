@@ -10,9 +10,12 @@ export interface RegistrationParams {
   programModAccount: Address
 }
 
+
 export interface RegisteredInfo {
   keyVisibility: KeyVisibilityInfo
-  verifyingKey: string
+  programsData: Uint8Array
+  programModAccount: string
+  versionNumber: number
 }
 
 export type KeyVisibilityInfo =
@@ -106,7 +109,9 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
                 const data = registeredData.unwrap()
                 resolve({
                   keyVisibility: data.keyVisibility.toJSON() as KeyVisibilityInfo,
-                  verifyingKey: data.verifyingKey.toString(),
+                  programsData: data.programsData.toJSON(),
+                  programModAccount: data.ProgramsModAccount.toJSON(),
+                  versionNumber: data.versionNumber
                 })
               }
             }

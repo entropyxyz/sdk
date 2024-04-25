@@ -33,11 +33,11 @@ export interface SigOps {
 
 export interface UserSignatureRequest {
   message: string
-  signature_request_account?: string
   auxilary_data?: Array<string | null>
   validators_info: ValidatorInfo[]
   timestamp: { secs_since_epoch: number; nanos_since_epoch: number }
   hash: string
+  signatureVerifyingKey: Uint8Array
 }
 /**
  * `SignatureRequestManager` facilitates signature requests using Polkadot/Substrate API.
@@ -121,10 +121,10 @@ export default class SignatureRequestManager {
     const validatorsInfo: Array<ValidatorInfo> = await this.pickValidators(
       strippedsigRequestHash
     )
-    let signature_request_account
+    let signatureVerifyingKey
     const txRequests: Array<EncMsg> = await this.formatTxRequests({
       validatorsInfo: validatorsInfo,
-      signature_request_account,
+      signatureVerifyingKey,
       strippedsigRequestHash,
       auxilaryData,
       hash,
@@ -164,13 +164,13 @@ export default class SignatureRequestManager {
 
   async formatTxRequests ({
     strippedsigRequestHash,
-    signature_request_account,
+    signatureVerifyingKey,
     validatorsInfo,
     auxilaryData,
     hash,
   }: {
     strippedsigRequestHash: string
-    signature_request_account: string
+    signatureVerifyingKey: Uint8Array
     validatorsInfo: Array<ValidatorInfo>
     auxilaryData?: unknown[]
     hash?: string
@@ -180,7 +180,7 @@ export default class SignatureRequestManager {
         async (validator: ValidatorInfo): Promise<EncMsg> => {
           const txRequestData: UserSignatureRequest = {
             message: stripHexPrefix(strippedsigRequestHash),
-            signature_request_account,
+            signatureVerifyingKey,
             validators_info: validatorsInfo,
             timestamp: this.getTimeStamp(),
             hash,
