@@ -94,6 +94,12 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
     const registered: Promise<RegisteredInfo> = new Promise(
       (resolve, reject) => {
         try {
+          console.log("in registration manager", this.verifyingKey)
+          if (!this.verifyingKey) {
+            console.log("No verifying key available.")
+            return
+          }
+
           const unsubPromise = this.substrate.rpc.chain.subscribeNewHeads(
             async () => {
               const registeredCheck = await this.substrate.query.registry.registered(
@@ -115,11 +121,10 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
                   keyVisibility: data.keyVisibility.toJSON() as KeyVisibilityInfo,
                   programsData: data.programsData.toJSON(),
                   programModAccount: data.ProgramsModAccount.toJSON(),
-                  versionNumber: data.versionNumber
-                })
-              }
-            }
-          )
+                  versionNumber: data.versionNumber                  })
+              } 
+            } 
+          ) 
         } catch (e) {
           reject(e)
         }

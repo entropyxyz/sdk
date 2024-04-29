@@ -88,6 +88,7 @@ describe('Register Tests', () => {
       keyVisibility: 'Public',
       initialPrograms: [{ programPointer: pointer, programConfig: '0x' }],
     })
+    
     const verifyingKey = entropy.account.verifyingKey
     if (!verifyingKey) {
       console.log("no verifying key")

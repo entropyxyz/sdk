@@ -7,7 +7,7 @@ import { Adapter } from './signing/adapters/types'
 import { isValidPair } from './keys'
 import { Signer } from './types'
 import ProgramManager from './programs'
-
+import { Codec } from '@polkadot/types-codec/types'
 export interface EntropyAccount {
   sigRequestKey?: Signer
   programModKey?: Signer | string
@@ -128,7 +128,9 @@ export default class Entropy {
 
   async #setVerifyingKeys (): Promise<void> {
     if (this.account) {
-      this.subscribeToAccountRegisteredEvents()
+      this.subscribeToAccountRegisteredEvents((verifyingKey: string) => {
+        console.log("Received verifyingKey: ", verifyingKey)
+      })
     }
   }
 
@@ -170,23 +172,24 @@ export default class Entropy {
    * @throws {TypeError} - If the provided address format is incompatible.
    * @throws {Error} - If the address is already registered or if there's a problem during registration.
    */
-
-  async subscribeToAccountRegisteredEvents () {
-    this.substrate.query.system.events((events) => {
+  async subscribeToAccountRegisteredEvents (callback: (verifyingKey: string) => void): Promise<Codec> {
+    const unsubscribe = await this.substrate.query.system.events((events) => {
       events.forEach((record) => {
         const { event } = record
         if (event.section === 'registry' && event.method === 'AccountRegistered') {
           const [accountId, verifyingKeyBytes] = event.data
-          // checks if the event is for the current account
           if (this.account && this.account.sigRequestKey && this.account.sigRequestKey.wallet.address === accountId.toString()) {
             const verifyingKey = verifyingKeyBytes.toString()
             this.account.verifyingKey = verifyingKey
             console.log(`Account ID: ${accountId.toString()}, Verifying Key: ${verifyingKey}`)
-            return
+            callback(verifyingKey)
+
+           
           }
         }
       })
     })
+    return unsubscribe
   }
 
   async register (
@@ -207,8 +210,11 @@ export default class Entropy {
       throw new TypeError('Incompatible address type')
     }
     await this.registrationManager.register(params)
-    this.subscribeToAccountRegisteredEvents()
-    return
+    this.subscribeToAccountRegisteredEvents((verifyingKey: string) => {
+      console.log(`Received verifyingKey after registration: ${verifyingKey}`)
+    }).then(unsubscribe => {
+      return unsubscribe
+    })
   }
 
   /**
