@@ -1,3 +1,3 @@
 #! /usr/bin/env bash
 
-export ENTROPY_CORE_VERSION=test-hc-release-00c87d6a4-testnet-launch-params
+export ENTROPY_CORE_VERSION=release-v0.0.11

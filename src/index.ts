@@ -171,13 +171,16 @@ export default class Entropy {
    */
 
   async subscribeToAccountRegisteredEvents () {
-    await this.substrate.isReady; // Ensure the API is ready
+    await this.substrate.isReady
 
     this.substrate.query.system.events((events) => {
       events.forEach((record) => {
-        const { event } = record;
-        if (event.section === 'Registry' && event.method === 'AccountRegistered') {
-          const [accountId, verifyingKeyBytes] = event.data;
+        const { event } = record
+        if (event.section === 'relayer' && event.method === 'AccountRegistered') {
+          const [accountId, verifyingKeyBytes] = event.data
+          console.log("acount id", accountId.toHuman())
+          console.log("verifyingKeyByes", verifyingKeyBytes)
+          console.log("event data", event.data.toHuman())
           // checks if the event is for the current account
           if (this.account && this.account.sigRequestKey && this.account.sigRequestKey.wallet.address === accountId.toString()) {
             const verifyingKey = verifyingKeyBytes.toString()

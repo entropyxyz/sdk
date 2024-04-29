@@ -98,7 +98,7 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
               if (registeredCheck) {
                 const unsub = await unsubPromise
                 unsub()
-                const registeredData = await this.substrate.query.registry.registered(
+                const registeredData = await this.substrate.query.relayer.registered(
                   this.signer.wallet.address
                 )
                 // @ts-ignore: next line
@@ -123,7 +123,7 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
     )
 
     // Convert the ProgramData to PalletRelayerProgramInstance and wrap it in an array
-    const registerTx = this.substrate.tx.registry.register(
+    const registerTx = this.substrate.tx.relayer.register(
       programModificationAccount,
       keyVisibility,
       // initialPrograms
@@ -131,7 +131,7 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
     )
 
     await this.sendAndWaitFor (registerTx, freeTx, {
-      section: 'registry',
+      section: 'relayer',
       name: 'SignalRegister',
     })
 
@@ -145,8 +145,8 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
    * @returns A promise which resolves to `true` if the address is registered, otherwise `false`.
    */
 
-  async checkRegistrationStatus (address: Address): Promise<boolean> {
-    const isRegistered = await this.substrate.query.registry.registered(address)
+  async checkRegistrationStatus (verifyingKey: Address): Promise<boolean> {
+    const isRegistered = await this.substrate.query.relayer.registered(verifyingKey)
     return !!isRegistered.toJSON()
   }
 }
