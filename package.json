@@ -12,7 +12,7 @@
   "browser": "dist/index.js",
   "scripts": {
     "test": "yarn test:setup && yarn removedb && jest --runInBand --detectOpenHandles",
-    "test:setup": "docker version && [ \"$(cat .nvmrc)\" = \"$(node --version)\" ] && echo \"\\nCORRECT NODE VERSION\\n\" || { echo \"\\nINCOREECT NODE VERSION\\n\"; exit 1; }",
+    "test:setup": "docker version && [ \"$(cat .nvmrc)\" = \"$(node --version)\" ] && echo \"\\nCORRECT NODE VERSION\\n\" || { echo \"\\nINCORRECT NODE VERSION\\n\"; exit 1; }",
     "test:log": "yarn removedb && jest --runInBand --detectOpenHandles --silent=false --verbose",
     "lint:ts": "tsc",
     "lint:eslint": "eslint . --ext .ts",
