@@ -55,7 +55,7 @@ export default class ProgramManager extends ExtrinsicBaseClass {
    */
 
   async get (verifyingKey: string): Promise<ProgramData[]> {
-    const registeredOption = await this.substrate.query.relayer.registered(
+    const registeredOption = await this.substrate.query.registry.registered(
       verifyingKey
     )
 
@@ -92,7 +92,7 @@ export default class ProgramManager extends ExtrinsicBaseClass {
   ): Promise<void> {
     programModKey = programModKey || sigReqAccount
 
-    const registeredInfoOption = await this.substrate.query.relayer.registered(
+    const registeredInfoOption = await this.substrate.query.registry.registered(
       sigReqAccount
     )
 
@@ -113,7 +113,7 @@ export default class ProgramManager extends ExtrinsicBaseClass {
       programConfig: data.programConfig,
     }))
 
-    const tx: SubmittableExtrinsic<'promise'> = this.substrate.tx.relayer.changeProgramInstance(
+    const tx: SubmittableExtrinsic<'promise'> = this.substrate.tx.registry.changeProgramInstance(
       sigReqAccount,
       newProgramInstances
     )

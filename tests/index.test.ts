@@ -174,8 +174,8 @@ const programConfig = util.u8aToHex(new Uint8Array(byteArray))
       programModAccount: charlieStashAddress,
     })
 
-    const registered = await entropy.substrate.query.relayer.confirm_register(charlieStashAddress)
-    const registereddos = await entropy.substrate.query.relayer.confirmRegister(charlieStashAddress)
+    const registered = await entropy.substrate.query.registry.confirm_register(charlieStashAddress)
+    const registereddos = await entropy.substrate.query.registry.confirmRegister(charlieStashAddress)
 
     console.log("REGISTERED", registered.toHuman())
     console.log("REGISTERED DIS", registereddos.toHuman())

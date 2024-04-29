@@ -79,7 +79,8 @@ export default class ProgramDev extends ExtrinsicBaseClass {
     // programModKey is the caller of the extrinsic
     const tx: SubmittableExtrinsic<'promise'> = this.substrate.tx.programs.setProgram(
       util.u8aToHex(new Uint8Array(program)),
-      formatedConfig
+      formatedConfig,
+      ''
     )
 
     const record = await this.sendAndWaitFor(tx, false, {

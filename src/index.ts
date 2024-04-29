@@ -176,7 +176,7 @@ export default class Entropy {
     this.substrate.query.system.events((events) => {
       events.forEach((record) => {
         const { event } = record
-        if (event.section === 'relayer' && event.method === 'AccountRegistered') {
+        if (event.section === 'registry' && event.method === 'AccountRegistered') {
           const [accountId, verifyingKeyBytes] = event.data
           console.log("acount id", accountId.toHuman())
           console.log("verifyingKeyByes", verifyingKeyBytes)
