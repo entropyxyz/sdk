@@ -73,7 +73,7 @@ describe('Register Tests', () => {
   it('should check pre-registration status', async () => {
     // Check if already registered before the test
     const verifyingKey = entropy.account.verifyingKey
-    console.log(verifyingKey)
+    // if no verifying key set we an assume the account hasnt be registered 
     if (!verifyingKey) {
       console.log("no verifying key")
       return
@@ -83,12 +83,11 @@ describe('Register Tests', () => {
   })
 
   it('should handle user registration', async () => {
-    const register = await entropy.register({
+    await entropy.register({
       programModAccount: charlieStashAddress,
       keyVisibility: 'Public',
       initialPrograms: [{ programPointer: pointer, programConfig: '0x' }],
     })
-    console.log("register", register)
     const verifyingKey = entropy.account.verifyingKey
     if (!verifyingKey) {
       console.log("no verifying key")

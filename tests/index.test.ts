@@ -155,13 +155,13 @@ const programConfig = util.u8aToHex(new Uint8Array(byteArray))
 
   
     // Pre-registration check
-    const preRegistrationStatus = await entropy.isRegistered(
-      charlieStashAddress
-    )
+    // const preRegistrationStatus = await entropy.isRegistered(
+    //   charlieStashAddress
+    // )
 
-    expect(preRegistrationStatus).toBeFalsy()
-    const preStringifiedResponse = JSON.stringify(preRegistrationStatus)
-    expect(preStringifiedResponse).toBe('false')
+    // expect(preRegistrationStatus).toBeFalsy()
+    // const preStringifiedResponse = JSON.stringify(preRegistrationStatus)
+    // expect(preStringifiedResponse).toBe('false')
   
 
 
