@@ -78,9 +78,9 @@ export default class ProgramDev extends ExtrinsicBaseClass {
     const formatedConfig = JSON.stringify(configurationInterface)
     // programModKey is the caller of the extrinsic
     const tx: SubmittableExtrinsic<'promise'> = this.substrate.tx.programs.setProgram(
-      util.u8aToHex(new Uint8Array(program)),
-      formatedConfig,
-      ''
+      util.u8aToHex(new Uint8Array(program)), // new program
+      formatedConfig, // config schema
+      '' // auxilary config schema
     )
 
     const record = await this.sendAndWaitFor(tx, false, {
