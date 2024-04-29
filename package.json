@@ -1,7 +1,7 @@
 {
   "name": "@entropyxyz/sdk",
   "version": "0.1.4",
-  "license": "ISC",
+  "license": "AGPL-3.0-only",
   "description": "JS SDK for entropy blockchain ",
   "main": "dist/index.js",
   "files": [
@@ -12,7 +12,7 @@
   "browser": "dist/index.js",
   "scripts": {
     "test": "yarn test:setup && yarn removedb && jest --runInBand --detectOpenHandles",
-    "test:setup": "docker version && [ \"$(cat .nvmrc)\" = \"$(node --version)\" ] && echo \"\\nCORRECT NODE VERSION\\n\" || { echo \"\\nINCOREECT NODE VERSION\\n\"; exit 1; }",
+    "test:setup": "docker version && [ \"$(cat .nvmrc)\" = \"$(node --version)\" ] && echo \"\\nCORRECT NODE VERSION\\n\" || { echo \"\\nINCORRECT NODE VERSION\\n\"; exit 1; }",
     "test:log": "yarn removedb && jest --runInBand --detectOpenHandles --silent=false --verbose",
     "lint": "yarn lint:ts && yarn lint:eslint",
     "lint:ts": "tsc",
