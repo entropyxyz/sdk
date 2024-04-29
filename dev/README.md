@@ -1,5 +1,17 @@
 # Hello sdk dev!
 
+## versions
+
+The SDK version must match a compatible [`entropy-core`](https://github.com/entropyxyz/entropy-core) version.
+
+<!-- TODO: -->
+
+module | tag
+---|---
+`@entropyxyz/sdk` | `main` TODO
+`entropy-core` | `release/v0.0.11`
+
+
 ### When updating core version:
 
 - [ ] change docker version in ./bin/ENTROPY_CORE_VERSION.sh

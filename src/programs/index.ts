@@ -98,8 +98,8 @@ class ProgramManager extends ExtrinsicBaseClass {
     }
 
     const registeredInfo = registeredInfoOption.toJSON()
-    // @ts-ignore: next line :{
     const isAuthorized =
+    // @ts-ignore: next line :{
       registeredInfo.programModificationAccount === programModKey
 
     if (!isAuthorized) {
