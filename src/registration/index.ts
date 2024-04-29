@@ -14,7 +14,7 @@ export interface RegistrationParams {
 export interface RegisteredInfo {
   keyVisibility: KeyVisibilityInfo
   programsData: Uint8Array
-  programModAccount: string
+  programModAccount: Address
   versionNumber: number
 }
 
@@ -36,14 +36,18 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
    * @param {ApiPromise} substrate - The Polkadot/Substrate API instance.
    * @param {Signer} signer - The signer used for signing transactions.
    */
+  verifyingKey: string
   constructor ({
     substrate,
     signer,
+    verifyingKey
   }: {
     substrate: ApiPromise
     signer: Signer
+    verifyingKey: string
   }) {
     super({ signer, substrate })
+    this.verifyingKey = verifyingKey
   }
 
   /**
@@ -80,20 +84,20 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
    * This method queries Entropy to determine if a given address is registered.
    */
 
-    const isCurrentlyRegistered = await this.checkRegistrationStatus(
-      this.signer.wallet.address
-    )
-    if (isCurrentlyRegistered) {
-      throw new Error('already registered')
-    }
+    // const isCurrentlyRegistered = await this.checkRegistrationStatus(
+    //   this.verifyingKey
+    // )
+    // if (isCurrentlyRegistered) {
+    //   throw new Error('already registered')
+    // }
 
     const registered: Promise<RegisteredInfo> = new Promise(
       (resolve, reject) => {
         try {
           const unsubPromise = this.substrate.rpc.chain.subscribeNewHeads(
             async () => {
-              const registeredCheck = await this.checkRegistrationStatus(
-                this.signer.wallet.address
+              const registeredCheck = await this.substrate.query.registry.registered(
+                this.verifyingKey
               )
               if (registeredCheck) {
                 const unsub = await unsubPromise
@@ -145,8 +149,12 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
    * @returns A promise which resolves to `true` if the address is registered, otherwise `false`.
    */
 
-  async checkRegistrationStatus (verifyingKey: Address): Promise<boolean> {
-    const isRegistered = await this.substrate.query.registry.registered(verifyingKey)
-    return !!isRegistered.toJSON()
-  }
+//   async checkRegistrationStatus (verifyingKey: Address): Promise<boolean> {
+//     if (!verifyingKey) {
+//       console.log("no verifying key set")
+//       return
+//     }
+//     const isRegistered = await this.substrate.query.registry.registered(verifyingKey)
+//     return !!isRegistered.toJSON()
+//   }
 }

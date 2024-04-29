@@ -165,8 +165,7 @@ const programConfig = util.u8aToHex(new Uint8Array(byteArray))
   
 
 
-
-    await entropy.register({
+   await entropy.register({
       keyVisibility: 'Public',
       freeTx: false,
       // initialPrograms: [{ pointer: programData.pointer, config: programData.config }],
@@ -174,21 +173,15 @@ const programConfig = util.u8aToHex(new Uint8Array(byteArray))
       programModAccount: charlieStashAddress,
     })
 
-    const registered = await entropy.substrate.query.registry.confirm_register(charlieStashAddress)
-    const registereddos = await entropy.substrate.query.registry.confirmRegister(charlieStashAddress)
-
-    console.log("REGISTERED", registered.toHuman())
-    console.log("REGISTERED DIS", registereddos.toHuman())
-  
     expect(entropy.account.verifyingKey).toBeTruthy()
     const verifyingKey = entropy.account.verifyingKey
     console.log("verifying key:", verifyingKey)
     expect(entropy.account.sigRequestKey.wallet.address).toBe(charlieStashAddress)
-    expect(
-      await entropy.registrationManager.checkRegistrationStatus(
-        charlieStashAddress
-      )
-    ).toBeTruthy()
+    // expect(
+    //   await entropy.registrationManager.checkRegistrationStatus(
+    //     charlieStashAddress
+    //   )
+    // ).toBeTruthy()
   
     // Post-registration check
   

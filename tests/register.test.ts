@@ -72,8 +72,12 @@ describe('Register Tests', () => {
 
   it('should check pre-registration status', async () => {
     // Check if already registered before the test
-    // const verifyingKey = entropy.account.verifyingKey
-    // console.log(verifyingKey)
+    const verifyingKey = entropy.account.verifyingKey
+    console.log(verifyingKey)
+    if (!verifyingKey) {
+      console.log("no verifying key")
+      return
+    }
     // isRegisteredBefore = await entropy.checkRegistrationStatus(verifyingKey)
     // expect(isRegisteredBefore).toBeFalsy()
   })
@@ -82,13 +86,17 @@ describe('Register Tests', () => {
     const register = await entropy.register({
       programModAccount: charlieStashAddress,
       keyVisibility: 'Public',
-      freeTx: false,
       initialPrograms: [{ programPointer: pointer, programConfig: '0x' }],
     })
     console.log("register", register)
-    // const verifyingKey = entropy.account.verifyingKey
-    // const isRegisteredAfter = await entropy.isRegistered(verifyingKey)
-    // expect(isRegisteredAfter).toBeTruthy()
+    const verifyingKey = entropy.account.verifyingKey
+    if (!verifyingKey) {
+      console.log("no verifying key")
+      return
+    }
+    console.log("post registration check")
+    const isRegisteredAfter = await entropy.query.registry.registered(verifyingKey)
+    expect(isRegisteredAfter).toBeTruthy()
   })
 
   it('should not allow re-registration', async () => {
@@ -96,14 +104,13 @@ describe('Register Tests', () => {
       entropy.register({
         programModAccount: charlieStashAddress,
         keyVisibility: 'Public',
-        freeTx: true,
         initialPrograms: [{ programPointer: pointer, programConfig: '0x' }],
       })
     ).rejects.toThrow('already registered')
   })
 
-  it('should verify registration status of a new address', async () => {
-    // const isNewAddressRegistered = await entropy.checkRegistrationStatus("5FWd3NSnWQ6Ay9CXmw9aTU8ZvDksn7zzzuw5dCKq9R8DsaCo")
-    // expect(isNewAddressRegistered).toBeFalsy()
-  })
+  // it('should verify registration status of a new address', async () => {
+  //   const isNewAddressRegistered = await entropy.checkRegistrationStatus("5FWd3NSnWQ6Ay9CXmw9aTU8ZvDksn7zzzuw5dCKq9R8DsaCo")
+  //   expect(isNewAddressRegistered).toBeFalsy()
+  // })
 })

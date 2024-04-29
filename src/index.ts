@@ -5,7 +5,7 @@ import SignatureRequestManager, { SigOps, SigTxOps } from './signing'
 import { crypto } from './utils/crypto'
 import { Adapter } from './signing/adapters/types'
 import { isValidPair } from './keys'
-import { Signer, Address } from './types'
+import { Signer } from './types'
 import ProgramManager from './programs'
 
 export interface EntropyAccount {
@@ -64,7 +64,7 @@ export default class Entropy {
   /** A promise that resolves once chacha20poly1305 cryptoLib has been loaded */
   ready: Promise<boolean>
   registrationManager: RegistrationManager
-  isRegistered: (address: Address) => Promise<boolean>
+  isRegistered: (verifyingKey: string) => Promise<boolean>
   programs: ProgramManager
   signingManager: SignatureRequestManager
   account?: EntropyAccount
@@ -101,6 +101,7 @@ export default class Entropy {
     this.registrationManager = new RegistrationManager({
       substrate: this.substrate,
       signer: {wallet: this.account.sigRequestKey.wallet, pair: this.account.sigRequestKey.pair},
+      verifyingKey: this.account.verifyingKey
     })
     this.signingManager = new SignatureRequestManager({
       signer: {wallet: this.account.sigRequestKey.wallet, pair: this.account.sigRequestKey.pair},
@@ -119,9 +120,9 @@ export default class Entropy {
     })
     if (this.#programReadOnly || this.#allReadOnly) this.programs.set = async () => { throw new Error('Programs is in a read only state: Must pass a valid key pair in initialization.') }
     this.#ready(true)
-    this.isRegistered = this.registrationManager.checkRegistrationStatus.bind(
-      this.registrationManager
-    )
+    // this.isRegistered = this.registrationManager.checkRegistrationStatus.bind(
+    //   this.registrationManager
+    // )
     this.#setVerifyingKeys()
   }
 
@@ -171,21 +172,17 @@ export default class Entropy {
    */
 
   async subscribeToAccountRegisteredEvents () {
-    await this.substrate.isReady
-
     this.substrate.query.system.events((events) => {
       events.forEach((record) => {
         const { event } = record
         if (event.section === 'registry' && event.method === 'AccountRegistered') {
           const [accountId, verifyingKeyBytes] = event.data
-          console.log("acount id", accountId.toHuman())
-          console.log("verifyingKeyByes", verifyingKeyBytes)
-          console.log("event data", event.data.toHuman())
           // checks if the event is for the current account
           if (this.account && this.account.sigRequestKey && this.account.sigRequestKey.wallet.address === accountId.toString()) {
             const verifyingKey = verifyingKeyBytes.toString()
             this.account.verifyingKey = verifyingKey
             console.log(`Account ID: ${accountId.toString()}, Verifying Key: ${verifyingKey}`)
+            return
           }
         }
       })
@@ -211,6 +208,7 @@ export default class Entropy {
     }
     await this.registrationManager.register(params)
     this.subscribeToAccountRegisteredEvents()
+    return
   }
 
   /**
