@@ -170,7 +170,7 @@ declare module '@polkadot/api-base/types/events' {
           from: AccountId32,
           to: AccountId32,
           amount: u128,
-          destinationStatus: FrameSupportTokensMiscBalanceStatus
+          destinationStatus: FrameSupportTokensMiscBalanceStatus,
         ],
         {
           from: AccountId32
@@ -381,7 +381,7 @@ declare module '@polkadot/api-base/types/events' {
           account: AccountId32,
           proposalIndex: u32,
           proposalHash: H256,
-          threshold: u32
+          threshold: u32,
         ],
         {
           account: AccountId32
@@ -401,7 +401,7 @@ declare module '@polkadot/api-base/types/events' {
           proposalHash: H256,
           voted: bool,
           yes: u32,
-          no: u32
+          no: u32,
         ],
         {
           account: AccountId32
@@ -465,7 +465,7 @@ declare module '@polkadot/api-base/types/events' {
         [
           prevOwner: PalletDemocracyMetadataOwner,
           owner: PalletDemocracyMetadataOwner,
-          hash_: H256
+          hash_: H256,
         ],
         {
           prevOwner: PalletDemocracyMetadataOwner
@@ -545,7 +545,7 @@ declare module '@polkadot/api-base/types/events' {
         [
           voter: AccountId32,
           refIndex: u32,
-          vote: PalletDemocracyVoteAccountVote
+          vote: PalletDemocracyVoteAccountVote,
         ],
         {
           voter: AccountId32
@@ -572,7 +572,7 @@ declare module '@polkadot/api-base/types/events' {
         ApiType,
         [
           compute: PalletElectionProviderMultiPhaseElectionCompute,
-          score: SpNposElectionsElectionScore
+          score: SpNposElectionsElectionScore,
         ],
         {
           compute: PalletElectionProviderMultiPhaseElectionCompute
@@ -587,7 +587,7 @@ declare module '@polkadot/api-base/types/events' {
         [
           from: PalletElectionProviderMultiPhasePhase,
           to: PalletElectionProviderMultiPhasePhase,
-          round: u32
+          round: u32,
         ],
         {
           from: PalletElectionProviderMultiPhasePhase
@@ -625,7 +625,7 @@ declare module '@polkadot/api-base/types/events' {
         [
           compute: PalletElectionProviderMultiPhaseElectionCompute,
           origin: Option<AccountId32>,
-          prevEjected: bool
+          prevEjected: bool,
         ],
         {
           compute: PalletElectionProviderMultiPhaseElectionCompute
@@ -886,7 +886,7 @@ declare module '@polkadot/api-base/types/events' {
           approving: AccountId32,
           timepoint: PalletMultisigTimepoint,
           multisig: AccountId32,
-          callHash: U8aFixed
+          callHash: U8aFixed,
         ],
         {
           approving: AccountId32
@@ -904,7 +904,7 @@ declare module '@polkadot/api-base/types/events' {
           cancelling: AccountId32,
           timepoint: PalletMultisigTimepoint,
           multisig: AccountId32,
-          callHash: U8aFixed
+          callHash: U8aFixed,
         ],
         {
           cancelling: AccountId32
@@ -923,7 +923,7 @@ declare module '@polkadot/api-base/types/events' {
           timepoint: PalletMultisigTimepoint,
           multisig: AccountId32,
           callHash: U8aFixed,
-          result: Result<Null, SpRuntimeDispatchError>
+          result: Result<Null, SpRuntimeDispatchError>,
         ],
         {
           approving: AccountId32
@@ -1050,7 +1050,7 @@ declare module '@polkadot/api-base/types/events' {
         [
           root: Option<AccountId32>,
           bouncer: Option<AccountId32>,
-          nominator: Option<AccountId32>
+          nominator: Option<AccountId32>,
         ],
         {
           root: Option<AccountId32>
@@ -1086,7 +1086,7 @@ declare module '@polkadot/api-base/types/events' {
           poolId: u32,
           balance: u128,
           points: u128,
-          era: u32
+          era: u32,
         ],
         {
           member: AccountId32
@@ -1165,7 +1165,7 @@ declare module '@polkadot/api-base/types/events' {
         [
           deployer: AccountId32,
           programHash: H256,
-          configurationInterface: Bytes
+          configurationInterface: Bytes,
         ],
         {
           deployer: AccountId32
@@ -1223,7 +1223,7 @@ declare module '@polkadot/api-base/types/events' {
           delegator: AccountId32,
           delegatee: AccountId32,
           proxyType: EntropyRuntimeProxyType,
-          delay: u32
+          delay: u32,
         ],
         {
           delegator: AccountId32
@@ -1249,7 +1249,7 @@ declare module '@polkadot/api-base/types/events' {
           delegator: AccountId32,
           delegatee: AccountId32,
           proxyType: EntropyRuntimeProxyType,
-          delay: u32
+          delay: u32,
         ],
         {
           delegator: AccountId32
@@ -1268,7 +1268,7 @@ declare module '@polkadot/api-base/types/events' {
           pure: AccountId32,
           who: AccountId32,
           proxyType: EntropyRuntimeProxyType,
-          disambiguationIndex: u16
+          disambiguationIndex: u16,
         ],
         {
           pure: AccountId32
@@ -1331,7 +1331,7 @@ declare module '@polkadot/api-base/types/events' {
         [
           lostAccount: AccountId32,
           rescuerAccount: AccountId32,
-          sender: AccountId32
+          sender: AccountId32,
         ],
         {
           lostAccount: AccountId32
@@ -1406,7 +1406,7 @@ declare module '@polkadot/api-base/types/events' {
         [
           task: ITuple<[u32, u32]>,
           id: Option<U8aFixed>,
-          result: Result<Null, SpRuntimeDispatchError>
+          result: Result<Null, SpRuntimeDispatchError>,
         ],
         {
           task: ITuple<[u32, u32]>
@@ -1538,7 +1538,7 @@ declare module '@polkadot/api-base/types/events' {
         [
           stash: AccountId32,
           dest: PalletStakingRewardDestination,
-          amount: u128
+          amount: u128,
         ],
         {
           stash: AccountId32
@@ -1691,7 +1691,7 @@ declare module '@polkadot/api-base/types/events' {
         ApiType,
         [
           dispatchError: SpRuntimeDispatchError,
-          dispatchInfo: FrameSupportDispatchDispatchInfo
+          dispatchInfo: FrameSupportDispatchDispatchInfo,
         ],
         {
           dispatchError: SpRuntimeDispatchError
@@ -1786,7 +1786,7 @@ declare module '@polkadot/api-base/types/events' {
           account: AccountId32,
           proposalIndex: u32,
           proposalHash: H256,
-          threshold: u32
+          threshold: u32,
         ],
         {
           account: AccountId32
@@ -1806,7 +1806,7 @@ declare module '@polkadot/api-base/types/events' {
           proposalHash: H256,
           voted: bool,
           yes: u32,
-          no: u32
+          no: u32,
         ],
         {
           account: AccountId32
@@ -1952,7 +1952,7 @@ declare module '@polkadot/api-base/types/events' {
           amount: u128,
           beneficiary: AccountId32,
           validFrom: u32,
-          expireAt: u32
+          expireAt: u32,
         ],
         {
           index: u32

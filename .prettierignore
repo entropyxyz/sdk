@@ -1,9 +1,2 @@
-build
-coverage
-node_modules
-types
-dist
-docs/_book
+**/*.yaml
 LICENSE.md
-entropy-js.sublime-project
-entropy-js.sublime-workspace

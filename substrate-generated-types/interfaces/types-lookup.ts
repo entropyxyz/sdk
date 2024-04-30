@@ -2086,7 +2086,7 @@ declare module '@polkadot/types/lookup' {
         [
           Compact<u32>,
           Vec<ITuple<[Compact<u16>, Compact<PerU16>]>>,
-          Compact<u16>
+          Compact<u16>,
         ]
       >
     >
@@ -2095,7 +2095,7 @@ declare module '@polkadot/types/lookup' {
         [
           Compact<u32>,
           Vec<ITuple<[Compact<u16>, Compact<PerU16>]>>,
-          Compact<u16>
+          Compact<u16>,
         ]
       >
     >
@@ -2104,7 +2104,7 @@ declare module '@polkadot/types/lookup' {
         [
           Compact<u32>,
           Vec<ITuple<[Compact<u16>, Compact<PerU16>]>>,
-          Compact<u16>
+          Compact<u16>,
         ]
       >
     >
@@ -2113,7 +2113,7 @@ declare module '@polkadot/types/lookup' {
         [
           Compact<u32>,
           Vec<ITuple<[Compact<u16>, Compact<PerU16>]>>,
-          Compact<u16>
+          Compact<u16>,
         ]
       >
     >
@@ -2122,7 +2122,7 @@ declare module '@polkadot/types/lookup' {
         [
           Compact<u32>,
           Vec<ITuple<[Compact<u16>, Compact<PerU16>]>>,
-          Compact<u16>
+          Compact<u16>,
         ]
       >
     >
@@ -2131,7 +2131,7 @@ declare module '@polkadot/types/lookup' {
         [
           Compact<u32>,
           Vec<ITuple<[Compact<u16>, Compact<PerU16>]>>,
-          Compact<u16>
+          Compact<u16>,
         ]
       >
     >
@@ -2140,7 +2140,7 @@ declare module '@polkadot/types/lookup' {
         [
           Compact<u32>,
           Vec<ITuple<[Compact<u16>, Compact<PerU16>]>>,
-          Compact<u16>
+          Compact<u16>,
         ]
       >
     >
@@ -2149,7 +2149,7 @@ declare module '@polkadot/types/lookup' {
         [
           Compact<u32>,
           Vec<ITuple<[Compact<u16>, Compact<PerU16>]>>,
-          Compact<u16>
+          Compact<u16>,
         ]
       >
     >
@@ -2158,7 +2158,7 @@ declare module '@polkadot/types/lookup' {
         [
           Compact<u32>,
           Vec<ITuple<[Compact<u16>, Compact<PerU16>]>>,
-          Compact<u16>
+          Compact<u16>,
         ]
       >
     >
@@ -2167,7 +2167,7 @@ declare module '@polkadot/types/lookup' {
         [
           Compact<u32>,
           Vec<ITuple<[Compact<u16>, Compact<PerU16>]>>,
-          Compact<u16>
+          Compact<u16>,
         ]
       >
     >
@@ -2176,7 +2176,7 @@ declare module '@polkadot/types/lookup' {
         [
           Compact<u32>,
           Vec<ITuple<[Compact<u16>, Compact<PerU16>]>>,
-          Compact<u16>
+          Compact<u16>,
         ]
       >
     >
@@ -2185,7 +2185,7 @@ declare module '@polkadot/types/lookup' {
         [
           Compact<u32>,
           Vec<ITuple<[Compact<u16>, Compact<PerU16>]>>,
-          Compact<u16>
+          Compact<u16>,
         ]
       >
     >
@@ -2194,7 +2194,7 @@ declare module '@polkadot/types/lookup' {
         [
           Compact<u32>,
           Vec<ITuple<[Compact<u16>, Compact<PerU16>]>>,
-          Compact<u16>
+          Compact<u16>,
         ]
       >
     >
@@ -2203,7 +2203,7 @@ declare module '@polkadot/types/lookup' {
         [
           Compact<u32>,
           Vec<ITuple<[Compact<u16>, Compact<PerU16>]>>,
-          Compact<u16>
+          Compact<u16>,
         ]
       >
     >

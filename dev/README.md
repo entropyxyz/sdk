@@ -22,6 +22,7 @@ Setup
 - files: `.husky/`
 
 If you are blocked from committing, you can skip these hooks
+
 ```bash
 git commit --no-verify
 ```

@@ -79,7 +79,7 @@ export default class Entropy {
    * @param {Adapter[]} [opts.adapters] - A collection of signing adapters for handling various transaction types.
    */
 
-  constructor (opts: EntropyOpts) {
+  constructor(opts: EntropyOpts) {
     this.ready = new Promise((resolve, reject) => {
       this.#ready = resolve
       this.#fail = reject
@@ -90,7 +90,7 @@ export default class Entropy {
     })
   }
 
-  async #init (opts: EntropyOpts) {
+  async #init(opts: EntropyOpts) {
     this.account = opts.account
     this.#setReadOnlyStates()
 
@@ -128,17 +128,17 @@ export default class Entropy {
     if (this.#programReadOnly || this.#allReadOnly)
       this.programs.set = async () => {
         throw new Error(
-          'Programs is in a read only state: Must pass a valid key pair in initialization.'
+          'Programs is in a read only state: Must pass a valid key pair in initialization.',
         )
       }
     this.#ready(true)
     this.isRegistered = this.registrationManager.checkRegistrationStatus.bind(
-      this.registrationManager
+      this.registrationManager,
     )
     this.#setVerfiyingKeys()
   }
 
-  async #setVerfiyingKeys (): Promise<void> {
+  async #setVerfiyingKeys(): Promise<void> {
     // if an account was provided
     if (this.account) {
       // and their is a sigRequest key
@@ -155,7 +155,7 @@ export default class Entropy {
   }
 
   /** @internal */
-  #setReadOnlyStates (): void {
+  #setReadOnlyStates(): void {
     // the readOnly state will not allow for write functions
     this.#programReadOnly = false
     this.#allReadOnly = false
@@ -175,7 +175,7 @@ export default class Entropy {
       })
     ) {
       throw new Error(
-        'AccountTypeError: sigRequestKey not a valid signing pair'
+        'AccountTypeError: sigRequestKey not a valid signing pair',
       )
     }
 
@@ -200,13 +200,13 @@ export default class Entropy {
    * @throws {Error} - If the address is already registered or if there's a problem during registration.
    */
 
-  async register (
-    params: RegistrationParams & { account?: EntropyAccount }
+  async register(
+    params: RegistrationParams & { account?: EntropyAccount },
   ): Promise<void> {
     await this.ready
     if (this.#allReadOnly)
       throw new Error(
-        'Initialized in read only state: can not use write functions'
+        'Initialized in read only state: can not use write functions',
       )
     const account = params.account || this.account
 
@@ -222,7 +222,7 @@ export default class Entropy {
     }
     await this.registrationManager.register(params)
     this.account.verifyingKey = await this.getVerifyingKey(
-      this.account.sigRequestKey.wallet.address
+      this.account.sigRequestKey.wallet.address,
     )
   }
 
@@ -233,10 +233,9 @@ export default class Entropy {
    * @returns {Promise<string>} - A promise resolving to the verifying key.
    */
 
-  async getVerifyingKey (address: Address): Promise<string> {
-    const registeredInfo = await this.substrate.query.relayer.registered(
-      address
-    )
+  async getVerifyingKey(address: Address): Promise<string> {
+    const registeredInfo =
+      await this.substrate.query.relayer.registered(address)
     // @ts-ignore: next line
     return registeredInfo.toHuman().verifyingKey
   }
@@ -260,11 +259,11 @@ export default class Entropy {
    * @throws {Error} Will throw an error if the transaction type does not have a corresponding adapter.
    */
 
-  async signTransaction (params: SigTxOps): Promise<unknown> {
+  async signTransaction(params: SigTxOps): Promise<unknown> {
     await this.ready
     if (this.#allReadOnly)
       throw new Error(
-        'Initialized in read only state: can not use write functions'
+        'Initialized in read only state: can not use write functions',
       )
     return this.signingManager.signTransaction(params)
   }
@@ -282,11 +281,11 @@ export default class Entropy {
    * @throws {Error} - If there's an error in the signing routine.
    */
 
-  async sign (params: SigOps): Promise<Uint8Array> {
+  async sign(params: SigOps): Promise<Uint8Array> {
     await this.ready
     if (this.#allReadOnly)
       throw new Error(
-        'Initialized in read only state: can not use write functions'
+        'Initialized in read only state: can not use write functions',
       )
     return this.signingManager.sign(params)
   }

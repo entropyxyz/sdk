@@ -28,7 +28,7 @@ describe('Core Tests', () => {
       execFileSync(
         'dev/bin/spin-up.sh',
         ['two-nodes'],
-        { shell: true, cwd: process.cwd(), stdio: 'inherit' } // Use shell's search path.
+        { shell: true, cwd: process.cwd(), stdio: 'inherit' }, // Use shell's search path.
       )
     } catch (e) {
       console.error('Error in beforeAll: ', e.message)
@@ -127,7 +127,7 @@ describe('Core Tests', () => {
     jest.setTimeout(60000)
 
     const basicTxProgram: any = readFileSync(
-      './tests/testing-utils/template_basic_transaction.wasm'
+      './tests/testing-utils/template_basic_transaction.wasm',
     )
 
     const pointer = await entropy.programs.dev.deploy(basicTxProgram)
@@ -152,9 +152,8 @@ describe('Core Tests', () => {
     }
 
     // Pre-registration check
-    const preRegistrationStatus = await entropy.isRegistered(
-      charlieStashAddress
-    )
+    const preRegistrationStatus =
+      await entropy.isRegistered(charlieStashAddress)
 
     expect(preRegistrationStatus).toBeFalsy()
     const preStringifiedResponse = JSON.stringify(preRegistrationStatus)
@@ -170,19 +169,18 @@ describe('Core Tests', () => {
 
     expect(entropy.account.verifyingKey).toBeTruthy()
     expect(entropy.account.sigRequestKey.wallet.address).toBe(
-      charlieStashAddress
+      charlieStashAddress,
     )
     expect(
       await entropy.registrationManager.checkRegistrationStatus(
-        charlieStashAddress
-      )
+        charlieStashAddress,
+      ),
     ).toBeTruthy()
 
     // Post-registration check
 
-    const postRegistrationStatus = await entropy.isRegistered(
-      charlieStashAddress
-    )
+    const postRegistrationStatus =
+      await entropy.isRegistered(charlieStashAddress)
     expect(postRegistrationStatus).toBeTruthy()
 
     const postStringifiedResponse = JSON.stringify(postRegistrationStatus)
@@ -196,7 +194,7 @@ describe('Core Tests', () => {
     //  loading second program
 
     const dummyProgram: any = readFileSync(
-      './tests/testing-utils/template_barebones.wasm'
+      './tests/testing-utils/template_barebones.wasm',
     )
 
     const newPointer = await entropy.programs.dev.deploy(dummyProgram)
@@ -211,9 +209,8 @@ describe('Core Tests', () => {
     console.log('CHARLIES PROGRAMS', programs)
     // removing charlie program barebones
     await entropy.programs.remove(newPointer, charlieStashAddress)
-    const updatedRemovedPrograms = await entropy.programs.get(
-      charlieStashAddress
-    )
+    const updatedRemovedPrograms =
+      await entropy.programs.get(charlieStashAddress)
 
     const basicTx = {
       to: '0x772b9a9e8aa1c9db861c6611a82d251db4fac990',

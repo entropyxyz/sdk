@@ -58,7 +58,7 @@ await entropy.ready
 // path to program wasm file
 
 const basicTxProgram: any = readFileSync(
-  './tests/testing-utils/template_basic_transaction.wasm'
+  './tests/testing-utils/template_basic_transaction.wasm',
 )
 
 // returns pointer hash
@@ -283,7 +283,7 @@ await entropy.programs.get('user address')
 await entropy.programs.add(
   'list of program hashes',
   sigReqAccount,
-  programModKey
+  programModKey,
 )
 
 // removes a program a list of user programs
@@ -291,7 +291,7 @@ await entropy.programs.add(
 await entropy.programs.remove(
   'list of program hashes',
   sigReqAccount,
-  programModKey
+  programModKey,
 )
 ```
 
@@ -546,7 +546,7 @@ const freeBalance = hexToBigInt(accountInfo.data.free)
 console.log(
   `Address ${
     selectedAccount.address
-  } has a balance of: ${freeBalance.toString()} bits`
+  } has a balance of: ${freeBalance.toString()} bits`,
 )
 ```
 

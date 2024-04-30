@@ -34,7 +34,7 @@ export interface CryptoLib {
   verifySignature: (
     message: string,
     signature: string,
-    address: string
+    address: string,
   ) => Promise<boolean>
   // from chacha20poly1305
   fromHex: (input: string) => Uint8Array
@@ -45,7 +45,7 @@ export interface CryptoLib {
   encryptAndSign: (
     secretKey: Uint8Array,
     encoded: Uint8Array,
-    serverDHKey: Uint8Array
+    serverDHKey: Uint8Array,
   ) => Promise<string>
   /**
    * Decrypts a provided message and verifies its authenticity.
@@ -75,7 +75,7 @@ export const crypto: CryptoLib = new Proxy({} as CryptoLib, {
       }
       if (!cryptoLib[key]) {
         throw new Error(
-          `Function "${key as string}" is not available in the crypto library`
+          `Function "${key as string}" is not available in the crypto library`,
         )
       }
 
@@ -93,10 +93,10 @@ export const crypto: CryptoLib = new Proxy({} as CryptoLib, {
  * @returns A Promise that resolves to a boolean indicating whether the signature is valid.
  */
 
-async function verifySignature (
+async function verifySignature(
   message: string,
   signature: string,
-  address: string
+  address: string,
 ): Promise<boolean> {
   const publicKey = decodeAddress(address)
   const hexPublicKey = u8aToHex(publicKey)
@@ -110,7 +110,7 @@ async function verifySignature (
  * @returns The imported crypto library.
  */
 
-export async function loadCryptoLib () {
+export async function loadCryptoLib() {
   if (isImported) return cryptoLib
 
   if (!globalThis.window) {

@@ -58,7 +58,7 @@ export default class SignatureRequestManager {
    * @param {CryptoLib} config.crypto - Instance of CryptoLib for cryptographic operations.
    */
 
-  constructor ({ signer, substrate, adapters, crypto }: Config) {
+  constructor({ signer, substrate, adapters, crypto }: Config) {
     this.signer = signer
     this.substrate = substrate
     this.crypto = crypto
@@ -78,12 +78,12 @@ export default class SignatureRequestManager {
    * @throws {Error} if an adapter for the transaction type is not found, or if the adapter lacks a preSign function.
    */
 
-  async signTransaction ({ txParams, type }: SigTxOps): Promise<unknown> {
+  async signTransaction({ txParams, type }: SigTxOps): Promise<unknown> {
     if (!this.adapters[type])
       throw new Error(`No transaction adapter for type: ${type} submit as hash`)
     if (!this.adapters[type].preSign)
       throw new Error(
-        `Adapter for type: ${type} has no preSign function. Adapters must have a preSign function`
+        `Adapter for type: ${type} has no preSign function. Adapters must have a preSign function`,
       )
 
     const sigRequestHash = await this.adapters[type].preSign(txParams)
@@ -109,14 +109,14 @@ export default class SignatureRequestManager {
    * @returns {Promise<Uint8Array>} A promise resolving to the signed hash as a Uint8Array.
    */
 
-  async sign ({
+  async sign({
     sigRequestHash,
     hash,
     auxilaryData,
   }: SigOps): Promise<Uint8Array> {
     const strippedsigRequestHash = stripHexPrefix(sigRequestHash)
     const validatorsInfo: Array<ValidatorInfo> = await this.pickValidators(
-      strippedsigRequestHash
+      strippedsigRequestHash,
     )
     const txRequests: Array<EncMsg> = await this.formatTxRequests({
       validatorsInfo: validatorsInfo,
@@ -135,7 +135,7 @@ export default class SignatureRequestManager {
    * @returns An object containing `secs_since_epoch` and `nanos_since_epoch`.
    */
 
-  getTimeStamp () {
+  getTimeStamp() {
     const timestampInMilliseconds = Date.now()
     const secs_since_epoch = Math.floor(timestampInMilliseconds / 1000)
     const nanos_since_epoch = (timestampInMilliseconds % 1000) * 1_000_000
@@ -157,7 +157,7 @@ export default class SignatureRequestManager {
    * @returns {Promise<EncMsg[]>} A promise resolving to an array of encrypted messages for validators.
    */
 
-  async formatTxRequests ({
+  async formatTxRequests({
     strippedsigRequestHash,
     validatorsInfo,
     auxilaryData,
@@ -169,52 +169,50 @@ export default class SignatureRequestManager {
     hash?: string
   }): Promise<EncMsg[]> {
     return await Promise.all(
-      validatorsInfo.map(
-        async (validator: ValidatorInfo): Promise<EncMsg> => {
-          const txRequestData: UserSignatureRequest = {
-            message: stripHexPrefix(strippedsigRequestHash),
-            validators_info: validatorsInfo,
-            timestamp: this.getTimeStamp(),
-            hash,
-          }
-          if (auxilaryData)
-            txRequestData.auxilary_data = auxilaryData.map((i) =>
-              JSON.stringify(i)
-            )
-          const serverDHKey = await crypto.fromHex(validator.x25519_public_key)
-
-          const formattedValidators = await Promise.all(
-            validatorsInfo.map(async (v) => {
-              return {
-                ...v,
-                x25519_public_key: Array.from(
-                  await crypto.fromHex(v.x25519_public_key)
-                ),
-              }
-            })
-          )
-
-          const encoded = Uint8Array.from(
-            JSON.stringify({
-              ...txRequestData,
-              validators_info: formattedValidators,
-            }),
-            (x) => x.charCodeAt(0)
-          )
-
-          const encryptedMessage = await crypto.encryptAndSign(
-            this.signer.pair.secretKey,
-            encoded,
-            serverDHKey
-          )
-
-          return {
-            msg: encryptedMessage,
-            url: validator.ip_address,
-            tss_account: validator.tss_account,
-          }
+      validatorsInfo.map(async (validator: ValidatorInfo): Promise<EncMsg> => {
+        const txRequestData: UserSignatureRequest = {
+          message: stripHexPrefix(strippedsigRequestHash),
+          validators_info: validatorsInfo,
+          timestamp: this.getTimeStamp(),
+          hash,
         }
-      )
+        if (auxilaryData)
+          txRequestData.auxilary_data = auxilaryData.map((i) =>
+            JSON.stringify(i),
+          )
+        const serverDHKey = await crypto.fromHex(validator.x25519_public_key)
+
+        const formattedValidators = await Promise.all(
+          validatorsInfo.map(async (v) => {
+            return {
+              ...v,
+              x25519_public_key: Array.from(
+                await crypto.fromHex(v.x25519_public_key),
+              ),
+            }
+          }),
+        )
+
+        const encoded = Uint8Array.from(
+          JSON.stringify({
+            ...txRequestData,
+            validators_info: formattedValidators,
+          }),
+          (x) => x.charCodeAt(0),
+        )
+
+        const encryptedMessage = await crypto.encryptAndSign(
+          this.signer.pair.secretKey,
+          encoded,
+          serverDHKey,
+        )
+
+        return {
+          msg: encryptedMessage,
+          url: validator.ip_address,
+          tss_account: validator.tss_account,
+        }
+      }),
     )
   }
 
@@ -225,7 +223,7 @@ export default class SignatureRequestManager {
    * @returns {Promise<string[][]>} A promise that resolves to an array of arrays of signatures in string format.
    */
 
-  async submitTransactionRequest (txReq: Array<EncMsg>): Promise<string[][]> {
+  async submitTransactionRequest(txReq: Array<EncMsg>): Promise<string[][]> {
     return Promise.all(
       txReq.map(async (message: EncMsg) => {
         // Extract the required fields from parsedMsg
@@ -236,11 +234,11 @@ export default class SignatureRequestManager {
         }
         const sigProof = (await sendHttpPost(
           `http://${message.url}/user/sign_tx`,
-          JSON.stringify(payload)
+          JSON.stringify(payload),
         )) as string[]
         sigProof.push(message.tss_account)
         return sigProof
-      })
+      }),
     )
   }
 
@@ -251,8 +249,9 @@ export default class SignatureRequestManager {
    * @returns {Promise<ValidatorInfo[]>} A promise resolving to an array of validator information.
    */
 
-  async pickValidators (sigRequest: string): Promise<ValidatorInfo[]> {
-    const entries = await this.substrate.query.stakingExtension.signingGroups.entries()
+  async pickValidators(sigRequest: string): Promise<ValidatorInfo[]> {
+    const entries =
+      await this.substrate.query.stakingExtension.signingGroups.entries()
     const stashKeys = entries.map((group) => {
       const keyGroup = group[1]
       // omg polkadot type gen is a head ache
@@ -265,8 +264,8 @@ export default class SignatureRequestManager {
 
     const rawValidatorInfo = await Promise.all(
       stashKeys.map((stashKey) =>
-        this.substrate.query.stakingExtension.thresholdServers(stashKey)
-      )
+        this.substrate.query.stakingExtension.thresholdServers(stashKey),
+      ),
     )
     const validatorsInfo: Array<ValidatorInfo> = rawValidatorInfo.map(
       (validator) => {
@@ -284,7 +283,7 @@ export default class SignatureRequestManager {
           ip_address: endpoint,
           tss_account: tssAccount,
         }
-      }
+      },
     )
 
     return validatorsInfo
@@ -297,7 +296,7 @@ export default class SignatureRequestManager {
    * @returns The first valid signature after verification.
    */
 
-  async verifyAndReduceSignatures (sigsAndProofs: string[][]): Promise<string> {
+  async verifyAndReduceSignatures(sigsAndProofs: string[][]): Promise<string> {
     const seperatedSigsAndProofs = sigsAndProofs.reduce(
       (a, sp) => {
         if (!sp || !sp.length) return a
@@ -309,16 +308,16 @@ export default class SignatureRequestManager {
         a.addresses.push(sp[2] || 'place-holder')
         return a
       },
-      { sigs: [], proofs: [], addresses: [] }
+      { sigs: [], proofs: [], addresses: [] },
     )
     // find a valid signature
     const sigMatch = seperatedSigsAndProofs.sigs.find(
-      (s) => s !== 'place-holder'
+      (s) => s !== 'place-holder',
     )
     if (!sigMatch) throw new Error('Did not receive a valid signature')
     // use valid signature to see if they all match
     const allSigsMatch = seperatedSigsAndProofs.sigs.every(
-      (s) => s === sigMatch
+      (s) => s === sigMatch,
     )
     if (!allSigsMatch) throw new Error('All signatures do not match')
     // in the future. notify network of compromise?
@@ -329,10 +328,10 @@ export default class SignatureRequestManager {
           return await this.crypto.verifySignature(
             seperatedSigsAndProofs.sigs[index],
             proof,
-            seperatedSigsAndProofs.addresses[index]
+            seperatedSigsAndProofs.addresses[index],
           )
-        }
-      )
+        },
+      ),
     )
     const first = validated.findIndex((v) => v)
     if (first === -1)

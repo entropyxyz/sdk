@@ -34,7 +34,7 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
    * @param {ApiPromise} substrate - The Polkadot/Substrate API instance.
    * @param {Signer} signer - The signer used for signing transactions.
    */
-  constructor ({
+  constructor({
     substrate,
     signer,
   }: {
@@ -56,7 +56,7 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
    * @throws {Error} If the user is already registered.
    */
 
-  async register ({
+  async register({
     freeTx = false,
     initialPrograms = [],
     keyVisibility = 'Permissioned',
@@ -78,7 +78,7 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
      */
 
     const isCurrentlyRegistered = await this.checkRegistrationStatus(
-      this.signer.wallet.address
+      this.signer.wallet.address,
     )
     if (isCurrentlyRegistered) {
       throw new Error('already registered')
@@ -90,14 +90,15 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
           const unsubPromise = this.substrate.rpc.chain.subscribeNewHeads(
             async () => {
               const registeredCheck = await this.checkRegistrationStatus(
-                this.signer.wallet.address
+                this.signer.wallet.address,
               )
               if (registeredCheck) {
                 const unsub = await unsubPromise
                 unsub()
-                const registeredData = await this.substrate.query.relayer.registered(
-                  this.signer.wallet.address
-                )
+                const registeredData =
+                  await this.substrate.query.relayer.registered(
+                    this.signer.wallet.address,
+                  )
                 // @ts-ignore: next line
                 if (!registeredData.isSome) {
                   throw new Error('Registration information not found')
@@ -105,16 +106,17 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
                 // @ts-ignore: next line
                 const data = registeredData.unwrap()
                 resolve({
-                  keyVisibility: data.keyVisibility.toJSON() as KeyVisibilityInfo,
+                  keyVisibility:
+                    data.keyVisibility.toJSON() as KeyVisibilityInfo,
                   verifyingKey: data.verifyingKey.toString(),
                 })
               }
-            }
+            },
           )
         } catch (e) {
           reject(e)
         }
-      }
+      },
     )
 
     // Convert the ProgramData to PalletRelayerProgramInstance and wrap it in an array
@@ -127,7 +129,7 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
           programPointer: programInfo.programPointer,
           programConfig: programInfo.programConfig,
         }
-      })
+      }),
     )
 
     await this.sendAndWaitFor(registerTx, freeTx, {
@@ -145,7 +147,7 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
    * @returns A promise which resolves to `true` if the address is registered, otherwise `false`.
    */
 
-  async checkRegistrationStatus (address: Address): Promise<boolean> {
+  async checkRegistrationStatus(address: Address): Promise<boolean> {
     const isRegistered = await this.substrate.query.relayer.registered(address)
     return !!isRegistered.toJSON()
   }

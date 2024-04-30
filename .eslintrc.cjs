@@ -1,25 +1,15 @@
 // eslint-disable-next-line no-undef
 module.exports = {
-  extends: [
-    'eslint:recommended',
-    'plugin:@typescript-eslint/recommended'
-  ],
+  extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended'],
   parser: '@typescript-eslint/parser',
-  plugins: [
-    '@typescript-eslint'
-  ],
+  plugins: ['@typescript-eslint'],
   root: true,
   rules: {
     indent: ['error', 2],
-    'space-before-function-paren': ['error', 'always'],
+    'space-before-function-paren': 'off',
     '@typescript-eslint/no-var-requires': 'off',
     '@typescript-eslint/no-unused-vars': 'error',
     '@typescript-eslint/ban-ts-comment': 1,
   },
-  ignorePatterns: [
-    'node_modules/',
-    'dist/',
-    'examples/',
-    '.yarnrc.yml'
-  ],
+  ignorePatterns: ['node_modules/', 'dist/', 'examples/', '.yarnrc.yml'],
 }
