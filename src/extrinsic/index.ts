@@ -27,7 +27,7 @@ class ExtrinsicBaseClass {
    * @param signer - The signer object containing the wallet and other signing-related functionalities.
    */
 
-  constructor ({
+  constructor({
     substrate,
     signer,
   }: {
@@ -48,7 +48,7 @@ class ExtrinsicBaseClass {
    * @throws {Error} Will reject the promise if a dispatch error occurs or the filtered event is not found.
    */
 
-  async sendAndWaitFor (
+  async sendAndWaitFor(
     call: SubmittableExtrinsic<'promise'>,
     freeTx = false,
     filter: EventFilter
@@ -102,7 +102,7 @@ class ExtrinsicBaseClass {
    * @throws {Error} If the dry run fails or there's insufficient electricity (zaps).
    */
 
-  async handleFreeTx (
+  async handleFreeTx(
     call: SubmittableExtrinsic<'promise'>
   ): Promise<SubmittableExtrinsic<'promise'>> {
     const freeTxWrapper = this.substrate.tx.freeTx.callUsingElectricity(call)

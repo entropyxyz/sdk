@@ -17,7 +17,7 @@
     "lint": "yarn lint:ts && yarn lint:eslint",
     "lint:ts": "tsc",
     "lint:eslint": "eslint . --ext .ts --fix",
-    "prettier": "prettier --write . --ignore-path .gitignore",
+    "prettier": "prettier --write .",
     "peek": "tsc --build --clean",
     "burn": "rm -Rf node_modules && yarn cache clean --all && yarn install",
     "bundle": "tsup",
