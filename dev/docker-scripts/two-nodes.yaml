@@ -7,7 +7,7 @@
 # environment for their tests. Eventually, we will converge on
 # a more canonical set of environments and configuration files.
 ---
-version: '3.8'
+version: "3.8"
 name: entropy-devnet-local
 
 services:
@@ -21,63 +21,63 @@ services:
     # about how Git tags, branches, and commits refer to image tags here.
     image: entropyxyz/entropy-tss:$ENTROPY_CORE_VERSION
     ports:
-      - '127.0.0.1:3001:3001/tcp'
+      - "127.0.0.1:3001:3001/tcp"
     command:
-      - '--alice'
-      - '--threshold-url'
-      - '0.0.0.0:3001'
-      - '--chain-endpoint'
-      - 'ws://alice-chain-node:9944'
+      - "--alice"
+      - "--threshold-url"
+      - "0.0.0.0:3001"
+      - "--chain-endpoint"
+      - "ws://alice-chain-node:9944"
 
   # In a local devnet setup, for now, this is "Alice's chain."
   alice-chain-node:
     image: entropyxyz/entropy:$ENTROPY_CORE_VERSION
     ports:
-      - '127.0.0.1:9944:9944/tcp' # "RPC Port."
+      - "127.0.0.1:9944:9944/tcp"   # "RPC Port."
     command:
-      - '--chain'
-      - 'devnet-local'
-      - '--alice' # Shortcut for `--name Alice --validator`
-      - '--base-path'
-      - '.entropy/alice'
-      - '--rpc-port'
-      - '9944'
-      - '--rpc-cors'
-      - 'all'
-      - '--unsafe-rpc-external' # Intentional, for TSS's access.
-      - '--node-key=0000000000000000000000000000000000000000000000000000000000000001'
-      - '--tss-server-endpoint'
-      - 'http://alice-tss-server:3001'
+      - "--chain"
+      - "devnet-local"
+      - "--alice"               # Shortcut for `--name Alice --validator`
+      - "--base-path"
+      - ".entropy/alice"
+      - "--rpc-port"
+      - "9944"
+      - "--rpc-cors"
+      - "all"
+      - "--unsafe-rpc-external" # Intentional, for TSS's access.
+      - "--node-key=0000000000000000000000000000000000000000000000000000000000000001"
+      - "--tss-server-endpoint"
+      - "http://alice-tss-server:3001"
 
   # "Bob's TSS server."
   bob-tss-server:
     image: entropyxyz/entropy-tss:$ENTROPY_CORE_VERSION
     ports:
-      - '127.0.0.1:3002:3002/tcp'
+      - "127.0.0.1:3002:3002/tcp"
     command:
-      - '--bob'
-      - '--threshold-url'
-      - '0.0.0.0:3002'
-      - '--chain-endpoint'
-      - 'ws://bob-chain-node:9944'
+      - "--bob"
+      - "--threshold-url"
+      - "0.0.0.0:3002"
+      - "--chain-endpoint"
+      - "ws://bob-chain-node:9944"
 
   # "Bob's chain node."
   bob-chain-node:
     image: entropyxyz/entropy:$ENTROPY_CORE_VERSION
     ports:
-      - '127.0.0.1:9945:9944/tcp'
+      - "127.0.0.1:9945:9944/tcp"
     command:
-      - '--chain'
-      - 'devnet-local'
-      - '--bob' # Shortcut for `--name Bob --validator`
-      - '--base-path'
-      - '.entropy/bob'
-      - '--rpc-port'
-      - '9944'
-      - '--rpc-cors'
-      - 'all'
-      - '--unsafe-rpc-external' # Intentional, for TSS's access.
-      - '--bootnodes'
-      - '/dns4/alice-chain-node/tcp/30333/p2p/12D3KooWEyoppNCUx8Yx66oV9fJnriXwCcXwDDUA2kj6vnc6iDEp'
-      - '--tss-server-endpoint'
-      - 'http://bob-tss-server:3002'
+      - "--chain"
+      - "devnet-local"
+      - "--bob"                 # Shortcut for `--name Bob --validator`
+      - "--base-path"
+      - ".entropy/bob"
+      - "--rpc-port"
+      - "9944"
+      - "--rpc-cors"
+      - "all"
+      - "--unsafe-rpc-external" # Intentional, for TSS's access.
+      - "--bootnodes"
+      - "/dns4/alice-chain-node/tcp/30333/p2p/12D3KooWEyoppNCUx8Yx66oV9fJnriXwCcXwDDUA2kj6vnc6iDEp"
+      - "--tss-server-endpoint"
+      - "http://bob-tss-server:3002"
