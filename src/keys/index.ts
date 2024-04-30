@@ -72,7 +72,7 @@ export const getWallet: (input: string) => Promise<Signer | undefined> =
 
 export async function mnemonicGenOrDerive(
   mnemonic?: string,
-  derivationPath?: string,
+  derivationPath?: string
 ): Promise<Signer> {
   await cryptoWaitReady()
   const keyring = new Keyring({ type: 'sr25519' })

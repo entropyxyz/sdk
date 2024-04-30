@@ -21,7 +21,7 @@ describe('Register Tests', () => {
     execFileSync(
       'dev/bin/spin-up.sh',
       ['two-nodes'],
-      { shell: true, cwd: process.cwd(), stdio: 'inherit' }, // Use shell's search path.
+      { shell: true, cwd: process.cwd(), stdio: 'inherit' } // Use shell's search path.
     )
 
     try {
@@ -36,7 +36,7 @@ describe('Register Tests', () => {
       await sleep(30000)
       entropy = new Entropy({ account: entropyAccount })
       const dummyProgram: any = readFileSync(
-        './tests/testing-utils/template_barebones.wasm',
+        './tests/testing-utils/template_barebones.wasm'
       )
       await entropy.ready
       pointer = await entropy.programs.dev.deploy(dummyProgram)
@@ -54,7 +54,7 @@ describe('Register Tests', () => {
     execFileSync(
       'dev/bin/spin-down.sh',
       ['two-nodes'],
-      { shell: true, cwd: process.cwd(), stdio: 'inherit' }, // Use shell's search path.
+      { shell: true, cwd: process.cwd(), stdio: 'inherit' } // Use shell's search path.
     )
   })
 
@@ -83,13 +83,13 @@ describe('Register Tests', () => {
         keyVisibility: 'Permissioned',
         freeTx: true,
         initialPrograms: [{ programPointer: pointer, programConfig: '0x' }],
-      }),
+      })
     ).rejects.toThrow('already registered')
   })
 
   it('should verify registration status of a new address', async () => {
     const isNewAddressRegistered = await entropy.isRegistered(
-      '5FWd3NSnWQ6Ay9CXmw9aTU8ZvDksn7zzzuw5dCKq9R8DsaCo',
+      '5FWd3NSnWQ6Ay9CXmw9aTU8ZvDksn7zzzuw5dCKq9R8DsaCo'
     )
     expect(isNewAddressRegistered).toBeFalsy()
   })

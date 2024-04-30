@@ -14,7 +14,7 @@ describe('Crypto Tests', () => {
     endpoint: '127.0.0.1:3001',
     tssAccount: '5H8qc7f4mXFY16NBWSB9qkc6pTks98HdVuoQTs1aova5fRtN',
     x25519_public_key: stripHexPrefix(
-      '0x0ac029f0b853b23bed652d6d0de69b7cc38d94f93732eefc85b5861e90f73a22',
+      '0x0ac029f0b853b23bed652d6d0de69b7cc38d94f93732eefc85b5861e90f73a22'
     ),
   }
 
@@ -41,17 +41,17 @@ describe('Crypto Tests', () => {
     const root = process.cwd()
 
     const thresholdKey = (await readKey(
-      `${root + '/tests/testing-utils/test-keys/0'}`,
+      `${root + '/tests/testing-utils/test-keys/0'}`
     )) as Uint8Array
 
     const result = await crypto.encryptAndSign(
       aliceSecretKey,
       thresholdKey,
-      alicePublicKey,
+      alicePublicKey
     )
 
     expect(await crypto.decryptAndVerify(aliceSecretKey, result)).toStrictEqual(
-      thresholdKey,
+      thresholdKey
     )
   })
 })

@@ -45,7 +45,7 @@ export default class ExtrinsicBaseClass {
   async sendAndWaitFor(
     call: SubmittableExtrinsic<'promise'>,
     freeTx = false,
-    filter: EventFilter,
+    filter: EventFilter
   ): Promise<EventRecord> {
     const newCall = freeTx ? await this.handleFreeTx(call) : call
     return new Promise<EventRecord>((resolve, reject) => {
@@ -56,7 +56,7 @@ export default class ExtrinsicBaseClass {
             if (dispatchError.isModule) {
               // for module errors, we have the section indexed, lookup
               const decoded: Decoded = this.substrate.registry.findMetaError(
-                dispatchError.asModule,
+                dispatchError.asModule
               )
               const { docs, name, section } = decoded
 
@@ -97,7 +97,7 @@ export default class ExtrinsicBaseClass {
    */
 
   async handleFreeTx(
-    call: SubmittableExtrinsic<'promise'>,
+    call: SubmittableExtrinsic<'promise'>
   ): Promise<SubmittableExtrinsic<'promise'>> {
     const freeTxWrapper = this.substrate.tx.freeTx.callUsingElectricity(call)
     const result = await freeTxWrapper.dryRun(this.signer.wallet)

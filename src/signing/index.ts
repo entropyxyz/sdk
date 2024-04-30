@@ -83,7 +83,7 @@ export default class SignatureRequestManager {
       throw new Error(`No transaction adapter for type: ${type} submit as hash`)
     if (!this.adapters[type].preSign)
       throw new Error(
-        `Adapter for type: ${type} has no preSign function. Adapters must have a preSign function`,
+        `Adapter for type: ${type} has no preSign function. Adapters must have a preSign function`
       )
 
     const sigRequestHash = await this.adapters[type].preSign(txParams)
@@ -116,7 +116,7 @@ export default class SignatureRequestManager {
   }: SigOps): Promise<Uint8Array> {
     const strippedsigRequestHash = stripHexPrefix(sigRequestHash)
     const validatorsInfo: Array<ValidatorInfo> = await this.pickValidators(
-      strippedsigRequestHash,
+      strippedsigRequestHash
     )
     const txRequests: Array<EncMsg> = await this.formatTxRequests({
       validatorsInfo: validatorsInfo,
@@ -178,7 +178,7 @@ export default class SignatureRequestManager {
         }
         if (auxilaryData)
           txRequestData.auxilary_data = auxilaryData.map((i) =>
-            JSON.stringify(i),
+            JSON.stringify(i)
           )
         const serverDHKey = await crypto.fromHex(validator.x25519_public_key)
 
@@ -187,10 +187,10 @@ export default class SignatureRequestManager {
             return {
               ...v,
               x25519_public_key: Array.from(
-                await crypto.fromHex(v.x25519_public_key),
+                await crypto.fromHex(v.x25519_public_key)
               ),
             }
-          }),
+          })
         )
 
         const encoded = Uint8Array.from(
@@ -198,13 +198,13 @@ export default class SignatureRequestManager {
             ...txRequestData,
             validators_info: formattedValidators,
           }),
-          (x) => x.charCodeAt(0),
+          (x) => x.charCodeAt(0)
         )
 
         const encryptedMessage = await crypto.encryptAndSign(
           this.signer.pair.secretKey,
           encoded,
-          serverDHKey,
+          serverDHKey
         )
 
         return {
@@ -212,7 +212,7 @@ export default class SignatureRequestManager {
           url: validator.ip_address,
           tss_account: validator.tss_account,
         }
-      }),
+      })
     )
   }
 
@@ -234,11 +234,11 @@ export default class SignatureRequestManager {
         }
         const sigProof = (await sendHttpPost(
           `http://${message.url}/user/sign_tx`,
-          JSON.stringify(payload),
+          JSON.stringify(payload)
         )) as string[]
         sigProof.push(message.tss_account)
         return sigProof
-      }),
+      })
     )
   }
 
@@ -264,8 +264,8 @@ export default class SignatureRequestManager {
 
     const rawValidatorInfo = await Promise.all(
       stashKeys.map((stashKey) =>
-        this.substrate.query.stakingExtension.thresholdServers(stashKey),
-      ),
+        this.substrate.query.stakingExtension.thresholdServers(stashKey)
+      )
     )
     const validatorsInfo: Array<ValidatorInfo> = rawValidatorInfo.map(
       (validator) => {
@@ -283,7 +283,7 @@ export default class SignatureRequestManager {
           ip_address: endpoint,
           tss_account: tssAccount,
         }
-      },
+      }
     )
 
     return validatorsInfo
@@ -308,16 +308,16 @@ export default class SignatureRequestManager {
         a.addresses.push(sp[2] || 'place-holder')
         return a
       },
-      { sigs: [], proofs: [], addresses: [] },
+      { sigs: [], proofs: [], addresses: [] }
     )
     // find a valid signature
     const sigMatch = seperatedSigsAndProofs.sigs.find(
-      (s) => s !== 'place-holder',
+      (s) => s !== 'place-holder'
     )
     if (!sigMatch) throw new Error('Did not receive a valid signature')
     // use valid signature to see if they all match
     const allSigsMatch = seperatedSigsAndProofs.sigs.every(
-      (s) => s === sigMatch,
+      (s) => s === sigMatch
     )
     if (!allSigsMatch) throw new Error('All signatures do not match')
     // in the future. notify network of compromise?
@@ -328,10 +328,10 @@ export default class SignatureRequestManager {
           return await this.crypto.verifySignature(
             seperatedSigsAndProofs.sigs[index],
             proof,
-            seperatedSigsAndProofs.addresses[index],
+            seperatedSigsAndProofs.addresses[index]
           )
-        },
-      ),
+        }
+      )
     )
     const first = validated.findIndex((v) => v)
     if (first === -1)

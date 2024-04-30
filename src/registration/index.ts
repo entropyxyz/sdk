@@ -78,7 +78,7 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
      */
 
     const isCurrentlyRegistered = await this.checkRegistrationStatus(
-      this.signer.wallet.address,
+      this.signer.wallet.address
     )
     if (isCurrentlyRegistered) {
       throw new Error('already registered')
@@ -90,14 +90,14 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
           const unsubPromise = this.substrate.rpc.chain.subscribeNewHeads(
             async () => {
               const registeredCheck = await this.checkRegistrationStatus(
-                this.signer.wallet.address,
+                this.signer.wallet.address
               )
               if (registeredCheck) {
                 const unsub = await unsubPromise
                 unsub()
                 const registeredData =
                   await this.substrate.query.relayer.registered(
-                    this.signer.wallet.address,
+                    this.signer.wallet.address
                   )
                 // @ts-ignore: next line
                 if (!registeredData.isSome) {
@@ -111,12 +111,12 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
                   verifyingKey: data.verifyingKey.toString(),
                 })
               }
-            },
+            }
           )
         } catch (e) {
           reject(e)
         }
-      },
+      }
     )
 
     // Convert the ProgramData to PalletRelayerProgramInstance and wrap it in an array
@@ -129,7 +129,7 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
           programPointer: programInfo.programPointer,
           programConfig: programInfo.programConfig,
         }
-      }),
+      })
     )
 
     await this.sendAndWaitFor(registerTx, freeTx, {

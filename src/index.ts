@@ -128,12 +128,12 @@ export default class Entropy {
     if (this.#programReadOnly || this.#allReadOnly)
       this.programs.set = async () => {
         throw new Error(
-          'Programs is in a read only state: Must pass a valid key pair in initialization.',
+          'Programs is in a read only state: Must pass a valid key pair in initialization.'
         )
       }
     this.#ready(true)
     this.isRegistered = this.registrationManager.checkRegistrationStatus.bind(
-      this.registrationManager,
+      this.registrationManager
     )
     this.#setVerfiyingKeys()
   }
@@ -175,7 +175,7 @@ export default class Entropy {
       })
     ) {
       throw new Error(
-        'AccountTypeError: sigRequestKey not a valid signing pair',
+        'AccountTypeError: sigRequestKey not a valid signing pair'
       )
     }
 
@@ -201,12 +201,12 @@ export default class Entropy {
    */
 
   async register(
-    params: RegistrationParams & { account?: EntropyAccount },
+    params: RegistrationParams & { account?: EntropyAccount }
   ): Promise<void> {
     await this.ready
     if (this.#allReadOnly)
       throw new Error(
-        'Initialized in read only state: can not use write functions',
+        'Initialized in read only state: can not use write functions'
       )
     const account = params.account || this.account
 
@@ -222,7 +222,7 @@ export default class Entropy {
     }
     await this.registrationManager.register(params)
     this.account.verifyingKey = await this.getVerifyingKey(
-      this.account.sigRequestKey.wallet.address,
+      this.account.sigRequestKey.wallet.address
     )
   }
 
@@ -234,8 +234,9 @@ export default class Entropy {
    */
 
   async getVerifyingKey(address: Address): Promise<string> {
-    const registeredInfo =
-      await this.substrate.query.relayer.registered(address)
+    const registeredInfo = await this.substrate.query.relayer.registered(
+      address
+    )
     // @ts-ignore: next line
     return registeredInfo.toHuman().verifyingKey
   }
@@ -263,7 +264,7 @@ export default class Entropy {
     await this.ready
     if (this.#allReadOnly)
       throw new Error(
-        'Initialized in read only state: can not use write functions',
+        'Initialized in read only state: can not use write functions'
       )
     return this.signingManager.signTransaction(params)
   }
@@ -285,7 +286,7 @@ export default class Entropy {
     await this.ready
     if (this.#allReadOnly)
       throw new Error(
-        'Initialized in read only state: can not use write functions',
+        'Initialized in read only state: can not use write functions'
       )
     return this.signingManager.sign(params)
   }

@@ -71,7 +71,7 @@ export default class ProgramDev extends ExtrinsicBaseClass {
 
   async deploy(
     program: ArrayBuffer,
-    configurationInterface?: unknown,
+    configurationInterface?: unknown
   ): Promise<string> {
     // converts program and configurationInterface into a palatable format
     const formatedConfig = JSON.stringify(configurationInterface)
@@ -79,7 +79,7 @@ export default class ProgramDev extends ExtrinsicBaseClass {
     const tx: SubmittableExtrinsic<'promise'> =
       this.substrate.tx.programs.setProgram(
         util.u8aToHex(new Uint8Array(program)),
-        formatedConfig,
+        formatedConfig
       )
 
     const record = await this.sendAndWaitFor(tx, false, {

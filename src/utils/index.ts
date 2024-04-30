@@ -46,7 +46,7 @@ export async function sendHttpPost(url: string, data: any): Promise<any> {
     throw new Error(
       `request failed ${response.status}, ${
         response.statusText
-      } fetch: ${url} FULLRESPONSE: ${await response.text()}`,
+      } fetch: ${url} FULLRESPONSE: ${await response.text()}`
     )
   }
 
@@ -69,7 +69,7 @@ export async function sendHttpPost(url: string, data: any): Promise<any> {
     throw new Error(
       `request failed ${streamResponse.status}, ${
         streamResponse.statusText
-      } FULLRESPONSE: ${await streamResponse.text()}`,
+      } FULLRESPONSE: ${await streamResponse.text()}`
     )
   }
   return (await streamResponse.json()).Ok

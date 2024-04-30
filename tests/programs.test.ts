@@ -22,7 +22,7 @@ describe('Programs Tests', () => {
       execFileSync(
         'dev/bin/spin-up.sh',
         ['two-nodes'],
-        { shell: true, cwd: process.cwd(), stdio: 'inherit' }, // Use shell's search path.
+        { shell: true, cwd: process.cwd(), stdio: 'inherit' } // Use shell's search path.
       )
     } catch (e) {
       console.error('Error in beforeAll: ', e.message)
@@ -57,7 +57,7 @@ describe('Programs Tests', () => {
     jest.setTimeout(60000)
 
     const dummyProgram = readFileSync(
-      './tests/testing-utils/template_barebones.wasm',
+      './tests/testing-utils/template_barebones.wasm'
     )
     const pointer = await entropy.programs.dev.deploy(dummyProgram)
     const fetchedProgram = await entropy.programs.dev.get(pointer)

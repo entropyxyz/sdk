@@ -50,8 +50,9 @@ export default class ProgramManager extends ExtrinsicBaseClass {
    */
 
   async get(sigReqAccount: string): Promise<ProgramData[]> {
-    const registeredOption =
-      await this.substrate.query.relayer.registered(sigReqAccount)
+    const registeredOption = await this.substrate.query.relayer.registered(
+      sigReqAccount
+    )
 
     if (registeredOption.isEmpty) {
       throw new Error(`No programs found for account: ${sigReqAccount}`)
@@ -82,12 +83,13 @@ export default class ProgramManager extends ExtrinsicBaseClass {
   async set(
     newList: ProgramData[],
     sigReqAccount = this.signer.wallet.address,
-    programModKey?: string,
+    programModKey?: string
   ): Promise<void> {
     programModKey = programModKey || sigReqAccount
 
-    const registeredInfoOption =
-      await this.substrate.query.relayer.registered(sigReqAccount)
+    const registeredInfoOption = await this.substrate.query.relayer.registered(
+      sigReqAccount
+    )
 
     if (registeredInfoOption.isEmpty) {
       throw new Error(`Account not registered: ${sigReqAccount}`)
@@ -110,7 +112,7 @@ export default class ProgramManager extends ExtrinsicBaseClass {
     const tx: SubmittableExtrinsic<'promise'> =
       this.substrate.tx.relayer.changeProgramInstance(
         sigReqAccount,
-        newProgramInstances,
+        newProgramInstances
       )
 
     await this.sendAndWaitFor(tx, false, {
@@ -133,12 +135,12 @@ export default class ProgramManager extends ExtrinsicBaseClass {
   async remove(
     programHashToRemove: string,
     sigReqAccount = this.signer.wallet.address,
-    programModKey?: string,
+    programModKey?: string
   ): Promise<void> {
     const currentPrograms = await this.get(sigReqAccount)
     // creates new array that contains all of the currentPrograms except programHashToRemove
     const updatedPrograms = currentPrograms.filter(
-      (program) => program.programPointer !== programHashToRemove,
+      (program) => program.programPointer !== programHashToRemove
     )
     await this.set(updatedPrograms, sigReqAccount, programModKey)
   }
@@ -158,13 +160,13 @@ export default class ProgramManager extends ExtrinsicBaseClass {
   async add(
     newProgram: ProgramData,
     sigReqAccount = this.signer.wallet.address,
-    programModKey?: string,
+    programModKey?: string
   ): Promise<void> {
     const currentPrograms = await this.get(sigReqAccount)
     await this.set(
       [...currentPrograms, newProgram],
       sigReqAccount,
-      programModKey,
+      programModKey
     )
   }
 }
