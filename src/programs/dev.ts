@@ -6,7 +6,6 @@ import { hex2buf, stripHexPrefix } from '../utils'
 import * as util from '@polkadot/util'
 
 /**
- * @remarks
  * Represents program information.
  */
 export interface ProgramInfo {
@@ -21,7 +20,6 @@ export interface ProgramInfo {
 }
 
 /**
- * @remarks
  * Class to handle program-related extrinsic functions.
  *
  * @extends ExtrinsicBaseClass

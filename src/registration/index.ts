@@ -3,6 +3,14 @@ import { Signer, Address } from '../types'
 import { ApiPromise } from '@polkadot/api'
 import { ProgramData } from '../programs'
 
+export interface RegistrationManagerOpts {
+  /** The Polkadot/ Substrate API instance. */
+  substrate: ApiPromise
+
+  /** The Signer used for signing transactions. */
+  signer: Signer
+}
+
 export interface RegistrationParams {
   /** Indicates if the registration transaction should be free. */
   freeTx?: boolean
@@ -38,17 +46,10 @@ class RegistrationManager extends ExtrinsicBaseClass {
   /**
    * Constructs a new instance of the `RegistrationManager` class.
    *
-   * @param {ApiPromise} substrate - The Polkadot/Substrate API instance.
-   * @param {Signer} signer - The signer used for signing transactions.
+   * @param opts {RegistrationManagerOpts}
    */
-  constructor({
-    substrate,
-    signer,
-  }: {
-    substrate: ApiPromise
-    signer: Signer
-  }) {
-    super({ signer, substrate })
+  constructor(opts: RegistrationManagerOpts) {
+    super(opts)
   }
 
   /**
@@ -80,6 +81,7 @@ class RegistrationManager extends ExtrinsicBaseClass {
      *
      * @param {Address} address - The address for which registration status needs to be checked.
      * @returns {Promise<boolean>} A promise which resolves to `true` if the address is registered, otherwise `false`.
+     *
      * @remarks
      * This method queries Entropy to determine if a given address is registered.
      */

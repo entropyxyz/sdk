@@ -24,7 +24,6 @@ const res: ResObjectType = {
 loadCryptoLib()
 
 /**
- * @remarks
  * Interface for the cryptographic library, detailing core functionality: encryption, decryption, and key management.
  *
  * @see {@link https://www.npmjs.com/package/@entropyxyz/entropy-protocol-nodejs}

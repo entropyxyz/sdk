@@ -37,7 +37,6 @@ export interface EntropyOpts {
 }
 
 /**
- * @remarks
  * The main interface for users wanting to interact with Entropy.
  * This class provides methods to register, check registration status,
  * and sign transactions. Users can await the `ready` promise to ensure

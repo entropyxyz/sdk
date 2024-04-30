@@ -42,12 +42,11 @@ export interface UserSignatureRequest {
   timestamp: { secs_since_epoch: number; nanos_since_epoch: number }
   hash: string
 }
+
 /**
- * @remarks
  * `SignatureRequestManager` facilitates signature requests using Polkadot/Substrate API.
  * This manager handles transaction signing using pre-defined adapters and cryptographic utilities.
  */
-
 class SignatureRequestManager {
   adapters: { [key: string | number]: Adapter }
   crypto: CryptoLib

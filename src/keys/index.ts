@@ -53,7 +53,6 @@ function setupGetWallet(): (input: string) => Promise<Signer | undefined> {
 }
 
 /**
- * @remarks
  * Retrieves a wallet from a `Signer` object or a seed string.
  *
  * @param pair - A `Signer` seed string (base64, hex encoded)
