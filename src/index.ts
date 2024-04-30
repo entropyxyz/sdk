@@ -1,5 +1,4 @@
 import { ApiPromise, WsProvider } from '@polkadot/api'
-import Clarify from 'clarify-error'
 import { isValidSubstrateAddress } from './utils'
 import RegistrationManager, { RegistrationParams } from './registration'
 import SignatureRequestManager, { SigOps, SigTxOps } from './signing'
@@ -114,10 +113,10 @@ class Entropy {
     this.substrate = new ApiPromise({ provider: wsProvider })
     await this.substrate.isReadyOrError
       .catch(err => {
-        const info = err.message === "connect ECONNREFUSED 127.0.0.1:9944"
+        const cause = err.message === "connect ECONNREFUSED 127.0.0.1:9944"
           ? 'Entropy#init EntropyAccount.endpoint not accessible'
           : 'Entropy#init substrate startup failed'
-        throw Clarify(err.error, info)
+        throw new Error(err.error, { cause })
         // NOTE this err is from ws, has non-standard API
       })
 
