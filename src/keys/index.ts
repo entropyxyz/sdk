@@ -1,3 +1,13 @@
+/*
+TO-DO:
+keys file needs to repersnt the typs in this dir: (src/keys/types)
+generate wallet sould return signers with the type anotation
+if a verfiyg key array is provided then we know that this is a
+registered account and can request signatures
+*/
+
+
+
 import {
   sr25519PairFromSeed,
   cryptoWaitReady,

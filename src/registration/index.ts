@@ -61,7 +61,7 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
    * @returns A promise that resolves when the user is successfully registered.
    * @throws {Error} If the user is already registered.
    */
-
+// TO-DO: return the verfiying key have it documented that the user needs to save this otherwise that cant request sigs
   async register ({
     freeTx = false,
     initialPrograms = [],

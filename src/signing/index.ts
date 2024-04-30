@@ -121,6 +121,8 @@ export default class SignatureRequestManager {
     const validatorsInfo: Array<ValidatorInfo> = await this.pickValidators(
       strippedsigRequestHash
     )
+    // TO-DO: this needs to be and accounId ie hex string of the address
+    // which means you need a new key ie device key here
     let signatureRequestAccount
     const txRequests: Array<EncMsg> = await this.formatTxRequests({
       validatorsInfo: validatorsInfo,
