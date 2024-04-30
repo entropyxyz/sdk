@@ -111,10 +111,11 @@ class ProgramManager extends ExtrinsicBaseClass {
       programConfig: data.programConfig,
     }))
 
-    const tx: SubmittableExtrinsic<'promise'> = this.substrate.tx.relayer.changeProgramInstance(
-      sigReqAccount,
-      newProgramInstances
-    )
+    const tx: SubmittableExtrinsic<'promise'> =
+      this.substrate.tx.relayer.changeProgramInstance(
+        sigReqAccount,
+        newProgramInstances
+      )
 
     await this.sendAndWaitFor(tx, false, {
       section: 'relayer',

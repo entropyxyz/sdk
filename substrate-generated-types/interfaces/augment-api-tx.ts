@@ -80,12 +80,10 @@ import {
 } from '@polkadot/types/lookup'
 
 export type __AugmentedSubmittable = AugmentedSubmittable<() => unknown>
-export type __SubmittableExtrinsic<
-  ApiType extends ApiTypes
-> = SubmittableExtrinsic<ApiType>
-export type __SubmittableExtrinsicFunction<
-  ApiType extends ApiTypes
-> = SubmittableExtrinsicFunction<ApiType>
+export type __SubmittableExtrinsic<ApiType extends ApiTypes> =
+  SubmittableExtrinsic<ApiType>
+export type __SubmittableExtrinsicFunction<ApiType extends ApiTypes> =
+  SubmittableExtrinsicFunction<ApiType>
 
 declare module '@polkadot/api-base/types/submittable' {
   export interface AugmentedSubmittables<ApiType extends ApiTypes> {

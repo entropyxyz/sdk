@@ -76,10 +76,11 @@ class ProgramDev extends ExtrinsicBaseClass {
     // converts program and configurationInterface into a palatable format
     const formatedConfig = JSON.stringify(configurationInterface)
     // programModKey is the caller of the extrinsic
-    const tx: SubmittableExtrinsic<'promise'> = this.substrate.tx.programs.setProgram(
-      util.u8aToHex(new Uint8Array(program)),
-      formatedConfig
-    )
+    const tx: SubmittableExtrinsic<'promise'> =
+      this.substrate.tx.programs.setProgram(
+        util.u8aToHex(new Uint8Array(program)),
+        formatedConfig
+      )
 
     const record = await this.sendAndWaitFor(tx, false, {
       section: 'programs',
@@ -98,9 +99,8 @@ class ProgramDev extends ExtrinsicBaseClass {
    */
 
   async remove(programHash: string | Uint8Array): Promise<void> {
-    const tx: SubmittableExtrinsic<'promise'> = this.substrate.tx.programs.removeProgram(
-      programHash
-    )
+    const tx: SubmittableExtrinsic<'promise'> =
+      this.substrate.tx.programs.removeProgram(programHash)
 
     await this.sendAndWaitFor(tx, false, {
       section: 'programs',

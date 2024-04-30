@@ -59,9 +59,8 @@ function setupGetWallet(): (input: string) => Promise<Signer | undefined> {
  * @param pair - A `Signer` seed string (base64, hex encoded)
  * @returns A Promise resolving to an object containing the wallet and its associated `Signer`, or undefined if the input is invalid.
  */
-export const getWallet: (
-  input: string
-) => Promise<Signer | undefined> = setupGetWallet()
+export const getWallet: (input: string) => Promise<Signer | undefined> =
+  setupGetWallet()
 
 /**
  * Generates a new mnemonic phrase or derives a wallet from an existing mnemonic and an optional derivation path.

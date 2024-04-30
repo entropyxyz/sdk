@@ -172,52 +172,50 @@ class SignatureRequestManager {
     hash?: string
   }): Promise<EncMsg[]> {
     return await Promise.all(
-      validatorsInfo.map(
-        async (validator: ValidatorInfo): Promise<EncMsg> => {
-          const txRequestData: UserSignatureRequest = {
-            message: stripHexPrefix(strippedsigRequestHash),
-            validators_info: validatorsInfo,
-            timestamp: this.getTimeStamp(),
-            hash,
-          }
-          if (auxilaryData)
-            txRequestData.auxilary_data = auxilaryData.map((i) =>
-              JSON.stringify(i)
-            )
-          const serverDHKey = await crypto.fromHex(validator.x25519_public_key)
-
-          const formattedValidators = await Promise.all(
-            validatorsInfo.map(async (v) => {
-              return {
-                ...v,
-                x25519_public_key: Array.from(
-                  await crypto.fromHex(v.x25519_public_key)
-                ),
-              }
-            })
-          )
-
-          const encoded = Uint8Array.from(
-            JSON.stringify({
-              ...txRequestData,
-              validators_info: formattedValidators,
-            }),
-            (x) => x.charCodeAt(0)
-          )
-
-          const encryptedMessage = await crypto.encryptAndSign(
-            this.signer.pair.secretKey,
-            encoded,
-            serverDHKey
-          )
-
-          return {
-            msg: encryptedMessage,
-            url: validator.ip_address,
-            tss_account: validator.tss_account,
-          }
+      validatorsInfo.map(async (validator: ValidatorInfo): Promise<EncMsg> => {
+        const txRequestData: UserSignatureRequest = {
+          message: stripHexPrefix(strippedsigRequestHash),
+          validators_info: validatorsInfo,
+          timestamp: this.getTimeStamp(),
+          hash,
         }
-      )
+        if (auxilaryData)
+          txRequestData.auxilary_data = auxilaryData.map((i) =>
+            JSON.stringify(i)
+          )
+        const serverDHKey = await crypto.fromHex(validator.x25519_public_key)
+
+        const formattedValidators = await Promise.all(
+          validatorsInfo.map(async (v) => {
+            return {
+              ...v,
+              x25519_public_key: Array.from(
+                await crypto.fromHex(v.x25519_public_key)
+              ),
+            }
+          })
+        )
+
+        const encoded = Uint8Array.from(
+          JSON.stringify({
+            ...txRequestData,
+            validators_info: formattedValidators,
+          }),
+          (x) => x.charCodeAt(0)
+        )
+
+        const encryptedMessage = await crypto.encryptAndSign(
+          this.signer.pair.secretKey,
+          encoded,
+          serverDHKey
+        )
+
+        return {
+          msg: encryptedMessage,
+          url: validator.ip_address,
+          tss_account: validator.tss_account,
+        }
+      })
     )
   }
 
@@ -255,7 +253,8 @@ class SignatureRequestManager {
    */
 
   async pickValidators(sigRequest: string): Promise<ValidatorInfo[]> {
-    const entries = await this.substrate.query.stakingExtension.signingGroups.entries()
+    const entries =
+      await this.substrate.query.stakingExtension.signingGroups.entries()
     const stashKeys = entries.map((group) => {
       const keyGroup = group[1]
       // omg polkadot type gen is a head ache

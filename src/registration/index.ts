@@ -102,9 +102,10 @@ class RegistrationManager extends ExtrinsicBaseClass {
               if (registeredCheck) {
                 const unsub = await unsubPromise
                 unsub()
-                const registeredData = await this.substrate.query.relayer.registered(
-                  this.signer.wallet.address
-                )
+                const registeredData =
+                  await this.substrate.query.relayer.registered(
+                    this.signer.wallet.address
+                  )
                 // @ts-ignore: next line
                 if (!registeredData.isSome) {
                   throw new Error('Registration information not found')
@@ -112,7 +113,8 @@ class RegistrationManager extends ExtrinsicBaseClass {
                 // @ts-ignore: next line
                 const data = registeredData.unwrap()
                 resolve({
-                  keyVisibility: data.keyVisibility.toJSON() as KeyVisibilityInfo,
+                  keyVisibility:
+                    data.keyVisibility.toJSON() as KeyVisibilityInfo,
                   verifyingKey: data.verifyingKey.toString(),
                 })
               }
