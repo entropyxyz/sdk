@@ -22,7 +22,7 @@ describe('Keys Tests', () => {
 
   afterAll(async () => {
     try {
-      ('finished')
+      ;('finished')
     } catch (e) {
       console.error('Error in afterAll: ', e.message)
     }

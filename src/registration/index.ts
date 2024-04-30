@@ -23,7 +23,7 @@ export type KeyVisibilityInfo =
 /**
  * The `RegistrationManager` class provides functionality for user registration using the Polkadot/Substrate API.
  * It extends the `ExtrinsicBaseClass` to handle extrinsic submissions and utility methods.
- * 
+ *
  * This class includes methods for registering a user, checking if a user is already registered, and listening for registration events.
  */
 
@@ -34,7 +34,7 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
    * @param {ApiPromise} substrate - The Polkadot/Substrate API instance.
    * @param {Signer} signer - The signer used for signing transactions.
    */
-  constructor ({
+  constructor({
     substrate,
     signer,
   }: {
@@ -56,7 +56,7 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
    * @throws {Error} If the user is already registered.
    */
 
-  async register ({
+  async register({
     freeTx = false,
     initialPrograms = [],
     keyVisibility = 'Permissioned',
@@ -68,15 +68,14 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
     // TODO: store multiple signers via address. and respond accordingly
     // however it should be handled in extrinsic class and not here
 
-
     /**
-   * Verifies the registration status of an address.
-   *
-   * @param {Address} address - The address for which registration status needs to be checked.
-   * @returns {Promise<boolean>} A promise which resolves to `true` if the address is registered, otherwise `false`.
-   * @remarks
-   * This method queries Entropy to determine if a given address is registered.
-   */
+     * Verifies the registration status of an address.
+     *
+     * @param {Address} address - The address for which registration status needs to be checked.
+     * @returns {Promise<boolean>} A promise which resolves to `true` if the address is registered, otherwise `false`.
+     * @remarks
+     * This method queries Entropy to determine if a given address is registered.
+     */
 
     const isCurrentlyRegistered = await this.checkRegistrationStatus(
       this.signer.wallet.address
@@ -96,9 +95,10 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
               if (registeredCheck) {
                 const unsub = await unsubPromise
                 unsub()
-                const registeredData = await this.substrate.query.relayer.registered(
-                  this.signer.wallet.address
-                )
+                const registeredData =
+                  await this.substrate.query.relayer.registered(
+                    this.signer.wallet.address
+                  )
                 // @ts-ignore: next line
                 if (!registeredData.isSome) {
                   throw new Error('Registration information not found')
@@ -106,7 +106,8 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
                 // @ts-ignore: next line
                 const data = registeredData.unwrap()
                 resolve({
-                  keyVisibility: data.keyVisibility.toJSON() as KeyVisibilityInfo,
+                  keyVisibility:
+                    data.keyVisibility.toJSON() as KeyVisibilityInfo,
                   verifyingKey: data.verifyingKey.toString(),
                 })
               }
@@ -123,10 +124,15 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
       programModificationAccount,
       keyVisibility,
       // initialPrograms
-      initialPrograms.map((programInfo) => { return {programPointer: programInfo.programPointer, programConfig: programInfo.programConfig} })
+      initialPrograms.map((programInfo) => {
+        return {
+          programPointer: programInfo.programPointer,
+          programConfig: programInfo.programConfig,
+        }
+      })
     )
 
-    await this.sendAndWaitFor (registerTx, freeTx, {
+    await this.sendAndWaitFor(registerTx, freeTx, {
       section: 'relayer',
       name: 'SignalRegister',
     })
@@ -141,7 +147,7 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
    * @returns A promise which resolves to `true` if the address is registered, otherwise `false`.
    */
 
-  async checkRegistrationStatus (address: Address): Promise<boolean> {
+  async checkRegistrationStatus(address: Address): Promise<boolean> {
     const isRegistered = await this.substrate.query.relayer.registered(address)
     return !!isRegistered.toJSON()
   }

@@ -6,7 +6,7 @@ module.exports = {
   root: true,
   rules: {
     indent: ['error', 2],
-    'space-before-function-paren': ['error', 'always'],
+    'space-before-function-paren': 'off',
     '@typescript-eslint/no-var-requires': 'off',
     '@typescript-eslint/no-unused-vars': 'error',
     '@typescript-eslint/ban-ts-comment': 1,

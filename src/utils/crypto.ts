@@ -1,4 +1,8 @@
-import { cryptoWaitReady, decodeAddress, signatureVerify } from '@polkadot/util-crypto'
+import {
+  cryptoWaitReady,
+  decodeAddress,
+  signatureVerify,
+} from '@polkadot/util-crypto'
 import { u8aToHex } from '@polkadot/util'
 
 interface ResolveType {
@@ -14,7 +18,7 @@ let cryptoLib
 const res: ResObjectType = {
   resolve: () => {
     throw new Error('resolve function not yet set')
-  }
+  },
 }
 
 loadCryptoLib()
@@ -27,10 +31,14 @@ loadCryptoLib()
 
 export interface CryptoLib {
   // from polkadotjs
-  verifySignature: (message: string, signature: string, address: string) => Promise<boolean>
+  verifySignature: (
+    message: string,
+    signature: string,
+    address: string
+  ) => Promise<boolean>
   // from chacha20poly1305
   fromHex: (input: string) => Uint8Array
-   /**
+  /**
    * Encrypts the provided message and signs it using the X25519 and ChaCha20Poly1305 algorithms.
    * Uses the provided secret key for encryption and the server's Diffie-Hellman (DH) key for the signature.
    */
@@ -85,7 +93,11 @@ export const crypto: CryptoLib = new Proxy({} as CryptoLib, {
  * @returns A Promise that resolves to a boolean indicating whether the signature is valid.
  */
 
-async function verifySignature (message: string, signature: string, address: string): Promise<boolean> {
+async function verifySignature(
+  message: string,
+  signature: string,
+  address: string
+): Promise<boolean> {
   const publicKey = decodeAddress(address)
   const hexPublicKey = u8aToHex(publicKey)
 
@@ -98,7 +110,7 @@ async function verifySignature (message: string, signature: string, address: str
  * @returns The imported crypto library.
  */
 
-export async function loadCryptoLib () {
+export async function loadCryptoLib() {
   if (isImported) return cryptoLib
 
   if (!globalThis.window) {

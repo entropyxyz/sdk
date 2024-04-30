@@ -13,8 +13,8 @@ interface Decoded extends RegistryError {
 /**
  * A utility class to simplify extrinsic operations with the Polkadot/Substrate API.
  * Allows the user to send extrinsics and automatically handles errors, events, and certain special conditions like free transactions.
- * 
-*/
+ *
+ */
 
 export default class ExtrinsicBaseClass {
   substrate: ApiPromise
@@ -22,12 +22,12 @@ export default class ExtrinsicBaseClass {
 
   /**
    * Initializes a new instance of the `ExtrinsicBaseClass`.
-   * 
+   *
    * @param substrate - The instance of the Polkadot/Substrate API.
    * @param signer - The signer object containing the wallet and other signing-related functionalities.
    */
 
-  constructor ({ substrate, signer }) {
+  constructor({ substrate, signer }) {
     this.substrate = substrate
     this.signer = signer
   }
@@ -42,7 +42,7 @@ export default class ExtrinsicBaseClass {
    * @throws {Error} Will reject the promise if a dispatch error occurs or the filtered event is not found.
    */
 
-  async sendAndWaitFor (
+  async sendAndWaitFor(
     call: SubmittableExtrinsic<'promise'>,
     freeTx = false,
     filter: EventFilter
@@ -96,7 +96,7 @@ export default class ExtrinsicBaseClass {
    * @throws {Error} If the dry run fails or there's insufficient electricity (zaps).
    */
 
-  async handleFreeTx (
+  async handleFreeTx(
     call: SubmittableExtrinsic<'promise'>
   ): Promise<SubmittableExtrinsic<'promise'>> {
     const freeTxWrapper = this.substrate.tx.freeTx.callUsingElectricity(call)

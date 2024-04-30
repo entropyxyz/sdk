@@ -4,12 +4,24 @@
     "skipLibCheck": true,
     "noEmit": true,
     "incremental": true,
-    "typeRoots": ["node_modules/@types", "@types/", "@polkadot/types/*", "substrate-generated-types/interfaces"],
+    "typeRoots": [
+      "node_modules/@types",
+      "@types/",
+      "@polkadot/types/*",
+      "substrate-generated-types/interfaces"
+    ],
     "tsBuildInfoFile": ".tsbuildinfo",
     "moduleResolution": "node",
     "module": "Node16"
   },
-  "exclude": ["node_modules", "dist", "build", "examples", "old", "substrate-generated-types"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "build",
+    "examples",
+    "old",
+    "substrate-generated-types"
+  ],
   "ts-node": {
     "experimentalSpecifierResolution": "node"
   }

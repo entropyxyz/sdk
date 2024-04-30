@@ -7,28 +7,31 @@
 ![EN-Backgrounds-2023-7-5_11-35-31](https://github.com/entropyxyz/entropy-js/assets/62079777/070ebeb6-6c70-4087-b901-9f82ee724dbf)
 
 ### Installation
+
 yarn:
+
 ```js
 yarn add @entropyxyz/sdk
 ```
 
 npm:
+
 ```js
 npm i @entropyxyz/sdk --save
 ```
 
 ### Usage
 
-#### NOTICE 
-`endpoint ` defaults to 'ws://127.0.0.1:9944' if no value is provided. 
+#### NOTICE
 
+`endpoint ` defaults to 'ws://127.0.0.1:9944' if no value is provided.
 
 The main interface to interact with Entropy.
 This class provides methods to register, check registration status, interact with programs,
 and sign transactions. Users should await the `ready` promise to ensure
 that the class has been initialized before performing operations.
 
-Below is an example that instantiates Entropy, deploys a program, registers using the deployed program, and signs a transaction. 
+Below is an example that instantiates Entropy, deploys a program, registers using the deployed program, and signs a transaction.
 
 **`Example`**
 
@@ -44,19 +47,19 @@ const entropyAccount: EntropyAccount = {
   programModKey: signer,
 }
 
-// initialize Entropy 
+// initialize Entropy
 
 const entropy = new Entropy({ account: entropyAccount })
 
-// await entropy to be ready 
+// await entropy to be ready
 
 await entropy.ready
 
 // path to program wasm file
 
 const basicTxProgram: any = readFileSync(
-      './tests/testing-utils/template_basic_transaction.wasm'
-    )
+  './tests/testing-utils/template_basic_transaction.wasm'
+)
 
 // returns pointer hash
 
@@ -71,7 +74,7 @@ const config = `
         ]
     }
 `
-// converts config to bytes 
+// converts config to bytes
 
 const encoder = new TextEncoder()
 const byteArray = encoder.encode(config)
@@ -80,35 +83,37 @@ const byteArray = encoder.encode(config)
 
 const programConfig = util.u8aToHex(new Uint8Array(byteArray))
 
-// construct Program Data 
+// construct Program Data
 
 const programData: ProgramData = {
-      programPointer: pointer,
-      programConfig: programConfig,
-    }
+  programPointer: pointer,
+  programConfig: programConfig,
+}
 
 // attempt user registration
 
 await entropy.register({
-      keyVisibility: 'Permissioned',
-      initialPrograms: [programData],
-      programModAccount: 'insert ProgramModAccount address'
-    })
+  keyVisibility: 'Permissioned',
+  initialPrograms: [programData],
+  programModAccount: 'insert ProgramModAccount address',
+})
 
 // basic transaction composition
 
 const basicTx = {
-      to: "0x772b9a9e8aa1c9db861c6611a82d251db4fac990",
-      value: 1,
-      chainId: 1,
-      nonce: 1,
-      data: '0x' + Buffer.from('Created On Entropy').toString('hex'),
-    }
+  to: '0x772b9a9e8aa1c9db861c6611a82d251db4fac990',
+  value: 1,
+  chainId: 1,
+  nonce: 1,
+  data: '0x' + Buffer.from('Created On Entropy').toString('hex'),
+}
 
-// get entropy signature 
+// get entropy signature
 
-const signature = await entropy.signTransaction({txParams: basicTx, type: 'eth' }) as string
-
+const signature = (await entropy.signTransaction({
+  txParams: basicTx,
+  type: 'eth',
+})) as string
 ```
 
 ## Table of contents
@@ -122,16 +127,18 @@ const signature = await entropy.signTransaction({txParams: basicTx, type: 'eth' 
 - [account](README.md#account)
 - [ready](README.md#ready)
 - [programManager](README.md#programs)
-  - Flows: 
+  - Flows:
     - [Dev](README.md#dev-example)
     - [User](README.md#user-example)
 - [registrationManager](README.md#registrationmanager)
+
   - Methods:
     - [isRegistered](README.md#isregistered) - Checks if an address is already registered.
     - [getVerifyingKey](README.md#getverifyingkey) - Retrieves the verifying key for a registered address.
     - [register](README.md#register) - Registers an address with the necessary parameters.
 
 - [signingManager](README.md#signingmanager)
+
   - Methods:
     - [sign](README.md#sign)
     - [signTransaction](README.md#signtransaction)
@@ -140,20 +147,19 @@ const signature = await entropy.signTransaction({txParams: basicTx, type: 'eth' 
 
 ## Constructors
 
-
 • **new default**(`opts`): [`default`](./docs/classes/index.default.md)
 
 Initializes an instance of the Entropy class.
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
+| Name   | Type                                                    | Description                                         |
+| :----- | :------------------------------------------------------ | :-------------------------------------------------- |
 | `opts` | [`EntropyOpts`](./docs/interfaces/index.EntropyOpts.md) | The configuration options for the Entropy instance. |
 
 **`Example`**
 
-``` typescript
+```typescript
 new Entropy({ account: entropyAccount })
 
 await entropy.ready
@@ -171,15 +177,11 @@ await entropy.ready
 
 ### account
 
-
-
 • `Optional` **account**: [`EntropyAccount`](./docs/interfaces/index.EntropyAccount.md)
-
 
 **`Example`**
 
-``` typescript
-
+```typescript
 export interface EntropyAccount {
   sigRequestKey?: Signer
   programModKey?: Signer | string
@@ -188,25 +190,23 @@ export interface EntropyAccount {
 }
 ```
 
-Here's an overview of what each field means. 
+Here's an overview of what each field means.
 
-sigRequestKey or 'Signing Key'is the account on the Entropy  that is used to initate signing requests
+sigRequestKey or 'Signing Key'is the account on the Entropy that is used to initate signing requests
 
-programModKey or 'Program Modification Account' is  the account on the Entropy chain which may update the programs for a particular user / organization / entity.
+programModKey or 'Program Modification Account' is the account on the Entropy chain which may update the programs for a particular user / organization / entity.
 
 programDeployKey or 'Deploy Key' is the key used to deploy a program that can be used to remove a program
 
-verifyingKey is the key verification key that corresponds to a signer. 
+verifyingKey is the key verification key that corresponds to a signer.
 
 For an overview of definitions read: [Terminology](https://github.com/entropyxyz/entropy-docs/blob/master/docs/02-Terminology.md)
-
-
 
 #### Defined in
 
 [index.ts:70](https://github.com/entropyxyz/sdk/blob/1c426d7/src/index.ts#L70)
-___
 
+---
 
 ### ready
 
@@ -214,16 +214,15 @@ ___
 
 A promise that resolves once chacha20poly1305 cryptoLib has been loaded
 
-
 #### Defined in
 
 [index.ts:65](https://github.com/entropyxyz/sdk/blob/1c426d7/src/index.ts#L65)
 
-___
+---
 
 ### programManager
 
-The ProgramManager provides interfaces to interact with Entropy Programs. It facilitates various operations such as retrieving, setting, adding, and removing programs associated with a user account. 
+The ProgramManager provides interfaces to interact with Entropy Programs. It facilitates various operations such as retrieving, setting, adding, and removing programs associated with a user account.
 
 Features
 Alpha Release: This feature is currently in alpha and is subject to changes.
@@ -236,7 +235,7 @@ Creates an instance of ProgramManager for interacting with Entropy programs.
 constructor({
   substrate: ApiPromise,
   programModKey: Signer,
-  programDeployKey?: Signer
+  programDeployKey: Signer,
 })
 ```
 
@@ -246,21 +245,20 @@ programDeployKey: Optional signer object for deploying programs.
 
 • **programs**: [`default`](programs.default.md)
 
-There are two main flows for interfacing with Entropy Programs: dev and user. 
+There are two main flows for interfacing with Entropy Programs: dev and user.
 
-A program can be deployed by anyone without having to register with Entropy first. After being deployed, the program then gets stored in the Programs storage slot with the key being a hash of(bytecode + configuration_interface).  The hash is used by a user to point to the programs they want assigned to their key, everytime a program is referenced the ref counter increments. 
+A program can be deployed by anyone without having to register with Entropy first. After being deployed, the program then gets stored in the Programs storage slot with the key being a hash of(bytecode + configuration_interface). The hash is used by a user to point to the programs they want assigned to their key, everytime a program is referenced the ref counter increments.
 
 Here's a deeper overview of programs: [programs](https://github.com/entropyxyz/entropy-docs/blob/master/docs/06-ProgramFeatures.md)
 
+### **`Dev Example`**
 
-###  **`Dev Example`**
-
-```typescript 
+```typescript
 // to deploy a program
 
 const pointer = await entropy.programs.dev.deploy('insert program bytecode')
 
-// get a program bytecode 
+// get a program bytecode
 
 const fetchedProgram = await entropy.programs.dev.get('insert pointer hash')
 
@@ -276,39 +274,42 @@ await entropy.programs.dev.remove('insert pointer hash')
 
 await this.set(`pointer hash`, sigReqAccount, programModKey)
 
-// get a list of user programs 
+// get a list of user programs
 
 await entropy.programs.get('user address')
 
-// adds a program a list of user programs 
+// adds a program a list of user programs
 
-await entropy.programs.add('list of program hashes', sigReqAccount, programModKey)
+await entropy.programs.add(
+  'list of program hashes',
+  sigReqAccount,
+  programModKey
+)
 
-// removes a program a list of user programs 
+// removes a program a list of user programs
 
-await entropy.programs.remove('list of program hashes', sigReqAccount, programModKey)
-
-``` 
+await entropy.programs.remove(
+  'list of program hashes',
+  sigReqAccount,
+  programModKey
+)
+```
 
 #### Defined in
 
 [index.ts:68](https://github.com/entropyxyz/sdk/blob/1c426d7/src/index.ts#L68)
 
-
 ### registrationManager
 
 • **registrationManager**: [`default`](registration.default.md)
-
 
 #### Defined in
 
 [index.ts:66](https://github.com/entropyxyz/sdk/blob/1c426d7/src/index.ts#L66)
 
-
 ### register
 
 ▸ **register**(`params`): `Promise`\<`void`\>
-
 
 The user registers to Entropy by submitting a transaction from the 'signature request account' containing a 'program modification account', initial 'ProgramsData', and chosen key visibility mode.
 
@@ -320,9 +321,9 @@ for a more detail overview on registering read: [register](https://github.com/en
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `params` | [`RegistrationParams`](./docs/interfaces/registration.RegistrationParams.md) & { `account?`: [`EntropyAccount`](./docs/interfaces/index.EntropyAccount.md)  } | The registration parameters. |
+| Name     | Type                                                                                                                                                         | Description                  |
+| :------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------- | :--------------------------- |
+| `params` | [`RegistrationParams`](./docs/interfaces/registration.RegistrationParams.md) & { `account?`: [`EntropyAccount`](./docs/interfaces/index.EntropyAccount.md) } | The registration parameters. |
 
 #### Returns
 
@@ -340,23 +341,22 @@ A promise indicating the completion of the registration process.
 
 **`Example`**
 
-``` typescript
+```typescript
 // attempt user registration
 
 await entropy.register({
-// insert address to specify ProgramModAccount
-      keyVisibility: 'Permissioned',
-      initialPrograms: [programData],
-      programModAccount: '5Gw3s7q9...',
-    })
- ```
-
+  // insert address to specify ProgramModAccount
+  keyVisibility: 'Permissioned',
+  initialPrograms: [programData],
+  programModAccount: '5Gw3s7q9...',
+})
+```
 
 #### Defined in
 
 [index.ts:186](https://github.com/entropyxyz/sdk/blob/1c426d7/src/index.ts#L186)
 
-___
+---
 
 ### isRegistered
 
@@ -368,8 +368,8 @@ ___
 
 ##### Parameters
 
-| Name | Type |
-| :------ | :------ |
+| Name      | Type                                         |
+| :-------- | :------------------------------------------- |
 | `address` | [`Address`](./docs/modules/types.md#address) |
 
 ##### Returns
@@ -378,7 +378,7 @@ ___
 
 **`Example`**
 
-``` typescript
+```typescript
 await entropy.isRegistered(`insert address`)
 ```
 
@@ -386,8 +386,7 @@ await entropy.isRegistered(`insert address`)
 
 [index.ts:67](https://github.com/entropyxyz/sdk/blob/1c426d7/src/index.ts#L67)
 
-___
-
+---
 
 ### getVerifyingKey
 
@@ -397,8 +396,8 @@ Retrieves the verifying key associated with the given address's registration rec
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
+| Name      | Type                                         | Description                                        |
+| :-------- | :------------------------------------------- | :------------------------------------------------- |
 | `address` | [`Address`](./docs/modules/types.md#address) | The address for which the verifying key is needed. |
 
 #### Returns
@@ -409,7 +408,7 @@ Retrieves the verifying key associated with the given address's registration rec
 
 **`Example`**
 
-``` typescript 
+```typescript
 const verifyingKey = await entropy.getVerifyingKey(address)
 ```
 
@@ -417,28 +416,26 @@ const verifyingKey = await entropy.getVerifyingKey(address)
 
 [index.ts:215](https://github.com/entropyxyz/sdk/blob/1c426d7/src/index.ts#L215)
 
-___
+---
 
 ### signingManager
 
 • **signingManager**: [`default`](signing.default.md)
 **`Example`**
 
-``` typescript 
+```typescript
 // signing manager
 
 await entropy.signingManager.sign({
-      sigRequestHash,
-      hash: this.adapters[type].hash,
-      type,
-    })
-``` 
+  sigRequestHash,
+  hash: this.adapters[type].hash,
+  type,
+})
+```
 
 #### Defined in
 
 [index.ts:69](https://github.com/entropyxyz/sdk/blob/1c426d7/src/index.ts#L69)
-
-
 
 ### sign
 
@@ -452,8 +449,8 @@ for a more detailed overview of signing read: [signing](https://github.com/entro
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
+| Name     | Type                                            | Description                         |
+| :------- | :---------------------------------------------- | :---------------------------------- |
 | `params` | [`SigOps`](./docs/interfaces/signing.SigOps.md) | The signature operation parameters. |
 
 #### Returns
@@ -468,17 +465,17 @@ for a more detailed overview of signing read: [signing](https://github.com/entro
 
 **`Example`**
 
-``` typescript 
+```typescript
 // sign transaction
 
-await entropy.signTransaction({txParams: basicTx, type: 'eth' })
+await entropy.signTransaction({ txParams: basicTx, type: 'eth' })
 ```
 
 #### Defined in
 
 [index.ts:259](https://github.com/entropyxyz/sdk/blob/1c426d7/src/index.ts#L259)
 
-___
+---
 
 ### signTransaction
 
@@ -494,8 +491,8 @@ transaction request hash, and if necessary, the `postSign` function of the adapt
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
+| Name     | Type                                                | Description                                 |
+| :------- | :-------------------------------------------------- | :------------------------------------------ |
 | `params` | [`SigTxOps`](./docs/interfaces/signing.SigTxOps.md) | The parameters for signing the transaction. |
 
 #### Returns
@@ -505,7 +502,7 @@ transaction request hash, and if necessary, the `postSign` function of the adapt
 - A promise resolving to the transaction signature.
 
 A promise that returns the transaction signature. Note that the structure
-         and format of this signature may differ based on the adapter.
+and format of this signature may differ based on the adapter.
 
 **`Throws`**
 
@@ -517,39 +514,42 @@ Will throw an error if the transaction type does not have a corresponding adapte
 
 **`Example`**
 
-``` typescript 
+```typescript
 // signing manager
 
 await entropy.signingManager.sign({
-      sigRequestHash,
-      hash: this.adapters[type].hash,
-      type,
-    })
-``` 
+  sigRequestHash,
+  hash: this.adapters[type].hash,
+  type,
+})
+```
 
 #### Defined in
 
 [index.ts:240](https://github.com/entropyxyz/sdk/blob/1c426d7/src/index.ts#L240)
 
-
-___
+---
 
 ### substrate
 
 • **substrate**: `ApiPromise`
 
 **`Example`**
-``` typescript 
-  // a simple get balance for user
 
-    const accountInfo = await entropy.substrate.query.system.account(address)
+```typescript
+// a simple get balance for user
 
-    const freeBalance = hexToBigInt(accountInfo.data.free)
+const accountInfo = await entropy.substrate.query.system.account(address)
 
-    console.log(`Address ${selectedAccount.address} has a balance of: ${freeBalance.toString()} bits`)
+const freeBalance = hexToBigInt(accountInfo.data.free)
+
+console.log(
+  `Address ${
+    selectedAccount.address
+  } has a balance of: ${freeBalance.toString()} bits`
+)
 ```
+
 #### Defined in
 
 [index.ts:71](https://github.com/entropyxyz/sdk/blob/1c426d7/src/index.ts#L71)
-
-
