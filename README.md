@@ -142,9 +142,7 @@ const signature = await entropy.signTransaction({
 
 ## Documentation
 
-<!-- TODO: URL -->
-
-See [online documentation]()
+See TODO URL
 
 Or build a copy locally:
 

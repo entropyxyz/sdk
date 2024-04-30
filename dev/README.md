@@ -11,7 +11,7 @@ The SDK version must match a compatible [`entropy-core`](https://github.com/entr
 | `@entropyxyz/sdk` | `main` TODO       |
 | `entropy-core`    | `release/v0.0.11` |
 
-### When updating core version:
+## When updating core version:
 
 - [ ] change docker version in ./bin/ENTROPY_CORE_VERSION.sh
 - [ ] generate types
@@ -24,10 +24,30 @@ The SDK version must match a compatible [`entropy-core`](https://github.com/entr
 - [ ] run `yarn test`
 - [ ] push up and PR
 
-### When publishing
+## Linting
 
-- [ ] run: `yarn burn`
-- [ ] run: `yarn lint --fix`
-- [ ] run: `yarn bundle`
-- [ ] run: `yarn version --patch` (or whatever)
-- [ ] run: `npm publish`
+We've got automated linting set up as a pre-commit hook.
+Setup
+
+- dependencies: `husky`, `pinst`, `lint-staged`
+- files: `.husky/`
+
+If you are blocked from committing, you can skip these hooks
+
+```bash
+git commit --no-verify
+```
+
+## Publishing
+
+Always publish from `stable` branch
+
+```bash
+git checkout stable
+yarn burn
+yarn
+yarn bundle
+yarn version --patch # patch|minor|major
+npm publish
+git push origin stable --tags
+```
