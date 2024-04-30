@@ -9,13 +9,12 @@ export default defineConfig((options) => {
       // 'src/utils/crypto.ts'
     ],
     replaceNodeEnv: true,
-    format: ['esm', 'cjs'],
+    format: ['esm'],
     dts: true,
     // todo: env var for this?
     sourcemap: false,
     clean: true,
     target: 'es2022',
-    minify: options.minify,
     watch: options.watch,
   }
 })

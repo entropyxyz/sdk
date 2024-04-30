@@ -6,17 +6,10 @@ import {
   disconnect,
   charlieStashSeed,
   charlieStashAddress,
-  whitelisted_test_evm_address,
 } from './testing-utils'
-import { Keyring } from '@polkadot/api'
 import { getWallet } from '../src/keys'
-import { mnemonicGenerate } from '@polkadot/util-crypto'
-import { buf2hex } from '../src/utils'
 import { execFileSync } from 'child_process'
-import { Transaction } from 'ethereumjs-tx'
-import { preSign } from '../src/signing/adapters/eth'
 import { ProgramData } from '../src/programs'
-import { stringToU8a } from '@polkadot/util'
 import * as util from '@polkadot/util'
 
 describe('Core Tests', () => {
@@ -214,6 +207,7 @@ describe('Core Tests', () => {
     const updatedRemovedPrograms = await entropy.programs.get(
       charlieStashAddress
     )
+    expect(updatedRemovedPrograms).toEqual(undefined)
 
     const basicTx = {
       to: '0x772b9a9e8aa1c9db861c6611a82d251db4fac990',

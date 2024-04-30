@@ -23,10 +23,10 @@ class ExtrinsicBaseClass {
   /**
    * Initializes a new instance of the `ExtrinsicBaseClass`.
    *
-   * @param substrate - The instance of the Polkadot/Substrate API.
-   * @param signer - The signer object containing the wallet and other signing-related functionalities.
+   * @param opts
+   * @param opts.substrate {ApiPromise} - The instance of the Polkadot/Substrate API.
+   * @param opts.signer {Signer} - The signer object containing the wallet and other signing-related functionalities.
    */
-
   constructor({
     substrate,
     signer,

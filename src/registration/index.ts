@@ -3,14 +3,6 @@ import { Signer, Address } from '../types'
 import { ApiPromise } from '@polkadot/api'
 import { ProgramData } from '../programs'
 
-export interface RegistrationManagerOpts {
-  /** The Polkadot/ Substrate API instance. */
-  substrate: ApiPromise
-
-  /** The Signer used for signing transactions. */
-  signer: Signer
-}
-
 export interface RegistrationParams {
   /** Indicates if the registration transaction should be free. */
   freeTx?: boolean
@@ -46,10 +38,18 @@ class RegistrationManager extends ExtrinsicBaseClass {
   /**
    * Constructs a new instance of the `RegistrationManager` class.
    *
-   * @param opts {RegistrationManagerOpts}
+   * @param opts
+   * @param opts.substrate {ApiPromise} - The instance of the Polkadot/Substrate API.
+   * @param opts.signer {Signer} - The Signer object used for signing transactions.
    */
-  constructor(opts: RegistrationManagerOpts) {
-    super(opts)
+  constructor({
+    substrate,
+    signer,
+  }: {
+    substrate: ApiPromise
+    signer: Signer
+  }) {
+    super({ substrate, signer })
   }
 
   /**
@@ -158,7 +158,9 @@ class RegistrationManager extends ExtrinsicBaseClass {
 
   async checkRegistrationStatus(address: Address): Promise<boolean> {
     // WIP here
-    console.log('relayer', this.substrate.query.relayer) // undefined
+    console.log('substrate.query:', Object.keys(this.substrate.query))
+    // this.substrate.query.relayer === undefined
+
     const isRegistered = await this.substrate.query.relayer.registered(address)
     return !!isRegistered.toJSON()
   }
