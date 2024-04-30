@@ -6,11 +6,10 @@ The SDK version must match a compatible [`entropy-core`](https://github.com/entr
 
 <!-- TODO: -->
 
-module | tag
----|---
-`@entropyxyz/sdk` | `main` TODO
-`entropy-core` | `release/v0.0.11`
-
+| module            | tag               |
+| ----------------- | ----------------- |
+| `@entropyxyz/sdk` | `main` TODO       |
+| `entropy-core`    | `release/v0.0.11` |
 
 ### When updating core version:
 

@@ -41,7 +41,7 @@ class RegistrationManager extends ExtrinsicBaseClass {
    * @param {ApiPromise} substrate - The Polkadot/Substrate API instance.
    * @param {Signer} signer - The signer used for signing transactions.
    */
-  constructor ({
+  constructor({
     substrate,
     signer,
   }: {
@@ -63,7 +63,7 @@ class RegistrationManager extends ExtrinsicBaseClass {
    * @throws {Error} If the user is already registered.
    */
 
-  async register ({
+  async register({
     freeTx = false,
     initialPrograms = [],
     keyVisibility = 'Permissioned',
@@ -152,7 +152,7 @@ class RegistrationManager extends ExtrinsicBaseClass {
    * @returns A promise which resolves to `true` if the address is registered, otherwise `false`.
    */
 
-  async checkRegistrationStatus (address: Address): Promise<boolean> {
+  async checkRegistrationStatus(address: Address): Promise<boolean> {
     console.log('relayer', this.substrate.query.relayer) // undefined
     const isRegistered = await this.substrate.query.relayer.registered(address)
     return !!isRegistered.toJSON()

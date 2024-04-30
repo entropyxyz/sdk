@@ -35,7 +35,7 @@ class ProgramDev extends ExtrinsicBaseClass {
    * @param {Signer} signer - The Signer instance.
    */
 
-  constructor ({
+  constructor({
     substrate,
     signer,
   }: {
@@ -52,7 +52,7 @@ class ProgramDev extends ExtrinsicBaseClass {
    * @returns {Promise<ProgramInfo>} - A Promise resolving to the program information.
    */
 
-  async get (pointer: string): Promise<ProgramInfo> {
+  async get(pointer: string): Promise<ProgramInfo> {
     // fetch program bytecode using the program pointer at the specific block hash
     const responseOption = await this.substrate.query.programs.programs(pointer)
 
@@ -69,7 +69,7 @@ class ProgramDev extends ExtrinsicBaseClass {
    * @returns {Promise<string>} - A Promise resolving to the hash of the deployed program.
    */
 
-  async deploy (
+  async deploy(
     program: ArrayBuffer,
     configurationInterface?: unknown
   ): Promise<string> {
@@ -97,7 +97,7 @@ class ProgramDev extends ExtrinsicBaseClass {
    * @returns {Promise<void>} - A Promise resolving when the program is removed.
    */
 
-  async remove (programHash: string | Uint8Array): Promise<void> {
+  async remove(programHash: string | Uint8Array): Promise<void> {
     const tx: SubmittableExtrinsic<'promise'> = this.substrate.tx.programs.removeProgram(
       programHash
     )
@@ -117,7 +117,7 @@ class ProgramDev extends ExtrinsicBaseClass {
    * @returns {ProgramInfo} - The formatted program information.
    */
 
-  #formatProgramInfo (programInfo): ProgramInfo {
+  #formatProgramInfo(programInfo): ProgramInfo {
     const { configurationInterface, deployer, refCounter } = programInfo
     const bytecode = hex2buf(stripHexPrefix(programInfo.bytecode)) // Convert hex string to ArrayBuffer
     return { configurationInterface, deployer, refCounter, bytecode }

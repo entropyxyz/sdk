@@ -64,7 +64,7 @@ class SignatureRequestManager {
    * @param {CryptoLib} config.crypto - Instance of CryptoLib for cryptographic operations.
    */
 
-  constructor ({ signer, substrate, adapters, crypto }: Config) {
+  constructor({ signer, substrate, adapters, crypto }: Config) {
     this.signer = signer
     this.substrate = substrate
     this.crypto = crypto
@@ -84,7 +84,7 @@ class SignatureRequestManager {
    * @throws {Error} if an adapter for the transaction type is not found, or if the adapter lacks a preSign function.
    */
 
-  async signTransaction ({ txParams, type }: SigTxOps): Promise<unknown> {
+  async signTransaction({ txParams, type }: SigTxOps): Promise<unknown> {
     if (!this.adapters[type])
       throw new Error(`No transaction adapter for type: ${type} submit as hash`)
     if (!this.adapters[type].preSign)
@@ -112,7 +112,7 @@ class SignatureRequestManager {
    * @returns {Promise<Uint8Array>} A promise resolving to the signed hash as a Uint8Array.
    */
 
-  async sign ({
+  async sign({
     sigRequestHash,
     hash,
     auxilaryData,
@@ -138,7 +138,7 @@ class SignatureRequestManager {
    * @returns An object containing `secs_since_epoch` and `nanos_since_epoch`.
    */
 
-  getTimeStamp () {
+  getTimeStamp() {
     const timestampInMilliseconds = Date.now()
     const secs_since_epoch = Math.floor(timestampInMilliseconds / 1000)
     const nanos_since_epoch = (timestampInMilliseconds % 1000) * 1_000_000
@@ -160,7 +160,7 @@ class SignatureRequestManager {
    * @returns {Promise<EncMsg[]>} A promise resolving to an array of encrypted messages for validators.
    */
 
-  async formatTxRequests ({
+  async formatTxRequests({
     strippedsigRequestHash,
     validatorsInfo,
     auxilaryData,
@@ -228,7 +228,7 @@ class SignatureRequestManager {
    * @returns {Promise<string[][]>} A promise that resolves to an array of arrays of signatures in string format.
    */
 
-  async submitTransactionRequest (txReq: Array<EncMsg>): Promise<string[][]> {
+  async submitTransactionRequest(txReq: Array<EncMsg>): Promise<string[][]> {
     return Promise.all(
       txReq.map(async (message: EncMsg) => {
         // Extract the required fields from parsedMsg
@@ -254,7 +254,7 @@ class SignatureRequestManager {
    * @returns {Promise<ValidatorInfo[]>} A promise resolving to an array of validator information.
    */
 
-  async pickValidators (sigRequest: string): Promise<ValidatorInfo[]> {
+  async pickValidators(sigRequest: string): Promise<ValidatorInfo[]> {
     const entries = await this.substrate.query.stakingExtension.signingGroups.entries()
     const stashKeys = entries.map((group) => {
       const keyGroup = group[1]
@@ -300,7 +300,7 @@ class SignatureRequestManager {
    * @returns The first valid signature after verification.
    */
 
-  async verifyAndReduceSignatures (sigsAndProofs: string[][]): Promise<string> {
+  async verifyAndReduceSignatures(sigsAndProofs: string[][]): Promise<string> {
     const seperatedSigsAndProofs = sigsAndProofs.reduce(
       (a, sp) => {
         if (!sp || !sp.length) return a

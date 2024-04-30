@@ -94,7 +94,7 @@ class Entropy {
    * @param {EntropyOpts} opts - The configuration options for the Entropy instance.
    */
 
-  constructor (opts: EntropyOpts) {
+  constructor(opts: EntropyOpts) {
     this.ready = new Promise((resolve, reject) => {
       this.#ready = resolve
       this.#fail = reject
@@ -105,20 +105,20 @@ class Entropy {
     })
   }
 
-  async #init (opts: EntropyOpts) {
+  async #init(opts: EntropyOpts) {
     this.account = opts.account
     this.#setReadOnlyStates()
 
     const wsProvider = new WsProvider(opts.endpoint)
     this.substrate = new ApiPromise({ provider: wsProvider })
-    await this.substrate.isReadyOrError
-      .catch(err => {
-        const cause = err.message === "connect ECONNREFUSED 127.0.0.1:9944"
+    await this.substrate.isReadyOrError.catch((err) => {
+      const cause =
+        err.message === 'connect ECONNREFUSED 127.0.0.1:9944'
           ? 'Entropy#init EntropyAccount.endpoint not accessible'
           : 'Entropy#init substrate startup failed'
-        throw new Error(err.error, { cause })
-        // NOTE this err is from ws, has non-standard API
-      })
+      throw new Error(err.error, { cause })
+      // NOTE this err is from ws, has non-standard API
+    })
 
     this.registrationManager = new RegistrationManager({
       substrate: this.substrate,
@@ -160,7 +160,7 @@ class Entropy {
     this.#setVerfiyingKeys()
   }
 
-  async #setVerfiyingKeys (): Promise<void> {
+  async #setVerfiyingKeys(): Promise<void> {
     // if an account was provided
     if (this.account) {
       // and their is a sigRequest key
@@ -177,7 +177,7 @@ class Entropy {
   }
 
   /** @internal */
-  #setReadOnlyStates (): void {
+  #setReadOnlyStates(): void {
     // the readOnly state will not allow for write functions
     this.#programReadOnly = false
     this.#allReadOnly = false
@@ -218,7 +218,7 @@ class Entropy {
    * @throws {Error} - If the address is already registered or if there's a problem during registration.
    */
 
-  async register (
+  async register(
     params: RegistrationParams & { account?: EntropyAccount }
   ): Promise<void> {
     await this.ready
@@ -251,7 +251,7 @@ class Entropy {
    * @returns {Promise<string>} - A promise resolving to the verifying key.
    */
 
-  async getVerifyingKey (address: Address): Promise<string> {
+  async getVerifyingKey(address: Address): Promise<string> {
     const registeredInfo = await this.substrate.query.relayer.registered(
       address
     )
@@ -276,7 +276,7 @@ class Entropy {
    * @throws {Error} Will throw an error if the transaction type does not have a corresponding adapter.
    */
 
-  async signTransaction (params: SigTxOps): Promise<unknown> {
+  async signTransaction(params: SigTxOps): Promise<unknown> {
     await this.ready
     if (this.#allReadOnly)
       throw new Error(
@@ -295,7 +295,7 @@ class Entropy {
    * @throws {Error} - If there's an error in the signing routine.
    */
 
-  async sign (params: SigOps): Promise<Uint8Array> {
+  async sign(params: SigOps): Promise<Uint8Array> {
     await this.ready
     if (this.#allReadOnly)
       throw new Error(

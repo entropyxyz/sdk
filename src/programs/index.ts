@@ -27,7 +27,7 @@ class ProgramManager extends ExtrinsicBaseClass {
    * @alpha
    */
   dev: ProgramDev
-  constructor ({
+  constructor({
     substrate,
     programModKey,
     programDeployKey,
@@ -51,7 +51,7 @@ class ProgramManager extends ExtrinsicBaseClass {
    * @alpha
    */
 
-  async get (sigReqAccount: string): Promise<ProgramData[]> {
+  async get(sigReqAccount: string): Promise<ProgramData[]> {
     const registeredOption = await this.substrate.query.relayer.registered(
       sigReqAccount
     )
@@ -82,7 +82,7 @@ class ProgramManager extends ExtrinsicBaseClass {
    * @alpha
    */
 
-  async set (
+  async set(
     newList: ProgramData[],
     sigReqAccount = this.signer.wallet.address,
     programModKey?: string
@@ -99,7 +99,7 @@ class ProgramManager extends ExtrinsicBaseClass {
 
     const registeredInfo = registeredInfoOption.toJSON()
     const isAuthorized =
-    // @ts-ignore: next line :{
+      // @ts-ignore: next line :{
       registeredInfo.programModificationAccount === programModKey
 
     if (!isAuthorized) {
@@ -133,7 +133,7 @@ class ProgramManager extends ExtrinsicBaseClass {
    * @alpha
    */
 
-  async remove (
+  async remove(
     programHashToRemove: string,
     sigReqAccount = this.signer.wallet.address,
     programModKey?: string
@@ -158,7 +158,7 @@ class ProgramManager extends ExtrinsicBaseClass {
    * @alpha
    */
 
-  async add (
+  async add(
     newProgram: ProgramData,
     sigReqAccount = this.signer.wallet.address,
     programModKey?: string

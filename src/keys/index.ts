@@ -17,7 +17,7 @@ import { Signer } from '../types'
  * @returns A boolean indicating whether the provided object is a valid `Signer` pair.
  */
 
-export function isValidPair (pair: Signer): boolean {
+export function isValidPair(pair: Signer): boolean {
   if (!pair) return false
   if (typeof pair !== 'object') return false
   if (!pair.pair.publicKey) return false
@@ -35,10 +35,10 @@ export function isValidPair (pair: Signer): boolean {
  * @returns A function that takes a `Signer` or seed string and returns a Promise resolving to an object containing the wallet and its associated `Signer`.
  */
 
-function setupGetWallet (): (input: string) => Promise<Signer | undefined> {
+function setupGetWallet(): (input: string) => Promise<Signer | undefined> {
   const keyring = new Keyring({ type: 'sr25519' })
 
-  return async function getWallet (input: string): Promise<Signer | undefined> {
+  return async function getWallet(input: string): Promise<Signer | undefined> {
     // do a string typecheck
     if (typeof input === 'string') {
       await cryptoWaitReady()
@@ -71,7 +71,7 @@ export const getWallet: (
  * @returns A Promise resolving to a `Signer` object containing the generated or derived wallet and its associated key pair.
  */
 
-export async function mnemonicGenOrDerive (
+export async function mnemonicGenOrDerive(
   mnemonic?: string,
   derivationPath?: string
 ): Promise<Signer> {

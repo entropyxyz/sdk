@@ -94,7 +94,7 @@ export const crypto: CryptoLib = new Proxy({} as CryptoLib, {
  * @returns A Promise that resolves to a boolean indicating whether the signature is valid.
  */
 
-async function verifySignature (
+async function verifySignature(
   message: string,
   signature: string,
   address: string
@@ -111,7 +111,7 @@ async function verifySignature (
  * @returns The imported crypto library.
  */
 
-export async function loadCryptoLib () {
+export async function loadCryptoLib() {
   if (isImported) return cryptoLib
 
   if (!globalThis.window) {
