@@ -1,2 +1,6 @@
 **/*.yaml
+<<<<<<< HEAD
+=======
+entropy-metadata*.json
+>>>>>>> 9898202802f4c9d6d3f9f57cb39c37cf3efe737f
 LICENSE.md

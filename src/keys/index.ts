@@ -55,7 +55,7 @@ function setupGetWallet(): (input: string) => Promise<Signer | undefined> {
 /**
  * Retrieves a wallet from a `Signer` object or a seed string.
  *
- * @param pair - A `Signer` seed string (base64, hex encoded)
+ * @param pair {String} - A `Signer` seed string (base64, hex encoded)
  * @returns A Promise resolving to an object containing the wallet and its associated `Signer`, or undefined if the input is invalid.
  */
 export const getWallet: (input: string) => Promise<Signer | undefined> =

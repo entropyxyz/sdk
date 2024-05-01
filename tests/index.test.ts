@@ -207,7 +207,7 @@ describe('Core Tests', () => {
     const updatedRemovedPrograms = await entropy.programs.get(
       charlieStashAddress
     )
-    expect(updatedRemovedPrograms).toEqual(undefined)
+    expect(updatedRemovedPrograms).toEqual(undefined) // TODO: do something with this variable!
 
     const basicTx = {
       to: '0x772b9a9e8aa1c9db861c6611a82d251db4fac990',

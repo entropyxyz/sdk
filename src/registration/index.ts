@@ -157,10 +157,6 @@ class RegistrationManager extends ExtrinsicBaseClass {
    */
 
   async checkRegistrationStatus(address: Address): Promise<boolean> {
-    // WIP here
-    console.log('substrate.query:', Object.keys(this.substrate.query))
-    // this.substrate.query.relayer === undefined
-
     const isRegistered = await this.substrate.query.relayer.registered(address)
     return !!isRegistered.toJSON()
   }
