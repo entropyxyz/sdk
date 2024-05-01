@@ -1,17 +1,10 @@
 import { readFileSync } from 'fs'
+import { execFileSync } from 'child_process'
 import Entropy from '../src'
-import {
-  sleep,
-  disconnect,
-  charlieStashSeed,
-  charlieStashAddress,
-} from './testing-utils'
-import { Keyring } from '@polkadot/api'
+import { sleep, disconnect, charlieStashSeed } from './testing-utils'
 import { getWallet } from '../src/keys'
 import { EntropyAccount } from '../src'
-import { mnemonicGenerate } from '@polkadot/util-crypto'
 import { buf2hex } from '../src/utils'
-import { execFileSync } from 'child_process'
 
 describe('Programs Tests', () => {
   let entropy: Entropy
@@ -59,8 +52,11 @@ describe('Programs Tests', () => {
     const dummyProgram = readFileSync(
       './tests/testing-utils/template_barebones.wasm'
     )
+
     const pointer = await entropy.programs.dev.deploy(dummyProgram)
+    // @ts-ignore next line
     const fetchedProgram = await entropy.programs.dev.get(pointer)
+    // @ts-ignore next line
     expect(buf2hex(fetchedProgram.bytecode)).toEqual(buf2hex(dummyProgram))
   })
 })

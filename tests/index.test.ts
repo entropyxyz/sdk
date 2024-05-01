@@ -140,6 +140,7 @@ describe('Core Tests', () => {
     const programConfig = util.u8aToHex(new Uint8Array(byteArray))
 
     const programData: ProgramData = {
+      // @ts-ignore next line
       programPointer: pointer,
       programConfig: programConfig,
     }
@@ -193,7 +194,9 @@ describe('Core Tests', () => {
     )
 
     const newPointer = await entropy.programs.dev.deploy(dummyProgram)
+    // TODO: fix this ts-ignore. This deploy should always return a string right? that or it is throwing an error...
     const secondProgramData: ProgramData = {
+      // @ts-ignore next line
       programPointer: newPointer,
       programConfig: '',
     }
@@ -203,6 +206,8 @@ describe('Core Tests', () => {
 
     console.log('CHARLIES PROGRAMS', programs)
     // removing charlie program barebones
+    // TODO: remove this ts-ignore
+    // @ts-ignore next line
     await entropy.programs.remove(newPointer, charlieStashAddress)
     const updatedRemovedPrograms = await entropy.programs.get(
       charlieStashAddress

@@ -9,6 +9,25 @@ export interface ProgramData {
   programConfig?: unknown
 }
 
+interface ProgramManagerOpts {
+  /** Substrate API object. */
+  substrate: ApiPromise
+  /** The signer object for the user interfacing with Entropy. */
+  programModKey: Signer
+  /** The signer object for the user interfacing with Entropy. */
+  programDeployKey?: Signer
+}
+
+class DummyProgramDev {
+  deploy() {
+    throw new Error('Cannot deploy, requires EntropyAccount.programDeployKey')
+  }
+
+  get() {
+    throw new Error('Cannot get, requires EntropyAccount.programDeployKey')
+  }
+}
+
 /**
  * The ProgramManager class provides an interface to interact with Entropy Programs.
  */
@@ -16,26 +35,25 @@ class ProgramManager extends ExtrinsicBaseClass {
   /**
    * Creates an instance of ProgramManager.
    *
-   * @param {ApiPromise} substrate - Substrate API object.
-   * @param {Signer} programModKey - The signer object for the user interfacing with Entropy.
-   * @param {Signer} programDeployKey - The signer object for the user interfacing with Entropy.
+   * @param {ProgramManagerOpts}
    *
    * @remarks
    * The constructor initializes the Substrate api and the signer.
    * @alpha
    */
-  dev: ProgramDev
-  constructor({
-    substrate,
-    programModKey,
-    programDeployKey,
-  }: {
-    substrate: ApiPromise
-    programModKey: Signer
-    programDeployKey?: Signer
-  }) {
-    super({ substrate, signer: programModKey })
-    this.dev = new ProgramDev({ substrate, signer: programDeployKey })
+  dev: ProgramDev | DummyProgramDev
+  constructor(opts: ProgramManagerOpts) {
+    super({
+      substrate: opts.substrate,
+      signer: opts.programModKey,
+    })
+
+    this.dev = opts.programDeployKey
+      ? new ProgramDev({
+        substrate: opts.substrate,
+        signer: opts.programDeployKey,
+      })
+      : new DummyProgramDev()
   }
 
   /**

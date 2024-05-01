@@ -10,6 +10,13 @@ interface Decoded extends RegistryError {
   section: string
 }
 
+interface ExtrinsicBaseClassOpts {
+  // The instance of the Polkadot/Substrate API.
+  substrate: ApiPromise
+  // The signer object containing the wallet and other signing-related functionalities.
+  signer: Signer
+}
+
 /**
  * A utility class to simplify extrinsic operations with the Polkadot/Substrate API.
  * Allows the user to send extrinsics and automatically handles errors, events, and certain special conditions like free transactions.
@@ -24,18 +31,15 @@ class ExtrinsicBaseClass {
    * Initializes a new instance of the `ExtrinsicBaseClass`.
    *
    * @param opts
-   * @param opts.substrate {ApiPromise} - The instance of the Polkadot/Substrate API.
-   * @param opts.signer {Signer} - The signer object containing the wallet and other signing-related functionalities.
    */
-  constructor({
-    substrate,
-    signer,
-  }: {
-    substrate: ApiPromise
-    signer: Signer
-  }) {
-    this.substrate = substrate
-    this.signer = signer
+  constructor(opts: ExtrinsicBaseClassOpts) {
+    // TODO: remove these once typescript is catching these errors correctly
+    if (!opts.substrate)
+      throw Error(`${this.constructor.name} requires params.substrate`)
+    if (!opts.signer)
+      throw Error(`${this.constructor.name} requires params.signer`)
+    this.substrate = opts.substrate
+    this.signer = opts.signer
   }
 
   /**

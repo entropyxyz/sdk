@@ -1,9 +1,20 @@
-import ExtrinsicBaseClass from '../extrinsic'
 import { ApiPromise } from '@polkadot/api'
-import { Signer } from '../types'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
-import { hex2buf, stripHexPrefix } from '../utils'
 import * as util from '@polkadot/util'
+import ExtrinsicBaseClass from '../extrinsic'
+import { Signer } from '../types'
+import { hex2buf, stripHexPrefix } from '../utils'
+
+interface ProgramInfoJSON {
+  /** The bytecode of the program (as a hex string). */
+  bytecode: string
+  /** The configuration interface of the program. */
+  configurationInterface?: unknown
+  /** The address of the deployer of the program. */
+  deployer: string
+  /** The reference count for the program. */
+  refCounter: number
+}
 
 /**
  * Represents program information.
@@ -19,6 +30,13 @@ export interface ProgramInfo {
   refCounter: number
 }
 
+interface ProgramDevOpts {
+  // The Substrate API instance
+  substrate: ApiPromise
+  // The Signer instance
+  signer: Signer
+}
+
 /**
  * Class to handle program-related extrinsic functions.
  *
@@ -26,21 +44,22 @@ export interface ProgramInfo {
  */
 
 class ProgramDev extends ExtrinsicBaseClass {
+  #freeTx: boolean
   /**
    * Constructs a ProgramDev instance.
    *
-   * @param {ApiPromise} substrate - The Substrate API instance.
-   * @param {Signer} signer - The Signer instance.
+   * @param opts {ProgramDevOpts} - constuctor params
    */
 
-  constructor({
-    substrate,
-    signer,
-  }: {
-    substrate: ApiPromise
-    signer: Signer
-  }) {
-    super({ substrate, signer })
+  constructor(opts: ProgramDevOpts) {
+    super({
+      substrate: opts.substrate,
+      signer: opts.signer,
+    })
+
+    // this.#freeTx = false
+    // HACK: was getting an error about Inability to pay some fees
+    this.#freeTx = true
   }
 
   /**
@@ -55,7 +74,8 @@ class ProgramDev extends ExtrinsicBaseClass {
     const responseOption = await this.substrate.query.programs.programs(pointer)
 
     const programInfo = responseOption.toJSON()
-
+    // WARN: why is this JSON? it looks like the next function expects an Object, not JSON!?
+    // @ts-ignore next-line .... TODO: remove this
     return this.#formatProgramInfo(programInfo)
   }
 
@@ -80,7 +100,7 @@ class ProgramDev extends ExtrinsicBaseClass {
         formatedConfig
       )
 
-    const record = await this.sendAndWaitFor(tx, false, {
+    const record = await this.sendAndWaitFor(tx, this.#freeTx, {
       section: 'programs',
       name: 'ProgramCreated',
     })
@@ -100,7 +120,7 @@ class ProgramDev extends ExtrinsicBaseClass {
     const tx: SubmittableExtrinsic<'promise'> =
       this.substrate.tx.programs.removeProgram(programHash)
 
-    await this.sendAndWaitFor(tx, false, {
+    await this.sendAndWaitFor(tx, this.#freeTx, {
       section: 'programs',
       name: 'ProgramRemoved',
     })
@@ -115,9 +135,9 @@ class ProgramDev extends ExtrinsicBaseClass {
    * @returns {ProgramInfo} - The formatted program information.
    */
 
-  #formatProgramInfo(programInfo): ProgramInfo {
+  #formatProgramInfo(programInfo: ProgramInfoJSON): ProgramInfo {
     const { configurationInterface, deployer, refCounter } = programInfo
-    const bytecode = hex2buf(stripHexPrefix(programInfo.bytecode)) // Convert hex string to ArrayBuffer
+    const bytecode = hex2buf(stripHexPrefix(programInfo.bytecode)) // hex string => ArrayBuffer
     return { configurationInterface, deployer, refCounter, bytecode }
   }
 }

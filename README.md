@@ -34,10 +34,13 @@ const entropyAccount = {
   programModKey: signer,
 }
 
-const entropy = new Entropy({ account: entropyAccount })
-await entropy.ready
+const entropy = new Entropy({
+  account: entropyAccount,
+  endpoint: 'ws://127.0.0.1:9944',
+})
 
-// you have to wate for entropy to be ready
+// you have to wait for entropy to be ready
+await entropy.ready
 ```
 
 NOTE: Users should await the `ready` promise to ensure that the class has been
@@ -97,7 +100,7 @@ const res = await entropy.register({
 // TODO what does it return?
 ```
 
-<!-- // NICER DX
+<!-- // TODO: NICER DX
 const programData = {
   programPointer,
   programConfig: {

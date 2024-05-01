@@ -11,7 +11,7 @@ describe('Crypto Tests', () => {
   }
 
   const mockData = {
-    endpoint: '127.0.0.1:3001',
+    endpoint: 'ws://127.0.0.1:3001',
     tssAccount: '5H8qc7f4mXFY16NBWSB9qkc6pTks98HdVuoQTs1aova5fRtN',
     x25519_public_key: stripHexPrefix(
       '0x0ac029f0b853b23bed652d6d0de69b7cc38d94f93732eefc85b5861e90f73a22'
@@ -24,7 +24,7 @@ describe('Crypto Tests', () => {
       195, 141, 148, 249, 55, 50, 238, 252, 133, 181, 134, 30, 144, 247, 58, 34,
     ]
 
-    const result = await crypto.fromHex(mockData.x25519_public_key)
+    const result = crypto.fromHex(mockData.x25519_public_key)
     expect(result.toString()).toBe(mockReturn.toString())
   })
   it(`encrypts and signs`, async () => {
@@ -37,7 +37,8 @@ describe('Crypto Tests', () => {
 
     const alicePublicKey = await crypto.publicKeyFromSecret(aliceSecretKey)
 
-    const serverDHKey = await crypto.fromHex(mockData.x25519_public_key)
+    const serverDHKey = crypto.fromHex(mockData.x25519_public_key)
+    expect(serverDHKey).not.toEqual(undefined)
     const root = process.cwd()
 
     const thresholdKey = (await readKey(
