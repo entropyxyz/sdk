@@ -1,5 +1,19 @@
 # Hello sdk dev!
 
+This is your home base for how to develop on the project locally and process around that
+
+## Branches
+
+- `dev`
+  in development
+- `main`
+  "stable" what is on npm
+
+- `user-name/issue-number-short-title` (personal branches)
+  for example `frankie/i123-docs`
+
+all PRS go into `dev`
+
 ## versions
 
 The SDK version must match a compatible [`entropy-core`](https://github.com/entropyxyz/entropy-core) version.
@@ -20,7 +34,7 @@ The SDK version must match a compatible [`entropy-core`](https://github.com/entr
   - `dev/bin/generate-types.sh`
   - `dev/bin/spin-down.sh two-nodes`
 - [ ] run `yarn tsc` just to make sure that went "okay" or as okay as it can be. generated types are ignored in tsc check but are used in project (kind of not really if you fix it frankie will love you and that will secure you a seat at her round table)
-- [ ] fix crate renamings etc in sdk
+- [ ] fix crate renaming etc in sdk
 - [ ] run `yarn test`
 - [ ] push up and PR
 
@@ -40,12 +54,31 @@ git commit --no-verify
 
 ## Publishing
 
+**Unfinished section**
+
 Always publish from `stable` branch
+
+- [ ] craft version pr for `dev` into `main`
+- [ ] `yarn burn`
+- [ ] `yarn build`
+- [ ] `yarn test`
+
+  - change logs should be hand written as apart of the version pr
+  - `yarn version patch #or major.minor.patch`
+
+  <!-- TO-DO: figure out with him an automated system -->
+
+- [ ] minimum day ideally two day before ping @johnnymatthews on version bump pr set 48 hour timer
+- [ ] after timer merge into main
+- [ ] `git push origin main --tags`
+- [ ] make sure we have a version tag
+- [ ] check out version tag
+- [ ] create a tag push to main? this might be handled by yarn needs to be checked
+- [ ] `npm publish`
 
 ```bash
 git checkout stable
 yarn burn
-yarn
 yarn bundle
 yarn version --patch # patch|minor|major
 npm publish
