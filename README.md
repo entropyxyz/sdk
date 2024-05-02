@@ -15,6 +15,8 @@ transactions.
 npm i @entropyxyz/sdk
 ```
 
+TODO: Clarfiy accounts on entropy the network along with key scheme and how they are used
+
 ## Example Usage
 
 This example that instantiates Entropy, deploys a program, registers using the
@@ -23,79 +25,69 @@ deployed program, and signs a transaction.
 ### 1. Start Entropy
 
 ```js
-import Entropy, { makeSeed, getWallet } from '@entropyxyz/sdk'
+import { generateSeed } from '@entropyxyz/sdk/keys'
+import Entropy from '@entropyxyz/sdk'
 
-const seed = makeSeed()
-const signer = await getWallet(seed)
-
+// this is where you would provide seed material see
+const deviceSeed = generateSeed()
+const programModSeed = generateSeed()
 // create an Entropy Account object
-const entropyAccount = {
-  sigRequestKey: signer,
-  programModKey: signer,
+const entropySeedMaterial = {
+  deviceSeed,
+  programModSeed,
 }
 
 const entropy = new Entropy({
-  account: entropyAccount,
+  account: entropySeedMaterial,
   endpoint: 'ws://127.0.0.1:9944',
 })
 
 // you have to wait for entropy to be ready
 await entropy.ready
+
+// you need to fund your entropy address before registering your new entropy account
+
+const address = entropy.programModKey.address
 ```
 
 NOTE: Users should await the `ready` promise to ensure that the class has been
 initialized before performing operations.
 
-### 2. Deploy a program
-
-```js
-import { readFileSync } from 'fs'
-
-const basicTxProgram = readFileSync(
-  './tests/testing-utils/template_basic_transaction.wasm'
-)
-
-const programPointer = await entropy.programs.dev.deploy(basicTxProgram)
-// returns pointer hash
-// QUESTION: what's the dev.deploy
-// QUESTION: is this idempotent?
-// QUESTION: what stops DDOS?
-```
-
-### 3. Register the deployed program
+### 3. Register your entropy account
 
 ```js
 import util from '@entropyxyz/sdk/util'
 // TODO where is util coming from? Is it needed?
 // TODO make this DX nicer
 
+const programPointer = `0x0000000000000000000000000000000000000000000000000000000000000000`
 // configuration object
-const config = `{
-  "allowlisted_addresses": [
-    "772b9a9e8aa1c9db861c6611a82d251db4fac990"
-  ]
-}`
-
-// converts config to bytes
-const encoder = new TextEncoder()
-const byteArray = encoder.encode(config)
-
-// converts U8Array to hex
-const programConfig = util.u8aToHex(new Uint8Array(byteArray))
+const programConfig = {
+  // who can request a signature from entropy
+  allowlisted_addresses: [entropy.account.devceKey.address],
+}
 
 // construct Program Data
 const programData = {
   programPointer,
-  programConfig,
+  programConfigs,
 }
 
 // Register this user with this program
-const res = await entropy.register({
-  keyVisibility: 'Permissioned',
+// it will return the verifying key as a string
+// this key will be needed for signing and for verfiyg the signature of the signed message.
+
+// register is only run once
+// it is setting what programs you want with your chossen configurations
+// and getting back the verfyingKey that your signatures in entropy.signTransaction resolve to for that given program set
+
+// this costs tokens
+const verfiyingKey = await entropy.register({
   initialPrograms: [programData],
-  programModAccount: 'insert ProgramModAccount address',
   // TODO what is programModAccount?
 })
+// TO-DO get address from signer
+
 // on success, returns ...
 // TODO what does it return?
 ```
@@ -127,10 +119,10 @@ await entropy.register({
 const basicTx = {
   to: '0x772b9a9e8aa1c9db861c6611a82d251db4fac990',
   // TODO why is this different to allowlisted_addresses ?
-  value: 1,
+  value: 0,
   chainId: 1,
   nonce: 1,
-  data: '0x' + Buffer.from('Created On Entropy').toString('hex'),
+  data: '0x00',
   // TODO what?
 }
 
@@ -141,6 +133,67 @@ const signature = await entropy.signTransaction({
 })
 
 // TODO show this can be signed by a different Entropy instance?
+```
+
+from another device but an already registered account
+
+```ts
+
+import { generateSeed } from '@entropyxyz/sdk/keys'
+import Entropy from '@entropyxyz/sdk'
+
+// this is where you would provide seed material see
+const deviceSeed = generateSeed()
+// create an Entropy Account object
+const entropyAccount = {
+  deviceSeed,
+  verfiyingKeys: [verfiyingKey/*this is the verfiying key recived when you register*/]
+  type: 'REGISTERED_ACCOUNT'
+}
+
+const entropy = new Entropy({
+  account: entropyAccountJson,
+  endpoint: 'ws://127.0.0.1:9944',
+})
+
+// you have to wait for entropy to be ready
+await entropy.ready
+
+
+// TODO allow device seed by setting the program config for program entropy.programs.set?
+
+const basicTx = {
+  to: '0x772b9a9e8aa1c9db861c6611a82d251db4fac990',
+  // TODO why is this different to allowlisted_addresses ?
+  value: 0,
+  chainId: 1,
+  nonce: 1,
+  data: '0x00'
+  // TODO what?
+}
+
+// get entropy signature
+const signature = await entropy.signTransaction({
+  txParams: basicTx,
+  type: 'eth',
+  verfiyingKey,
+})
+```
+
+### 2. Deploy a program
+
+```js
+import { readFileSync } from 'fs'
+
+const basicTxProgram = readFileSync(
+  './tests/testing-utils/template_basic_transaction.wasm'
+)
+
+const programPointer = await entropy.programs.dev.deploy(basicTxProgram)
+// returns pointer hash
+// QUESTION: what's the dev.deploy
+// QUESTION: is this idempotent?
+// QUESTION: what stops DDOS?
 ```
 
 ## Documentation
