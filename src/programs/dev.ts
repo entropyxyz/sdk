@@ -57,9 +57,7 @@ class ProgramDev extends ExtrinsicBaseClass {
       signer: opts.signer,
     })
 
-    // this.#freeTx = false
-    // HACK: was getting an error about Inability to pay some fees
-    this.#freeTx = true
+    this.#freeTx = false
   }
 
   /**

@@ -4,9 +4,9 @@ export default defineConfig((options) => {
   return {
     entry: [
       'src/index.ts',
-      // 'src/keys/index.ts',
-      // 'src/utils/index.ts',
-      // 'src/utils/crypto.ts'
+      'src/keys/index.ts',
+      'src/utils/index.ts',
+      'src/utils/crypto.ts',
     ],
     replaceNodeEnv: true,
     format: ['esm'],

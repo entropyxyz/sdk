@@ -1,5 +1,7 @@
 import { readFileSync } from 'fs'
-import Entropy, { getWallet } from '../dist/index.js'
+// TODO: fix the "dist" thing
+import Entropy from '../dist/index.js'
+import { getWallet } from '../dist/keys/index.js'
 
 try {
   const seed =
