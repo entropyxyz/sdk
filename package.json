@@ -11,10 +11,11 @@
   "module": "dist/index.js",
   "browser": "dist/index.js",
   "scripts": {
-    "test": "yarn test:setup && yarn removedb && jest --runInBand --detectOpenHandles",
+    "test": "yarn test:setup && yarn removedb && tape -r ts-node/register/transpile-only tests/**/*.test.ts tests/*.test.ts",
     "test:setup": "docker version && [ \"$(cat .nvmrc)\" = \"$(node --version)\" ] && echo \"\\nCORRECT NODE VERSION\\n\" || { echo \"\\nINCORRECT NODE VERSION\\n\"; exit 1; }",
     "test:log": "yarn removedb && jest --runInBand --detectOpenHandles --silent=false --verbose",
-    "test:coverage": "yarn test:setup && yarn:removedb && jest --runInBand --detectOpenHandles --coverage --watchAll=false",
+    "test:coverage": "nyc yarn test",
+    "test:tape": "tape tests/index.test.ts",
     "lint": "yarn lint:ts && yarn lint:eslint",
     "lint:ts": "tsc",
     "lint:eslint": "eslint . --ext .ts --fix",
@@ -48,6 +49,7 @@
   "devDependencies": {
     "@polkadot/typegen": "^10.11.1",
     "@types/jest": "^29.4.0",
+    "@types/tape": "^5",
     "@typescript-eslint/eslint-plugin": "^5.43.0",
     "@typescript-eslint/parser": "^5.43.0",
     "depcheck": "^1.4.7",
@@ -55,8 +57,10 @@
     "husky": "^9.0.11",
     "jest": "^29.4.3",
     "lint-staged": ">=10",
+    "nyc": "^15.1.0",
     "pinst": "^3.0.0",
     "prettier": "2.8.8",
+    "tape": "^5.7.5",
     "ts-jest": "^29.0.5",
     "ts-node": "^10.9.1",
     "ts-prune": "^0.10.3",
@@ -76,10 +80,5 @@
   "lint-staged": {
     "*.ts": "eslint --fix",
     "*.{js,ts,json,md}": "prettier --write"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm run test:coverage"
-    }
   }
 }
