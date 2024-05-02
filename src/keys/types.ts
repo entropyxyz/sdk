@@ -19,7 +19,7 @@ export type RegisteredAccountType = 'Private' | 'Public'
 export interface AllBaseKeys {
   keyShare?: string | ArrayBuffer
   // this is the key you use for registration
-  programModKey?: string
+  registeringKey?: string
   // this is a dev key used for deploying programs
   programDeployKey?: string
   // this is the key used for signing
@@ -37,7 +37,7 @@ export interface ProgramDevKeys extends Keys {
 }
 
 export interface RootKey extends Keys {
-  programModKey: string
+  registeringKey: string
 }
 // maybe save this interface for @entropyxyz/auth
 export interface AuthorizedDeviceKey extends Keys {
@@ -50,7 +50,7 @@ export interface AuthorizedDeviceKey extends Keys {
  * describes a kind of user that deploys programs and has either only the seed
  * or the deploy key
  * this way we know we can lazily load registration records
- * REGISTERED_ACCOUNT:
+ * REGISTERING_ACCOUNT:
  * Describes an account type that has a "root key" this means
  * it registerd the program set and possibly has full controll to change
  * the programs it may still be able to request signatures so dont lazy load signing
@@ -64,27 +64,26 @@ export interface AuthorizedDeviceKey extends Keys {
  * */
 export const enum EntropyAccountType {
   PROGRAM_DEV_ACCOUNT = 'PROGRAM_DEV_ACCOUNT',
-  REGISTERED_ACCOUNT = 'REGISTERED_ACCOUNT',
+  REGISTERING_ACCOUNT = 'REGISTERING_ACCOUNT',
   CONSUMER_ACCOUNT = 'CONSUMER_ACCOUNT',
-  MIXED_ACCOUNT = 'MIXED_ACCOUNT'
 }
 
 
 // given the account type generate the appropriate keys from seed
-export interface EntropyAccountJSON {
+export interface EntropyAccount {
   registeringKey?: string
   programDeployKey?: string
   deviceKey?: string
   seed?: string
   verifyingKeys?: string[]
-  type: EntropyAccountType
 }
 
 
-export interface EntropyAccount {
+export interface EntropyWallet {
   sigRequestKey?: Signer
-  programModKey?: Signer | string
+  registeringKey?: Signer | string
   programDeployKey?: Signer
   deviceKey?: Signer
   verifyingKey?: string[]
+  type: EntropyAccountType
 }
