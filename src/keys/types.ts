@@ -65,9 +65,11 @@ export interface AuthorizedDeviceKey extends Keys {
 export const enum EntropyAccountType {
   PROGRAM_DEV_ACCOUNT = 'PROGRAM_DEV_ACCOUNT',
   REGISTERED_ACCOUNT = 'REGISTERED_ACCOUNT',
-  CONSUMER_ACCOOUNT = 'CONSUMER_ACCOOUNT'
+  CONSUMER_ACCOUNT = 'CONSUMER_ACCOUNT',
   MIXED_ACCOUNT = 'MIXED_ACCOUNT'
 }
+
+
 // given the account type generate the appropriate keys from seed
 export interface EntropyAccountJSON {
   registeringKey?: string
@@ -84,5 +86,5 @@ export interface EntropyAccount {
   programModKey?: Signer | string
   programDeployKey?: Signer
   deviceKey?: Signer
-  verifyingKey?: string
+  verifyingKey?: string[]
 }

@@ -7,12 +7,11 @@ import { Adapter } from './signing/adapters/types'
 import { isValidPair } from './keys'
 import { Signer } from './types'
 import ProgramManager from './programs'
-import { Codec } from '@polkadot/types-codec/types'
 export interface EntropyAccount {
   sigRequestKey?: Signer
   programModKey?: Signer | string
   programDeployKey?: Signer
-  verifyingKey?: string
+  verifyingKey?: string[]
 }
 
 export interface EntropyOpts {
@@ -101,7 +100,7 @@ export default class Entropy {
     this.registrationManager = new RegistrationManager({
       substrate: this.substrate,
       signer: {wallet: this.account.sigRequestKey.wallet, pair: this.account.sigRequestKey.pair},
-      verifyingKey: this.account.verifyingKey
+      verifyingKey: this.account.verifyingKey[0]
     })
     this.signingManager = new SignatureRequestManager({
       signer: {wallet: this.account.sigRequestKey.wallet, pair: this.account.sigRequestKey.pair},
@@ -116,23 +115,23 @@ export default class Entropy {
       substrate: this.substrate,
       programModKey: programModKeyPair as Signer || this.account.sigRequestKey,
       programDeployKey: this.account.programDeployKey,
-      verifyingKey: this.account.verifyingKey
+      verifyingKey: this.account.verifyingKey[0]
     })
     if (this.#programReadOnly || this.#allReadOnly) this.programs.set = async () => { throw new Error('Programs is in a read only state: Must pass a valid key pair in initialization.') }
     this.#ready(true)
     // this.isRegistered = this.registrationManager.checkRegistrationStatus.bind(
     //   this.registrationManager
     // )
-    this.#setVerifyingKeys()
+    // this.#setVerifyingKeys()
   }
 
-  async #setVerifyingKeys (): Promise<void> {
-    if (this.account) {
-      this.subscribeToAccountRegisteredEvents((verifyingKey: string) => {
-        console.log("Received verifyingKey: ", verifyingKey)
-      })
-    }
-  }
+  // async #setVerifyingKeys (): Promise<void> {
+  //   if (this.account) {
+  //     this.subscribeToAccountRegisteredEvents((verifyingKey: string) => {
+  //       console.log("Received verifyingKey: ", verifyingKey)
+  //     })
+  //   }
+  // }
 
   /** @internal */
   #setReadOnlyStates (): void {
@@ -172,8 +171,9 @@ export default class Entropy {
    * @throws {TypeError} - If the provided address format is incompatible.
    * @throws {Error} - If the address is already registered or if there's a problem during registration.
    */
-  async subscribeToAccountRegisteredEvents (callback: (verifyingKey: string) => void): Promise<Codec> {
-    const unsubscribe = await this.substrate.query.system.events((events) => {
+
+  async subscribeToAccountRegisteredEvents (callback: (verifyingKey: string) => void) {
+    await this.substrate.query.system.events((events) => {
       events.forEach((record) => {
         const { event } = record
         if (event.section === 'registry' && event.method === 'AccountRegistered') {
@@ -183,19 +183,21 @@ export default class Entropy {
             this.account.verifyingKey = verifyingKey
             console.log(`Account ID: ${accountId.toString()}, Verifying Key: ${verifyingKey}`)
             callback(verifyingKey)
-
-           
           }
         }
       })
     })
-    return unsubscribe
+    // const yodos = this.substrate.disconnect()
+    // console.log("yodos", yodos)
+    // const yotres = this.substrate.isReady
+    // console.log("yotres", yotres)
   }
+  
 
   async register (
     params: RegistrationParams & { account?: EntropyAccount }
   ): Promise<void> {
-    await this.ready
+    await this.ready && this.substrate.isReady
     if (this.#allReadOnly) throw new Error('Initialized in read only state: can not use write functions')
     const account = params.account || this.account
 
@@ -210,11 +212,9 @@ export default class Entropy {
       throw new TypeError('Incompatible address type')
     }
     await this.registrationManager.register(params)
-    this.subscribeToAccountRegisteredEvents((verifyingKey: string) => {
-      console.log(`Received verifyingKey after registration: ${verifyingKey}`)
-    }).then(unsubscribe => {
-      return unsubscribe
-    })
+    // this.subscribeToAccountRegisteredEvents((verifyingKey: string) => {
+    //   console.log(`Received verifyingKey after registration: ${verifyingKey}`)
+    // })
   }
 
   /**
@@ -237,7 +237,7 @@ export default class Entropy {
    */
 
   async signTransaction (params: SigTxOps): Promise<unknown> {
-    await this.ready
+    await this.ready && this.substrate.isReady
     if (this.#allReadOnly) throw new Error('Initialized in read only state: can not use write functions')
     return this.signingManager.signTransaction(params)
   }

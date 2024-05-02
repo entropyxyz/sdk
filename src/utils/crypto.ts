@@ -62,8 +62,8 @@ export const crypto: CryptoLib = new Proxy({} as CryptoLib, {
         throw new Error('cryptoLib loaded incorrectly')
       }
       if (key === 'verifySignature') return verifySignature
-      if (cryptoLib.X25519Chacha20Poly1305[key]) {
-        return cryptoLib.X25519Chacha20Poly1305[key](...params)
+      if (cryptoLib.Hpke[key]) {
+        return cryptoLib.Hpke[key](...params)
       }
       if (!cryptoLib[key]) {
         throw new Error(

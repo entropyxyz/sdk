@@ -16,9 +16,12 @@ import {
   keyFromPath,
   keyExtractPath,
 } from '@polkadot/util-crypto'
-import { Keyring } from '@polkadot/keyring'
+import { Keyring} from '@polkadot/keyring'
 import { hexToU8a } from '@polkadot/util'
 import { Signer } from '../types'
+import KeyringPair from '@polkadot/keyring'
+import { type EntropyAccountJSON} from './types'
+import { EntropyAccountType, EntropyAccount} from './types'
 
 /**
  * Checks if the provided object is a valid `Signer` pair.
@@ -26,6 +29,8 @@ import { Signer } from '../types'
  * @param pair - The `Signer` object to be validated.
  * @returns A boolean indicating whether the provided object is a valid `Signer` pair.
  */
+
+
 
 export function isValidPair (pair: Signer): boolean {
   if (!pair) return false
@@ -63,6 +68,77 @@ function setupGetWallet (): (input: string) => Promise<Signer | undefined> {
   }
 }
 
+export function generateKeyPair (seed: Uint8Array): { publicKey: string; privateKey: string } {
+  const keyring = new Keyring({ type: 'sr25519' })
+  const pair = sr25519PairFromSeed(seed)
+  return {
+    publicKey: keyring.encodeAddress(pair.publicKey),
+    privateKey: pair.secretKey.toString(),
+  };
+}
+
+export async function generateAccountKeys(accountInfo: EntropyAccountJSON): Promise<EntropyAccount> {
+  await cryptoWaitReady();
+  const keyring = new Keyring({ type: 'sr25519' });
+  const seed = hexToU8a(accountInfo.seed);
+  const sr25519pair = sr25519PairFromSeed(seed);
+  const wallet = keyring.addFromPair(sr25519pair);
+  const pair = { publicKey: sr25519pair.publicKey, secretKey: sr25519pair.secretKey };
+
+  const entropyAccount: EntropyAccount = {
+    sigRequestKey: undefined,
+    programModKey: undefined,
+    programDeployKey: undefined,
+    deviceKey: undefined,
+    verifyingKey: [],
+  };
+
+  switch (accountInfo.type) {
+  case EntropyAccountType.PROGRAM_DEV_ACCOUNT:
+    if (!accountInfo.programDeployKey) {
+      entropyAccount.programDeployKey = {
+        wallet: wallet, 
+        pair: { 
+          publicKey: sr25519pair.publicKey,
+          secretKey: sr25519pair.secretKey  
+        }
+      };
+      };
+    }
+    break;
+  case EntropyAccountType.REGISTERED_ACCOUNT:
+    if (!accountInfo.programModKey) {
+      entropyAccount.programModKey = {
+        wallet: {
+          publicKey: wallet.publicKey
+        },
+        pair: pair
+      };
+    }
+    break;
+  case EntropyAccountType.CONSUMER_ACCOUNT:
+    if (!accountInfo.deviceKey) {
+      entropyAccount.deviceKey = {
+        wallet: wallet,
+        pair: pair
+      };
+    }
+    break;
+  case EntropyAccountType.MIXED_ACCOUNT:
+    entropyAccount.programModKey = {
+      wallet: wallet,
+      pair: pair
+    };
+    entropyAccount.deviceKey = {
+      wallet: wallet,
+      pair: pair
+    };
+    break;
+  }
+
+  return entropyAccount;
+}
+
 /**
  * Retrieves a wallet from a `Signer` object or a seed string.
  * 
@@ -71,6 +147,8 @@ function setupGetWallet (): (input: string) => Promise<Signer | undefined> {
  */
 
 export const getWallet: (input: string) => Promise<Signer | undefined> = setupGetWallet()
+export const getAccountWallet: (input: string) => Promise<Signer | undefined> = setupGetWallet()
+
 
 /**
  * Generates a new mnemonic phrase or derives a wallet from an existing mnemonic and an optional derivation path.
@@ -102,6 +180,7 @@ export async function mnemonicGenOrDerive (
     pair = sr25519PairFromSeed(seed)
   }
   const wallet = keyring.addFromPair(pair)
+
   return {
     wallet,
     pair,
