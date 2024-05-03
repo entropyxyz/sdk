@@ -1,29 +1,21 @@
-import { execFileSync } from 'child_process'
-import { getWallet } from '../src/keys'
-import { charlieStashSeed, disconnect, sleep } from './testing-utils'
-import Entropy, { EntropyAccount } from '../src'
+import tape from 'tape'
 
-// requires should be after import sorry frankie
-const tape = require('tape')
-
-let entropy: Entropy
-
-
-
-tape('should return hello', (t) => {
+tape('Test Suite', async (t) => {
   const tests = [
     require('./template.test.ts'),
     require('./end-to-end.test.ts'),
+    require('./keys.test.ts'),
   ]
-  const count = tests.reduce((agg, test) => {
-    // how many tests in that test
-    return agg + test.count
-  }, 0)
-
-  t.plan(count)
-  tests.forEach((test) => {
+  // const count = tests.reduce((agg, test) => {
+  //   // how many tests in that test
+  //   return agg + test.count;
+  // }, 0);
+  // t.plan(count);
+  await tests.forEach(async (test) => {
+    // console.log('test suite', test);
     if (!test) return
-    test.runner(t)
+    // console.log('test count', test.count);
+    // t.plan(test.count);
+    await test.runner(t)
   })
-  t.end()
 })
