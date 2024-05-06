@@ -96,7 +96,6 @@ export function generateKeyPairFromSeed (seed: string, dervation?: string): { ad
     pair = sr25519PairFromSeed(seed)
   }
 
-
   return {
     // this might break address formatting? test against charlie stash address
     address: encodeAddress(pair.publicKey),
