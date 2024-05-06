@@ -1,5 +1,5 @@
-import { crypto, cryptoIsLoaded } from '../src/utils/crypto'
-import { readKey } from './testing-utils/readKey'
+import { crypto, cryptoIsLoaded } from '../../src/utils/crypto'
+import { readKey } from '../testing-utils/readKey'
 
 describe('Crypto Tests', () => {
   beforeAll(async () => {

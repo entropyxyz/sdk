@@ -1,7 +1,7 @@
-import { sleep, charlieStashSeed } from './testing-utils'
+import { sleep, charlieStashSeed } from '../testing-utils'
 import { mnemonicGenerate } from '@polkadot/util-crypto'
 
-import { getWallet, mnemonicGenOrDerive } from '../src/keys'
+import { getWallet, mnemonicGenOrDerive } from '../../src/keys'
 
 describe('Keys Tests', () => {
   let testMnemonic: string

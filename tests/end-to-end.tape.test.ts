@@ -16,17 +16,18 @@ const networkNeeds = true
 const networkType = 'two-nodes'
 let entropy: Entropy
 tape('End To End Test Suite', async (suite) => {
+  // suite.plan(count);
   try {
     await spinNetworkUp(networkType)
     entropy = await createTestAccount(entropy)
-    const programsAvailable = await entropy.programs.get(charlieStashAddress)
-    console.log('programs available', programsAvailable)
+    // const programsAvailable = await entropy.programs.get(charlieStashAddress)
+    // console.log('programs available', programsAvailable)
 
-    // if (programsAvailable) {
-    //   await Promise.all(programsAvailable.map(async (program) => {
-    //     await entropy.programs.remove(program.programPointer, charlieStashAddress)
-    //   }));
-    // }
+    // // if (programsAvailable) {
+    // //   await Promise.all(programsAvailable.map(async (program) => {
+    // //     await entropy.programs.remove(program.programPointer, charlieStashAddress)
+    // //   }));
+    // // }
   } catch (error) {
     console.error(
       'Error in spinning network up or creating test account',
@@ -145,7 +146,7 @@ tape('End To End Test Suite', async (suite) => {
     await spinNetworkDown(networkType, entropy)
   } catch (error) {
     console.error('Error while spinning network down', error.message)
+  } finally {
+    suite.end()
   }
-
-  suite.end()
 })

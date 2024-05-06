@@ -1,14 +1,14 @@
 import { readFileSync } from 'fs'
-import Entropy from '../src'
+import Entropy from '../../src'
 import {
   sleep,
   disconnect,
   charlieStashSeed,
   charlieStashAddress,
-} from './testing-utils'
+} from '../testing-utils'
 import { execFileSync } from 'child_process'
-import { getWallet } from '../src/keys'
-import { EntropyAccount } from '../src'
+import { getWallet } from '../../src/keys'
+import { EntropyAccount } from '../../src'
 
 describe('Register Tests', () => {
   let entropy

@@ -1,16 +1,16 @@
 import { readFileSync } from 'fs'
-import Entropy from '../src'
+import Entropy from '../../src'
 import {
   sleep,
   disconnect,
   charlieStashSeed,
   charlieStashAddress,
-} from './testing-utils'
+} from '../testing-utils'
 import { Keyring } from '@polkadot/api'
-import { getWallet } from '../src/keys'
-import { EntropyAccount } from '../src'
+import { getWallet } from '../../src/keys'
+import { EntropyAccount } from '../../src'
 import { mnemonicGenerate } from '@polkadot/util-crypto'
-import { buf2hex } from '../src/utils'
+import { buf2hex } from '../../src/utils'
 import { execFileSync } from 'child_process'
 
 describe('Programs Tests', () => {

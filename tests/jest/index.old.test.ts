@@ -1,21 +1,21 @@
 import { readFileSync } from 'fs'
-import { EntropyAccount } from '../src'
-import Entropy from '../src'
+import { EntropyAccount } from '../../src'
+import Entropy from '../../src'
 import {
   sleep,
   disconnect,
   charlieStashSeed,
   charlieStashAddress,
   whitelisted_test_evm_address,
-} from './testing-utils'
+} from '../testing-utils'
 import { Keyring } from '@polkadot/api'
-import { getWallet } from '../src/keys'
+import { getWallet } from '../../src/keys'
 import { mnemonicGenerate } from '@polkadot/util-crypto'
-import { buf2hex } from '../src/utils'
+import { buf2hex } from '../../src/utils'
 import { execFileSync } from 'child_process'
 import { Transaction } from 'ethereumjs-tx'
-import { preSign } from '../src/signing/adapters/eth'
-import { ProgramData } from '../src/programs'
+import { preSign } from '../../src/signing/adapters/eth'
+import { ProgramData } from '../../src/programs'
 import { stringToU8a } from '@polkadot/util'
 import * as util from '@polkadot/util'
 
