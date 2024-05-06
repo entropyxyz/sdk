@@ -73,7 +73,8 @@
     "@types/node": "^20.10.3",
     "ethereum-cryptography": "^2.1.2",
     "ethereumjs-tx": "^2.1.2",
-    "hpke-js": "^1.2.7"
+    "hpke-js": "^1.2.7",
+    "uuid": "^9.0.1"
   },
   "directories": {
     "example": "examples"

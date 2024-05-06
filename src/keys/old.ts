@@ -108,6 +108,7 @@ export function generateKeyPair (seed: Uint8Array): { publicKey: string; private
   const keyring = new Keyring({ type: 'sr25519' })
   const pair = sr25519PairFromSeed(seed)
   return {
+    // is this acctually the address?
     publicKey: keyring.encodeAddress(pair.publicKey),
     privateKey: pair.secretKey.toString(),
   };

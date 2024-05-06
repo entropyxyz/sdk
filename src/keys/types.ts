@@ -24,12 +24,12 @@ export interface AllBaseKeys {
   programDeployKey?: string
   // this is the key used for signing
   deviceKey?: string
-  // this is the seed material used to generate all necessary keys
-  seed?: string
+  // this is the mnemonic material used to generate all necessary keys
+  mnemonic?: string
 }
 
-export interface GenerateAllKeysNeededFromSeed extends Keys {
- seed: string
+export interface GenerateAllKeysNeededFromMnemonic extends Keys {
+ mnemonic: string
 }
 
 export interface ProgramDevKeys extends Keys {
@@ -47,7 +47,7 @@ export interface AuthorizedDeviceKey extends Keys {
  * This describes the kinds of account that can be passed
  * to the entropy sdk class
  * PROGRAM_DEV_ACCOUNT:
- * describes a kind of user that deploys programs and has either only the seed
+ * describes a kind of user that deploys programs and has either only the mnemonic
  * or the deploy key
  * this way we know we can lazily load registration records
  * REGISTERING_ACCOUNT:
@@ -66,15 +66,17 @@ export const enum EntropyAccountType {
   PROGRAM_DEV_ACCOUNT = 'PROGRAM_DEV_ACCOUNT',
   REGISTERING_ACCOUNT = 'REGISTERING_ACCOUNT',
   CONSUMER_ACCOUNT = 'CONSUMER_ACCOUNT',
+  // an unknown account type. generate keys on the fly :grimacing:
+  MIXED_ACCOUNT = 'MIXED_ACCOUNT',
 }
 
 
-// given the account type generate the appropriate keys from seed
+// given the account type generate the appropriate keys from mnemonic
 export interface EntropyAccount {
   registeringKey?: string
   programDeployKey?: string
   deviceKey?: string
-  seed?: string
+  mnemonic?: string
   verifyingKeys?: string[]
 }
 
