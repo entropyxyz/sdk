@@ -21,7 +21,7 @@ jobs:
         with:
           node-version: 20.10.0
       - name: Build
-        run: yarn --frozen-lockfile --network-timeout 180000
+        run: yarn --network-timeout 180000
       - name: Lint
         run: yarn run lint
       - name: Bundle
