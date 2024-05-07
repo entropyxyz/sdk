@@ -24,22 +24,24 @@ registeredAccount needs to be thoroughly backed up by the user(/application) if 
 
 this is the bare minimum for signing new device keys need to be authorized by the registering key by changing the programConfig
 
+```
 {
   seed:
   registeringAdress?:
   verfiyingKeys: string[]
   dervationPath:
 }
+```
 
 `'PROGRAM_DEV_ACCOUNT'`
 
 a program dev account does not need to be registered. Its main function is to deploy new programs to chain.
 
-
+```
 {
   seed:
 }
-
+```
 
 can have all or any keys be
 
@@ -50,14 +52,16 @@ verifying keys are what is returned when a user registers an entropy account on 
 
 there is no private key for this because the "priavte key" is on the entropy network
 
+```
 interface VerfiyingKey {
   verifyingKeyId: string,
   programInterface: {...any, description: string type: string},
 }
-
+```
 
 an entropy account state as a whole:
 
+```
 {
   type:EntropyAccountType PROGRAM_DEV_ACCOUNT || REGISTERING_ACCOUNT || CONSUMER_ACCOUNT
   verifyingKeys?: VerfiyingKey[]
@@ -67,7 +71,7 @@ an entropy account state as a whole:
   deviceSeed?:
   deviceDervation?:
 }
-
+```
 
 A seed is what we use to generate keys and a mnemonic is what a end user sees
 
