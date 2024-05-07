@@ -15,7 +15,6 @@
     "test:setup": "docker version && [ \"$(cat .nvmrc)\" = \"$(node --version)\" ] && echo \"\\nCORRECT NODE VERSION\\n\" || { echo \"\\nINCORRECT NODE VERSION\\n\"; exit 1; }",
     "test:log": "yarn removedb && jest --runInBand --detectOpenHandles --silent=false --verbose",
     "test:coverage": "nyc yarn test",
-    "test:tape": "yarn test:setup && yarn removedb && tape -r ts-node/register/transpile-only tests/index.test.ts",
     "lint": "yarn lint:ts && yarn lint:eslint",
     "lint:ts": "tsc",
     "lint:eslint": "eslint . --ext .ts --fix",
