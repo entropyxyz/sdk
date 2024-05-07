@@ -15,8 +15,8 @@ const networkNeeds = true
 
 const networkType = 'two-nodes'
 let entropy: Entropy
-tape('End To End Test Suite', async (suite) => {
-  // suite.plan(count);
+
+tape('End To End Test Suite', async (t) => {
   try {
     await spinNetworkUp(networkType)
     entropy = await createTestAccount(entropy)
@@ -67,9 +67,9 @@ tape('End To End Test Suite', async (suite) => {
   // Pre-registration check
   const preRegistrationStatus = await entropy.isRegistered(charlieStashAddress)
   // test 1
-  suite.notOk(preRegistrationStatus)
+  t.notOk(preRegistrationStatus)
   // test 2
-  suite.equal(JSON.stringify(preRegistrationStatus), 'false')
+  t.equal(JSON.stringify(preRegistrationStatus), 'false')
 
   await entropy.register({
     keyVisibility: 'Permissioned',
@@ -79,21 +79,21 @@ tape('End To End Test Suite', async (suite) => {
     programModAccount: charlieStashAddress,
   })
   // test 3
-  suite.ok(entropy.account.verifyingKey)
+  t.ok(entropy.account.verifyingKey)
   // test 4
-  suite.equal(entropy.account.sigRequestKey.wallet.address, charlieStashAddress)
+  t.equal(entropy.account.sigRequestKey.wallet.address, charlieStashAddress)
   // test 5
   const preRegistrationStatusCheck =
     await entropy.registrationManager.checkRegistrationStatus(
       charlieStashAddress
     )
-  suite.ok(preRegistrationStatusCheck)
+  t.ok(preRegistrationStatusCheck)
 
   // Post-registration check
 
   const postRegistrationStatus = await entropy.isRegistered(charlieStashAddress)
   // test 6
-  suite.ok(postRegistrationStatus)
+  t.ok(postRegistrationStatus)
 
   const postStringifiedResponse = JSON.stringify(postRegistrationStatus)
 
@@ -102,7 +102,7 @@ tape('End To End Test Suite', async (suite) => {
     console.log('is not registered')
   }
   // test 7
-  suite.equal(postStringifiedResponse, 'true')
+  t.equal(postStringifiedResponse, 'true')
 
   //  loading second program
 
@@ -140,13 +140,13 @@ tape('End To End Test Suite', async (suite) => {
   // encoding signature
   console.log('SIGGGG', signature)
   // test 8
-  suite.equal(signature.length, 228)
+  t.equal(signature.length, 228)
   // await disconnect(charlieStashEntropy.substrate)
   try {
     await spinNetworkDown(networkType, entropy)
   } catch (error) {
     console.error('Error while spinning network down', error.message)
   } finally {
-    suite.end()
+    t.end()
   }
 })

@@ -33,7 +33,7 @@ const testSetup = async () => {
   return { entropy, pointer }
 }
 
-tape('Register Tests: check pre-registration status', async (suite) => {
+tape('Register Tests: check pre-registration status', async (t) => {
   try {
     ;({ entropy, pointer } = await testSetup())
   } catch (error) {
@@ -42,18 +42,18 @@ tape('Register Tests: check pre-registration status', async (suite) => {
 
   // Check if already registered before the test
   isRegisteredBefore = await entropy.isRegistered(charlieStashAddress)
-  suite.notOk(isRegisteredBefore)
+  t.notOk(isRegisteredBefore)
 
   try {
     await spinNetworkDown('two-nodes', entropy)
   } catch (error) {
     console.error('Error spinning network down', error)
   } finally {
-    suite.end()
+    t.end()
   }
 })
 
-tape('Register Tests: handle user registration', async (suite) => {
+tape('Register Tests: handle user registration', async (t) => {
   try {
     ;({ entropy, pointer } = await testSetup())
   } catch (error) {
@@ -68,18 +68,18 @@ tape('Register Tests: handle user registration', async (suite) => {
   })
 
   const isRegisteredAfter = await entropy.isRegistered(charlieStashAddress)
-  suite.ok(isRegisteredAfter)
+  t.ok(isRegisteredAfter)
 
   try {
     await spinNetworkDown('two-nodes', entropy)
   } catch (error) {
     console.error('Error spinning network down', error)
   } finally {
-    suite.end()
+    t.end()
   }
 })
 
-tape('Register Tests: not allow re-registration', async (suite) => {
+tape('Register Tests: not allow re-registration', async (t) => {
   try {
     ;({ entropy, pointer } = await testSetup())
   } catch (error) {
@@ -94,7 +94,7 @@ tape('Register Tests: not allow re-registration', async (suite) => {
   })
 
   await sleep(120000)
-  suite.throws(
+  t.throws(
     () =>
       entropy.register({
         programModAccount: charlieStashAddress,
@@ -111,13 +111,13 @@ tape('Register Tests: not allow re-registration', async (suite) => {
   } catch (error) {
     console.error('Error spinning network down', error)
   } finally {
-    suite.end()
+    t.end()
   }
 })
 
 tape(
   'Register Tests: verify registration status of a new address',
-  async (suite) => {
+  async (t) => {
     try {
       ;({ entropy, pointer } = await testSetup())
     } catch (error) {
@@ -127,14 +127,14 @@ tape(
     const isNewAddressRegistered = await entropy.isRegistered(
       '5FWd3NSnWQ6Ay9CXmw9aTU8ZvDksn7zzzuw5dCKq9R8DsaCo'
     )
-    suite.notOk(isNewAddressRegistered)
+    t.notOk(isNewAddressRegistered)
 
     try {
       await spinNetworkDown('two-nodes', entropy)
     } catch (error) {
       console.error('Error spinning network down', error)
     } finally {
-      suite.end()
+      t.end()
     }
   }
 )

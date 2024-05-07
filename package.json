@@ -11,8 +11,9 @@
   "module": "dist/index.js",
   "browser": "dist/index.js",
   "scripts": {
-    "test": "yarn test:setup && yarn removedb && tape -r ts-node/register/transpile-only tests/*.tape.test.ts",
+    "test": "yarn test:setup && yarn removedb && yarn test:ts",
     "test:setup": "docker version && [ \"$(cat .nvmrc)\" = \"$(node --version)\" ] && echo \"\\nCORRECT NODE VERSION\\n\" || { echo \"\\nINCORRECT NODE VERSION\\n\"; exit 1; }",
+    "test:ts": "tape -r ts-node/register/transpile-only tests/*.test.ts | tap-spec",
     "test:log": "yarn removedb && jest --runInBand --detectOpenHandles --silent=false --verbose",
     "test:coverage": "nyc yarn test",
     "lint": "yarn lint:ts && yarn lint:eslint",
@@ -59,6 +60,7 @@
     "nyc": "^15.1.0",
     "pinst": "^3.0.0",
     "prettier": "2.8.8",
+    "tap-spec": "^5.0.0",
     "tape": "^5.7.5",
     "ts-jest": "^29.0.5",
     "ts-node": "^10.9.1",

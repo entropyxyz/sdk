@@ -6,7 +6,7 @@ function stripHexPrefix(str: string): string {
   return str.startsWith('0x') ? str.slice(2) : str
 }
 
-tape('Crypto Tests', async (suite) => {
+tape('Crypto Tests', async (t) => {
   // Before all
   try {
     await cryptoIsLoaded
@@ -21,17 +21,18 @@ tape('Crypto Tests', async (suite) => {
     ),
   }
 
-  suite.test('should parse server threshold info', async (testSuite) => {
+  t.test('should parse server threshold info', async (t2) => {
     const mockReturn = [
       10, 192, 41, 240, 184, 83, 178, 59, 237, 101, 45, 109, 13, 230, 155, 124,
       195, 141, 148, 249, 55, 50, 238, 252, 133, 181, 134, 30, 144, 247, 58, 34,
     ]
 
     const result = await crypto.fromHex(mockData.x25519_public_key)
-    testSuite.equal(result.toString(), mockReturn.toString())
+    t2.equal(result.toString(), mockReturn.toString())
+    t2.end()
   })
 
-  suite.test('should encrypt and sign', async (testSuite) => {
+  t.test('should encrypt and sign', async (t3) => {
     const aliceSecretKey: Uint8Array = new Uint8Array([
       152, 49, 157, 79, 248, 169, 80, 140, 75, 176, 207, 11, 90, 120, 215, 96,
       160, 178, 8, 44, 2, 119, 94, 110, 130, 55, 8, 22, 254, 223, 255, 72, 146,
@@ -53,13 +54,13 @@ tape('Crypto Tests', async (suite) => {
       thresholdKey,
       alicePublicKey
     )
-    testSuite.equal(
+    t3.deepEqual(
       await crypto.decryptAndVerify(aliceSecretKey, result),
       thresholdKey
     )
-  })
 
-  suite.end()
+    t3.end()
+  })
 })
 
 // not currently sure how to handle thresholdKey since i believe it should be "encoded" per encrypt_and_sign

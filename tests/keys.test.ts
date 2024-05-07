@@ -28,29 +28,29 @@ function testCleanup() {
   }
 }
 
-tape('Keys Test: getWallet', async (suite) => {
-  suite.plan(2)
+tape('Keys Test: getWallet', async (t) => {
+  t.plan(2)
   await testSetup()
   // it should generate valid Signer from seed
   const walletSigner = await getWallet(charlieStashSeed)
   // test 1
-  suite.ok(Object.keys(walletSigner).includes('wallet'))
+  t.ok(Object.keys(walletSigner).includes('wallet'))
   // test 2
-  suite.ok(Object.keys(walletSigner).includes('pair'))
+  t.ok(Object.keys(walletSigner).includes('pair'))
 
   testCleanup()
   // suite.end();
 })
 
-tape('Keys Test: generateKeysFromMnemonic', async (suite) => {
-  suite.plan(2)
+tape('Keys Test: generateKeysFromMnemonic', async (t) => {
+  t.plan(2)
   await testSetup()
   // it should generate valid Signer from mnemonic
   const mnemonicSigner = await mnemonicGenOrDerive(testMnemonic)
   // test 1
-  suite.ok(Object.keys(mnemonicSigner).includes('wallet'))
+  t.ok(Object.keys(mnemonicSigner).includes('wallet'))
   // test 2
-  suite.ok(Object.keys(mnemonicSigner).includes('pair'))
+  t.ok(Object.keys(mnemonicSigner).includes('pair'))
   testCleanup()
   // suite.end();
 })
