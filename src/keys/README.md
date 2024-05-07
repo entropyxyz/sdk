@@ -8,6 +8,7 @@ Derivation Path
 `'REGISTERING_ACCOUNT'`:
 this kind of account type looks like this:
 
+```
 {
   seed
   deviceSeed
@@ -15,7 +16,7 @@ this kind of account type looks like this:
   //this comes from registering a program set
   verfiyingKeys?: string[]
 }
-
+```
 
 registeredAccount needs to be thoroughly backed up by the user(/application) if this is lost and no recovery systems have been setup a user will not be able to authorize new devices for signature or change program configurations
 
