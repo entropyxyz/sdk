@@ -14,7 +14,7 @@ import {
 const networkType = 'two-nodes'
 let entropy: Entropy
 
-test.only('End To End Test Suite', async (t) => {
+test('End To End Test Suite', async (t) => {
   try {
     await spinNetworkUp(networkType)
     entropy = await createTestAccount(entropy)

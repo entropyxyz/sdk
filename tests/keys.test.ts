@@ -1,21 +1,13 @@
-import tape from 'tape'
+import test from 'tape'
 import { mnemonicGenerate } from '@polkadot/util-crypto'
 import { getWallet, mnemonicGenOrDerive } from '../src/keys'
 
 import { sleep, charlieStashSeed } from './testing-utils'
 
-export const count = 4
 let testMnemonic: string
 let derivationPath: string
+
 async function testSetup() {
-  try {
-    console.log('starting key tests')
-  } catch (e) {
-    console.error('Error in beforeAll: ', e.message)
-  }
-
-  await sleep(30000)
-
   testMnemonic = mnemonicGenerate()
   derivationPath = '//0'
 }
@@ -28,29 +20,23 @@ function testCleanup() {
   }
 }
 
-tape('Keys Test: getWallet', async (t) => {
+test('Keys Test: getWallet', async (t) => {
   t.plan(2)
   await testSetup()
   // it should generate valid Signer from seed
   const walletSigner = await getWallet(charlieStashSeed)
-  // test 1
-  t.ok(Object.keys(walletSigner).includes('wallet'))
-  // test 2
-  t.ok(Object.keys(walletSigner).includes('pair'))
+  t.true(Object.keys(walletSigner).includes('wallet'), 'has wallet')
+  t.true(Object.keys(walletSigner).includes('pair'), 'has pair')
 
   testCleanup()
-  // suite.end();
 })
 
-tape('Keys Test: generateKeysFromMnemonic', async (t) => {
+test('Keys Test: generateKeysFromMnemonic', async (t) => {
   t.plan(2)
   await testSetup()
   // it should generate valid Signer from mnemonic
   const mnemonicSigner = await mnemonicGenOrDerive(testMnemonic)
-  // test 1
-  t.ok(Object.keys(mnemonicSigner).includes('wallet'))
-  // test 2
-  t.ok(Object.keys(mnemonicSigner).includes('pair'))
+  t.true(Object.keys(mnemonicSigner).includes('wallet'), 'has wallet')
+  t.true(Object.keys(mnemonicSigner).includes('pair'), 'has pair')
   testCleanup()
-  // suite.end();
 })

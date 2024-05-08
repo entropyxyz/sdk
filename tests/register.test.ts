@@ -54,7 +54,7 @@ test('Register Tests: check pre-registration status', async (t) => {
   isRegisteredBefore = await entropy.isRegistered(charlieStashAddress)
   t.notOk(isRegisteredBefore)
 
-  testTeardown(t)
+  await testTeardown(t)
 })
 
 test('Register Tests: handle user registration', async (t) => {
@@ -70,7 +70,7 @@ test('Register Tests: handle user registration', async (t) => {
   const isRegisteredAfter = await entropy.isRegistered(charlieStashAddress)
   t.ok(isRegisteredAfter)
 
-  testTeardown(t)
+  await testTeardown(t)
 })
 
 test('Register Tests: not allow re-registration', async (t) => {
@@ -98,7 +98,7 @@ test('Register Tests: not allow re-registration', async (t) => {
     { message: 'already registered' }
   )
 
-  testTeardown(t)
+  await testTeardown(t)
 })
 
 test('Register Tests: verify registration status of a new address', async (t) => {
@@ -109,5 +109,5 @@ test('Register Tests: verify registration status of a new address', async (t) =>
   )
   t.notOk(isNewAddressRegistered)
 
-  testTeardown(t)
+  await testTeardown(t)
 })

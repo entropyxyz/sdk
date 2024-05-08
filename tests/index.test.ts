@@ -1,17 +1,17 @@
 import test from 'tape'
 import { readFileSync } from 'fs'
-import { execFileSync } from 'child_process'
 import * as util from '@polkadot/util'
 import Entropy, { EntropyAccount } from '../src'
-import { getWallet } from '../src/keys'
 import { ProgramData } from '../src/programs'
 
 import {
-  // sleep,
-  disconnect,
-  charlieStashSeed,
+  spinNetworkUp,
+  spinNetworkDown,
+  createTestAccount,
   charlieStashAddress,
 } from './testing-utils'
+
+const networkType = 'two-nodes'
 
 test('Core Tests', (t) => {
   let entropy: Entropy
@@ -22,26 +22,12 @@ test('Core Tests', (t) => {
     }, 300000)
 
     try {
-      execFileSync(
-        'dev/bin/spin-up.sh',
-        ['two-nodes'],
-        { shell: true, cwd: process.cwd(), stdio: 'inherit' } // Use shell's search path.
-      )
-    } catch (e) {
-      console.error('Error in beforeAll: ', e.message)
+      await spinNetworkUp(networkType)
+      entropy = await createTestAccount(entropy)
+    } catch (err) {
+      t.error(err, 'setup succeeded')
     }
-
-    const signer = await getWallet(charlieStashSeed)
-
-    const entropyAccount: EntropyAccount = {
-      sigRequestKey: signer,
-      programModKey: signer,
-      programDeployKey: signer,
-    }
-
-    // await sleep(30000)
-    entropy = new Entropy({ account: entropyAccount })
-    await entropy.ready
+    t.pass('setup succeeded')
 
     clearTimeout(timeout)
     t.end()
@@ -60,12 +46,12 @@ test('Core Tests', (t) => {
 
       const pointer = await entropy.programs.dev.deploy(basicTxProgram)
       const config = `
-    {
-        "allowlisted_addresses": [
+        {
+          "allowlisted_addresses": [
             "772b9a9e8aa1c9db861c6611a82d251db4fac990"
-        ]
-    }
-`
+          ]
+        }
+      `
       // convert to bytes
 
       const encoder = new TextEncoder()
@@ -81,12 +67,9 @@ test('Core Tests', (t) => {
 
       // Pre-registration check
       const preRegistrationStatus = await entropy.isRegistered(
-        charlieStashAddress
+        charlieStashAddress // TODO: use entropy.account.address?
       )
-
-      t.false(preRegistrationStatus)
-      const preStringifiedResponse = JSON.stringify(preRegistrationStatus)
-      t.false(preStringifiedResponse)
+      t.equal(JSON.stringify(preRegistrationStatus), 'false')
 
       await entropy.register({
         keyVisibility: 'Permissioned',
@@ -131,15 +114,19 @@ test('Core Tests', (t) => {
         programConfig: '',
       }
       await entropy.programs.add(secondProgramData, charlieStashAddress)
+
       // getting charlie programs
       const programs = await entropy.programs.get(charlieStashAddress)
 
-      console.log('CHARLIES PROGRAMS', programs)
+      t.equal(programs.length, 2, 'charlie has 2 programs')
+      // console.log('CHARLIES PROGRAMS', programs)
+
       // removing charlie program barebones
       await entropy.programs.remove(newPointer, charlieStashAddress)
       const updatedRemovedPrograms = await entropy.programs.get(
         charlieStashAddress
       )
+      t.equal(updatedRemovedPrograms.length, 1, 'charlie can remove a program')
 
       const basicTx = {
         to: '0x772b9a9e8aa1c9db861c6611a82d251db4fac990',
@@ -149,15 +136,15 @@ test('Core Tests', (t) => {
         data: '0x' + Buffer.from('Created On Entropy').toString('hex'),
       }
 
-      const signature = (await entropy.signTransaction({
-        txParams: basicTx,
-        type: 'eth',
-      })) as string
-
-      // encoding signature
-      console.log('SIGGGG', signature)
-      t.equal(signature.length, 228)
-      // await disconnect(charlieStashEntropy.substrate)
+      await entropy
+        .signTransaction({
+          txParams: basicTx,
+          type: 'eth',
+        })
+        .then((signature: string) => {
+          t.equal(signature.length, 228, 'signature is good')
+        })
+        .catch((err) => t.error(err, 'signature is good'))
 
       clearTimeout(timeout)
       t.end()
@@ -165,16 +152,8 @@ test('Core Tests', (t) => {
   )
 
   t.test('afterAll', async (t) => {
-    try {
-      await disconnect(entropy.substrate)
-      execFileSync('dev/bin/spin-down.sh', ['two-nodes'], {
-        shell: true,
-        cwd: process.cwd(),
-        stdio: 'inherit',
-      })
-    } catch (e) {
-      console.error('Error in afterAll: ', e.message)
-    }
-    t.end()
+    await spinNetworkDown(networkType, entropy).catch((err) =>
+      t.error(err, 'teardown')
+    )
   })
 })
