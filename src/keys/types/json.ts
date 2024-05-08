@@ -16,34 +16,34 @@ export type Path = string
 /**
  * 12 or 24? words separated by spaces defined by bip39
  * */
-export type menomnic = string
+export type Menomnic = string
 
 export type KeyMaterial = HexSeedMaterial | MenomnicSeedMaterial
 
 export interface HexSeedMaterial {
   seed: seed
-  path?: Path
+  // one day this would be nice to have
+  // path?: Path
 }
 
 export interface MenomnicSeedMaterial {
-  menomnic: menomnic
-  path?: path
+  menomnic: Menomnic
+  // one day this would be nice to have
+  // path?: Path
 }
 
-
-
 export interface EntropyAccount {
-  registeringKey?: string
-  programDeployKey?: string
-  deviceKey?: string
-  mnemonic?: string
+  registeringKey?: PairMaterial
+  programDeployKey?: PairMaterial
+  deviceKey?: PairMaterial
+  mnemonic?: Menomnic
   seed?:
   verifyingKeys?: string[]
 }
 
 export interface PairMaterial {
   // 32
-  address: hexString
+  address?: hexString
   //
   path: Path
 }

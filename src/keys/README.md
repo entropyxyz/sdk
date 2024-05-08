@@ -2,6 +2,30 @@ How "Key mangment should be done in the sdk"
 
 the user hold onto the seed every class will create their own key via a set derivation path except for the device key. the dervation path for the device key should be by
 Derivation Path
+```ts
+//store that private key
+const accounnt = {seed || mnemonic}
+const keyring = new Keyring(account)
+// you should allways store what comes from this
+let persistMe = keyring.accounts.toJson()
+const saveToStorage = (state) => persistMe = state
+keyring.accounts.on('account-update', (fullAccountAsJSON) => { saveToStorage(fullAccountAsJSON) })
+
+let entropy = New Entropy({keyring, endpoint})
+// session end
+
+// new session with same account as before
+// the second time you use entropy:
+const loadedFromStorage = persistMe
+
+const newKeyring = new Keyring(loadFromStorage)
+
+keyring.accounts.on('account-update', (fullAccountAsJSON) => { saveToStorage(fullAccountAsJSON) })
+
+
+entropy = new Entropy({keyring: newKeyring, endpoint})
+
+```
 
 ``
 

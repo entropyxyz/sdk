@@ -50,14 +50,19 @@ export type UIDv4 = string
  */
 
 
-export default class Keyring extends EventEmitter {
+export default class Keyring {
 
-  async constructor () {
-    super()
+  async constructor (account: KeyMaterial | EntropyAccount) {
     // these are async wrapped functions of polkadot crypto
     this.crypto = crypto
+    this.accounts = new EventEmitter()
+    const { seed, mnemonic } = account
+    if (!seed || !mnemonic) throw new Error('Need at least a seed or mnemonic to create keys')
+    if (mnemonic) {
+      this.#seed =
+    }
+    this.#seed = seed
   }
-
 
 
 }

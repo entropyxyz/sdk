@@ -10,6 +10,9 @@ import {
 
 const ready = cryptoWaitReady()
 
+export async function seedFromMnemonic (m) {
+  return mnemonicToMiniSecret(m)
+}
 
 // for the device key generate a random number example: `device-key:${uid}`
 export function getPath ({type, uid}: {type: string, uid: UIDv4}): string {
