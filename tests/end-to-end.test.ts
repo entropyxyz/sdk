@@ -24,13 +24,20 @@ test.only('End To End Test Suite', async (t) => {
   }
   t.ok(entropy, 'setup')
 
+  t.teardown(async () => {
+    await spinNetworkDown(networkType, entropy).catch((error) =>
+      console.error('Error while spinning network down', error.message)
+    )
+  })
+
   const basicTxProgram: any = readFileSync(
     './tests/testing-utils/template_basic_transaction.wasm'
   )
   t.equal(typeof basicTxProgram.toString(), 'string', 'got basic program')
 
+  console.time('deploy')
   const pointer = await entropy.programs.dev.deploy(basicTxProgram)
-  // WIP: broken here
+  console.timeEnd('deploy')
   t.equal(typeof pointer, 'string', 'program deployed (got pointer)')
 
   const config = `
@@ -110,19 +117,18 @@ test.only('End To End Test Suite', async (t) => {
     data: '0x' + Buffer.from('Created On Entropy').toString('hex'),
   }
 
-  const signature = (await entropy.signTransaction({
-    txParams: basicTx,
-    type: 'eth',
-  })) as string
+  await entropy
+    .signTransaction({
+      txParams: basicTx,
+      type: 'eth',
+    })
+    .then((signature: string) => {
+      // encoding signature
+      t.equal(signature.length, 228, 'got a good sig')
+    })
+    .catch((err) => t.error(err, 'signature worked'))
 
-  // encoding signature
-  t.equal(signature.length, 228, 'got a good sig')
   // await disconnect(charlieStashEntropy.substrate)
-  try {
-    await spinNetworkDown(networkType, entropy)
-  } catch (error) {
-    console.error('Error while spinning network down', error.message)
-  } finally {
-    t.end()
-  }
+
+  t.end()
 })

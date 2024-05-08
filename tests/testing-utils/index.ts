@@ -42,8 +42,7 @@ export async function createTestAccount(
     programDeployKey: signer,
   }
 
-  await sleep(10_000)
-  // QUESTION: (mix) why was this here?
+  await sleep(5_000)
   entropy = new Entropy({ account: entropyAccount })
   await entropy.ready
   return entropy
