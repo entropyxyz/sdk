@@ -15,26 +15,79 @@ import { Signer } from '../types'
 import { type EntropyAccountJSON} from './types'
 import { EntropyAccountType, EntropyWallet, EntropyAccount } from './types'
 
-await cryptoWaitReady()
-
-
-export const UIDv4regex = /^(?:[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}|00000000-0000-0000-0000-000000000000)$/i
-export type UIDv4 = string
-
-
- // for the device key generate a random number example: `device-key:${uid}`
-export function getPath ({type, uid}: {type: string, uid: UIDv4}): string {
-  if (UIDv4regex.test(uid)) {
-    return `//entropy//${type}///${UIDV4}`
-  }
-  throw new TypeError('uid is not correct type please provide the correct regex matching string')
-}
+const ready = cryptoWaitReady()
 
 export enum ChildKey {
   REGISTRATION = 'registration'
   PROGRAM_DEV = 'program-dev'
   DEVICE_KEY = 'device-key'
 }
+
+
+
+const crypto = new Proxy({
+  sr25519PairFromSeed,
+  mnemonicToMiniSecret,
+  mnemonicGenerate,
+  keyFromPath,
+  keyExtractPath,
+  encodeAddress
+}, {
+  get: async (base, key) => {
+    await ready
+    return base[key]
+  }
+})
+
+
+export const UIDv4regex = /^(?:[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}|00000000-0000-0000-0000-000000000000)$/i
+export type UIDv4 = string
+
+
+/**
+ * A utility class to allow consumers of the sdk to subscribe
+ * to key creations and "account" updates
+ */
+
+
+export default class Keyring extends EventEmitter {
+
+  async constructor () {
+    super()
+    // these are async wrapped functions of polkadot crypto
+    this.crypto = crypto
+  }
+
+
+
+}
+
+
+export function KeyringToAccount () {
+
+}
+
+export function AccountToKeyRing () {
+
+}
+
+export function createKeyring () {
+
+}
+
+export function createDeviceKey () {
+
+}
+
+export function createAdminKey () {
+
+}
+
+export function createDevKey () {
+
+}
+
+export function
 
 export function createEntropyKeyring (account: EntropyAccountInfo = {}) : EntropyAccount {
   const jsonStore = {...account}
@@ -72,39 +125,4 @@ export function createEntropyKeyring (account: EntropyAccountInfo = {}) : Entrop
 
 
   return keyring
-}
-
-export function generateSeed (): string {
-  const mnemonic = mnemonicGenerate()
-  const mnemonicMini = mnemonicToMiniSecret(mnemonic)
-}
-
-
-/**
- * @param seed {@link string}
- * @param derivation {@link string}
- * @returns Signer {@link Signer}
- * generates A usable signer with meta info about the account i.e. address etc
- * */
-export function generateKeyPairFromSeed (seed: string, dervation?: string): { address: string; privateKey: string, pair: Signer } {
-  let pair
-  if (dervation) {
-    const masterPair = sr25519PairFromSeed(seed)
-    const { path } = keyExtractPath(dervation)
-    pair = keyFromPath(masterPair, path, 'sr25519')
-  } else {
-    pair = sr25519PairFromSeed(seed)
-  }
-
-  return {
-    // this might break address formatting? test against charlie stash address
-    address: encodeAddress(pair.publicKey),
-    privateKey: pair.secretKey.toString(),
-    signer: pair,
-  };
-}
-
-export function deriveFromMasterPair (signer: Keypair, dervation): Keypair {
-    const { path } = keyExtractPath(dervation)
-    return keyFromPath(signer, path, 'sr25519')
 }
