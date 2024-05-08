@@ -1,3 +1,2 @@
 npx tsc && echo "✔ tsc..." && \
 npx lint-staged
-# yarn test:coverage

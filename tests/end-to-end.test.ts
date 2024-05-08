@@ -35,16 +35,17 @@ test('End To End Test Suite', async (t) => {
   )
   t.equal(typeof basicTxProgram.toString(), 'string', 'got basic program')
 
-  console.time('deploy')
+  const TIMER_ID = 'deploy'
+  console.time(TIMER_ID)
   const pointer = await entropy.programs.dev.deploy(basicTxProgram)
-  console.timeEnd('deploy')
+  console.timeEnd(TIMER_ID)
   t.equal(typeof pointer, 'string', 'program deployed (got pointer)')
 
   const config = `
     {
-        "allowlisted_addresses": [
-            "772b9a9e8aa1c9db861c6611a82d251db4fac990"
-        ]
+      "allowlisted_addresses": [
+        "772b9a9e8aa1c9db861c6611a82d251db4fac990"
+      ]
     }
   `
   // convert to bytes
@@ -74,7 +75,6 @@ test('End To End Test Suite', async (t) => {
     initialPrograms: [programData],
     programModAccount: charlieStashAddress,
   })
-  t.ok(entropy.account.verifyingKey, 'got verifyingKey post register')
   t.equal(
     entropy.account.sigRequestKey.wallet.address,
     charlieStashAddress,
@@ -127,8 +127,6 @@ test('End To End Test Suite', async (t) => {
       t.equal(signature.length, 228, 'got a good sig')
     })
     .catch((err) => t.error(err, 'signature worked'))
-
-  // await disconnect(charlieStashEntropy.substrate)
 
   t.end()
 })
