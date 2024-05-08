@@ -33,9 +33,11 @@ export interface MenomnicSeedMaterial {
 }
 
 export interface EntropyAccount {
+  // rename these to match child key
   registeringKey?: PairMaterial
   programDeployKey?: PairMaterial
   deviceKey?: PairMaterial
+  // end rename
   mnemonic?: Menomnic
   seed?:
   verifyingKeys?: string[]
@@ -46,4 +48,10 @@ export interface PairMaterial {
   address?: hexString
   //
   path: Path
+
+  seed?:
+
+  type: ChildKey
+  // is list of address? i think these are acctually publicKeys
+  verifyingKeys?: string[]
 }

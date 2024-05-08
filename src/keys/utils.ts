@@ -1,14 +1,11 @@
 import {
   sr25519PairFromSeed,
-  cryptoWaitReady,
   mnemonicToMiniSecret,
   mnemonicGenerate,
   keyFromPath,
   keyExtractPath,
   encodeAddress
 } from '@polkadot/util-crypto'
-
-const ready = cryptoWaitReady()
 
 export async function seedFromMnemonic (m) {
   return mnemonicToMiniSecret(m)
@@ -24,12 +21,10 @@ export function getPath ({type, uid}: {type: string, uid: UIDv4}): string {
 
 
 export function generateMnemonic () {
-  await ready
   return mnemonicGenerate()
 }
 
 export function generateSeed (): string {
-  await ready
   const mnemonic = mnemonicGenerate()
   const mnemonicMini = mnemonicToMiniSecret(mnemonic)
 }
@@ -44,7 +39,6 @@ export function generateSeed (): string {
  * */
 
 export function generateKeyPairFromSeed (seed: string, dervation?: string): { address: string; privateKey: string, pair: Signer } {
-  await ready
   let pair
   if (dervation) {
     const masterPair = sr25519PairFromSeed(seed)
@@ -63,7 +57,6 @@ export function generateKeyPairFromSeed (seed: string, dervation?: string): { ad
 }
 
 export function deriveFromMasterPair (signer: Keypair, dervation): Keypair {
-  await ready
   const { path } = keyExtractPath(dervation)
   return keyFromPath(signer, path, 'sr25519')
 }

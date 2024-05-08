@@ -26,7 +26,7 @@ export const enum EntropyAccountType {
 }
 
 export enum ChildKeyBasePaths {
-  REGISTRATION = '//entropy//registration',
+  REGISTRATION = '//entropy//registration///',
   PROGRAM_DEV = '//entropy//program-dev',
-  DEVICE_KEY = '//entropy//device-key'
+  DEVICE_KEY = '//entropy//device-key///',
 }

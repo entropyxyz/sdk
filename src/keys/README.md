@@ -4,6 +4,11 @@ the user hold onto the seed every class will create their own key via a set deri
 Derivation Path
 ```ts
 //store that private key
+
+import { wasmGlobalsReady, Entropy }
+
+await wasmGlobalsReady
+
 const accounnt = {seed || mnemonic}
 const keyring = new Keyring(account)
 // you should allways store what comes from this
