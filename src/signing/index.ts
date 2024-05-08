@@ -6,7 +6,7 @@ import { EncMsg, ValidatorInfo } from '../types'
 import { stripHexPrefix, sendHttpPost } from '../utils'
 import { crypto, CryptoLib } from '../utils/crypto'
 import { Transaction } from 'ethereumjs-tx'
-
+import { Address } from '../types'
 
 export interface Config {
   signer: Signer
@@ -37,7 +37,7 @@ export interface UserSignatureRequest {
   validatorsInfo: ValidatorInfo[]
   timestamp: { secs_since_epoch: number; nanos_since_epoch: number }
   hash: string
-  signatureRequestAccount: Uint8Array
+  signatureRequestAccount: string
 }
 /**
  * `SignatureRequestManager` facilitates signature requests using Polkadot/Substrate API.
@@ -116,14 +116,16 @@ export default class SignatureRequestManager {
    * permissioned modes, this must be identical to the account used to sign the SignedMessage containing the signature request. 
    * In public access mode this may be an Entropy account owned by someone else. **/
 
-  async sign ({ sigRequestHash, hash, auxilaryData }: SigOps): Promise<Uint8Array> {
+  async sign ({ sigRequestHash, hash, auxilaryData,  }: SigOps): Promise<Uint8Array> {
     const strippedsigRequestHash = stripHexPrefix(sigRequestHash)
     const validatorsInfo: Array<ValidatorInfo> = await this.pickValidators(
       strippedsigRequestHash
     )
     // TO-DO: this needs to be and accounId ie hex string of the address
     // which means you need a new key ie device key here
-    let signatureRequestAccount
+
+    const signatureRequestAccount = this.signer.address
+
     const txRequests: Array<EncMsg> = await this.formatTxRequests({
       validatorsInfo: validatorsInfo,
       signatureRequestAccount,
@@ -172,7 +174,7 @@ export default class SignatureRequestManager {
     hash,
   }: {
     strippedsigRequestHash: string
-    signatureRequestAccount: Uint8Array
+    signatureRequestAccount: string
     validatorsInfo: Array<ValidatorInfo>
     auxilaryData?: unknown[]
     hash?: string
@@ -209,9 +211,12 @@ export default class SignatureRequestManager {
             (x) => x.charCodeAt(0)
           )
 
+          const publicX25519key = await crypto.publicKeyFromSecret(this.signer.pair.secretKey)
+
           const encryptedMessage = await crypto.encryptAndSign(
             this.signer.pair.secretKey,
             encoded,
+            publicX25519key,
             serverDHKey
           )
 

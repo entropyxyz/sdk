@@ -78,7 +78,6 @@ describe('Core Tests', () => {
   //   console.log('registration tests')
   //   await entropy.register({
   //     keyVisibility: 'Permissioned',
-  //     freeTx: false,
   //     initialPrograms: [{ pointer: pointer, config: '0x' }],
   //     programModAccount: charlieStashAddress,
   //   })
@@ -167,10 +166,9 @@ const programConfig = util.u8aToHex(new Uint8Array(byteArray))
 
    await entropy.register({
       keyVisibility: 'Public',
-      freeTx: false,
       // initialPrograms: [{ pointer: programData.pointer, config: programData.config }],
-      initialPrograms: [programData],
-      programModAccount: charlieStashAddress,
+      programPointer: [programData],
+      programDeployer: charlieStashAddress,
     })
 
     expect(entropy.account.verifyingKey).toBeTruthy()

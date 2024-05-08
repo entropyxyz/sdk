@@ -5,17 +5,16 @@ import { ProgramData } from '../programs'
 import { EntropyAccount, EntropyAccountType } from '../keys/types'
 
 export interface RegistrationParams {
-  freeTx?: boolean
-  initialPrograms?: ProgramData[]
+  programPointer?: ProgramData[]
   keyVisibility?: 'Public' | 'Private'
-  programModAccount?: Address
+  programDeployer?: Address
 }
 
 
 export interface RegisteredInfo {
   keyVisibility: KeyVisibilityInfo
   programsData: Uint8Array
-  programModAccount: Address
+  programDeployer: Address
   versionNumber: number
 }
 
@@ -73,22 +72,20 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
   /**
    * Registers a user with the given parameters.
    *
-   * @param freeTx - Optional. Indicates if the transaction should be free (default: false).
-   * @param initialPrograms - Optional. Initial program associated with the user.
+   * @param programPointer - Optional. Initial program associated with the user.
    * @param keyVisibility - Key visibility level ('Public', 'Private'). Defaults to 'Public'.
-   * @param programModAccount - Account authorized to modify programs on behalf of the user.
+   * @param programDeployer - Account authorized to modify programs on behalf of the user.
    *
    * @returns A promise that resolves when the user is successfully registered.
    * @throws {Error} If the user is already registered.
    */
   // TO-DO: return the verfiying key have it documented that the user needs to save this otherwise that cant request sigs
   async register ({
-    freeTx = false,
-    initialPrograms = [DEFAULT_PROGRAM_INTERFACE],
+    programPointer = [DEFAULT_PROGRAM_INTERFACE],
     keyVisibility = 'Public',
-    programModAccount = this.defaultAddress,
+    programDeployer = this.defaultAddress,
   }: RegistrationParams): Promise<RegisteredInfo> {
-    const programModificationAccount = programModAccount
+    const programDeployer = programDeployer
 
     // this is sloppy
     // TODO: store multiple signers via address. and respond accordingly
@@ -129,7 +126,7 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
                 const unsub = await unsubPromise
                 unsub()
                 const registeredData = await this.substrate.query.registry.registered(
-                  this.signer.wallet.address
+                  this.signer.address
                 )
                 // @ts-ignore: next line
                 if (!registeredData.isSome) {
@@ -140,7 +137,7 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
                 resolve({
                   keyVisibility: data.keyVisibility.toJSON() as KeyVisibilityInfo,
                   programsData: data.programsData.toJSON(),
-                  programModAccount: data.ProgramsModAccount.toJSON(),
+                  programDeployer: data.programDeployer.toJSON(),
                   versionNumber: data.versionNumber                  })
               } 
             } 
@@ -153,13 +150,12 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
 
     // Convert the ProgramData to PalletRegistryProgramInstance and wrap it in an array
     const registerTx = this.substrate.tx.registry.register(
-      programModificationAccount,
+      programDeployer,
       keyVisibility,
-      // initialPrograms
-      initialPrograms.map((programInfo) => { return {programPointer: programInfo.programPointer, programConfig: programInfo.programConfig} })
+      programPointer.map((programInfo) => { return {programPointer: programInfo.programPointer, programConfig: programInfo.programConfig} })
     )
 
-    await this.sendAndWaitFor (registerTx, freeTx, {
+    await this.sendAndWaitFor (registerTx,{
       section: 'registry',
       name: 'SignalRegister',
     })

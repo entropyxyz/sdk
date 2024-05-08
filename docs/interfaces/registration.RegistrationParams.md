@@ -8,16 +8,9 @@
 
 ### Properties
 
-- [freeTx](registration.RegistrationParams.md#freetx)
 - [initialPrograms](registration.RegistrationParams.md#initialprograms)
 - [keyVisibility](registration.RegistrationParams.md#keyvisibility)
 - [programModAccount](registration.RegistrationParams.md#programmodaccount)
-
-## Properties
-
-### freeTx
-
-• `Optional` **freeTx**: `boolean`
 
 #### Defined in
 
