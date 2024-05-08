@@ -1,6 +1,6 @@
 import { ApiPromise } from '@polkadot/api'
 import { execFileSync } from 'child_process'
-import { rimrafSync } from 'rimraf'
+import * as readline from 'readline'
 
 import Entropy, { EntropyAccount } from '../../src'
 import { getWallet } from '../../src/keys'
@@ -11,15 +11,8 @@ export type spinNetworkUpOpts = void | {
   startClean?: boolean
 }
 
-export async function spinNetworkUp(
-  networkType = 'two-nodes',
-  opts: spinNetworkUpOpts
-) {
-  const { startClean = true } = opts || {}
-
+export async function spinNetworkUp(networkType = 'two-nodes') {
   try {
-    if (startClean) rimrafSync('.entropy')
-
     execFileSync(
       'dev/bin/spin-up.sh',
       [networkType],
@@ -64,9 +57,50 @@ export async function spinNetworkDown(
   }
 }
 
+const SLEEP_DONE = '▓'
+const SLEEP_TODO = '░'
+
 export function sleep(durationInMs: number) {
-  console.log(`sleep (${Math.round(durationInMs / 1000)}s)`)
-  return new Promise((resolve) => setTimeout(resolve, durationInMs))
+  return new Promise((resolve) => {
+    let count = 0
+
+    readline.cursorTo(process.stdout, 2)
+
+    const steps = Math.min(Math.round(durationInMs / 1000), 80)
+    const stepLength = durationInMs / steps
+
+    console.log('') // write blank link to overwrite
+    const interval = setInterval(step, stepLength)
+
+    function step() {
+      count++
+
+      if (count >= steps) {
+        clearInterval(interval)
+
+        undoLastLine()
+        console.log(`sleep (${durationInMs / 1000}s)`)
+        resolve('DONE')
+        return
+      }
+
+      undoLastLine()
+      console.log(
+        [
+          'sleep ',
+          ...Array(count).fill(SLEEP_DONE),
+          ...Array(steps - count).fill(SLEEP_TODO),
+          '\n',
+        ].join('')
+      )
+    }
+  })
+}
+function undoLastLine() {
+  readline.moveCursor(process.stdout, 0, -1)
+  readline.cursorTo(process.stdout, 0)
+  readline.clearLine(process.stdout, 0)
+  readline.cursorTo(process.stdout, 4) // indent
 }
 
 export async function disconnect(api: ApiPromise) {

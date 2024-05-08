@@ -73,30 +73,33 @@ test('Register Tests: handle user registration', async (t) => {
   await testTeardown(t)
 })
 
-test('Register Tests: not allow re-registration', async (t) => {
+test.only('Register Tests: not allow re-registration', async (t) => {
   ;({ entropy, pointer } = await testSetup(t))
 
-  await entropy.register({
-    programModAccount: charlieStashAddress,
-    keyVisibility: 'Permissioned',
-    freeTx: false,
-    initialPrograms: [{ programPointer: pointer, programConfig: '0x' }],
-  })
+  const TIMER_ID = 'time to register'
+  console.time(TIMER_ID)
+  await entropy
+    .register({
+      programModAccount: charlieStashAddress,
+      keyVisibility: 'Permissioned',
+      freeTx: false,
+      initialPrograms: [{ programPointer: pointer, programConfig: '0x' }],
+    })
+    .catch((err) => t.error(err, 'registerd'))
+  console.timeEnd(TIMER_ID)
 
-  // QUESTION: why is there this massive wait?!
-  await sleep(120000)
+  await sleep(30_000)
+  // QUESTION: is it not enough to await to trust registration has really happened?
 
-  t.throws(
-    () =>
-      entropy.register({
-        programModAccount: charlieStashAddress,
-        keyVisibility: 'Permissioned',
-        freeTx: true,
-        initialPrograms: [{ programPointer: pointer, programConfig: '0x' }],
-      }),
-    undefined,
-    { message: 'already registered' }
-  )
+  await entropy
+    .register({
+      programModAccount: charlieStashAddress,
+      keyVisibility: 'Permissioned',
+      freeTx: true,
+      initialPrograms: [{ programPointer: pointer, programConfig: '0x' }],
+    })
+    .then(() => t.fail('throws error on duplicate registrations'))
+    .catch((err) => t.match(err.message, /already registered/))
 
   await testTeardown(t)
 })

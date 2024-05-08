@@ -27,6 +27,23 @@ If you are blocked from committing, you can skip these hooks
 git commit --no-verify
 ```
 
+## Tests
+
+The tests use docker to spin up test networks to run against.
+Sometimes when interupted docker containers will be left runnin in the background, meaning you don't get a "clean" startup, and your tests will fail (saying things like "ERROR that program is already deployed boo").
+
+Have a look what's running:
+
+```bash
+docker ps
+```
+
+Close them down like this (for example):
+
+```bash
+docker compose --file dev/docker-scripts/two-nodes.yaml down
+```
+
 ## Publishing
 
 Always publish from `stable` branch

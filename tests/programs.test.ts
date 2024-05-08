@@ -33,25 +33,25 @@ test('Programs Test', async (t) => {
   const dummyProgram = readFileSync(
     './tests/testing-utils/template_barebones.wasm'
   )
-  const pointer = await entropy.programs.dev
+  const pointer = (await entropy.programs.dev
     .deploy(dummyProgram)
     .then((pointer) => {
       t.pass('program deployed')
       return pointer
     })
-    .catch((err) => t.error(err, 'program deployed'))
+    .catch((err) => t.error(err, 'program deployed'))) as string
 
-  // @ts-ignore next line
   const fetchedProgram = await entropy.programs.dev
     .get(pointer)
+    // @ts-ignore next line
     .then((program) => {
       t.pass('fetched program')
       return program
     })
     .catch((err) => t.error(err, 'fetched program'))
 
-  // @ts-ignore next line
   t.equal(
+    // @ts-ignore next line
     buf2hex(fetchedProgram.bytecode),
     buf2hex(dummyProgram),
     'everything looks GREAT'
