@@ -73,7 +73,7 @@ test('Register Tests: handle user registration', async (t) => {
   await testTeardown(t)
 })
 
-test.only('Register Tests: not allow re-registration', async (t) => {
+test('Register Tests: not allow re-registration', async (t) => {
   ;({ entropy, pointer } = await testSetup(t))
 
   const TIMER_ID = 'time to register'
