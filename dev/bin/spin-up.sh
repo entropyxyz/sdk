@@ -1,5 +1,5 @@
 #! /usr/bin/env bash
-printf "SPIN UP"
+printf "SPIN UP\n"
 source ./dev/bin/ENTROPY_CORE_VERSION.sh
 # DFO is place holder put the docker script here
 docker_file=dev/docker-scripts/$1.yaml

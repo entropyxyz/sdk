@@ -1,25 +1,24 @@
+import test from 'tape'
 import { readFileSync } from 'fs'
 import Entropy from '../src'
+
 import {
   sleep,
-  disconnect,
-  charlieStashSeed,
   charlieStashAddress,
   spinNetworkUp,
   createTestAccount,
   spinNetworkDown,
 } from './testing-utils'
-import { execFileSync } from 'child_process'
-import { getWallet } from '../src/keys'
-import { EntropyAccount } from '../src'
-import tape from 'tape'
 
-let entropy: Entropy
-let pointer
-let isRegisteredBefore
-const testSetup = async () => {
-  await sleep(300000)
+async function testSetup(t) {
+  let timeout: any
+
   try {
+    timeout = setTimeout(() => {
+      throw new Error('test setup failed')
+    }, 300000)
+
+    // @ts-ignore
     await spinNetworkUp()
     entropy = await createTestAccount(entropy)
     const dummyProgram: any = readFileSync(
@@ -27,23 +26,14 @@ const testSetup = async () => {
     )
     pointer = await entropy.programs.dev.deploy(dummyProgram)
   } catch (error) {
-    console.error('Error spinning up network', error)
+    t.error(error, 'test setup succeeded')
   }
 
+  clearTimeout(timeout)
   return { entropy, pointer }
 }
 
-tape('Register Tests: check pre-registration status', async (t) => {
-  try {
-    ;({ entropy, pointer } = await testSetup())
-  } catch (error) {
-    console.error('Error setting up test', error)
-  }
-
-  // Check if already registered before the test
-  isRegisteredBefore = await entropy.isRegistered(charlieStashAddress)
-  t.notOk(isRegisteredBefore)
-
+async function testTeardown(t) {
   try {
     await spinNetworkDown('two-nodes', entropy)
   } catch (error) {
@@ -51,14 +41,24 @@ tape('Register Tests: check pre-registration status', async (t) => {
   } finally {
     t.end()
   }
+}
+
+let entropy: Entropy
+let pointer: string
+let isRegisteredBefore: boolean
+
+test('Register Tests: check pre-registration status', async (t) => {
+  ;({ entropy, pointer } = await testSetup(t))
+
+  // Check if already registered before the test
+  isRegisteredBefore = await entropy.isRegistered(charlieStashAddress)
+  t.notOk(isRegisteredBefore)
+
+  testTeardown(t)
 })
 
-tape('Register Tests: handle user registration', async (t) => {
-  try {
-    ;({ entropy, pointer } = await testSetup())
-  } catch (error) {
-    console.error('Error setting up test', error)
-  }
+test('Register Tests: handle user registration', async (t) => {
+  ;({ entropy, pointer } = await testSetup(t))
 
   await entropy.register({
     programModAccount: charlieStashAddress,
@@ -70,21 +70,11 @@ tape('Register Tests: handle user registration', async (t) => {
   const isRegisteredAfter = await entropy.isRegistered(charlieStashAddress)
   t.ok(isRegisteredAfter)
 
-  try {
-    await spinNetworkDown('two-nodes', entropy)
-  } catch (error) {
-    console.error('Error spinning network down', error)
-  } finally {
-    t.end()
-  }
+  testTeardown(t)
 })
 
-tape('Register Tests: not allow re-registration', async (t) => {
-  try {
-    ;({ entropy, pointer } = await testSetup())
-  } catch (error) {
-    console.error('Error setting up test', error)
-  }
+test('Register Tests: not allow re-registration', async (t) => {
+  ;({ entropy, pointer } = await testSetup(t))
 
   await entropy.register({
     programModAccount: charlieStashAddress,
@@ -93,7 +83,9 @@ tape('Register Tests: not allow re-registration', async (t) => {
     initialPrograms: [{ programPointer: pointer, programConfig: '0x' }],
   })
 
+  // QUESTION: why is there this massive wait?!
   await sleep(120000)
+
   t.throws(
     () =>
       entropy.register({
@@ -106,35 +98,16 @@ tape('Register Tests: not allow re-registration', async (t) => {
     { message: 'already registered' }
   )
 
-  try {
-    await spinNetworkDown('two-nodes', entropy)
-  } catch (error) {
-    console.error('Error spinning network down', error)
-  } finally {
-    t.end()
-  }
+  testTeardown(t)
 })
 
-tape(
-  'Register Tests: verify registration status of a new address',
-  async (t) => {
-    try {
-      ;({ entropy, pointer } = await testSetup())
-    } catch (error) {
-      console.error('Error setting up test', error)
-    }
+test('Register Tests: verify registration status of a new address', async (t) => {
+  ;({ entropy, pointer } = await testSetup(t))
 
-    const isNewAddressRegistered = await entropy.isRegistered(
-      '5FWd3NSnWQ6Ay9CXmw9aTU8ZvDksn7zzzuw5dCKq9R8DsaCo'
-    )
-    t.notOk(isNewAddressRegistered)
+  const isNewAddressRegistered = await entropy.isRegistered(
+    '5FWd3NSnWQ6Ay9CXmw9aTU8ZvDksn7zzzuw5dCKq9R8DsaCo'
+  )
+  t.notOk(isNewAddressRegistered)
 
-    try {
-      await spinNetworkDown('two-nodes', entropy)
-    } catch (error) {
-      console.error('Error spinning network down', error)
-    } finally {
-      t.end()
-    }
-  }
-)
+  testTeardown(t)
+})

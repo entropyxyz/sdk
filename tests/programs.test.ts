@@ -1,13 +1,14 @@
+import tape from 'tape'
 import { readFileSync } from 'fs'
+
 import Entropy from '../src'
+import { buf2hex } from '../src/utils'
 import {
   sleep,
   spinNetworkUp,
   createTestAccount,
   spinNetworkDown,
 } from './testing-utils'
-import { buf2hex } from '../src/utils'
-import tape from 'tape'
 
 const networkType = 'two-nodes'
 let entropy: Entropy

@@ -1,57 +1,45 @@
+import test from 'tape'
 import { readFileSync } from 'fs'
+import * as util from '@polkadot/util'
 import Entropy from '../src'
+import { ProgramData } from '../src/programs'
+
 import {
-  charlieStashAddress,
   spinNetworkUp,
   createTestAccount,
+  charlieStashAddress,
   spinNetworkDown,
 } from './testing-utils'
-import { ProgramData } from '../src/programs'
-import * as util from '@polkadot/util'
-import tape from 'tape'
-export const count = 8
-// QN @naynay: What was this needed for again frankie?
-const networkNeeds = true
 
 const networkType = 'two-nodes'
 let entropy: Entropy
 
-tape('End To End Test Suite', async (t) => {
+test.only('End To End Test Suite', async (t) => {
   try {
     await spinNetworkUp(networkType)
     entropy = await createTestAccount(entropy)
-    // const programsAvailable = await entropy.programs.get(charlieStashAddress)
-    // console.log('programs available', programsAvailable)
-
-    // // if (programsAvailable) {
-    // //   await Promise.all(programsAvailable.map(async (program) => {
-    // //     await entropy.programs.remove(program.programPointer, charlieStashAddress)
-    // //   }));
-    // // }
   } catch (error) {
-    console.error(
-      'Error in spinning network up or creating test account',
-      error.message
-    )
+    t.error(error, 'setup')
+    throw error
   }
-
-  // console.log('entropy', entropy);
+  t.ok(entropy, 'setup')
 
   const basicTxProgram: any = readFileSync(
     './tests/testing-utils/template_basic_transaction.wasm'
   )
-  console.log('basic program', basicTxProgram.toString())
+  t.equal(typeof basicTxProgram.toString(), 'string', 'got basic program')
 
   const pointer = await entropy.programs.dev.deploy(basicTxProgram)
-  console.log('pointer 1', pointer)
+  // WIP: broken here
+  t.equal(typeof pointer, 'string', 'program deployed (got pointer)')
 
   const config = `
-  {
-      "allowlisted_addresses": [
-          "772b9a9e8aa1c9db861c6611a82d251db4fac990"
-      ]
-  }
-`
+    {
+        "allowlisted_addresses": [
+            "772b9a9e8aa1c9db861c6611a82d251db4fac990"
+        ]
+    }
+  `
   // convert to bytes
   const encoder = new TextEncoder()
   const byteArray = encoder.encode(config)
@@ -66,10 +54,11 @@ tape('End To End Test Suite', async (t) => {
 
   // Pre-registration check
   const preRegistrationStatus = await entropy.isRegistered(charlieStashAddress)
-  // test 1
-  t.notOk(preRegistrationStatus)
-  // test 2
-  t.equal(JSON.stringify(preRegistrationStatus), 'false')
+  t.equal(
+    JSON.stringify(preRegistrationStatus),
+    'false',
+    'charlie not yet registered'
+  )
 
   await entropy.register({
     keyVisibility: 'Permissioned',
@@ -78,38 +67,26 @@ tape('End To End Test Suite', async (t) => {
     initialPrograms: [programData],
     programModAccount: charlieStashAddress,
   })
-  // test 3
-  t.ok(entropy.account.verifyingKey)
-  // test 4
-  t.equal(entropy.account.sigRequestKey.wallet.address, charlieStashAddress)
-  // test 5
+  t.ok(entropy.account.verifyingKey, 'got verifyingKey post register')
+  t.equal(
+    entropy.account.sigRequestKey.wallet.address,
+    charlieStashAddress,
+    'got right address'
+  )
   const preRegistrationStatusCheck =
     await entropy.registrationManager.checkRegistrationStatus(
       charlieStashAddress
     )
-  t.ok(preRegistrationStatusCheck)
+  t.ok(preRegistrationStatusCheck, 'preRegistrationStatusCheck ...') // TODO: better check
 
   // Post-registration check
-
   const postRegistrationStatus = await entropy.isRegistered(charlieStashAddress)
-  // test 6
-  t.ok(postRegistrationStatus)
-
-  const postStringifiedResponse = JSON.stringify(postRegistrationStatus)
-
-  // QN @naynay: What is the need of this conditional if we are testing for truthiness?
-  if (postStringifiedResponse === 'false') {
-    console.log('is not registered')
-  }
-  // test 7
-  t.equal(postStringifiedResponse, 'true')
+  t.equal(JSON.stringify(postRegistrationStatus), 'true', 'isRegerstered')
 
   //  loading second program
-
   const dummyProgram: any = readFileSync(
     './tests/testing-utils/template_barebones.wasm'
   )
-
   const newPointer = await entropy.programs.dev.deploy(dummyProgram)
   const secondProgramData: ProgramData = {
     programPointer: newPointer,
@@ -118,11 +95,12 @@ tape('End To End Test Suite', async (t) => {
   await entropy.programs.add(secondProgramData, charlieStashAddress)
   // getting charlie programs
   const programs = await entropy.programs.get(charlieStashAddress)
+  t.equal(programs.length, 2, 'charlie has 2 programs')
 
-  console.log('CHARLIES PROGRAMS', programs)
   // removing charlie program barebones
   await entropy.programs.remove(newPointer, charlieStashAddress)
   const updatedRemovedPrograms = await entropy.programs.get(charlieStashAddress)
+  t.equal(updatedRemovedPrograms.length, 1, 'charlie has 1 program')
 
   const basicTx = {
     to: '0x772b9a9e8aa1c9db861c6611a82d251db4fac990',
@@ -138,9 +116,7 @@ tape('End To End Test Suite', async (t) => {
   })) as string
 
   // encoding signature
-  console.log('SIGGGG', signature)
-  // test 8
-  t.equal(signature.length, 228)
+  t.equal(signature.length, 228, 'got a good sig')
   // await disconnect(charlieStashEntropy.substrate)
   try {
     await spinNetworkDown(networkType, entropy)

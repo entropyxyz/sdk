@@ -1,12 +1,13 @@
-import tape from 'tape'
+import test from 'tape'
 import { crypto, cryptoIsLoaded } from '../src/utils/crypto'
+
 import { readKey } from './testing-utils/readKey'
 
 function stripHexPrefix(str: string): string {
   return str.startsWith('0x') ? str.slice(2) : str
 }
 
-tape('Crypto Tests', async (t) => {
+test('Crypto Tests', async (t) => {
   // Before all
   try {
     await cryptoIsLoaded

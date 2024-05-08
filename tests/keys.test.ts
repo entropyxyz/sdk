@@ -1,8 +1,8 @@
-import { sleep, charlieStashSeed } from './testing-utils'
-import { mnemonicGenerate } from '@polkadot/util-crypto'
-
-import { getWallet, mnemonicGenOrDerive } from '../src/keys'
 import tape from 'tape'
+import { mnemonicGenerate } from '@polkadot/util-crypto'
+import { getWallet, mnemonicGenOrDerive } from '../src/keys'
+
+import { sleep, charlieStashSeed } from './testing-utils'
 
 export const count = 4
 let testMnemonic: string
