@@ -20,7 +20,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20.10.0
-      - name: Build
+      - name: Install
         run: yarn --network-timeout 180000
       - name: Typecheck
         run: yarn run test:types
