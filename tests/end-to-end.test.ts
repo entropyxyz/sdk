@@ -101,19 +101,34 @@ test('End To End', async (t) => {
   const dummyProgram: any = readFileSync(
     './tests/testing-utils/template_barebones.wasm'
   )
-  const newPointer = await entropy.programs.dev.deploy(dummyProgram)
+  const newPointer = await run(
+    'deploy',
+    entropy.programs.dev.deploy(dummyProgram)
+  )
   const secondProgramData: ProgramData = {
     programPointer: newPointer,
     programConfig: '',
   }
-  await entropy.programs.add(secondProgramData, charlieStashAddress)
+  await run(
+    'add program',
+    entropy.programs.add(secondProgramData, charlieStashAddress)
+  )
   // getting charlie programs
-  const programs = await entropy.programs.get(charlieStashAddress)
+  const programs = await run(
+    'get programs',
+    entropy.programs.get(charlieStashAddress)
+  )
   t.equal(programs.length, 2, 'charlie has 2 programs')
 
   // removing charlie program barebones
-  await entropy.programs.remove(newPointer, charlieStashAddress)
-  const updatedRemovedPrograms = await entropy.programs.get(charlieStashAddress)
+  await run(
+    'remove program',
+    entropy.programs.remove(newPointer, charlieStashAddress)
+  )
+  const updatedRemovedPrograms = await run(
+    'get programs',
+    entropy.programs.get(charlieStashAddress)
+  )
   t.equal(updatedRemovedPrograms.length, 1, 'charlie has 1 program')
 
   const basicTx = {
