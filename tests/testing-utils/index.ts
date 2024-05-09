@@ -5,10 +5,52 @@ import * as readline from 'readline'
 import Entropy, { EntropyAccount } from '../../src'
 import { getWallet } from '../../src/keys'
 import { charlieStashSeed } from './constants'
+
 export * from './constants'
+export * from './readKey'
+export * from './getApi'
 
 export type spinNetworkUpOpts = void | {
   startClean?: boolean
+}
+
+/* Helper for wrapping promises which makes it super clear in logging if the promise
+ * resolves or threw.
+ *
+ * @param {any} t - an instance to tape runner
+ * @param {boolean} keepThrowing - toggle throwing
+ */
+export function promiseRunner(t: any, keepThrowing = true) {
+  // NOTE: this function swallows errors
+  return async function run(
+    message: string,
+    promise: Promise<any>
+  ): Promise<any> {
+    if (promise.constructor !== Promise) {
+      t.pass(message)
+      return Promise.resolve(promise)
+    }
+
+    return promise
+      .then((result) => {
+        t.pass(message)
+        return result
+      })
+      .catch((err) => {
+        t.error(err, message)
+        if (keepThrowing) throw err
+      })
+  }
+}
+
+export function createTimeout(time: number, message?: string) {
+  const timeout = setTimeout(() => {
+    throw Error(`Timeout hit: ${message || ''}`)
+  }, time)
+
+  return {
+    clear: () => clearTimeout(timeout),
+  }
 }
 
 export async function spinNetworkUp(networkType = 'two-nodes') {

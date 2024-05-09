@@ -1,19 +1,14 @@
 import test from 'tape'
 import { crypto, cryptoIsLoaded } from '../src/utils/crypto'
+import { stripHexPrefix } from '../src/utils'
 
-import { readKey } from './testing-utils/readKey'
-
-function stripHexPrefix(str: string): string {
-  return str.startsWith('0x') ? str.slice(2) : str
-}
+import { promiseRunner, readKey } from './testing-utils'
 
 test('Crypto Tests', async (t) => {
-  // Before all
-  try {
-    await cryptoIsLoaded
-  } catch (error) {
-    console.error('Error while checking if cryptoIsLoaded')
-  }
+  const run = promiseRunner(t)
+
+  await run('crypto loaded', cryptoIsLoaded)
+
   const mockData = {
     endpoint: '127.0.0.1:3001',
     tssAccount: '5H8qc7f4mXFY16NBWSB9qkc6pTks98HdVuoQTs1aova5fRtN',
@@ -22,18 +17,22 @@ test('Crypto Tests', async (t) => {
     ),
   }
 
-  t.test('should parse server threshold info', async (t2) => {
-    const mockReturn = [
+  /* Parse threshold info */
+  {
+    const expected = [
       10, 192, 41, 240, 184, 83, 178, 59, 237, 101, 45, 109, 13, 230, 155, 124,
       195, 141, 148, 249, 55, 50, 238, 252, 133, 181, 134, 30, 144, 247, 58, 34,
-    ]
+    ].toString()
 
-    const result = await crypto.fromHex(mockData.x25519_public_key)
-    t2.equal(result.toString(), mockReturn.toString())
-    t2.end()
-  })
+    const result = await run(
+      'fromHex',
+      crypto.fromHex(mockData.x25519_public_key)
+    )
+    t.deepEqual(result.toString(), expected, 'fromHex correct')
+  }
 
-  t.test('should encrypt and sign', async (t3) => {
+  /* Encrypt + sign */
+  {
     const aliceSecretKey: Uint8Array = new Uint8Array([
       152, 49, 157, 79, 248, 169, 80, 140, 75, 176, 207, 11, 90, 120, 215, 96,
       160, 178, 8, 44, 2, 119, 94, 110, 130, 55, 8, 22, 254, 223, 255, 72, 146,
@@ -41,27 +40,33 @@ test('Crypto Tests', async (t) => {
       3, 35, 54, 232, 143, 52, 66, 180, 35, 97, 244, 166, 96, 17,
     ])
 
-    const alicePublicKey = await crypto.publicKeyFromSecret(aliceSecretKey)
+    const alicePublicKey = await run(
+      'publicKeyFromSecret works',
+      crypto.publicKeyFromSecret(aliceSecretKey)
+    )
 
-    const serverDHKey = await crypto.fromHex(mockData.x25519_public_key)
+    const serverDHKey = await run(
+      'fromHex works',
+      crypto.fromHex(mockData.x25519_public_key)
+    )
     const root = process.cwd()
 
     const thresholdKey = (await readKey(
       `${root + '/tests/testing-utils/test-keys/0'}`
     )) as Uint8Array
 
-    const result = await crypto.encryptAndSign(
-      aliceSecretKey,
-      thresholdKey,
-      alicePublicKey
+    const result = await run(
+      'encryptAndSign',
+      crypto.encryptAndSign(aliceSecretKey, thresholdKey, alicePublicKey)
     )
-    t3.deepEqual(
-      await crypto.decryptAndVerify(aliceSecretKey, result),
-      thresholdKey
+    const expected = await run(
+      'decryptAndVerify',
+      crypto.decryptAndVerify(aliceSecretKey, result)
     )
+    t.deepEqual(expected, thresholdKey, 'decrypt works')
+  }
 
-    t3.end()
-  })
+  t.end()
 })
 
 // not currently sure how to handle thresholdKey since i believe it should be "encoded" per encrypt_and_sign

@@ -5,6 +5,7 @@ import Entropy from '../src'
 import { ProgramData } from '../src/programs'
 
 import {
+  promiseRunner,
   spinNetworkUp,
   createTestAccount,
   charlieStashAddress,
@@ -15,14 +16,10 @@ const networkType = 'two-nodes'
 let entropy: Entropy
 
 test('End To End Test Suite', async (t) => {
-  try {
-    await spinNetworkUp(networkType)
-    entropy = await createTestAccount(entropy)
-  } catch (error) {
-    t.error(error, 'setup')
-    throw error
-  }
-  t.ok(entropy, 'setup')
+  const run = promiseRunner(t)
+
+  await run('network up', spinNetworkUp(networkType))
+  entropy = await run('account', createTestAccount(entropy))
 
   t.teardown(async () => {
     await spinNetworkDown(networkType, entropy).catch((error) =>
@@ -37,9 +34,12 @@ test('End To End Test Suite', async (t) => {
 
   const TIMER_ID = 'deploy'
   console.time(TIMER_ID)
-  const pointer = await entropy.programs.dev.deploy(basicTxProgram)
+  const pointer = await run(
+    'deploy program',
+    entropy.programs.dev.deploy(basicTxProgram)
+  )
   console.timeEnd(TIMER_ID)
-  t.equal(typeof pointer, 'string', 'program deployed (got pointer)')
+  t.equal(typeof pointer, 'string', 'valid pointer')
 
   const config = `
     {
@@ -68,13 +68,16 @@ test('End To End Test Suite', async (t) => {
     'charlie not yet registered'
   )
 
-  await entropy.register({
-    keyVisibility: 'Permissioned',
-    freeTx: false,
-    // initialPrograms: [{ pointer: programData.pointer, config: programData.config }],
-    initialPrograms: [programData],
-    programModAccount: charlieStashAddress,
-  })
+  await run(
+    'registers',
+    entropy.register({
+      keyVisibility: 'Permissioned',
+      freeTx: false,
+      // initialPrograms: [{ pointer: programData.pointer, config: programData.config }],
+      initialPrograms: [programData],
+      programModAccount: charlieStashAddress,
+    })
+  )
   t.equal(
     entropy.account.sigRequestKey.wallet.address,
     charlieStashAddress,
@@ -117,16 +120,15 @@ test('End To End Test Suite', async (t) => {
     data: '0x' + Buffer.from('Created On Entropy').toString('hex'),
   }
 
-  await entropy
-    .signTransaction({
+  const signature = await run(
+    'signTransaction',
+    entropy.signTransaction({
       txParams: basicTx,
       type: 'eth',
     })
-    .then((signature: string) => {
-      // encoding signature
-      t.equal(signature.length, 228, 'got a good sig')
-    })
-    .catch((err) => t.error(err, 'signature worked'))
+  )
+
+  t.equal(signature.length, 228, 'got a good sig')
 
   t.end()
 })

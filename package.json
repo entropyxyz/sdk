@@ -11,10 +11,11 @@
   "module": "dist/index.js",
   "browser": "dist/index.js",
   "scripts": {
-    "test": "yarn test:setup && yarn removedb && yarn test:ts",
+    "test": "yarn test:setup && yarn removedb && yarn test:ts && yarn test:only",
     "test:setup": "docker version && [ \"$(cat .nvmrc)\" = \"$(node --version)\" ] && echo \"\\nCORRECT NODE VERSION\\n\" || { echo \"\\nINCORRECT NODE VERSION\\n\"; exit 1; }",
     "test:ts": "tape -r ts-node/register/transpile-only tests/*.test.ts | tap-spec",
     "test:log": "yarn removedb && jest --runInBand --detectOpenHandles --silent=false --verbose",
+    "test:only": "if grep -r --exclude-dir=node_modules --exclude-dir=.git --color 'test\\.only' ; then exit 1; fi",
     "test:coverage": "nyc yarn test",
     "lint": "yarn lint:ts && yarn lint:eslint",
     "lint:ts": "tsc",

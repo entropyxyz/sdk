@@ -3,6 +3,8 @@ import { readFileSync } from 'fs'
 import Entropy from '../src'
 
 import {
+  promiseRunner,
+  createTimeout,
   sleep,
   charlieStashAddress,
   spinNetworkUp,
@@ -10,37 +12,28 @@ import {
   spinNetworkDown,
 } from './testing-utils'
 
-async function testSetup(t) {
-  let timeout: any
+async function testSetup(t: any) {
+  const run = promiseRunner(t)
+  const timeout = createTimeout(30_000, 'setup')
 
-  try {
-    timeout = setTimeout(() => {
-      throw new Error('test setup failed')
-    }, 300000)
+  await run('network up', spinNetworkUp())
+  entropy = await run('account', createTestAccount(entropy))
+  const dummyProgram: any = readFileSync(
+    './tests/testing-utils/template_barebones.wasm'
+  )
+  pointer = await run(
+    'deploy program',
+    entropy.programs.dev.deploy(dummyProgram)
+  )
 
-    // @ts-ignore
-    await spinNetworkUp()
-    entropy = await createTestAccount(entropy)
-    const dummyProgram: any = readFileSync(
-      './tests/testing-utils/template_barebones.wasm'
-    )
-    pointer = await entropy.programs.dev.deploy(dummyProgram)
-  } catch (error) {
-    t.error(error, 'test setup succeeded')
-  }
-
-  clearTimeout(timeout)
+  timeout.clear()
   return { entropy, pointer }
 }
 
-async function testTeardown(t) {
-  try {
-    await spinNetworkDown('two-nodes', entropy)
-  } catch (error) {
-    console.error('Error spinning network down', error)
-  } finally {
-    t.end()
-  }
+async function testTeardown() {
+  await spinNetworkDown('two-nodes', entropy).catch((err) =>
+    console.log('Teardown failed:', err.message)
+  )
 }
 
 let entropy: Entropy
@@ -49,16 +42,18 @@ let isRegisteredBefore: boolean
 
 test('Register Tests: check pre-registration status', async (t) => {
   ;({ entropy, pointer } = await testSetup(t))
+  t.teardown(testTeardown)
 
   // Check if already registered before the test
   isRegisteredBefore = await entropy.isRegistered(charlieStashAddress)
   t.notOk(isRegisteredBefore)
 
-  await testTeardown(t)
+  t.end()
 })
 
 test('Register Tests: handle user registration', async (t) => {
   ;({ entropy, pointer } = await testSetup(t))
+  t.teardown(testTeardown)
 
   await entropy.register({
     programModAccount: charlieStashAddress,
@@ -70,11 +65,12 @@ test('Register Tests: handle user registration', async (t) => {
   const isRegisteredAfter = await entropy.isRegistered(charlieStashAddress)
   t.ok(isRegisteredAfter)
 
-  await testTeardown(t)
+  t.end()
 })
 
 test('Register Tests: not allow re-registration', async (t) => {
   ;({ entropy, pointer } = await testSetup(t))
+  t.teardown(testTeardown)
 
   const TIMER_ID = 'time to register'
   console.time(TIMER_ID)
@@ -101,16 +97,17 @@ test('Register Tests: not allow re-registration', async (t) => {
     .then(() => t.fail('throws error on duplicate registrations'))
     .catch((err) => t.match(err.message, /already registered/))
 
-  await testTeardown(t)
+  t.end()
 })
 
 test('Register Tests: verify registration status of a new address', async (t) => {
   ;({ entropy, pointer } = await testSetup(t))
+  t.teardown(testTeardown)
 
   const isNewAddressRegistered = await entropy.isRegistered(
     '5FWd3NSnWQ6Ay9CXmw9aTU8ZvDksn7zzzuw5dCKq9R8DsaCo'
   )
   t.notOk(isNewAddressRegistered)
 
-  await testTeardown(t)
+  t.end()
 })
