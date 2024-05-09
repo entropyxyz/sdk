@@ -3,6 +3,7 @@ import { Signer, EventFilter } from '../types'
 import { EventRecord } from '@polkadot/types/interfaces/types'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
 import { RegistryError } from '@polkadot/types-codec/types'
+import { PolkadotSigner } from '../keys/types/internal'
 
 interface Decoded extends RegistryError {
   name: string
@@ -18,7 +19,7 @@ interface Decoded extends RegistryError {
 
 export default class ExtrinsicBaseClass {
   substrate: ApiPromise
-  signer: Signer
+  signer: PolkadotSigner
 
   /**
    * Initializes a new instance of the `ExtrinsicBaseClass`.
@@ -47,7 +48,7 @@ export default class ExtrinsicBaseClass {
   ): Promise<EventRecord> {
     return new Promise<EventRecord>((resolve, reject) => {
       call
-        .signAndSend(this.signer.wallet, (res: SubmittableResult) => {
+        .signAndSend(this.signer.pair, (res: SubmittableResult) => {
           const { dispatchError, status } = res
           if (dispatchError) {
             if (dispatchError.isModule) {

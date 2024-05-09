@@ -3,6 +3,7 @@ import { SubmittableExtrinsic } from '@polkadot/api/types'
 import ExtrinsicBaseClass from '../extrinsic'
 import ProgramDev from './dev'
 import { Signer } from '../types'
+import { verify } from 'crypto'
 
 export interface ProgramInstance {
   programPointer: string
@@ -52,13 +53,13 @@ export default class ProgramManager extends ExtrinsicBaseClass {
    * @alpha
    */
 
-  async get (verifyingKey:string = this.signer.verifyingKeys[0]): Promise<ProgramInstance[]> {
+  async get (programModAccount: string = this.signer.address): Promise<ProgramInstance[]> {
     const registeredOption = await this.substrate.query.registry.registered(
-      verifyingKey
+      programModAccount
     )
 
     if (registeredOption.isEmpty) {
-      throw new Error(`No programs found for account: ${verifyingKey}`)
+      throw new Error(`No programs found for account: ${programModAccount}`)
     }
 
     const registeredInfo = registeredOption.toJSON()
@@ -83,17 +84,18 @@ export default class ProgramManager extends ExtrinsicBaseClass {
    * @alpha
    */
 
+
   async set (
+    verifyingKey: string = this.account.verifyingKey,
     newList: ProgramInstance[],
-    verifyingKey = this.signer.verifyingKeys[0],
-    deployer:string = this.signer.address
+    programModAccount : string = this.signer.address
   ): Promise<void> {
     const registeredInfoOption = await this.substrate.query.registry.registered(
-      programModKey
+      programModAccount
     )
 
     if (registeredInfoOption.isEmpty) {
-      throw new Error(`Account not registered: ${programModKey}`)
+      throw new Error(`Account not registered: ${programModAccount}`)
     }
     
     const registeredInfo = registeredInfoOption.toJSON()
@@ -101,7 +103,7 @@ export default class ProgramManager extends ExtrinsicBaseClass {
     const isAuthorized = registeredInfo.deployer === deployer
 
     if (!isAuthorized) {
-      throw new Error(`Unauthorized modification attempt by ${deployer}`)
+      throw new Error(`Unauthorized modification attempt by ${programModAccount}`)
     }
 
     const newProgramInstances = newList.map((data) => ({
@@ -110,7 +112,7 @@ export default class ProgramManager extends ExtrinsicBaseClass {
     }))
 
     const tx: SubmittableExtrinsic<'promise'> = this.substrate.tx.registry.changeProgramInstance(
-      programModKey,
+      verifyingKey,
       newProgramInstances
     )
 
@@ -134,7 +136,6 @@ export default class ProgramManager extends ExtrinsicBaseClass {
   async remove (
     programHashToRemove: string,
     programModKey = this.signer.address,
-    verifyingKey: string
   ): Promise<void> {
     const currentPrograms = await this.get(programModKey)
     // creates new array that contains all of the currentPrograms except programHashToRemove
@@ -143,7 +144,7 @@ export default class ProgramManager extends ExtrinsicBaseClass {
     )
 
 
-    await this.set(updatedPrograms, programModKey, verifyingKey)
+    await this.set(updatedPrograms, programModKey)
   }
 
   /**
