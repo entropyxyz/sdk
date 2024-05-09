@@ -20,9 +20,13 @@ export async function createTestAccount(
     programDeployKey: signer,
   }
 
-  await sleep(5_000)
+  await sleep(process.env.GITHUB_WORKSPACE ? 20_000 : 5_000)
+  // HACK: (mix) locally 5s is sufficient... github crashes out?
   entropy = new Entropy({ account: entropyAccount })
-  await entropy.ready
+  await entropy.ready.catch((err) => {
+    console.log('createTestAccount failed', err)
+    throw err
+  })
   return entropy
 }
 
