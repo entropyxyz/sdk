@@ -3,10 +3,18 @@
   "version": "0.1.4",
   "license": "AGPL-3.0-only",
   "description": "JS SDK for entropy blockchain ",
-  "main": "dist/index.js",
   "files": [
-    "dist"
+    "dist",
+    "dist/keys",
+    "dist/utils"
   ],
+  "exports": {
+    ".": "./dist/index.js",
+    "./keys": "./dist/keys/index.js",
+    "./cypto-utils": "./dist/utils/crypto.js",
+    "./gen-utils": "./dist/utils/index.js"
+  },
+  "type": "module",
   "types": "dist/index.d.ts",
   "module": "dist/index.js",
   "browser": "dist/index.js",
