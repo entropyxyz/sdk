@@ -32,13 +32,10 @@ test('End To End', async (t) => {
   )
   t.equal(typeof basicTxProgram.toString(), 'string', 'got basic program')
 
-  const TIMER_ID = 'deploy'
-  console.time(TIMER_ID)
   const pointer = await run(
     'deploy program',
     entropy.programs.dev.deploy(basicTxProgram)
   )
-  console.timeEnd(TIMER_ID)
   t.equal(typeof pointer, 'string', 'valid pointer')
 
   const config = `
@@ -90,8 +87,15 @@ test('End To End', async (t) => {
   t.ok(preRegistrationStatusCheck, 'preRegistrationStatusCheck ...') // TODO: better check
 
   // Post-registration check
-  const postRegistrationStatus = await entropy.isRegistered(charlieStashAddress)
-  t.equal(JSON.stringify(postRegistrationStatus), 'true', 'isRegerstered')
+  const postRegistrationStatus = await run(
+    'isRegistered',
+    entropy.isRegistered(charlieStashAddress)
+  )
+  t.equal(
+    JSON.stringify(postRegistrationStatus),
+    'true',
+    'isRegerstered = true'
+  )
 
   //  loading second program
   const dummyProgram: any = readFileSync(

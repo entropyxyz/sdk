@@ -71,20 +71,19 @@ test('Register: handle user registration', async (t) => {
 test('Register: not allow re-registration', async (t) => {
   ;({ entropy, pointer } = await testSetup(t))
   t.teardown(testTeardown)
+  const run = promiseRunner(t)
 
-  const TIMER_ID = 'time to register'
-  console.time(TIMER_ID)
-  await entropy
-    .register({
+  await run(
+    'register',
+    entropy.register({
       programModAccount: charlieStashAddress,
       keyVisibility: 'Permissioned',
       freeTx: false,
       initialPrograms: [{ programPointer: pointer, programConfig: '0x' }],
     })
-    .catch((err) => t.error(err, 'registerd'))
-  console.timeEnd(TIMER_ID)
+  )
 
-  await sleep(30_000)
+  // await sleep(30_000)
   // QUESTION: is it not enough to await to trust registration has really happened?
 
   await entropy

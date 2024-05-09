@@ -43,9 +43,14 @@ export function promiseRunner(t: any, keepThrowing = true) {
       return Promise.resolve(promise)
     }
 
+    const startTime = Date.now()
     return promise
       .then((result) => {
-        t.pass(message)
+        const time = (Date.now() - startTime) / 1000
+        const pad = Array(40 - message.length)
+          .fill('-')
+          .join('')
+        t.pass(`${message} ${pad} ${time}s`)
         return result
       })
       .catch((err) => {
