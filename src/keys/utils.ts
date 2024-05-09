@@ -7,6 +7,10 @@ import {
   encodeAddress
 } from '@polkadot/util-crypto'
 
+
+export const UIDv4regex = /^(?:[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}|00000000-0000-0000-0000-000000000000)$/i
+
+
 export async function seedFromMnemonic (m) {
   return mnemonicToMiniSecret(m)
 }
@@ -38,7 +42,7 @@ export function generateSeed (): string {
  * generates A usable signer with meta info about the account i.e. address etc
  * */
 
-export function generateKeyPairFromSeed (seed: string, dervation?: string): { address: string; privateKey: string, pair: Signer } {
+export function generateKeyPairFromSeed (seed: string, dervation?: string): { address: string;, pair: PoladotSigner } {
   let pair
   if (dervation) {
     const masterPair = sr25519PairFromSeed(seed)
@@ -51,8 +55,7 @@ export function generateKeyPairFromSeed (seed: string, dervation?: string): { ad
   return {
     // this might break address formatting? test against charlie stash address
     address: encodeAddress(pair.publicKey),
-    privateKey: pair.secretKey.toString(),
-    signer: pair,
+    pair,
   };
 }
 

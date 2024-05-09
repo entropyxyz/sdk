@@ -25,6 +25,13 @@ export const enum EntropyAccountType {
   MIXED_ACCOUNT = 'MIXED_ACCOUNT',
 }
 
+export enum ChildKey {
+  REGISTRATION = 'registration'
+  PROGRAM_DEV = 'programDev'
+  DEVICE_KEY = 'deviceKey'
+}
+
+
 export enum ChildKeyBasePaths {
   REGISTRATION = '//entropy//registration///',
   PROGRAM_DEV = '//entropy//program-dev',

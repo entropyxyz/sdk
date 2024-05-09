@@ -4,7 +4,7 @@ import RegistrationManager, { RegistrationParams } from './registration'
 import SignatureRequestManager, { SigOps, SigTxOps } from './signing'
 import { crypto } from './utils/crypto'
 import { Adapter } from './signing/adapters/types'
-import { isValidPair } from './keys'
+import { Keyring } from './keys'
 import { Signer } from './types'
 import ProgramManager from './programs'
 export interface EntropyAccount {
@@ -16,7 +16,7 @@ export interface EntropyAccount {
 
 export interface EntropyOpts {
   /** account for wallet initialization. */
-  account?: EntropyAccount
+  keyring: Keyring
   /** local or devnet endpoint for establishing a connection to validators */
   endpoint?: string
   /** A collection of signing adapters. */
@@ -66,7 +66,7 @@ export default class Entropy {
   isRegistered: (verifyingKey: string) => Promise<boolean>
   programs: ProgramManager
   signingManager: SignatureRequestManager
-  account?: EntropyAccount
+  keyring: Keyring
   substrate: ApiPromise
 
   /**
@@ -90,7 +90,7 @@ export default class Entropy {
   }
 
   async #init (opts: EntropyOpts) {
-    this.account = opts.account
+    this.keyring = opts.keyring
     this.#setReadOnlyStates()
 
     const wsProvider = new WsProvider(opts.endpoint)
@@ -99,11 +99,11 @@ export default class Entropy {
 
     this.registrationManager = new RegistrationManager({
       substrate: this.substrate,
-      signer: {wallet: this.account.sigRequestKey.wallet, pair: this.account.sigRequestKey.pair},
+      signer: this.keyring.getLazyLoadProxy(ChildKey.REGISTRATION),
       verifyingKey: this.account.verifyingKey[0]
     })
     this.signingManager = new SignatureRequestManager({
-      signer: {wallet: this.account.sigRequestKey.wallet, pair: this.account.sigRequestKey.pair},
+      signer: this.keyring.getLazyLoadProxy(ChildKey.DEVICE_KEY),
       substrate: this.substrate,
       adapters: opts.adapters,
       crypto,
@@ -113,7 +113,7 @@ export default class Entropy {
 
     this.programs = new ProgramManager({
       substrate: this.substrate,
-      programModKey: programModKeyPair as Signer || this.account.sigRequestKey,
+      programModKey: this.keyring.getLazyLoadProxy(ChildKey.REGISTRATION),
       programDeployKey: this.account.programDeployKey,
       verifyingKey: this.account.verifyingKey[0]
     })

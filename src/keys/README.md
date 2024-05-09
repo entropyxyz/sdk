@@ -14,7 +14,7 @@ const keyring = new Keyring(account)
 // you should allways store what comes from this
 let persistMe = keyring.accounts.toJson()
 const saveToStorage = (state) => persistMe = state
-keyring.accounts.on('account-update', (fullAccountAsJSON) => { saveToStorage(fullAccountAsJSON) })
+keyring.accounts.on('account-update', (fullAccount) => { saveToStorage(fullAccount) })
 
 let entropy = New Entropy({keyring, endpoint})
 // session end

@@ -12,12 +12,10 @@
  *
  * */
 
-import { Keys } from "@polkadot/types/interfaces/types"
-import { Signer } from "@polkadot/api/types"
-export type RegisteredAccountType = 'Private' | 'Public'
+import { PladotKeys, PolkadotSigner } from "@polkadot/types/interfaces/types"
+import {  } from "@polkadot/api/types"
 
 export interface AllBaseKeys {
-  keyShare?: string | ArrayBuffer
   // this is the key you use for registration
   registeringKey?: string
   // this is a dev key used for deploying programs
@@ -26,7 +24,10 @@ export interface AllBaseKeys {
   deviceKey?: string
   // this is the mnemonic material used to generate all necessary keys
   mnemonic?: string
+
+  seed?: string
 }
+
 
 export interface GenerateAllKeysNeededFromMnemonic extends Keys {
  mnemonic: string
@@ -40,26 +41,6 @@ export interface RootKey extends Keys {
   registeringKey: string
 }
 // maybe save this interface for @entropyxyz/auth
-export interface AuthorizedDeviceKey extends Keys {
-  deviceKey: string
-}
-
-
-// given the account type generate the appropriate keys from mnemonic
-export interface EntropyAccount {
-  registeringKey?: string
-  programDeployKey?: string
-  deviceKey?: string
-  mnemonic?: string
-  verifyingKeys?: string[]
-}
-
-
-export interface EntropyWallet {
-  sigRequestKey?: Signer
-  registeringKey?: Signer | string
-  programDeployKey?: Signer
-  deviceKey?: Signer
-  verifyingKey?: string[]
-  type: EntropyAccountType
+export interface AuthorizedDeviceKey extends KeyPair {
+  signingFunctionType: 'x25519'
 }
