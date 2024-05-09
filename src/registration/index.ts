@@ -26,7 +26,7 @@ export type KeyVisibilityInfo =
 /**
  * The `RegistrationManager` class provides functionality for user registration using the Polkadot/Substrate API.
  * It extends the `ExtrinsicBaseClass` to handle extrinsic submissions and utility methods.
- * 
+ *
  * This class includes methods for registering a user, checking if a user is already registered, and listening for registration events.
  */
 
@@ -42,13 +42,14 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
 
    */
 
-  verifyingKey: string  
-  signer: Signer  
+  verifyingKey: string
+  signer: Signer
   defaultAddress: string
   defaultProgram: typeof DEFAULT_PROGRAM_INTERFACE
 
 
   constructor ({
+
     substrate,
     signer
   }: {
@@ -80,15 +81,14 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
     // TODO: store multiple signers via address. and respond accordingly
     // however it should be handled in extrinsic class and not here
 
-
     /**
-   * Verifies the registration status of an address.
-   *
-   * @param {Address} address - The address for which registration status needs to be checked.
-   * @returns {Promise<boolean>} A promise which resolves to `true` if the address is registered, otherwise `false`.
-   * @remarks
-   * This method queries Entropy to determine if a given address is registered.
-   */
+     * Verifies the registration status of an address.
+     *
+     * @param {Address} address - The address for which registration status needs to be checked.
+     * @returns {Promise<boolean>} A promise which resolves to `true` if the address is registered, otherwise `false`.
+     * @remarks
+     * This method queries Entropy to determine if a given address is registered.
+     */
 
     // const isCurrentlyRegistered = await this.checkRegistrationStatus(
     //   this.verifyingKey
@@ -128,9 +128,9 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
                   programsData: data.programsData.toJSON(),
                   programDeployer: data.programDeployer.toJSON(),
                   versionNumber: data.versionNumber                  })
-              } 
-            } 
-          ) 
+              }
+            }
+          )
         } catch (e) {
           reject(e)
         }
@@ -148,28 +148,6 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
       section: 'registry',
       name: 'AccountRegistered',
     })
-
-    if (this.account.address === accountId.toString()) {
-      const verifyingKey = verifyingKeyBytes.toString()
-      this.account.verifyingKey = verifyingKey
-      console.log(`Account ID: ${accountId.toString()}, Verifying Key: ${verifyingKey}`)
-
     return registered
   }
-
-  /**
-   * Verifies the registration status of an address.
-   *
-   * @param address - The address for which registration status needs to be checked.
-   * @returns A promise which resolves to `true` if the address is registered, otherwise `false`.
-   */
-
-//   async checkRegistrationStatus (verifyingKey: Address): Promise<boolean> {
-//     if (!verifyingKey) {
-//       console.log("no verifying key set")
-//       return
-//     }
-//     const isRegistered = await this.substrate.query.registry.registered(verifyingKey)
-//     return !!isRegistered.toJSON()
-//   }
 }

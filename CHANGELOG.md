@@ -9,7 +9,6 @@ At the moment this project **does not** adhere to
 
 ## [Unreleased]
 
-
 ## [0.1.4] Bacchus - 2024-01-09 (entropy-core compatibility: 0.0.10)
 
 ### Changed
@@ -23,9 +22,11 @@ At the moment this project **does not** adhere to
 ## [0.1.3] Bes - 2024-01-31 (entropy-core compatibility: 0.0.10)
 
 ### Breaking Changes:
+
 - `@entropyxyz/entropy-js` is now `@entropyxyz/sdk`
 
 ### Added
+
 - Update programs and signing (#283):
 - `entropy.programs.dev` is the new interface to deploying programs
 - signing now supports auxilaryData
@@ -49,6 +50,7 @@ At the moment this project **does not** adhere to
 - register now returns the registration record from storage (#264)
 
 ### Fixed
+
 - entropy now validates proofs from tss nodes before returning signature. Will error if no valid proof is given (#230)
 - Eth adapter (#260)
 - getWallet no longer returns a nested signer (#263)

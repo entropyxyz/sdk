@@ -40,7 +40,6 @@ export default class ProgramManager extends ExtrinsicBaseClass {
     super({ substrate, signer: programModKey })
     this.dev = new ProgramDev({substrate, signer: deployer})
     this.account.verifyingKey = verifyingKey
-
   }
 
   /**
@@ -85,7 +84,6 @@ export default class ProgramManager extends ExtrinsicBaseClass {
    * @alpha
    */
 
-
   async set (
     verifyingKey: string = this.account.verifyingKey,
     newList: ProgramInstance[],
@@ -98,11 +96,10 @@ export default class ProgramManager extends ExtrinsicBaseClass {
     if (registeredInfoOption.isEmpty) {
       throw new Error(`Account not registered: ${programModAccount}`)
     }
-    
+
     const registeredInfo = registeredInfoOption.toJSON()
     // @ts-ignore: next line :{
     const isAuthorized = registeredInfo.deployer === deployer
-
     if (!isAuthorized) {
       throw new Error(`Unauthorized modification attempt by ${programModAccount}`)
     }
@@ -116,7 +113,6 @@ export default class ProgramManager extends ExtrinsicBaseClass {
       verifyingKey,
       newProgramInstances
     )
-
     await this.sendAndWaitFor(tx, {
       section: 'registry',
       name: 'ProgramInfoChanged',
@@ -134,7 +130,7 @@ export default class ProgramManager extends ExtrinsicBaseClass {
    * @alpha
    */
 
-  async remove (
+  async remove(
     programHashToRemove: string,
     programModKey = this.signer.address,
   ): Promise<void> {

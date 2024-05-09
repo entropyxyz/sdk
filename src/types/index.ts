@@ -1,4 +1,4 @@
-import  Entropy  from './../index';
+import Entropy from './../index'
 import { Keypair } from '@polkadot/util-crypto/types'
 import { KeyringPair } from '@polkadot/keyring/types'
 import type { AccountId32 } from '@polkadot/types/interfaces/runtime'

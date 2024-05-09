@@ -1,3 +1,6 @@
+docs
+dist
+
 # Created by https://www.toptal.com/developers/gitignore/api/macos,node
 # Edit at https://www.toptal.com/developers/gitignore?templates=macos,node
 
@@ -188,3 +191,6 @@ prepTests.sh
 
 *.sublime-project
 *.sublime-workspace
+
+# Testing npm package
+bootstrap/

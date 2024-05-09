@@ -1,68 +1,52 @@
+import test from 'tape'
 import { readFileSync } from 'fs'
+
 import Entropy from '../src'
-import {
-  sleep,
-  disconnect,
-  charlieStashSeed,
-  charlieStashAddress,
-} from './testing-utils'
-import { Keyring } from '@polkadot/api'
-import { getWallet } from '../src/keys'
-import { EntropyAccount } from '../src'
-import { mnemonicGenerate } from '@polkadot/util-crypto'
 import { buf2hex } from '../src/utils'
-import { execFileSync } from 'child_process'
+import {
+  promiseRunner,
+  spinNetworkUp,
+  createTestAccount,
+  spinNetworkDown,
+} from './testing-utils'
 
-describe('Programs Tests', () => {
-  let entropy: Entropy
+const networkType = 'two-nodes'
+let entropy: Entropy
 
-  beforeAll(async () => {
-    jest.setTimeout(300000) // Give us five minutes to spin up.
-    try {
-      execFileSync(
-        'dev/bin/spin-up.sh',
-        ['two-nodes'],
-        { shell: true, cwd: process.cwd(), stdio: 'inherit' } // Use shell's search path.
-      )
-    } catch (e) {
-      console.error('Error in beforeAll: ', e.message)
-    }
-
-    const signer = await getWallet(charlieStashSeed)
-    const entropyAccount: EntropyAccount = {
-      sigRequestKey: signer,
-      programModKey: signer,
-      programDeployKey: signer
-    }
-
-    await sleep(30000)
-    entropy = new Entropy({ account: entropyAccount})
-    await entropy.ready
+async function testTeardown() {
+  await spinNetworkDown(networkType, entropy).catch((err) => {
+    console.error('Error while spinning network down', err.message)
   })
+}
 
-  afterAll(async () => {
-    try {
-      await disconnect(entropy.substrate)
-      execFileSync(
-        'dev/bin/spin-down.sh',
-        ['two-nodes'],
-        { shell: true, cwd: process.cwd(), stdio: 'inherit' }
-      )
+test('Programs', async (t) => {
+  const run = promiseRunner(t)
 
-    } catch (e) {
-      console.error('Error in afterAll: ', e.message)
-    }
-  })
+  await run('network up', spinNetworkUp(networkType))
+  entropy = await run('account', createTestAccount(entropy))
+  t.teardown(testTeardown)
 
-  it('should handle programs', async () => {
-    jest.setTimeout(60000)
+  // await sleep(60000)
 
+  const dummyProgram = readFileSync(
+    './tests/testing-utils/template_barebones.wasm'
+  )
+  const pointer = await run(
+    'deploy program',
+    entropy.programs.dev.deploy(dummyProgram)
+  )
 
-    const dummyProgram = readFileSync(
-      './tests/testing-utils/template_barebones.wasm'
-    )
-    const pointer = await entropy.programs.dev.deploy(dummyProgram)
-    const fetchedProgram = await entropy.programs.dev.get(pointer)
-    expect(buf2hex(fetchedProgram.bytecode)).toEqual(buf2hex(dummyProgram))
-  })
+  const fetchedProgram = await run(
+    'get program',
+    entropy.programs.dev.get(pointer)
+  )
+
+  t.equal(
+    // @ts-ignore next line
+    buf2hex(fetchedProgram.bytecode),
+    buf2hex(dummyProgram),
+    'everything looks GREAT'
+  )
+
+  t.end()
 })

@@ -1,116 +1,111 @@
+import test from 'tape'
 import { readFileSync } from 'fs'
 import Entropy from '../src'
+
 import {
+  promiseRunner,
+  createTimeout,
   sleep,
-  disconnect,
-  charlieStashSeed,
   charlieStashAddress,
+  spinNetworkUp,
+  createTestAccount,
+  spinNetworkDown,
 } from './testing-utils'
-import { execFileSync } from 'child_process'
-import { getWallet } from '../src/keys'
-import { EntropyAccount } from '../src'
 
-describe('Register Tests', () => {
-  let entropy
-  let isRegisteredBefore
-  let pointer
-  beforeAll(async () => {
-    jest.setTimeout(300000) // Set timeout for the entire suite
+async function testSetup(t: any) {
+  const run = promiseRunner(t)
+  const timeout = createTimeout(30_000, 'setup')
 
-    // Spin up the test environment
-      execFileSync(
-        'dev/bin/spin-up.sh',
-        ['two-nodes'],
-        { shell: true, cwd: process.cwd(), stdio: 'inherit' } // Use shell's search path.
-      )
+  await run('network up', spinNetworkUp())
+  entropy = await run('account', createTestAccount(entropy))
+  const dummyProgram: any = readFileSync(
+    './tests/testing-utils/template_barebones.wasm'
+  )
+  pointer = await run(
+    'deploy program',
+    entropy.programs.dev.deploy(dummyProgram)
+  )
 
-    try {
-      const signer = await getWallet(charlieStashSeed)
+  timeout.clear()
+  return { entropy, pointer }
+}
 
+async function testTeardown() {
+  await spinNetworkDown('two-nodes', entropy).catch((err) =>
+    console.log('Teardown failed:', err.message)
+  )
+}
 
-      const entropyAccount: EntropyAccount = {
-        sigRequestKey: signer,
-        programModKey: signer,
-        programDeployKey: signer,
-        // verifyingKey: verifyingKey
+let entropy: Entropy
+let pointer: string
+let isRegisteredBefore: boolean
 
-      }
+test('Register Tests: check pre-registration status', async (t) => {
+  ;({ entropy, pointer } = await testSetup(t))
+  t.teardown(testTeardown)
 
-      if (!entropyAccount) {
-        console.log("account is not complete")
-        return 
-      }
+  // Check if already registered before the test
+  isRegisteredBefore = await entropy.isRegistered(charlieStashAddress)
+  t.notOk(isRegisteredBefore)
 
-      await sleep(30000)
-      entropy = new Entropy({ account: entropyAccount})
-            // const verifyingKey = entropy.account.verifyingKey
+  t.end()
+})
 
-      const dummyProgram: any = readFileSync(
-        './tests/testing-utils/template_barebones.wasm'
-      )
-      
-      await entropy.ready
-      pointer = await entropy.programs.dev.deploy(dummyProgram)
+test('Register: handle user registration', async (t) => {
+  ;({ entropy, pointer } = await testSetup(t))
+  t.teardown(testTeardown)
 
-    } catch (e) {
-      console.error('Error in beforeAll: ', e.message)
-    }
+  await entropy.register({
+    programModAccount: charlieStashAddress,
+    keyVisibility: 'Permissioned',
+    freeTx: false,
+    initialPrograms: [{ programPointer: pointer, programConfig: '0x' }],
   })
 
-  afterAll(async () => {
-    try {
-      await disconnect(entropy.substrate)
-    } catch (e) {
-      console.error('Error during disconnect in afterAll: ', e.message)
-    }
-    execFileSync(
-      'dev/bin/spin-down.sh',
-      ['two-nodes'],
-      { shell: true, cwd: process.cwd(), stdio: 'inherit' } // Use shell's search path.
-    )
-  })
+  const isRegisteredAfter = await entropy.isRegistered(charlieStashAddress)
+  t.ok(isRegisteredAfter)
 
-  it('should check pre-registration status', async () => {
-    // Check if already registered before the test
-    const verifyingKey = entropy.account.verifyingKey
-    // if no verifying key set we an assume the account hasnt be registered 
-    if (!verifyingKey) {
-      console.log("no verifying key")
-      return
-    }
-    // isRegisteredBefore = await entropy.checkRegistrationStatus(verifyingKey)
-    // expect(isRegisteredBefore).toBeFalsy()
-  })
+  t.end()
+})
 
-  it('should handle user registration', async () => {
-    await entropy.register({
+test('Register: not allow re-registration', async (t) => {
+  ;({ entropy, pointer } = await testSetup(t))
+  t.teardown(testTeardown)
+  const run = promiseRunner(t)
+
+  await run(
+    'register',
+    entropy.register({
       programModAccount: charlieStashAddress,
       keyVisibility: 'Public',
       initialPrograms: [{ programPointer: pointer, programConfig: '0x' }],
     })
-    
-    const verifyingKey = entropy.account.verifyingKey
-    if (!verifyingKey) {
-      console.log("no verifying key")
-      return
-    }
-    console.log("post registration check")
-    const isRegisteredAfter = await entropy.query.registry.registered(verifyingKey)
-    expect(isRegisteredAfter).toBeTruthy()
-  })
+  )
 
-  it('should not allow re-registration', async () => {
-    await expect(
-      entropy.register({
-        programModAccount: charlieStashAddress,
-        keyVisibility: 'Public',
-        initialPrograms: [{ programPointer: pointer, programConfig: '0x' }],
-      })
-    ).rejects.toThrow('already registered')
-  })
+  // await sleep(30_000)
+  // QUESTION: is it not enough to await to trust registration has really happened?
 
-  // it('should verify registration status of a new address', async () => {
-  //   const isNewAddressRegistered = await entropy.checkRegistrationStatus("5FWd3NSnWQ6Ay9CXmw9aTU8ZvDksn7zzzuw5dCKq9R8DsaCo")
-  //   expect(isNewAddressRegistered).toBeFalsy()
-  // })
+  await entropy
+    .register({
+      programModAccount: charlieStashAddress,
+      keyVisibility: 'Permissioned',
+      freeTx: true,
+      initialPrograms: [{ programPointer: pointer, programConfig: '0x' }],
+    })
+    .then(() => t.fail('throws error on duplicate registrations'))
+    .catch((err) => t.match(err.message, /already registered/))
+
+  t.end()
+})
+
+test('Register Tests: verify registration status of a new address', async (t) => {
+  ;({ entropy, pointer } = await testSetup(t))
+  t.teardown(testTeardown)
+
+  const isNewAddressRegistered = await entropy.isRegistered(
+    '5FWd3NSnWQ6Ay9CXmw9aTU8ZvDksn7zzzuw5dCKq9R8DsaCo'
+  )
+  t.notOk(isNewAddressRegistered)
+
+  t.end()
 })

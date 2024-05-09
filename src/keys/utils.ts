@@ -42,7 +42,7 @@ export function generateSeed (): string {
  * generates A usable signer with meta info about the account i.e. address etc
  * */
 
-export function generateKeyPairFromSeed (seed: string, dervation?: string): { address: string;, pair: PoladotSigner } {
+export function generateKeyPairFromSeed (seed: string, dervation?: string): { address: string; pair: PoladotSigner } {
   let pair
   if (dervation) {
     const masterPair = sr25519PairFromSeed(seed)

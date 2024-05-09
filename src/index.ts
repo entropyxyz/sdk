@@ -46,7 +46,6 @@ export interface EntropyOpts {
  *
  * await entropy.register({
  *   programModAccount: '5Gw3s7q9...',
- *   keyVisibility: 'Public',
  * })
  * ```
  * @alpha
@@ -109,7 +108,9 @@ export default class Entropy {
       crypto,
     })
 
-    const programModKeyPair = isValidPair(this.account.programModKey as Signer) ? this.account.programModKey : undefined
+    const programModKeyPair = isValidPair(this.account.programModKey as Signer)
+      ? this.account.programModKey
+      : undefined
 
     this.programs = new ProgramManager({
       substrate: this.substrate,
@@ -117,25 +118,18 @@ export default class Entropy {
       programDeployer: this.account.programDeployKey,
       verifyingKey: this.account.verifyingKey[0]
     })
-    if (this.#programReadOnly || this.#allReadOnly) this.programs.set = async () => { throw new Error('Programs is in a read only state: Must pass a valid key pair in initialization.') }
+    if (this.#programReadOnly || this.#allReadOnly)
+      this.programs.set = async () => {
+        throw new Error(
+          'Programs is in a read only state: Must pass a valid key pair in initialization.'
+        )
+      }
     this.#ready(true)
-    // this.isRegistered = this.registrationManager.checkRegistrationStatus.bind(
-    //   this.registrationManager
-    // )
-    // this.#setVerifyingKeys()
   }
 
-  // async #setVerifyingKeys (): Promise<void> {
-  //   if (this.account) {
-  //     this.subscribeToAccountRegisteredEvents((verifyingKey: string) => {
-  //       console.log("Received verifyingKey: ", verifyingKey)
-  //     })
-  //   }
-  // }
-
   /** @internal */
-  #setReadOnlyStates (): void {
-  // the readOnly state will not allow for write functions
+  #setReadOnlyStates(): void {
+    // the readOnly state will not allow for write functions
     this.#programReadOnly = false
     this.#allReadOnly = false
 
@@ -147,8 +141,15 @@ export default class Entropy {
 
     if (typeof this.account.sigRequestKey !== 'object') {
       throw new Error('AccountTypeError: sigRequestKey can not be a string')
-    } else if (!isValidPair({ wallet: this.account.sigRequestKey.wallet, pair: this.account.sigRequestKey.pair})) {
-      throw new Error('AccountTypeError: sigRequestKey not a valid signing pair')
+    } else if (
+      !isValidPair({
+        wallet: this.account.sigRequestKey.wallet,
+        pair: this.account.sigRequestKey.pair,
+      })
+    ) {
+      throw new Error(
+        'AccountTypeError: sigRequestKey not a valid signing pair'
+      )
     }
 
     if (typeof this.account.programModKey === 'string') {
@@ -171,7 +172,7 @@ export default class Entropy {
    * @throws {Error} - If the address is already registered or if there's a problem during registration.
    */
 
-  // FRANKIE im not entirely sure this is the way we want to be doing things 
+  // FRANKIE im not entirely sure this is the way we want to be doing things
   // async subscribeToAccountRegisteredEvents (callback: (verifyingKey: string) => void) {
   //   await this.substrate.query.system.events((events) => {
   //     events.forEach((record) => {
@@ -192,7 +193,7 @@ export default class Entropy {
   //   // const yotres = this.substrate.isReady
   //   // console.log("yotres", yotres)
   // }
-  
+
 
   async register (
     params: RegistrationParams & { account?: EntropyAccount }
@@ -262,9 +263,12 @@ export default class Entropy {
    * @throws {Error} - If there's an error in the signing routine.
    */
 
-  async sign (params: SigOps): Promise<Uint8Array> {
+  async sign(params: SigOps): Promise<Uint8Array> {
     await this.ready
-    if (this.#allReadOnly) throw new Error('Initialized in read only state: can not use write functions')
+    if (this.#allReadOnly)
+      throw new Error(
+        'Initialized in read only state: can not use write functions'
+      )
     return this.signingManager.sign(params)
   }
 }
