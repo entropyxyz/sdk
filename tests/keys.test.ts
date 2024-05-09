@@ -12,7 +12,7 @@ async function testSetup() {
   derivationPath = '//0'
 }
 
-test('Keys Test: getWallet', async (t) => {
+test('Keys: getWallet', async (t) => {
   t.plan(2)
   await testSetup()
   // it should generate valid Signer from seed
@@ -21,7 +21,7 @@ test('Keys Test: getWallet', async (t) => {
   t.true(Object.keys(walletSigner).includes('pair'), 'has pair')
 })
 
-test('Keys Test: generateKeysFromMnemonic', async (t) => {
+test('Keys: generateKeysFromMnemonic', async (t) => {
   t.plan(2)
   await testSetup()
   // it should generate valid Signer from mnemonic

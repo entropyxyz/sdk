@@ -19,7 +19,7 @@ async function testTeardown() {
   })
 }
 
-test('Programs Test', async (t) => {
+test('Programs', async (t) => {
   const run = promiseRunner(t)
 
   await run('network up', spinNetworkUp(networkType))

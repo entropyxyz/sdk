@@ -19,13 +19,13 @@
   "module": "dist/index.js",
   "browser": "dist/index.js",
   "scripts": {
-    "test": "yarn test:setup && yarn removedb && yarn test:ts && yarn test:only",
-    "test:setup": "./dev/bin/check-tools.sh",
-    "test:ts": ".... | tap-spec",
+    "test": "yarn test:setup && yarn test:types && yarn test:ts && yarn test:only",
+    "test:setup": "./dev/bin/check-tools.sh && yarn removedb",
+    "test:types": "tsc",
+    "test:ts": "set -e; for t in tests/*.test.ts; do npx tsx $t | tap-spec; done",
     "test:only": "if grep -r --exclude-dir=node_modules --exclude-dir=.git --color 'test\\.only' ; then exit 1; fi",
     "test:coverage": "nyc yarn test",
     "lint": "yarn lint:ts && yarn lint:eslint",
-    "lint:ts": "tsc",
     "lint:eslint": "eslint . --ext .ts --fix",
     "prettier": "prettier --write .",
     "peek": "tsc --build --clean",
@@ -81,7 +81,8 @@
     "@polkadot/api": "^10.11.1",
     "@types/node": "^20.10.3",
     "ethereum-cryptography": "^2.1.2",
-    "ethereumjs-tx": "^2.1.2"
+    "ethereumjs-tx": "^2.1.2",
+    "tsx": "^4.9.3"
   },
   "lint-staged": {
     "*.ts": "eslint --fix",

@@ -15,7 +15,7 @@ import {
 const networkType = 'two-nodes'
 let entropy: Entropy
 
-test('End To End Test Suite', async (t) => {
+test('End To End', async (t) => {
   const run = promiseRunner(t)
 
   await run('network up', spinNetworkUp(networkType))

@@ -51,7 +51,7 @@ test('Register Tests: check pre-registration status', async (t) => {
   t.end()
 })
 
-test('Register Tests: handle user registration', async (t) => {
+test('Register: handle user registration', async (t) => {
   ;({ entropy, pointer } = await testSetup(t))
   t.teardown(testTeardown)
 
@@ -68,7 +68,7 @@ test('Register Tests: handle user registration', async (t) => {
   t.end()
 })
 
-test('Register Tests: not allow re-registration', async (t) => {
+test('Register: not allow re-registration', async (t) => {
   ;({ entropy, pointer } = await testSetup(t))
   t.teardown(testTeardown)
 

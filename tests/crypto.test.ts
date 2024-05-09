@@ -4,7 +4,7 @@ import { stripHexPrefix } from '../src/utils'
 
 import { promiseRunner, readKey } from './testing-utils'
 
-test.only('Crypto Tests', async (t) => {
+test('Crypto', async (t) => {
   const run = promiseRunner(t)
 
   await run('crypto loaded', cryptoIsLoaded)
