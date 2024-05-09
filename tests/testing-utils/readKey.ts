@@ -1,9 +1,9 @@
-export const readKey = async (path: string) => {
+export async function readKey(path: string) {
   if (!path) {
     throw new Error('Path is required')
   }
 
-  if (typeof window === 'undefined') {
+  if (!isBrowser()) {
     const { readFileSync } = await import('fs')
     // If we are in Node.js, we can use the fs module
     const buffer = readFileSync(path)
@@ -26,4 +26,8 @@ export const readKey = async (path: string) => {
 
     return result
   }
+}
+
+function isBrowser(): boolean {
+  return typeof window === 'undefined'
 }

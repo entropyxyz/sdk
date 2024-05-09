@@ -1,5 +1,3 @@
-import { ApiPromise } from '@polkadot/api'
-import { execFileSync } from 'child_process'
 import * as readline from 'readline'
 
 import Entropy, { EntropyAccount } from '../../src'
@@ -7,11 +5,25 @@ import { getWallet } from '../../src/keys'
 import { charlieStashSeed } from './constants'
 
 export * from './constants'
+export * from './network'
 export * from './readKey'
-export * from './getApi'
 
-export type spinNetworkUpOpts = void | {
-  startClean?: boolean
+export async function createTestAccount(
+  entropy: Entropy,
+  seed = charlieStashSeed
+) {
+  const signer = await getWallet(seed)
+
+  const entropyAccount: EntropyAccount = {
+    sigRequestKey: signer,
+    programModKey: signer,
+    programDeployKey: signer,
+  }
+
+  await sleep(5_000)
+  entropy = new Entropy({ account: entropyAccount })
+  await entropy.ready
+  return entropy
 }
 
 /* Helper for wrapping promises which makes it super clear in logging if the promise
@@ -50,52 +62,6 @@ export function createTimeout(time: number, message?: string) {
 
   return {
     clear: () => clearTimeout(timeout),
-  }
-}
-
-export async function spinNetworkUp(networkType = 'two-nodes') {
-  try {
-    execFileSync(
-      'dev/bin/spin-up.sh',
-      [networkType],
-      { shell: true, cwd: process.cwd(), stdio: 'inherit' } // Use shell's search path.
-    )
-  } catch (e) {
-    console.error('Error in spintNetworkUp: ', e.message)
-  }
-}
-
-export async function createTestAccount(
-  entropy: Entropy,
-  seed = charlieStashSeed
-) {
-  const signer = await getWallet(seed)
-
-  const entropyAccount: EntropyAccount = {
-    sigRequestKey: signer,
-    programModKey: signer,
-    programDeployKey: signer,
-  }
-
-  await sleep(5_000)
-  entropy = new Entropy({ account: entropyAccount })
-  await entropy.ready
-  return entropy
-}
-
-export async function spinNetworkDown(
-  networkType = 'two-nodes',
-  entropy: Entropy
-) {
-  try {
-    await disconnect(entropy.substrate)
-    execFileSync('dev/bin/spin-down.sh', [networkType], {
-      shell: true,
-      cwd: process.cwd(),
-      stdio: 'inherit',
-    })
-  } catch (e) {
-    console.error('Error in afterAll: ', e.message)
   }
 }
 
@@ -143,18 +109,4 @@ function undoLastLine() {
   readline.cursorTo(process.stdout, 0)
   readline.clearLine(process.stdout, 0)
   readline.cursorTo(process.stdout, 4) // indent
-}
-
-export async function disconnect(api: ApiPromise) {
-  console.log('Attempting to disconnect...')
-  if (api.isConnected) {
-    try {
-      await api.disconnect()
-      console.log('Disconnected successfully.')
-    } catch (error) {
-      console.error(`Error while disconnecting: ${error.message}`)
-    }
-  } else {
-    console.log('API is already disconnected.')
-  }
 }
