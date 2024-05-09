@@ -3,7 +3,7 @@ export async function readKey(path: string) {
     throw new Error('Path is required')
   }
 
-  if (!isBrowser()) {
+  if (isNode()) {
     const { readFileSync } = await import('fs')
     // If we are in Node.js, we can use the fs module
     const buffer = readFileSync(path)
@@ -28,6 +28,6 @@ export async function readKey(path: string) {
   }
 }
 
-function isBrowser(): boolean {
+function isNode(): boolean {
   return typeof window === 'undefined'
 }
