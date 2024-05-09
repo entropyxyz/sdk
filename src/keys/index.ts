@@ -18,8 +18,8 @@ import { EntropyAccountType, EntropyWallet, EntropyAccount } from './types'
 const ready = cryptoWaitReady()
 
 export enum ChildKey {
-  REGISTRATION = 'registration'
-  PROGRAM_DEV = 'program-dev'
+  REGISTRATION = 'registration',
+  PROGRAM_DEV = 'program-dev',
   DEVICE_KEY = 'device-key'
 }
 

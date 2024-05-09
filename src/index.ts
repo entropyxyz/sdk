@@ -6,6 +6,8 @@ import { crypto } from './utils/crypto'
 import { Adapter } from './signing/adapters/types'
 import { Signer } from './types'
 import ProgramManager from './programs'
+import { DEFAULT_PROGRAM_INTERFACE } from '../tests/testing-utils'
+import { ChildKey } from './keys'
 export interface EntropyAccount {
   sigRequestKey?: Signer
   programModKey?: Signer | string
@@ -97,8 +99,7 @@ export default class Entropy {
 
     this.registrationManager = new RegistrationManager({
       substrate: this.substrate,
-      signer: {wallet: this.account.sigRequestKey.wallet, pair: this.account.sigRequestKey.pair},
-      verifyingKey: this.account.verifyingKey[0]
+      signer: {wallet: this.account.sigRequestKey.wallet, pair: this.account.sigRequestKey.pair}
     })
     this.signingManager = new SignatureRequestManager({
       signer: {wallet: this.account.sigRequestKey.wallet, pair: this.account.sigRequestKey.pair},
@@ -111,7 +112,7 @@ export default class Entropy {
 
     this.programs = new ProgramManager({
       substrate: this.substrate,
-      programModKey: programModKeyPair as Signer || this.account.sigRequestKey,
+      programDeployer: programModKeyPair as Signer || this.account.sigRequestKey,
       programDeployKey: this.account.programDeployKey,
       verifyingKey: this.account.verifyingKey[0]
     })
@@ -195,6 +196,8 @@ export default class Entropy {
     params: RegistrationParams & { account?: EntropyAccount }
   ): Promise<void> {
     await this.ready && this.substrate.isReady
+    const defaultProgram = DEFAULT_PROGRAM_INTERFACE 
+    defaultProgram.userConfig.sr25519_public_keys.push(this.account.deviceKey.address)
     if (this.#allReadOnly) throw new Error('Initialized in read only state: can not use write functions')
     const account = params.account || this.account
 
@@ -203,12 +206,17 @@ export default class Entropy {
     }
 
     if (
-      params.programModAccount &&
-      !isValidSubstrateAddress(params.programModAccount)
+      params.programDeployer &&
+      !isValidSubstrateAddress(params.programDeployer)
     ) {
       throw new TypeError('Incompatible address type')
     }
     await this.registrationManager.register(params)
+    this.keyring.accounts[ChildKey.REGISTRATION].verifyingKeys.push[verifyingKey]
+    // TODO: if there is already a verifyingKey for DeviceKey -- need to make decision if we push to new device key or existing
+    this.keyring.accounts[ChildKey.DEVICE_KEY].verifyingKeys.push[verifyingKey]
+
+
     // this.subscribeToAccountRegisteredEvents((verifyingKey: string) => {
     //   console.log(`Received verifyingKey after registration: ${verifyingKey}`)
     // })

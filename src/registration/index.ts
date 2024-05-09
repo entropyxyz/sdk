@@ -1,13 +1,14 @@
 import ExtrinsicBaseClass from '../extrinsic'
 import { Signer, Address } from '../types'
 import { ApiPromise } from '@polkadot/api'
-import { ProgramData } from '../programs'
-import { EntropyAccount, EntropyAccountType } from '../keys/types'
+import { ProgramInstance } from '../programs'
+import { EntropyAccount } from '../keys/types'
+import { DEFAULT_PROGRAM_INTERFACE } from '../../tests/testing-utils'
 
 export interface RegistrationParams {
-  programPointer?: ProgramData[]
-  keyVisibility?: 'Public' | 'Private'
   programDeployer?: Address
+  keyVisibility?: 'Public'
+  programData: ProgramInstance[]
 }
 
 
@@ -29,12 +30,6 @@ export type KeyVisibilityInfo =
  * This class includes methods for registering a user, checking if a user is already registered, and listening for registration events.
  */
 
-export const DEFAULT_PROGRAM_INTERFACE = {
-  pointer: '0x0000000000000000000000000000000000000000000000000000000000000000'
-  userConfig: {
-    sr25519_public_keys: [/*instert useres adress here needs to be the device key*/]
-  }
-}
 
 
 export default class RegistrationManager extends ExtrinsicBaseClass {
@@ -44,29 +39,21 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
    * @param {ApiPromise} substrate - The Polkadot/Substrate API instance.
    * @param {Signer} signer - The signer used for signing transactions.
    */
-  verifyingKey: string
-  keyring: KeyRing
-  signer: Signer
+
+  verifyingKey: string  
+  signer: Signer  
   defaultAddress: string
-  defaultProgram: DEFAULT_PROGRAM_INTERFACE
+  defaultProgram: typeof DEFAULT_PROGRAM_INTERFACE
 
 
   constructor ({
     substrate,
-    keyring,
-    verifyingKey
+    signer
   }: {
     substrate: ApiPromise
-    this.accounts: EntropyAccount
-    verifyingKey: string
+    signer: Signer
   }) {
     super({ signer, substrate })
-    this.keyring = keyring
-    if (!this.keyring[EntropyAccountType.REGISTERED_ACCOUNT]) {
-      this.keyring.createAccount(EntropyAccountType.REGISTERED_ACCOUNT)
-    }
-    this.signer = this.keyring[EntropyAccountType.REGISTERED_ACCOUNT].signer
-    this.defaultAddress = this.keyring[EntropyAccountType.REGISTERED_ACCOUNT].address
   }
 
   /**
@@ -81,11 +68,10 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
    */
   // TO-DO: return the verfiying key have it documented that the user needs to save this otherwise that cant request sigs
   async register ({
-    programPointer = [DEFAULT_PROGRAM_INTERFACE],
+    programDeployer = this.signer,
     keyVisibility = 'Public',
-    programDeployer = this.defaultAddress,
+    programData
   }: RegistrationParams): Promise<RegisteredInfo> {
-    const programDeployer = programDeployer
 
     // this is sloppy
     // TODO: store multiple signers via address. and respond accordingly
@@ -152,14 +138,13 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
     const registerTx = this.substrate.tx.registry.register(
       programDeployer,
       keyVisibility,
-      programPointer.map((programInfo) => { return {programPointer: programInfo.programPointer, programConfig: programInfo.programConfig} })
+      programData.map((programInfo) => { return {programPointer: programInfo.programPointer, programConfig: programInfo.programConfig} })
     )
 
     await this.sendAndWaitFor (registerTx,{
       section: 'registry',
       name: 'SignalRegister',
     })
-    this.keyring[EntropyAccountType.REGISTERED_ACCOUNT].verifyingKeys.push[verifyingKey]
     return registered
   }
 

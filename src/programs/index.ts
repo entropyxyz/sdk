@@ -4,7 +4,7 @@ import ExtrinsicBaseClass from '../extrinsic'
 import ProgramDev from './dev'
 import { Signer } from '../types'
 
-export interface ProgramData {
+export interface ProgramInstance {
   programPointer: string
   programConfig?: unknown
 }
@@ -18,7 +18,7 @@ export default class ProgramManager extends ExtrinsicBaseClass {
   /**
    * Creates an instance of ProgramManager.
    * @param {ApiPromise} substrate - Substrate API object.
-   * @param {Signer} programDeployer - The signer object for the user interfacing with Entropy.
+   * @param {Signer} deployer - The signer object for the user interfacing with Entropy.
    * @remarks
    * The constructor initializes the Substrate api and the signer.
    * @alpha
@@ -27,15 +27,15 @@ export default class ProgramManager extends ExtrinsicBaseClass {
   verifyingKey: string
   constructor ({
     substrate,
-    programDeployer,
+    deployer,
     verifyingKey
   }: {
     substrate: ApiPromise
-    programDeployer?: Signer
+    deployer: Signer
     verifyingKey: string
   }) {
-    super({ substrate, signer: programDeployer })
-    this.dev = new ProgramDev({substrate, signer: programDeployer})
+    super({ substrate, signer: deployer })
+    this.dev = new ProgramDev({substrate, signer: deployer})
     this.verifyingKey = verifyingKey
 
   }
@@ -51,7 +51,7 @@ export default class ProgramManager extends ExtrinsicBaseClass {
    * @alpha
    */
 
-  async get (verifyingKey: string): Promise<ProgramData[]> {
+  async get (verifyingKey: string): Promise<ProgramInstance[]> {
     const registeredOption = await this.substrate.query.registry.registered(
       verifyingKey
     )
@@ -74,7 +74,7 @@ export default class ProgramManager extends ExtrinsicBaseClass {
    * Updates the programs of a specified account.
    * @param {ProgramData[]} newList - Array of new program data to set.
    * @param {string} [sigReqAccount=this.signer.address] - The account for which the programs will be updated. Defaults to the signer's account.
-   * @param {string} [programDeployer] - Optional. An authorized account to modify the programs, if different from the signer's account.
+   * @param {string} [deployer] - Optional. An authorized account to modify the programs, if different from the signer's account.
    * @returns {Promise<void>} - A Promise that resolves when the programs are successfully updated.
    * @throws {Error} - If the account is unauthorized or there's a problem updating the programs.
    * @remarks
@@ -83,11 +83,11 @@ export default class ProgramManager extends ExtrinsicBaseClass {
    */
 
   async set (
-    newList: ProgramData[],
+    newList: ProgramInstance[],
     sigReqAccount = this.signer.address,
-    programDeployer?: string
+    deployer?: string
   ): Promise<void> {
-    programDeployer = programDeployer || sigReqAccount
+    deployer = deployer || sigReqAccount
 
     const registeredInfoOption = await this.substrate.query.registry.registered(
       sigReqAccount
@@ -99,10 +99,10 @@ export default class ProgramManager extends ExtrinsicBaseClass {
     
     const registeredInfo = registeredInfoOption.toJSON()
     // @ts-ignore: next line :{
-    const isAuthorized = registeredInfo.programDeployer === programDeployer
+    const isAuthorized = registeredInfo.deployer === deployer
 
     if (!isAuthorized) {
-      throw new Error(`Unauthorized modification attempt by ${programDeployer}`)
+      throw new Error(`Unauthorized modification attempt by ${deployer}`)
     }
 
     const newProgramInstances = newList.map((data) => ({
@@ -160,7 +160,7 @@ export default class ProgramManager extends ExtrinsicBaseClass {
    */
 
   async add (
-    newProgram: ProgramData,
+    newProgram: ProgramInstance,
     sigReqAccount = this.signer.address,
     verifyingKey?: string
   ): Promise<void> {

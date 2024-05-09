@@ -46,4 +46,5 @@ export interface EncMsg {
   msg: string
   url: string
   tss_account: string
+  signature_verifying_key: string
 }

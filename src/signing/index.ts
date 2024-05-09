@@ -37,7 +37,7 @@ export interface UserSignatureRequest {
   validatorsInfo: ValidatorInfo[]
   timestamp: { secs_since_epoch: number; nanos_since_epoch: number }
   hash: string
-  signatureRequestAccount: string
+  signatureVerifyingKey: string
 }
 /**
  * `SignatureRequestManager` facilitates signature requests using Polkadot/Substrate API.
@@ -168,26 +168,29 @@ export default class SignatureRequestManager {
 
   async formatTxRequests ({
     strippedsigRequestHash,
-    signatureRequestAccount,
-    validatorsInfo,
     auxilaryData,
+    validatorsInfo,
     hash,
+    signatureVerifyingKey
   }: {
     strippedsigRequestHash: string
-    signatureRequestAccount: string
-    validatorsInfo: Array<ValidatorInfo>
     auxilaryData?: unknown[]
+    validatorsInfo: Array<ValidatorInfo>
     hash?: string
+    signatureVerifyingKey: string
   }): Promise<EncMsg[]> {
     return await Promise.all(
       validatorsInfo.map(
         async (validator: ValidatorInfo): Promise<EncMsg> => {
+          // TODO: auxilaryData full implementation
+
           const txRequestData: UserSignatureRequest = {
             message: stripHexPrefix(strippedsigRequestHash),
-            signatureRequestAccount,
+            auxilaryData,
             validatorsInfo: validatorsInfo,
             timestamp: this.getTimeStamp(),
             hash,
+            signatureVerifyingKey
           }
           if (auxilaryData) txRequestData.auxilaryData = auxilaryData.map(i => JSON.stringify(i))
           const serverDHKey = await crypto.fromHex(validator.x25519_public_key)
@@ -224,6 +227,7 @@ export default class SignatureRequestManager {
             msg: encryptedMessage,
             url: validator.ip_address,
             tss_account: validator.tss_account,
+            signature_verifying_key: signatureVerifyingKey
           }
         }
       )
