@@ -28,21 +28,22 @@ export default class ProgramManager extends ExtrinsicBaseClass {
   constructor ({
     substrate,
     deployer,
-    verifyingKey
+    programModKey,
   }: {
     substrate: ApiPromise
     deployer: Signer
+    programModKey: Signer
     verifyingKey: string
   }) {
-    super({ substrate, signer: deployer })
+    super({ substrate, signer: programModKey })
     this.dev = new ProgramDev({substrate, signer: deployer})
     this.verifyingKey = verifyingKey
 
   }
 
   /**
-   * Retrieves the program associated with a given sigReqAccount (account)
-   * @param {string} sigReqAccount - The account key, defaulting to the signer's wallet address if not provided.
+   * Retrieves the program associated with a given programModKey (account)
+   * @param {string} programModKey - The account key, defaulting to the signer's wallet address if not provided.
    * @returns {Promise<ArrayBuffer>} - The program as an ArrayBuffer.
    * @throws {Error} If no program is defined for the given account.
    * @remarks
@@ -51,7 +52,7 @@ export default class ProgramManager extends ExtrinsicBaseClass {
    * @alpha
    */
 
-  async get (verifyingKey: string): Promise<ProgramInstance[]> {
+  async get (verifyingKey:string = this.signer.verifyingKeys[0]): Promise<ProgramInstance[]> {
     const registeredOption = await this.substrate.query.registry.registered(
       verifyingKey
     )
@@ -73,7 +74,7 @@ export default class ProgramManager extends ExtrinsicBaseClass {
   /**
    * Updates the programs of a specified account.
    * @param {ProgramData[]} newList - Array of new program data to set.
-   * @param {string} [sigReqAccount=this.signer.address] - The account for which the programs will be updated. Defaults to the signer's account.
+   * @param {string} [programModKey=this.signer.address] - The account for which the programs will be updated. Defaults to the signer's account.
    * @param {string} [deployer] - Optional. An authorized account to modify the programs, if different from the signer's account.
    * @returns {Promise<void>} - A Promise that resolves when the programs are successfully updated.
    * @throws {Error} - If the account is unauthorized or there's a problem updating the programs.
@@ -84,17 +85,15 @@ export default class ProgramManager extends ExtrinsicBaseClass {
 
   async set (
     newList: ProgramInstance[],
-    sigReqAccount = this.signer.address,
-    deployer?: string
+    verifyingKey = this.signer.verifyingKeys[0],
+    deployer:string = this.signer.address
   ): Promise<void> {
-    deployer = deployer || sigReqAccount
-
     const registeredInfoOption = await this.substrate.query.registry.registered(
-      sigReqAccount
+      programModKey
     )
 
     if (registeredInfoOption.isEmpty) {
-      throw new Error(`Account not registered: ${sigReqAccount}`)
+      throw new Error(`Account not registered: ${programModKey}`)
     }
     
     const registeredInfo = registeredInfoOption.toJSON()
@@ -111,7 +110,7 @@ export default class ProgramManager extends ExtrinsicBaseClass {
     }))
 
     const tx: SubmittableExtrinsic<'promise'> = this.substrate.tx.registry.changeProgramInstance(
-      sigReqAccount,
+      programModKey,
       newProgramInstances
     )
 
@@ -124,7 +123,7 @@ export default class ProgramManager extends ExtrinsicBaseClass {
   /**
    * Removes a specific program from an account.
    * @param {string | Uint8Array} programHashToRemove - The hash of the program to remove.
-   * @param {string} [sigReqAccount=this.signer.address] - The account from which the program will be removed. Defaults to the signer's account.
+   * @param {string} [programModKey=this.signer.address] - The account from which the program will be removed. Defaults to the signer's account.
    * @param {string} [programDeployer] - Optional. The authorized account to perform the removal, if different from the signer's account.
    * @returns {Promise<void>} - A Promise resolving when the program is successfully removed.
    * @remarks
@@ -134,23 +133,23 @@ export default class ProgramManager extends ExtrinsicBaseClass {
 
   async remove (
     programHashToRemove: string,
-    sigReqAccount = this.signer.address,
+    programModKey = this.signer.address,
     verifyingKey: string
   ): Promise<void> {
-    const currentPrograms = await this.get(sigReqAccount)
+    const currentPrograms = await this.get(programModKey)
     // creates new array that contains all of the currentPrograms except programHashToRemove
     const updatedPrograms = currentPrograms.filter(
       (program) => program.programPointer !== programHashToRemove
     )
 
 
-    await this.set(updatedPrograms, sigReqAccount, verifyingKey)
+    await this.set(updatedPrograms, programModKey, verifyingKey)
   }
 
-  /**f
+  /**
    * Adds a new program for a specific account.
    * @param {ProgramData} newProgram - The new program data to add.
-   * @param {string} [sigReqAccount=this.signer.address] - The account to add the program to. Defaults to the signer's account.
+   * @param {string} [programModKey=this.signer.address] - The account to add the program to. Defaults to the signer's account.
    * @param {string} [programDeployer] - Optional. The authorized account to modify the program, if different from the signer's account.
    * @returns {Promise<void>} - A promise that resolves when the program is successfully added.
    * @remarks
@@ -161,14 +160,14 @@ export default class ProgramManager extends ExtrinsicBaseClass {
 
   async add (
     newProgram: ProgramInstance,
-    sigReqAccount = this.signer.address,
-    verifyingKey?: string
+    programModKey = this.signer.address,
+    verifyingKey:string = this.signer.verifyingKeys[0]
   ): Promise<void> {
-    const currentPrograms = await this.get(sigReqAccount)
+    const currentPrograms = await this.get(verifyingKey)
     await this.set(
       [...currentPrograms, newProgram],
-      sigReqAccount,
-      verifyingKey
+      verifyingKey,
+      programModKey
     )
   }
 }
