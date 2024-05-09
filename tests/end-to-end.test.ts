@@ -58,7 +58,10 @@ test('End To End', async (t) => {
   }
 
   // Pre-registration check
-  const preRegistrationStatus = await entropy.isRegistered(charlieStashAddress)
+  const preRegistrationStatus = await run(
+    'isRegistered',
+    entropy.isRegistered(charlieStashAddress)
+  )
   t.equal(
     JSON.stringify(preRegistrationStatus),
     'false',
@@ -66,7 +69,7 @@ test('End To End', async (t) => {
   )
 
   await run(
-    'registers',
+    'register',
     entropy.register({
       keyVisibility: 'Permissioned',
       freeTx: false,
@@ -80,10 +83,10 @@ test('End To End', async (t) => {
     charlieStashAddress,
     'got right address'
   )
-  const preRegistrationStatusCheck =
-    await entropy.registrationManager.checkRegistrationStatus(
-      charlieStashAddress
-    )
+  const preRegistrationStatusCheck = await run(
+    'checkRegistrationStatus',
+    entropy.registrationManager.checkRegistrationStatus(charlieStashAddress)
+  )
   t.ok(preRegistrationStatusCheck, 'preRegistrationStatusCheck ...') // TODO: better check
 
   // Post-registration check
