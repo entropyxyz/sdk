@@ -22,8 +22,8 @@ jobs:
           node-version: 20.10.0
       - name: Build
         run: yarn --network-timeout 180000
-      - name: Lint
-        run: yarn run lint
+      - name: Typecheck
+        run: yarn run test:types
       - name: Bundle
         run: yarn run bundle
       - name: Log in to Docker Hub
