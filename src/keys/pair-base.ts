@@ -29,34 +29,10 @@ const crypto = new Proxy({
   }
 })
 
-
-
-export type KeyMaterial = HexSeedMaterial | MenomnicSeedMaterial
-
-/**
- * hex strings
- * */
-
-export type seed = string
-export type path = string
-
-/**
- * 12 or 24? words separated by spaces defined by bip39
- * */
-export type menomnic = string
-
-export interface HexSeedMaterial {
-  seed: seed
-  path?: path
-}
-
-export interface MenomnicSeedMaterial {
-  menomnic: menomnic
-  path?: path
-}
-
 export default class BasePair {
-  async constructor ({seed, path}: {seed?: string, path?: string}) {
+  // Not sure what the interface/type should be here, leaving as any for now
+  crypto: any;
+  constructor ({seed, path}: {seed?: string, path?: string}) {
     // these are async wrapped functions of polkadot crypto
     this.crypto = crypto
   }

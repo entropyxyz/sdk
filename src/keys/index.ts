@@ -1,7 +1,10 @@
-import EventEmitter from `node:events`
+import EventEmitter from 'node:events'
 import { v4 as uuidv4 } from 'uuid'
 import { Keypair } from '@polkadot/util-crypto/types'
 import * as utils from './utils'
+import { EntropyAccount, KeyMaterial, PairMaterial, Seed, UIDv4 } from './types/json'
+import { ChildKey, ChildKeyBasePaths } from './types/constants'
+import { Signer } from './types/internal'
 
 /**
  * A utility class to allow consumers of the sdk to subscribe
@@ -13,18 +16,22 @@ export default class Keyring {
   // private
   // it's a unit8array if it comes from a mnemonic and a string if it comes from the user
   #seed: Uint8Array | string
-  accounts:
-  async constructor (account: KeyMaterial | EntropyAccount) {
+  accounts: EventEmitter
+  crypto: Crypto
+  constructor(account: KeyMaterial & EntropyAccount) {
     // these are async wrapped functions of polkadot crypto
     this.crypto = crypto
     this.accounts = new EventEmitter()
     const { seed, mnemonic } = account
     if (!seed || !mnemonic) throw new Error('Need at least a seed or mnemonic to create keys')
-    if (mnemonic) {
-      this.#seed = utils.seedFromMnemonic(mnemonic)
-    } else {
-      this.#seed = seed
+    const populateSeed = async () => {
+      if (mnemonic) {
+        this.#seed = await utils.seedFromMnemonic(mnemonic)
+      } else {
+        this.#seed = seed
+      }
     }
+    populateSeed()
     if (Object.keys(account).length > 2) this.#deriveKeys(account)
   }
   /**
@@ -32,20 +39,22 @@ export default class Keyring {
   #deriveKeys (entropyAccount: EntropyAccount) {
     const accounts = Object.keys(entropyAccount)
     accounts.forEach((keyPairMaterialName: string) => {
-      this.#formatAccount({name: keyPairMaterialName, account: entropyAccount[keyPairMaterialName]})
+      this.#formatAccount(entropyAccount[keyPairMaterialName])
     })
   }
 
   getAccount (): EntropyAccount {
     const accounts = {}
-    ChildKey.forEach((name) => {
-      const account = {}
+    Object.values(ChildKey).forEach((name) => {
+      const account: PairMaterial = {
+        path: '',
+        type: name,
+      };
       const { path, seed, verfiyingKeys, address, type } = this.accounts[name]
       if (path) account.path = path
       if (seed) account.seed = seed
-      if (verfiyingKeys) account.verfiyingKeys = verfiyingKeys
+      if (verfiyingKeys) account.verifyingKeys = verfiyingKeys
       if (address) account.address = address
-      account.type = name
       accounts[name] = account
     })
     return accounts
@@ -53,11 +62,11 @@ export default class Keyring {
 
   #formatAccount (account: PairMaterial) {
     const name = account.type
-    const dervationPath = account.path
+    const derivationPath = account.path
     const seed = account.seed
-    const verfiyingKeys = account.verfiyingKeys
-    this.accounts[name] = generateKeyPairFromSeed(seed || this.#seed, dervationPath)
-    this.accounts[name].path = dervationPath
+    const verfiyingKeys = account.verifyingKeys
+    this.accounts[name] = utils.generateKeyPairFromSeed(seed || this.#seed.toString(), derivationPath)
+    this.accounts[name].path = derivationPath
     if (seed) this.accounts[name].seed = seed
     if (verfiyingKeys) this.accounts[name].verfiyingKeys = verfiyingKeys
     this.accounts[name].type = name
@@ -80,7 +89,7 @@ export default class Keyring {
   getProgramDevKey (): Signer {
     const type = ChildKey.PROGRAM_DEV
     if (this.accounts[ChildKey.PROGRAM_DEV]) return this.accounts[ChildKey.PROGRAM_DEV].signer
-    this.#creatKey({type})
+    this.#createKey({type})
     return this.accounts[ChildKey.PROGRAM_DEV].signer
   }
   // this is so we dont just generate a bunch of useless keys that are getting
@@ -91,10 +100,10 @@ export default class Keyring {
     })
   }
 
-  #createKey ({seed=this.#seed, type, uuid}: {type: ChildKey, seed?: Seed, uuid?: UIDv4}) {
+  #createKey ({ type, uuid }: {type: ChildKey, seed?: Seed, uuid?: UIDv4}) {
     const path = uuid ? `${ChildKeyBasePaths[type]}${uuidv4()}` : ChildKeyBasePaths[type]
     this.#formatAccount({ path, type })
-    this.accounts.emmit('account-update', this.getAccount())
+    this.accounts.emit('account-update', this.getAccount())
   }
 
 }

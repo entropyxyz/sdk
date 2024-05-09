@@ -1,13 +1,12 @@
-import EventEmitter from `node:events`
+import EventEmitter from 'node:events'
 import { Keypair } from '@polkadot/util-crypto/types'
 import { Keys } from '@polkadot/types/interfaces/types'
-import { Signer } from '@polkadot/api/types'
+import { Signer as RawPolkadotSigner } from '@polkadot/api/types'
 
-import { ChildKey } from './constants'
+import { ChildKey, EntropyAccountType } from './constants'
 
-export type PolkadotSigner = Keypair
+export type PolkadotSigner = Keypair | RawPolkadotSigner
 export type PolkadotKeys = Keys
-export type PolkadotSigner = Signer
 
 /**
  * keep this in mind when dealing with polkadot:

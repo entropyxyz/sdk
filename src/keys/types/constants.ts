@@ -26,9 +26,9 @@ export const enum EntropyAccountType {
 }
 
 export enum ChildKey {
-  REGISTRATION = 'registration'
-  PROGRAM_DEV = 'programDev'
-  DEVICE_KEY = 'deviceKey'
+  REGISTRATION = 'registration',
+  PROGRAM_DEV = 'programDev',
+  DEVICE_KEY = 'deviceKey',
 }
 
 
