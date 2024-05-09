@@ -144,10 +144,16 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
       programData.map((programInfo) => { return {programPointer: programInfo.programPointer, programConfig: programInfo.programConfig} })
     )
 
-    await this.sendAndWaitFor (registerTx,{
+    const [accountId, verifyingKeyBytes] = await this.sendAndWaitFor (registerTx,{
       section: 'registry',
       name: 'AccountRegistered',
     })
+
+    if (this.account.address === accountId.toString()) {
+      const verifyingKey = verifyingKeyBytes.toString()
+      this.account.verifyingKey = verifyingKey
+      console.log(`Account ID: ${accountId.toString()}, Verifying Key: ${verifyingKey}`)
+
     return registered
   }
 
