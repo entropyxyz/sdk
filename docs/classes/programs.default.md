@@ -30,7 +30,6 @@ The ProgramManager class provides an interface to interact with Entropy Programs
 
 - [add](programs.default.md#add)
 - [get](programs.default.md#get)
-- [handleFreeTx](programs.default.md#handlefreetx)
 - [remove](programs.default.md#remove)
 - [sendAndWaitFor](programs.default.md#sendandwaitfor)
 - [set](programs.default.md#set)
@@ -182,21 +181,6 @@ The response is then processed and converted to an ArrayBuffer before being retu
 
 [programs/index.ts:52](https://github.com/entropyxyz/sdk/blob/1c426d7/src/programs/index.ts#L52)
 
-___
-
-### handleFreeTx
-
-▸ **handleFreeTx**(`call`): `Promise`\<`SubmittableExtrinsic`\<``"promise"``, `ISubmittableResult`\>\>
-
-Prepares a free transaction, performs a dry run, and ensures its viability.
-
-In this system:
-- **Electricity** represents an energy unit allowing certain transactions to bypass traditional fees.
-- An account's **Zaps** represent the available electricity it has. Consuming zaps results in transaction execution without fees.
-- **Batteries** are rechargeable units in an account that generate zaps over time.
-
-This method leverages the `callUsingElectricity` from the `freeTx` module to create a transaction that utilizes zaps.
-A dry run is then performed to ensure its success when broadcasted.
 
 #### Parameters
 
@@ -214,9 +198,6 @@ A promise resolving to a transaction prepared to use electricity.
 
 If the dry run fails or there's insufficient electricity (zaps).
 
-#### Inherited from
-
-[default](extrinsic.default.md).[handleFreeTx](extrinsic.default.md#handlefreetx)
 
 #### Defined in
 
@@ -256,7 +237,7 @@ ___
 
 ### sendAndWaitFor
 
-▸ **sendAndWaitFor**(`call`, `freeTx?`, `filter`): `Promise`\<`EventRecord`\>
+▸ **sendAndWaitFor**(`call`, `filter`): `Promise`\<`EventRecord`\>
 
 Sends an extrinsic and waits for a specific event or rejects with an error.
 
@@ -265,7 +246,6 @@ Sends an extrinsic and waits for a specific event or rejects with an error.
 | Name | Type | Default value | Description |
 | :------ | :------ | :------ | :------ |
 | `call` | `SubmittableExtrinsic`\<``"promise"``, `ISubmittableResult`\> | `undefined` | The extrinsic call to send. |
-| `freeTx` | `boolean` | `false` | Optional. Flag indicating if the transaction should be free (default: false). |
 | `filter` | [`EventFilter`](../interfaces/types.EventFilter.md) | `undefined` | An event filter to wait for. |
 
 #### Returns

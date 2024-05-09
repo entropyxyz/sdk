@@ -7,6 +7,8 @@ import { Adapter } from './signing/adapters/types'
 import { Keyring } from './keys'
 import { Signer } from './types'
 import ProgramManager from './programs'
+import { DEFAULT_PROGRAM_INTERFACE } from '../tests/testing-utils'
+import { ChildKey } from './keys'
 export interface EntropyAccount {
   sigRequestKey?: Signer
   programModKey?: Signer | string
@@ -45,7 +47,6 @@ export interface EntropyOpts {
  * await entropy.register({
  *   programModAccount: '5Gw3s7q9...',
  *   keyVisibility: 'Public',
- *   freeTx: false
  * })
  * ```
  * @alpha
@@ -100,7 +101,6 @@ export default class Entropy {
     this.registrationManager = new RegistrationManager({
       substrate: this.substrate,
       signer: this.keyring.getLazyLoadProxy(ChildKey.REGISTRATION),
-      verifyingKey: this.account.verifyingKey[0]
     })
     this.signingManager = new SignatureRequestManager({
       signer: this.keyring.getLazyLoadProxy(ChildKey.DEVICE_KEY),
@@ -114,7 +114,7 @@ export default class Entropy {
     this.programs = new ProgramManager({
       substrate: this.substrate,
       programModKey: this.keyring.getLazyLoadProxy(ChildKey.REGISTRATION),
-      programDeployKey: this.account.programDeployKey,
+      programDeployer: this.account.programDeployKey,
       verifyingKey: this.account.verifyingKey[0]
     })
     if (this.#programReadOnly || this.#allReadOnly) this.programs.set = async () => { throw new Error('Programs is in a read only state: Must pass a valid key pair in initialization.') }
@@ -165,8 +165,7 @@ export default class Entropy {
    * @param {RegistrationParams & { account?: EntropyAccount }} params - The registration parameters.
    * @param {Address} params.programModAccount - The address authorized to set programs on behalf of the user.
    * @param {'Private' | 'Public' } [params.keyVisibility] - Visibility setting for the key.
-   * @param {boolean} [params.freeTx] - Indicates if the registration transaction should be free.
-   * @param {ProgramData[]} [params.initialPrograms] - Optional initial programs associated with the user.
+   * @param {ProgramData[]} [params.programPointer] - Optional initial programs associated with the user.
    * @returns {Promise<void>} A promise indicating the completion of the registration process.
    * @throws {TypeError} - If the provided address format is incompatible.
    * @throws {Error} - If the address is already registered or if there's a problem during registration.
@@ -198,6 +197,8 @@ export default class Entropy {
     params: RegistrationParams & { account?: EntropyAccount }
   ): Promise<void> {
     await this.ready && this.substrate.isReady
+    const defaultProgram = DEFAULT_PROGRAM_INTERFACE
+    defaultProgram.userConfig.sr25519_public_keys.push(this.account.deviceKey.address)
     if (this.#allReadOnly) throw new Error('Initialized in read only state: can not use write functions')
     const account = params.account || this.account
 
@@ -206,12 +207,17 @@ export default class Entropy {
     }
 
     if (
-      params.programModAccount &&
-      !isValidSubstrateAddress(params.programModAccount)
+      params.programDeployer &&
+      !isValidSubstrateAddress(params.programDeployer)
     ) {
       throw new TypeError('Incompatible address type')
     }
     await this.registrationManager.register(params)
+    this.keyring.accounts[ChildKey.REGISTRATION].verifyingKeys.push[verifyingKey]
+    // TODO: if there is already a verifyingKey for DeviceKey -- need to make decision if we push to new device key or existing
+    this.keyring.accounts[ChildKey.DEVICE_KEY].verifyingKeys.push[verifyingKey]
+
+
     // this.subscribeToAccountRegisteredEvents((verifyingKey: string) => {
     //   console.log(`Received verifyingKey after registration: ${verifyingKey}`)
     // })

@@ -27,7 +27,6 @@ await entropy.ready;
 await entropy.register({ 
   programModAccount: '5Gw3s7q9...', 
   keyVisibility: 'Permissioned', 
-  freeTx: false 
 });
 ```
 

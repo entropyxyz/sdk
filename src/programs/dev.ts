@@ -14,6 +14,8 @@ import * as util from '@polkadot/util'
  * @property {string} deployer - The address of the deployer of the program.
  * @property {number} refCounter - The reference count for the program.
  */
+
+// interfaceDescription needs better design and another type other than 'unknown'
 export interface ProgramInfo {
   bytecode: ArrayBuffer
   interfaceDescription?: unknown
@@ -80,10 +82,11 @@ export default class ProgramDev extends ExtrinsicBaseClass {
     const tx: SubmittableExtrinsic<'promise'> = this.substrate.tx.programs.setProgram(
       util.u8aToHex(new Uint8Array(program)), // new program
       formatedConfig, // config schema
-      '' // auxilary config schema
+      '', // auxilary config schema
+      [] // oracle data pointer 
     )
 
-    const record = await this.sendAndWaitFor(tx, false, {
+    const record = await this.sendAndWaitFor(tx, {
       section: 'programs',
       name: 'ProgramCreated',
     })
@@ -107,7 +110,7 @@ export default class ProgramDev extends ExtrinsicBaseClass {
       programHash
     )
 
-    await this.sendAndWaitFor(tx, false, {
+    await this.sendAndWaitFor(tx, {
       section: 'programs',
       name: 'ProgramRemoved',
     })
