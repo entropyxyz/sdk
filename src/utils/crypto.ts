@@ -37,7 +37,7 @@ export interface CryptoLib {
     address: string
   ) => Promise<boolean>
   // from chacha20poly1305
-  fromHex: (input: string) => Uint8Array
+  fromHex: (input: string) => Promise<Uint8Array>
   /**
    * Encrypts the provided message and signs it using the X25519 and ChaCha20Poly1305 algorithms.
    * Uses the provided secret key for encryption and the server's Diffie-Hellman (DH) key for the signature.

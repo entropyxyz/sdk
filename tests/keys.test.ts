@@ -1,46 +1,31 @@
-import { sleep, charlieStashSeed } from './testing-utils'
+import test from 'tape'
 import { mnemonicGenerate } from '@polkadot/util-crypto'
-
 import { getWallet, mnemonicGenOrDerive } from '../src/keys'
 
-describe('Keys Tests', () => {
-  let testMnemonic: string
-  let derivationPath: string
+import { charlieStashSeed } from './testing-utils'
 
-  beforeAll(async () => {
-    try {
-      console.log('starting key tests')
-    } catch (e) {
-      console.error('Error in beforeAll: ', e.message)
-    }
+let testMnemonic: string
+let derivationPath: string
 
-    await sleep(30000)
+async function testSetup() {
+  testMnemonic = mnemonicGenerate()
+  derivationPath = '//0'
+}
 
-    testMnemonic = mnemonicGenerate()
-    derivationPath = '//0'
-  })
+test('Keys: getWallet', async (t) => {
+  t.plan(2)
+  await testSetup()
+  // it should generate valid Signer from seed
+  const walletSigner = await getWallet(charlieStashSeed)
+  t.true(Object.keys(walletSigner).includes('wallet'), 'has wallet')
+  t.true(Object.keys(walletSigner).includes('pair'), 'has pair')
+})
 
-  afterAll(async () => {
-    try {
-      ;('finished')
-    } catch (e) {
-      console.error('Error in afterAll: ', e.message)
-    }
-  })
-
-  describe('getWallet', () => {
-    it('should generate valid Signer from seed', async () => {
-      const signer = await getWallet(charlieStashSeed)
-      expect(signer).toHaveProperty('wallet')
-      expect(signer).toHaveProperty('pair')
-    })
-  })
-
-  describe('generateKeysFromMnemonic', () => {
-    it('should generate valid Signer from mnemonic', async () => {
-      const signer = await mnemonicGenOrDerive(testMnemonic)
-      expect(signer).toHaveProperty('wallet')
-      expect(signer).toHaveProperty('pair')
-    })
-  })
+test('Keys: generateKeysFromMnemonic', async (t) => {
+  t.plan(2)
+  await testSetup()
+  // it should generate valid Signer from mnemonic
+  const mnemonicSigner = await mnemonicGenOrDerive(testMnemonic)
+  t.true(Object.keys(mnemonicSigner).includes('wallet'), 'has wallet')
+  t.true(Object.keys(mnemonicSigner).includes('pair'), 'has pair')
 })
