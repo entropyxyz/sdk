@@ -38,6 +38,8 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
    *
    * @param {ApiPromise} substrate - The Polkadot/Substrate API instance.
    * @param {Signer} signer - The signer used for signing transactions.
+   * @param verifyingKey - The key verification key that corresponds to a signer.
+
    */
 
   verifyingKey: string  
@@ -67,6 +69,7 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
    * @throws {Error} If the user is already registered.
    */
   // TO-DO: return the verfiying key have it documented that the user needs to save this otherwise that cant request sigs
+
   async register ({
     programDeployer = this.signer,
     keyVisibility = 'Public',
@@ -143,7 +146,7 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
 
     await this.sendAndWaitFor (registerTx,{
       section: 'registry',
-      name: 'SignalRegister',
+      name: 'AccountRegistered',
     })
     return registered
   }

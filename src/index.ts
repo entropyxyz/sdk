@@ -171,26 +171,27 @@ export default class Entropy {
    * @throws {Error} - If the address is already registered or if there's a problem during registration.
    */
 
-  async subscribeToAccountRegisteredEvents (callback: (verifyingKey: string) => void) {
-    await this.substrate.query.system.events((events) => {
-      events.forEach((record) => {
-        const { event } = record
-        if (event.section === 'registry' && event.method === 'AccountRegistered') {
-          const [accountId, verifyingKeyBytes] = event.data
-          if (this.account && this.account.sigRequestKey && this.account.sigRequestKey.wallet.address === accountId.toString()) {
-            const verifyingKey = verifyingKeyBytes.toString()
-            this.account.verifyingKey = verifyingKey
-            console.log(`Account ID: ${accountId.toString()}, Verifying Key: ${verifyingKey}`)
-            callback(verifyingKey)
-          }
-        }
-      })
-    })
-    // const yodos = this.substrate.disconnect()
-    // console.log("yodos", yodos)
-    // const yotres = this.substrate.isReady
-    // console.log("yotres", yotres)
-  }
+  // FRANKIE im not entirely sure this is the way we want to be doing things 
+  // async subscribeToAccountRegisteredEvents (callback: (verifyingKey: string) => void) {
+  //   await this.substrate.query.system.events((events) => {
+  //     events.forEach((record) => {
+  //       const { event } = record
+  //       if (event.section === 'registry' && event.method === 'AccountRegistered') {
+  //         const [accountId, verifyingKeyBytes] = event.data
+  //         if (this.account && this.account.sigRequestKey && this.account.sigRequestKey.wallet.address === accountId.toString()) {
+  //           const verifyingKey = verifyingKeyBytes.toString()
+  //           this.account.verifyingKey = verifyingKey
+  //           console.log(`Account ID: ${accountId.toString()}, Verifying Key: ${verifyingKey}`)
+  //           callback(verifyingKey)
+  //         }
+  //       }
+  //     })
+  //   })
+  //   // const yodos = this.substrate.disconnect()
+  //   // console.log("yodos", yodos)
+  //   // const yotres = this.substrate.isReady
+  //   // console.log("yotres", yotres)
+  // }
   
 
   async register (

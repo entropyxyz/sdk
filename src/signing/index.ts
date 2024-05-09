@@ -33,7 +33,7 @@ export interface SigOps {
 
 export interface UserSignatureRequest {
   message: string
-  auxilaryData?: Array<string | null>
+  auxilaryData?: unknown[]
   validatorsInfo: ValidatorInfo[]
   timestamp: { secs_since_epoch: number; nanos_since_epoch: number }
   hash: string
@@ -108,6 +108,8 @@ export default class SignatureRequestManager {
    * @param {string} [sigOps.hash] - The hash type.
    * @param {string} [sigOps.type] - The type of signature operation.
    * @param {unknown[]} [sigOps.auxilaryData] - Additional data for the signature operation.
+   * @param {signatureVerifyingKey} signatureVerifyingKey - The verifying key for the signature requested
+
    * @returns {Promise<Uint8Array>} A promise resolving to the signed hash as a Uint8Array.
    */
 
@@ -124,14 +126,14 @@ export default class SignatureRequestManager {
     // TO-DO: this needs to be and accounId ie hex string of the address
     // which means you need a new key ie device key here
 
-    const signatureRequestAccount = this.signer.address
+    const signatureVerifyingKey = this.account.verifyingKey
 
     const txRequests: Array<EncMsg> = await this.formatTxRequests({
-      validatorsInfo: validatorsInfo,
-      signatureRequestAccount,
       strippedsigRequestHash,
       auxilaryData,
+      validatorsInfo: validatorsInfo,
       hash,
+      signatureVerifyingKey,
     })
     const sigs = await this.submitTransactionRequest(txRequests)
     const sig = await this.verifyAndReduceSignatures(sigs)
@@ -160,9 +162,10 @@ export default class SignatureRequestManager {
    * 
    * @param {object} params - Parameters for generating the transaction request.
    * @param {string} params.strippedsigRequestHash - Stripped signature request hash.
-   * @param {ValidatorInfo[]} params.validatorsInfo - Information about the validators.
    * @param {unknown[]} [params.auxilaryData] - Additional data for the transaction request.
+   * @param {ValidatorInfo[]} params.validatorsInfo - Information about the validators.
    * @param {string} [params.hash] - The hash type.
+   * @param {signatureVerifyingKey[]} params.signatureVerifyingKey - The verifying key for the signature requested
    * @returns {Promise<EncMsg[]>} A promise resolving to an array of encrypted messages for validators.
    */
 
