@@ -29,6 +29,13 @@ git commit --no-verify
 
 ## Tests
 
+For the tests to run you **must** edit your `/etc/hosts` file, adding:
+
+```
+127.0.0.1 alice-tss-server
+127.0.0.1 bob-tss-server
+```
+
 The tests use docker to spin up test networks to run against.
 Sometimes when interupted docker containers will be left runnin in the background, meaning you don't get a "clean" startup, and your tests will fail (saying things like "ERROR that program is already deployed boo").
 
