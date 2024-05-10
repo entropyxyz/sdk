@@ -5,16 +5,13 @@ import SignatureRequestManager, { SigOps, SigTxOps } from './signing'
 import { crypto } from './utils/crypto'
 import { Adapter } from './signing/adapters/types'
 import { Keyring } from './keys'
-import { Signer } from './types'
+import {
+  Signer,
+  EntropyAccount,
+} from './types'
 import ProgramManager from './programs'
 import { DEFAULT_PROGRAM_INTERFACE } from '../tests/testing-utils'
 import { ChildKey } from './keys'
-export interface EntropyAccount {
-  sigRequestKey?: Signer
-  programModKey?: Signer | string
-  programDeployKey?: Signer
-  verifyingKey?: string[]
-}
 
 export interface EntropyOpts {
   /** account for wallet initialization. */
@@ -56,10 +53,6 @@ export default class Entropy {
   #ready?: (value?: unknown) => void
   /** @internal */
   #fail?: (reason?: unknown) => void
-  /** @internal */
-  #programReadOnly: boolean
-  /** @internal */
-  #allReadOnly: boolean
   /** A promise that resolves once chacha20poly1305 cryptoLib has been loaded */
   ready: Promise<boolean>
   registrationManager: RegistrationManager
@@ -91,7 +84,6 @@ export default class Entropy {
 
   async #init (opts: EntropyOpts) {
     this.keyring = opts.keyring
-    this.#setReadOnlyStates()
 
     const wsProvider = new WsProvider(opts.endpoint)
     this.substrate = new ApiPromise({ provider: wsProvider })
@@ -118,46 +110,7 @@ export default class Entropy {
       programDeployer: this.account.programDeployKey,
       verifyingKey: this.account.verifyingKey[0]
     })
-    if (this.#programReadOnly || this.#allReadOnly)
-      this.programs.set = async () => {
-        throw new Error(
-          'Programs is in a read only state: Must pass a valid key pair in initialization.'
-        )
-      }
     this.#ready(true)
-  }
-
-  /** @internal */
-  #setReadOnlyStates(): void {
-    // the readOnly state will not allow for write functions
-    this.#programReadOnly = false
-    this.#allReadOnly = false
-
-    if (!this.account) {
-      this.#allReadOnly = true
-    } else if (!this.account.sigRequestKey && !this.account.programModKey) {
-      this.#allReadOnly = true
-    }
-
-    if (typeof this.account.sigRequestKey !== 'object') {
-      throw new Error('AccountTypeError: sigRequestKey can not be a string')
-    } else if (
-      !isValidPair({
-        wallet: this.account.sigRequestKey.wallet,
-        pair: this.account.sigRequestKey.pair,
-      })
-    ) {
-      throw new Error(
-        'AccountTypeError: sigRequestKey not a valid signing pair'
-      )
-    }
-
-    if (typeof this.account.programModKey === 'string') {
-      if (!isValidSubstrateAddress(this.account.programModKey)) {
-        throw new Error('AccountTypeError: programModKey not a valid address')
-      }
-      this.#programReadOnly = true
-    }
   }
 
   /**
@@ -201,7 +154,6 @@ export default class Entropy {
     await this.ready && this.substrate.isReady
     const defaultProgram = DEFAULT_PROGRAM_INTERFACE
     defaultProgram.userConfig.sr25519_public_keys.push(this.account.deviceKey.address)
-    if (this.#allReadOnly) throw new Error('Initialized in read only state: can not use write functions')
     const account = params.account || this.account
 
     if (!account) {
@@ -246,7 +198,6 @@ export default class Entropy {
 
   async signTransaction (params: SigTxOps): Promise<unknown> {
     await this.ready && this.substrate.isReady
-    if (this.#allReadOnly) throw new Error('Initialized in read only state: can not use write functions')
     return this.signingManager.signTransaction(params)
   }
 
@@ -265,10 +216,6 @@ export default class Entropy {
 
   async sign(params: SigOps): Promise<Uint8Array> {
     await this.ready
-    if (this.#allReadOnly)
-      throw new Error(
-        'Initialized in read only state: can not use write functions'
-      )
     return this.signingManager.sign(params)
   }
 }
