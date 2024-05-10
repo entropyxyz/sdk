@@ -1,6 +1,5 @@
 /**
- * A utility class to allow consumers of the sdk to subscribe
- * to key creations and "account" updates.
+ * A utility class to allow consumers of the sdk to subscribe to key creations and "account" updates.
  */
 
 import {
@@ -17,8 +16,7 @@ const ready = cryptoWaitReady()
 
 
 /**
- * A proxy object that wraps the crypto functions from the @polkadot/util-crypto library.
- * It ensures that the crypto functions are only accessed after the cryptoWaitReady promise is resolved.
+ * A proxy object that wraps the crypto functions from the @polkadot/util-crypto library. It ensures that the crypto functions are only accessed after the cryptoWaitReady promise is resolved.
  *
  * @private
  * @type {Proxy<Object>}

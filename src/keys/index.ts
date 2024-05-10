@@ -1,6 +1,5 @@
 /**
- * A utility class to allow consumers of the sdk to subscribe
- * to key creations and "account" updates
+ * A utility class to allow consumers of the sdk to subscribe to key creations and account updates.
  */
 
 import EventEmitter from 'node:events'

@@ -13,8 +13,8 @@ export const enum EntropyAccountType {
 
   /**
   * Describes an account type that has a "root key". This means it registered the program set
-  * and possibly has full control to change the programs. It may still be able to request
-  * signatures, so don't lazy load signing.
+  * and likely has full control to change the programs. It may still be able to request
+  * signatures, so don't lazy-load signing.
   */
   REGISTERING_ACCOUNT = 'REGISTERING_ACCOUNT',
 
