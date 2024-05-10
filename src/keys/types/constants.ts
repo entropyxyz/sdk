@@ -5,7 +5,7 @@
  * describes a kind of user that deploys programs and has either only the mnemonic
  * or the deploy key
  * this way we know we can lazily load registration records
- * REGISTERING_ACCOUNT:
+ * ADMIN_ACCOUNT:
  * Describes an account type that has a "root key" this means
  * it registerd the program set and possibly has full controll to change
  * the programs it may still be able to request signatures so dont lazy load signing
@@ -19,7 +19,7 @@
  * */
 export const enum EntropyAccountType {
   PROGRAM_DEV_ACCOUNT = 'PROGRAM_DEV_ACCOUNT',
-  REGISTERING_ACCOUNT = 'REGISTERING_ACCOUNT',
+  ADMIN_ACCOUNT = 'ADMIN_ACCOUNT',
   CONSUMER_ACCOUNT = 'CONSUMER_ACCOUNT',
   // an unknown account type. generate keys on the fly :grimacing:
   MIXED_ACCOUNT = 'MIXED_ACCOUNT',

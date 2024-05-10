@@ -1,6 +1,6 @@
 import ExtrinsicBaseClass from '../extrinsic'
 import { ApiPromise } from '@polkadot/api'
-import { Signer } from '../types'
+import { Signer } from '../keys/types/internal'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
 import { hex2buf, stripHexPrefix } from '../utils'
 import * as util from '@polkadot/util'

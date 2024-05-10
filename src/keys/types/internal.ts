@@ -2,10 +2,11 @@ import EventEmitter from 'node:events'
 import { Keypair } from '@polkadot/util-crypto/types'
 import { Keys } from '@polkadot/types/interfaces/types'
 import { Signer as RawPolkadotSigner } from '@polkadot/api/types'
+import { KeyringPair } from '@polkadot/keyring/types'
 
 import { ChildKey, EntropyAccountType } from './constants'
 
-export type PolkadotSigner = Keypair | RawPolkadotSigner
+export type PolkadotSigner = KeyringPair
 export type PolkadotKeys = Keys
 
 /**
@@ -16,14 +17,6 @@ export type PolkadotKeys = Keys
  * Account ID:        0xd6a3105d6768e956e9e5d41050ac29843f98561410d3a47f9dd5b3b227ab8746
  * SS58 Address:      5Gv8YYFu8H1btvmrJy9FjjAWfb99wrhV3uhPFoNEr918utyR
 */
-export interface EntropyWallet {
-  sigRequestKey?: Signer
-  registeringKey?: Signer | string
-  programDeployKey?: Signer
-  deviceKey?: Signer
-  verifyingKey?: string[]
-  type: EntropyAccountType
-}
 
 export interface Signer {
   address: string

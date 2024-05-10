@@ -1,12 +1,12 @@
 import { ApiPromise } from '@polkadot/api'
-import { Signer } from '../types'
+import { Signer } from '../keys/types/internal'
 import { defaultAdapters } from './adapters/default'
 import { Adapter } from './adapters/types'
 import { EncMsg, ValidatorInfo } from '../types'
 import { stripHexPrefix, sendHttpPost } from '../utils'
 import { crypto, CryptoLib } from '../utils/crypto'
 import { Transaction } from 'ethereumjs-tx'
-import { Address } from '../types'
+import { SS58Address } from '../keys/types/json'
 
 export interface Config {
   signer: Signer

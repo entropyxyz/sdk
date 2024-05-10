@@ -1,18 +1,18 @@
-import {
-  sr25519PairFromSeed,
-  mnemonicToMiniSecret,
-  mnemonicGenerate,
-  keyFromPath,
-  keyExtractPath,
-  encodeAddress
-} from '@polkadot/util-crypto'
+import { crypto } from '../util/crypto'
+import { Keyring } from '@polkadot/keyring'
 import { PolkadotSigner } from './types/internal'
 import { UIDv4 } from './types/json'
 import { Keypair } from '@polkadot/util-crypto/types'
 
 export const UIDv4regex = /^(?:[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}|00000000-0000-0000-0000-000000000000)$/i
 
-
+const {
+  mnemonicToMiniSecret,
+  mnemonicGenerate,
+  keyFromPath,
+  keyExtractPath,
+  encodeAddress
+} = crypto.polkadotCrypto
 export async function seedFromMnemonic (m) {
   return mnemonicToMiniSecret(m)
 }
@@ -48,19 +48,22 @@ export function generateSeed (): string {
 
 export function generateKeyPairFromSeed (seed: string, dervation?: string): { address: string; pair: PolkadotSigner } {
   let pair
+  // discard the keyring on every use because are keyring is better suited
+  // for our code
+  const polkadotKeyring = new Keyring()
   if (dervation) {
-    const masterPair = sr25519PairFromSeed(seed)
+    const masterPair = polkadotKeyring.addFromUri(seed)
     const { path } = keyExtractPath(dervation)
     pair = keyFromPath(masterPair, path, 'sr25519')
   } else {
-    pair = sr25519PairFromSeed(seed)
+    pair = polkadotKeyring.addFromUri(seed)
   }
 
   return {
     // this might break address formatting? test against charlie stash address
-    address: encodeAddress(pair.publicKey),
+    address: pair.address,
     pair,
-  };
+  }
 }
 
 export function deriveFromMasterPair (signer: Keypair, dervation): Keypair {

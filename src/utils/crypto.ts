@@ -2,7 +2,16 @@ import {
   cryptoWaitReady,
   decodeAddress,
   signatureVerify,
+  sr25519PairFromSeed,
+  mnemonicToMiniSecret,
+  mnemonicGenerate,
+  keyFromPath,
+  keyExtractPath,
+  encodeAddress
 } from '@polkadot/util-crypto'
+
+import * as PolkadotCrypto from '@polkadot/util-crypto'
+
 import { u8aToHex } from '@polkadot/util'
 
 interface ResolveType {
@@ -30,6 +39,7 @@ loadCryptoLib()
  */
 
 export interface CryptoLib {
+  polkadotCrypto: PolkadotCrypto
   verifySignature: (message: string, signature: string, address: string) => Promise<boolean>
 
   fromHex: (input: string) => Promise<Uint8Array>
@@ -88,8 +98,9 @@ export const crypto: CryptoLib = new Proxy({} as CryptoLib, {
     return async (...params) => {
       await cryptoIsLoaded
       if (!cryptoLib) {
-        throw new Error('cryptoLib loaded incorrectly')
+        throw new Error('cryptoLib loaded incorrectly. Did you await the wasmGlobalsReady function?')
       }
+      if (key === 'polkadotCrypto') return PolkadotCrypto
       if (key === 'verifySignature') return verifySignature
       if (cryptoLib.Hpke[key]) {
         return cryptoLib.Hpke[key](...params)

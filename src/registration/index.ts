@@ -1,12 +1,12 @@
 import ExtrinsicBaseClass from '../extrinsic'
-import { Address } from '../types'
+import { SS58Address } from '../keys/types/json'
 import { ApiPromise } from '@polkadot/api'
 import { ProgramInstance } from '../programs'
 import { DEFAULT_PROGRAM_INTERFACE } from '../../tests/testing-utils'
-import { PolkadotSigner } from '../keys/types/internal'
+import { Signer } from '../keys/types/internal'
 
 export interface RegistrationParams {
-  programDeployer?: Address
+  programDeployer?: SS58Address
   keyVisibility?: 'Public'
   programData: ProgramInstance[]
 }
@@ -15,7 +15,7 @@ export interface RegistrationParams {
 export interface RegisteredInfo {
   keyVisibility: KeyVisibilityInfo
   programsData: Uint8Array
-  programDeployer: Address
+  programDeployer: SS58Address
   versionNumber: number
 }
 
@@ -43,9 +43,7 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
    */
 
   verifyingKey: string
-  signer: PolkadotSigner
-  defaultAddress: string
-  defaultProgram: typeof DEFAULT_PROGRAM_INTERFACE
+  signer: Signer
 
 
   constructor ({
@@ -54,7 +52,7 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
     signer
   }: {
     substrate: ApiPromise
-    signer: PolkadotSigner
+    signer: Signer
   }) {
     super({ signer, substrate })
   }
@@ -78,16 +76,16 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
   }: RegistrationParams): Promise<RegisteredInfo> {
 
     // this is sloppy
-    // TODO: store multiple signers via address. and respond accordingly
+    // TODO: store multiple signers via SS58Address. and respond accordingly
     // however it should be handled in extrinsic class and not here
 
     /**
-     * Verifies the registration status of an address.
+     * Verifies the registration status of an SS58Address.
      *
-     * @param {Address} address - The address for which registration status needs to be checked.
-     * @returns {Promise<boolean>} A promise which resolves to `true` if the address is registered, otherwise `false`.
+     * @param {SS58Address} SS58Address - The SS58Address for which registration status needs to be checked.
+     * @returns {Promise<boolean>} A promise which resolves to `true` if the SS58Address is registered, otherwise `false`.
      * @remarks
-     * This method queries Entropy to determine if a given address is registered.
+     * This method queries Entropy to determine if a given SS58Address is registered.
      */
 
     // const isCurrentlyRegistered = await this.checkRegistrationStatus(

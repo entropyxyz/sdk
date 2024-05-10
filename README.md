@@ -36,84 +36,34 @@ Below is an example that instantiates Entropy, deploys a program, registers usin
 **`Example`**
 
 ```typescript
-// get a Signer object from seed using util function
+//store that private key
+import { Keyring } from '@entropyxyz/sdk/keys'
+import { wasmGlobalsReady, Entropy } from '@entropyxyz/sdk'
 
-const signer = await getWallet(charlieStashSeed)
+await wasmGlobalsReady()
 
-// create an Entropy Account object
+const newSeed = {seed || mnemonic}
+const keyring = new Keyring(account)
+// you should allways store what comes from this
+let persistMe = keyring.accounts.toJson()
+const saveToStorage = (state) => persistMe = state
+keyring.accounts.on('account-update', (fullAccount) => { saveToStorage(fullAccount) })
 
-const entropyAccount: EntropyAccount = {
-  sigRequestKey: signer,
-  programModKey: signer,
-}
+let entropy = New Entropy({keyring, endpoint})
+// session end
 
-// initialize Entropy
+// new session with same account as before
+// the second time you use entropy:
+const loadedFromStorage = persistMe
 
-const entropy = new Entropy({ account: entropyAccount })
+const newKeyring = new Keyring(loadFromStorage)
 
-// await entropy to be ready
+keyring.accounts.on('account-update', (fullAccountAsJSON) => { saveToStorage(fullAccountAsJSON) })
 
-await entropy.ready
 
-// path to program wasm file
+entropy = new Entropy({keyring: newKeyring, endpoint})
 
-const basicTxProgram: any = readFileSync(
-  './tests/testing-utils/template_basic_transaction.wasm'
-)
 
-// returns pointer hash
-
-const pointer = await entropy.programs.dev.deploy(basicTxProgram)
-
-// configuration object
-
-const config = `
-    {
-        "allowlisted_addresses": [
-            "772b9a9e8aa1c9db861c6611a82d251db4fac990"
-        ]
-    }
-`
-// converts config to bytes
-
-const encoder = new TextEncoder()
-const byteArray = encoder.encode(config)
-
-// converts U8Array to hex
-
-const programConfig = util.u8aToHex(new Uint8Array(byteArray))
-
-// construct Program Data
-
-const programData: ProgramData = {
-  programPointer: pointer,
-  programConfig: programConfig,
-}
-
-// attempt user registration
-
-await entropy.register({
-  keyVisibility: 'Permissioned',
-  initialPrograms: [programData],
-  programModAccount: 'insert ProgramModAccount address',
-})
-
-// basic transaction composition
-
-const basicTx = {
-  to: '0x772b9a9e8aa1c9db861c6611a82d251db4fac990',
-  value: 1,
-  chainId: 1,
-  nonce: 1,
-  data: '0x' + Buffer.from('Created On Entropy').toString('hex'),
-}
-
-// get entropy signature
-
-const signature = (await entropy.signTransaction({
-  txParams: basicTx,
-  type: 'eth',
-})) as string
 ```
 
 ## Table of contents

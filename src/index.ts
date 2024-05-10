@@ -2,19 +2,21 @@ import { ApiPromise, WsProvider } from '@polkadot/api'
 import { isValidSubstrateAddress } from './utils'
 import RegistrationManager, { RegistrationParams } from './registration'
 import SignatureRequestManager, { SigOps, SigTxOps } from './signing'
-import { crypto } from './utils/crypto'
+import { crypto, } from './utils/crypto'
 import { Adapter } from './signing/adapters/types'
 import { Keyring } from './keys'
+import { Signer } from './keys/types/internal'
 import {
-  Signer,
   EntropyAccount,
 } from './types'
 import ProgramManager from './programs'
 import { DEFAULT_PROGRAM_INTERFACE } from '../tests/testing-utils'
 import { ChildKey } from './keys'
 
+
+
 export interface EntropyOpts {
-  /** account for wallet initialization. */
+  /** keyring class instance object. */
   keyring: Keyring
   /** local or devnet endpoint for establishing a connection to validators */
   endpoint?: string
