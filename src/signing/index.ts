@@ -80,7 +80,7 @@ export default class SignatureRequestManager {
    * @throws {Error} if an adapter for the transaction type is not found, or if the adapter lacks a preSign function.
    */
 
-  async signTransaction({ txParams, type }: SigTxOps): Promise<unknown> {
+  async signWithAddapter({ txParams, type }: SigTxOps): Promise<unknown> {
     if (!this.adapters[type])
       throw new Error(`No transaction adapter for type: ${type} submit as hash`)
     if (!this.adapters[type].preSign)
@@ -88,11 +88,11 @@ export default class SignatureRequestManager {
         `Adapter for type: ${type} has no preSign function. Adapters must have a preSign function`
       )
 
-    const sigRequestHash = await this.adapters[type].preSign(txParams)
+    const { sigRequestHash, auxilaryData } = await this.adapters[type].preSign(this.signer, txParams)
     const signature = await this.sign({
       sigRequestHash,
       hash: this.adapters[type].hash,
-      type,
+      auxilaryData,
     })
     if (this.adapters[type].postSign) {
       return await this.adapters[type].postSign(signature, txParams)
