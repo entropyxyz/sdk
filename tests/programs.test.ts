@@ -7,13 +7,13 @@ import {
   promiseRunner,
   spinNetworkUp,
   createTestAccount,
-  spinNetworkDown,
+  spinNetworkDown
 } from './testing-utils'
 
 const networkType = 'two-nodes'
 let entropy: Entropy
 
-async function testTeardown() {
+async function testTeardown () {
   await spinNetworkDown(networkType, entropy).catch((err) => {
     console.error('Error while spinning network down', err.message)
   })
@@ -42,7 +42,6 @@ test('Programs', async (t) => {
   )
 
   t.equal(
-    // @ts-ignore next line
     buf2hex(fetchedProgram.bytecode),
     buf2hex(dummyProgram),
     'everything looks GREAT'

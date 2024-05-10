@@ -9,7 +9,7 @@ import {
   spinNetworkUp,
   createTestAccount,
   charlieStashAddress,
-  spinNetworkDown,
+  spinNetworkDown
 } from './testing-utils'
 
 const networkType = 'two-nodes'
@@ -54,7 +54,7 @@ test('End To End', async (t) => {
 
   const programData: ProgramData = {
     programPointer: pointer,
-    programConfig: programConfig,
+    programConfig
   }
 
   // Pre-registration check
@@ -75,7 +75,7 @@ test('End To End', async (t) => {
       freeTx: false,
       // initialPrograms: [{ pointer: programData.pointer, config: programData.config }],
       initialPrograms: [programData],
-      programModAccount: charlieStashAddress,
+      programModAccount: charlieStashAddress
     })
   )
   t.equal(
@@ -110,7 +110,7 @@ test('End To End', async (t) => {
   )
   const secondProgramData: ProgramData = {
     programPointer: newPointer,
-    programConfig: '',
+    programConfig: ''
   }
   await run(
     'add program',
@@ -139,14 +139,14 @@ test('End To End', async (t) => {
     value: 1,
     chainId: 1,
     nonce: 1,
-    data: '0x' + Buffer.from('Created On Entropy').toString('hex'),
+    data: '0x' + Buffer.from('Created On Entropy').toString('hex')
   }
 
   const signature = await run(
     'signTransaction',
     entropy.signTransaction({
       txParams: basicTx,
-      type: 'eth',
+      type: 'eth'
     })
   )
 

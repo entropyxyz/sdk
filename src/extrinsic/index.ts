@@ -27,7 +27,7 @@ export default class ExtrinsicBaseClass {
    * @param signer - The signer object containing the wallet and other signing-related functionalities.
    */
 
-  constructor({ substrate, signer }) {
+  constructor ({ substrate, signer }) {
     this.substrate = substrate
     this.signer = signer
   }
@@ -42,17 +42,17 @@ export default class ExtrinsicBaseClass {
    * @throws {Error} Will reject the promise if a dispatch error occurs or the filtered event is not found.
    */
 
-  async sendAndWaitFor(
+  async sendAndWaitFor (
     call: SubmittableExtrinsic<'promise'>,
     freeTx = false,
     filter: EventFilter
   ): Promise<EventRecord> {
     const newCall = freeTx ? await this.handleFreeTx(call) : call
-    return new Promise<EventRecord>((resolve, reject) => {
+    return await new Promise<EventRecord>((resolve, reject) => {
       newCall
         .signAndSend(this.signer.wallet, (res: SubmittableResult) => {
           const { dispatchError, status } = res
-          if (dispatchError) {
+          if (dispatchError != null) {
             if (dispatchError.isModule) {
               // for module errors, we have the section indexed, lookup
               const decoded: Decoded = this.substrate.registry.findMetaError(
@@ -67,7 +67,7 @@ export default class ExtrinsicBaseClass {
           }
           if (status.isInBlock || status.isFinalized) {
             const record = res.findRecord(filter.section, filter.name)
-            if (record) {
+            if (record != null) {
               resolve(record)
             } else {
               reject(Error('Event record not found'))
@@ -96,7 +96,7 @@ export default class ExtrinsicBaseClass {
    * @throws {Error} If the dry run fails or there's insufficient electricity (zaps).
    */
 
-  async handleFreeTx(
+  async handleFreeTx (
     call: SubmittableExtrinsic<'promise'>
   ): Promise<SubmittableExtrinsic<'promise'>> {
     const freeTxWrapper = this.substrate.tx.freeTx.callUsingElectricity(call)

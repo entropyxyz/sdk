@@ -5,14 +5,13 @@ import Entropy from '../src'
 import {
   promiseRunner,
   createTimeout,
-  sleep,
   charlieStashAddress,
   spinNetworkUp,
   createTestAccount,
-  spinNetworkDown,
+  spinNetworkDown
 } from './testing-utils'
 
-async function testSetup(t: any) {
+async function testSetup (t: any) {
   const run = promiseRunner(t)
   const timeout = createTimeout(30_000, 'setup')
 
@@ -30,7 +29,7 @@ async function testSetup(t: any) {
   return { entropy, pointer }
 }
 
-async function testTeardown() {
+async function testTeardown () {
   await spinNetworkDown('two-nodes', entropy).catch((err) =>
     console.log('Teardown failed:', err.message)
   )
@@ -59,7 +58,7 @@ test('Register: handle user registration', async (t) => {
     programModAccount: charlieStashAddress,
     keyVisibility: 'Permissioned',
     freeTx: false,
-    initialPrograms: [{ programPointer: pointer, programConfig: '0x' }],
+    initialPrograms: [{ programPointer: pointer, programConfig: '0x' }]
   })
 
   const isRegisteredAfter = await entropy.isRegistered(charlieStashAddress)
@@ -79,7 +78,7 @@ test('Register: not allow re-registration', async (t) => {
       programModAccount: charlieStashAddress,
       keyVisibility: 'Permissioned',
       freeTx: false,
-      initialPrograms: [{ programPointer: pointer, programConfig: '0x' }],
+      initialPrograms: [{ programPointer: pointer, programConfig: '0x' }]
     })
   )
 
@@ -91,7 +90,7 @@ test('Register: not allow re-registration', async (t) => {
       programModAccount: charlieStashAddress,
       keyVisibility: 'Permissioned',
       freeTx: true,
-      initialPrograms: [{ programPointer: pointer, programConfig: '0x' }],
+      initialPrograms: [{ programPointer: pointer, programConfig: '0x' }]
     })
     .then(() => t.fail('throws error on duplicate registrations'))
     .catch((err) => t.match(err.message, /already registered/))

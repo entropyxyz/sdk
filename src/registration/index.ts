@@ -34,9 +34,9 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
    * @param {ApiPromise} substrate - The Polkadot/Substrate API instance.
    * @param {Signer} signer - The signer used for signing transactions.
    */
-  constructor({
+  constructor ({
     substrate,
-    signer,
+    signer
   }: {
     substrate: ApiPromise
     signer: Signer
@@ -56,11 +56,11 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
    * @throws {Error} If the user is already registered.
    */
 
-  async register({
+  async register ({
     freeTx = false,
     initialPrograms = [],
     keyVisibility = 'Permissioned',
-    programModAccount,
+    programModAccount
   }: RegistrationParams): Promise<RegisteredInfo> {
     const programModificationAccount = programModAccount
 
@@ -99,16 +99,16 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
                   await this.substrate.query.relayer.registered(
                     this.signer.wallet.address
                   )
-                // @ts-ignore: next line
+                // @ts-expect-error: next line
                 if (!registeredData.isSome) {
                   throw new Error('Registration information not found')
                 }
-                // @ts-ignore: next line
+                // @ts-expect-error: next line
                 const data = registeredData.unwrap()
                 resolve({
                   keyVisibility:
                     data.keyVisibility.toJSON() as KeyVisibilityInfo,
-                  verifyingKey: data.verifyingKey.toString(),
+                  verifyingKey: data.verifyingKey.toString()
                 })
               }
             }
@@ -127,17 +127,17 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
       initialPrograms.map((programInfo) => {
         return {
           programPointer: programInfo.programPointer,
-          programConfig: programInfo.programConfig,
+          programConfig: programInfo.programConfig
         }
       })
     )
 
     await this.sendAndWaitFor(registerTx, freeTx, {
       section: 'relayer',
-      name: 'SignalRegister',
+      name: 'SignalRegister'
     })
 
-    return registered
+    return await registered
   }
 
   /**
@@ -147,7 +147,7 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
    * @returns A promise which resolves to `true` if the address is registered, otherwise `false`.
    */
 
-  async checkRegistrationStatus(address: Address): Promise<boolean> {
+  async checkRegistrationStatus (address: Address): Promise<boolean> {
     const isRegistered = await this.substrate.query.relayer.registered(address)
     return !!isRegistered.toJSON()
   }

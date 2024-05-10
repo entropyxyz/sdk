@@ -25,10 +25,10 @@
     "test:ts": "set -e; for t in tests/*.test.ts; do npx tsx $t | tap-spec; done",
     "test:only": "if grep -r --exclude-dir=node_modules --exclude-dir=.git --color 'test\\.only' ; then exit 1; fi",
     "test:coverage": "nyc yarn test",
-    "lint": "yarn lint:ts && yarn lint:eslint",
-    "lint:ts": "tsc",
-    "lint:eslint": "eslint .",
-    "prettier": "prettier --write .",
+    "lint": "eslint .",
+    "format": "yarn format:ts && yarn format:other",
+    "format:ts": "ts-standard --fix",
+    "format:other": "prettier --write",
     "peek": "tsc --build --clean",
     "burn": "rm -Rf node_modules && yarn cache clean --all && yarn install",
     "bundle": "tsup",
@@ -69,7 +69,6 @@
     "@types/tape": "^5",
     "depcheck": "^1.4.7",
     "eslint": "^9.2.0",
-    "eslint-config-prettier": "^9.1.0",
     "globals": "^15.2.0",
     "husky": "^9.0.11",
     "lint-staged": ">=10",
@@ -80,6 +79,7 @@
     "tape": "^5.7.5",
     "ts-node": "^10.9.1",
     "ts-prune": "^0.10.3",
+    "ts-standard": "^12.0.2",
     "tsup": "^6.5.0",
     "tsx": "^4.9.3",
     "typedoc": "^0.25.3",
@@ -87,8 +87,14 @@
     "typescript": "^4.9.5",
     "typescript-eslint": "^7.8.0"
   },
+  "ts-standard": {
+    "ignore": [
+      "substrate-generated-types"
+    ]
+  },
   "lint-staged": {
-    "*.ts": "eslint --fix",
-    "*.{js,ts,json,md}": "prettier --write"
+    "*.ts": "eslint",
+    "*.{js,ts}": "echo 'TODO' && false && ts-standard --fix",
+    "*.{json,md}": "prettier --write"
   }
 }

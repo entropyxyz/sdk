@@ -1,13 +1,11 @@
 import {
   cryptoWaitReady,
   decodeAddress,
-  signatureVerify,
+  signatureVerify
 } from '@polkadot/util-crypto'
 import { u8aToHex } from '@polkadot/util'
 
-interface ResolveType {
-  (value?: void | PromiseLike<void>): void
-}
+type ResolveType = (value?: void | PromiseLike<void>) => void
 
 interface ResObjectType {
   resolve: ResolveType
@@ -18,10 +16,14 @@ let cryptoLib
 const res: ResObjectType = {
   resolve: () => {
     throw new Error('resolve function not yet set')
-  },
+  }
 }
 
 loadCryptoLib()
+  .catch(err => {
+    // @ts-expect-error Error FOR SURE takes 2 args
+    throw new Error(err, { cause: 'loadCryptoLib failed' })
+  })
 
 /**
  * Interface for the cryptographic library, detailing core functionality: encryption, decryption, and key management.
@@ -81,7 +83,7 @@ export const crypto: CryptoLib = new Proxy({} as CryptoLib, {
 
       return cryptoLib[key](...params)
     }
-  },
+  }
 })
 
 /**
@@ -93,7 +95,7 @@ export const crypto: CryptoLib = new Proxy({} as CryptoLib, {
  * @returns A Promise that resolves to a boolean indicating whether the signature is valid.
  */
 
-async function verifySignature(
+async function verifySignature (
   message: string,
   signature: string,
   address: string
@@ -110,7 +112,7 @@ async function verifySignature(
  * @returns The imported crypto library.
  */
 
-export async function loadCryptoLib() {
+export async function loadCryptoLib () {
   if (isImported) return cryptoLib
 
   if (!globalThis.window) {

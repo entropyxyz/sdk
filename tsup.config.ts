@@ -3,10 +3,10 @@ import { defineConfig } from 'tsup'
 export default defineConfig((options) => {
   return {
     entry: [
-      `src/index.ts`,
+      'src/index.ts',
       'src/keys/index.ts',
       'src/utils/index.ts',
-      'src/utils/crypto.ts',
+      'src/utils/crypto.ts'
     ],
     replaceNodeEnv: true,
     format: ['esm', 'cjs'],
@@ -16,6 +16,6 @@ export default defineConfig((options) => {
     clean: true,
     target: 'es2022',
     minify: options.minify,
-    watch: options.watch,
+    watch: options.watch
   }
 })

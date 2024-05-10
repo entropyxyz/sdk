@@ -1,4 +1,4 @@
-export async function readKey(path: string) {
+export async function readKey (path: string) {
   if (!path) {
     throw new Error('Path is required')
   }
@@ -24,10 +24,10 @@ export async function readKey(path: string) {
     })
     file.readAsArrayBuffer(new Blob([path]))
 
-    return result
+    return await result
   }
 }
 
-function isNode(): boolean {
+function isNode (): boolean {
   return typeof window === 'undefined'
 }

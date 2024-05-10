@@ -2,7 +2,7 @@ import { ApiPromise /* WsProvider */ } from '@polkadot/api'
 import { execFileSync } from 'child_process'
 import Entropy from '../../src'
 
-export async function spinNetworkUp(networkType = 'two-nodes') {
+export async function spinNetworkUp (networkType = 'two-nodes') {
   try {
     execFileSync(
       'dev/bin/spin-up.sh',
@@ -14,7 +14,7 @@ export async function spinNetworkUp(networkType = 'two-nodes') {
   }
 }
 
-export async function spinNetworkDown(
+export async function spinNetworkDown (
   networkType = 'two-nodes',
   entropy: Entropy
 ) {
@@ -23,14 +23,14 @@ export async function spinNetworkDown(
     execFileSync('dev/bin/spin-down.sh', [networkType], {
       shell: true,
       cwd: process.cwd(),
-      stdio: 'inherit',
+      stdio: 'inherit'
     })
   } catch (e) {
     console.error('Error in afterAll: ', e.message)
   }
 }
 
-export async function disconnect(api: ApiPromise) {
+export async function disconnect (api: ApiPromise) {
   console.log('Attempting to disconnect...')
   if (api.isConnected) {
     try {

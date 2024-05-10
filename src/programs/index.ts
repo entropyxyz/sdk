@@ -25,10 +25,10 @@ export default class ProgramManager extends ExtrinsicBaseClass {
    * @alpha
    */
   dev: ProgramDev
-  constructor({
+  constructor ({
     substrate,
     programModKey,
-    programDeployKey,
+    programDeployKey
   }: {
     substrate: ApiPromise
     programModKey: Signer
@@ -49,7 +49,7 @@ export default class ProgramManager extends ExtrinsicBaseClass {
    * @alpha
    */
 
-  async get(sigReqAccount: string): Promise<ProgramData[]> {
+  async get (sigReqAccount: string): Promise<ProgramData[]> {
     const registeredOption = await this.substrate.query.relayer.registered(
       sigReqAccount
     )
@@ -59,12 +59,12 @@ export default class ProgramManager extends ExtrinsicBaseClass {
     }
 
     const registeredInfo = registeredOption.toJSON()
-    // @ts-ignore: next line :{
+    // @ts-expect-error: next line :{
     return (registeredInfo.programsData || []).map((program) => ({
       // pointer: program.pointer.toString(),
       programPointer: program.programPointer,
       // double check on how we're passing config
-      programConfig: program.programConfig,
+      programConfig: program.programConfig
     }))
   }
 
@@ -80,7 +80,7 @@ export default class ProgramManager extends ExtrinsicBaseClass {
    * @alpha
    */
 
-  async set(
+  async set (
     newList: ProgramData[],
     sigReqAccount = this.signer.wallet.address,
     programModKey?: string
@@ -97,7 +97,7 @@ export default class ProgramManager extends ExtrinsicBaseClass {
 
     const registeredInfo = registeredInfoOption.toJSON()
     const isAuthorized =
-      // @ts-ignore: next line :{
+      // @ts-expect-error: next line :{
       registeredInfo.programModificationAccount === programModKey
 
     if (!isAuthorized) {
@@ -106,7 +106,7 @@ export default class ProgramManager extends ExtrinsicBaseClass {
 
     const newProgramInstances = newList.map((data) => ({
       programPointer: data.programPointer,
-      programConfig: data.programConfig,
+      programConfig: data.programConfig
     }))
 
     const tx: SubmittableExtrinsic<'promise'> =
@@ -117,7 +117,7 @@ export default class ProgramManager extends ExtrinsicBaseClass {
 
     await this.sendAndWaitFor(tx, false, {
       section: 'relayer',
-      name: 'ProgramInfoChanged',
+      name: 'ProgramInfoChanged'
     })
   }
 
@@ -132,7 +132,7 @@ export default class ProgramManager extends ExtrinsicBaseClass {
    * @alpha
    */
 
-  async remove(
+  async remove (
     programHashToRemove: string,
     sigReqAccount = this.signer.wallet.address,
     programModKey?: string
@@ -157,7 +157,7 @@ export default class ProgramManager extends ExtrinsicBaseClass {
    * @alpha
    */
 
-  async add(
+  async add (
     newProgram: ProgramData,
     sigReqAccount = this.signer.wallet.address,
     programModKey?: string

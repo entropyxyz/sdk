@@ -8,7 +8,7 @@ export * from './constants'
 export * from './network'
 export * from './readKey'
 
-export async function createTestAccount(
+export async function createTestAccount (
   entropy: Entropy,
   seed = charlieStashSeed
 ) {
@@ -17,7 +17,7 @@ export async function createTestAccount(
   const entropyAccount: EntropyAccount = {
     sigRequestKey: signer,
     programModKey: signer,
-    programDeployKey: signer,
+    programDeployKey: signer
   }
 
   await sleep(process.env.GITHUB_WORKSPACE ? 20_000 : 5_000)
@@ -36,19 +36,19 @@ export async function createTestAccount(
  * @param {any} t - an instance to tape runner
  * @param {boolean} keepThrowing - toggle throwing
  */
-export function promiseRunner(t: any, keepThrowing = true) {
+export function promiseRunner (t: any, keepThrowing = true) {
   // NOTE: this function swallows errors
-  return async function run(
+  return async function run (
     message: string,
     promise: Promise<any>
   ): Promise<any> {
     if (promise.constructor !== Promise) {
       t.pass(message)
-      return Promise.resolve(promise)
+      return await Promise.resolve(promise)
     }
 
     const startTime = Date.now()
-    return promise
+    return await promise
       .then((result) => {
         const time = (Date.now() - startTime) / 1000
         const pad = Array(40 - message.length)
@@ -64,21 +64,21 @@ export function promiseRunner(t: any, keepThrowing = true) {
   }
 }
 
-export function createTimeout(time: number, message?: string) {
+export function createTimeout (time: number, message?: string) {
   const timeout = setTimeout(() => {
     throw Error(`Timeout hit: ${message || ''}`)
   }, time)
 
   return {
-    clear: () => clearTimeout(timeout),
+    clear: () => clearTimeout(timeout)
   }
 }
 
 const SLEEP_DONE = '▓'
 const SLEEP_TODO = '░'
 
-export function sleep(durationInMs: number) {
-  return new Promise((resolve) => {
+export async function sleep (durationInMs: number) {
+  return await new Promise((resolve) => {
     let count = 0
 
     readline.cursorTo(process.stdout, 2)
@@ -89,7 +89,7 @@ export function sleep(durationInMs: number) {
     console.log('') // write blank link to overwrite
     const interval = setInterval(step, stepLength)
 
-    function step() {
+    function step () {
       count++
 
       if (count >= steps) {
@@ -107,13 +107,13 @@ export function sleep(durationInMs: number) {
           'sleep ',
           ...Array(count).fill(SLEEP_DONE),
           ...Array(steps - count).fill(SLEEP_TODO),
-          '\n',
+          '\n'
         ].join('')
       )
     }
   })
 }
-function undoLastLine() {
+function undoLastLine () {
   readline.moveCursor(process.stdout, 0, -1)
   readline.cursorTo(process.stdout, 0)
   readline.clearLine(process.stdout, 0)

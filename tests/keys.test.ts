@@ -5,11 +5,11 @@ import { getWallet, mnemonicGenOrDerive } from '../src/keys'
 import { charlieStashSeed } from './testing-utils'
 
 let testMnemonic: string
-let derivationPath: string
+// let derivationPath: string
 
-async function testSetup() {
+async function testSetup () {
   testMnemonic = mnemonicGenerate()
-  derivationPath = '//0'
+  // derivationPath = '//0'
 }
 
 test('Keys: getWallet', async (t) => {
