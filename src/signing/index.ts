@@ -132,6 +132,8 @@ export default class SignatureRequestManager {
 
     const signatureVerifyingKey = this.account.verifyingKey
 
+    
+
     const txRequests: Array<EncMsg> = await this.formatTxRequests({
       strippedsigRequestHash,
       auxilaryData,

@@ -1,9 +1,9 @@
 import ExtrinsicBaseClass from '../extrinsic'
-import { Signer, Address } from '../types'
+import { Address } from '../types'
 import { ApiPromise } from '@polkadot/api'
 import { ProgramInstance } from '../programs'
-import { EntropyAccount } from '../keys/types'
 import { DEFAULT_PROGRAM_INTERFACE } from '../../tests/testing-utils'
+import { PolkadotSigner } from '../keys/types/internal'
 
 export interface RegistrationParams {
   programDeployer?: Address
@@ -43,7 +43,7 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
    */
 
   verifyingKey: string
-  signer: Signer
+  signer: PolkadotSigner
   defaultAddress: string
   defaultProgram: typeof DEFAULT_PROGRAM_INTERFACE
 
@@ -54,7 +54,7 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
     signer
   }: {
     substrate: ApiPromise
-    signer: Signer
+    signer: PolkadotSigner
   }) {
     super({ signer, substrate })
   }
@@ -72,7 +72,7 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
   // TO-DO: return the verfiying key have it documented that the user needs to save this otherwise that cant request sigs
 
   async register ({
-    programDeployer = this.signer,
+    programDeployer,
     keyVisibility = 'Public',
     programData
   }: RegistrationParams): Promise<RegisteredInfo> {
@@ -115,7 +115,7 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
                 const unsub = await unsubPromise
                 unsub()
                 const registeredData = await this.substrate.query.registry.registered(
-                  this.signer.address
+                  this.verifyingKey
                 )
                 // @ts-ignore: next line
                 if (!registeredData.isSome) {
@@ -127,7 +127,8 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
                   keyVisibility: data.keyVisibility.toJSON() as KeyVisibilityInfo,
                   programsData: data.programsData.toJSON(),
                   programDeployer: data.programDeployer.toJSON(),
-                  versionNumber: data.versionNumber                  })
+                  versionNumber: data.versionNumber   
+                })
               }
             }
           )
@@ -148,6 +149,8 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
       section: 'registry',
       name: 'AccountRegistered',
     })
+
+    console.log("account id and verifyingKey:", accountId, verifyingKeyBytes)
     return registered
   }
 }

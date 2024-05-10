@@ -3,7 +3,6 @@ import { Signer, EventFilter } from '../types'
 import { EventRecord } from '@polkadot/types/interfaces/types'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
 import { RegistryError } from '@polkadot/types-codec/types'
-import { PolkadotSigner } from '../keys/types/internal'
 
 interface Decoded extends RegistryError {
   name: string
@@ -19,7 +18,7 @@ interface Decoded extends RegistryError {
 
 export default class ExtrinsicBaseClass {
   substrate: ApiPromise
-  signer: PolkadotSigner
+  signer: Signer
 
   /**
    * Initializes a new instance of the `ExtrinsicBaseClass`.
@@ -48,7 +47,7 @@ export default class ExtrinsicBaseClass {
   ): Promise<EventRecord> {
     return new Promise<EventRecord>((resolve, reject) => {
       call
-        .signAndSend(this.signer.pair, (res: SubmittableResult) => {
+        .signAndSend(this.signer.wallet.address, (res: SubmittableResult) => {
           const { dispatchError, status } = res
           if (dispatchError) {
             if (dispatchError.isModule) {
@@ -78,30 +77,4 @@ export default class ExtrinsicBaseClass {
     })
   }
 
-  /**
-   * Prepares a free transaction, performs a dry run, and ensures its viability.
-   *
-   * In this system:
-   * - **Electricity** represents an energy unit allowing certain transactions to bypass traditional fees.
-   * - An account's **Zaps** represent the available electricity it has. Consuming zaps results in transaction execution without fees.
-   * - **Batteries** are rechargeable units in an account that generate zaps over time.
-   *
-   * This method leverages the `callUsingElectricity` from the `freeTx` module to create a transaction that utilizes zaps.
-   * A dry run is then performed to ensure its success when broadcasted.
-   *
-   * @param call - The extrinsic intended for execution.
-   * @returns A promise resolving to a transaction prepared to use electricity.
-   * @throws {Error} If the dry run fails or there's insufficient electricity (zaps).
-   */
-
-  async handleFreeTx(
-    call: SubmittableExtrinsic<'promise'>
-  ): Promise<SubmittableExtrinsic<'promise'>> {
-    const freeTxWrapper = this.substrate.tx.freeTx.callUsingElectricity(call)
-    const result = await freeTxWrapper.dryRun(this.signer.wallet)
-    if (result.isErr) {
-      throw new Error(result.toString())
-    }
-    return freeTxWrapper
-  }
 }

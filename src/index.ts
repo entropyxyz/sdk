@@ -91,10 +91,10 @@ export default class Entropy {
 
     this.registrationManager = new RegistrationManager({
       substrate: this.substrate,
-      signer: this.keyring.getLazyLoadProxy(ChildKey.REGISTRATION),
+      signer: this.keyring.getLazyLoadKeyProxy(ChildKey.REGISTRATION),
     })
     this.signingManager = new SignatureRequestManager({
-      signer: this.keyring.getLazyLoadProxy(ChildKey.DEVICE_KEY),
+      signer: this.keyring.getLazyLoadKeyProxy(ChildKey.DEVICE_KEY),
       substrate: this.substrate,
       adapters: opts.adapters,
       crypto,
@@ -106,7 +106,7 @@ export default class Entropy {
 
     this.programs = new ProgramManager({
       substrate: this.substrate,
-      programModKey: this.keyring.getLazyLoadProxy(ChildKey.REGISTRATION),
+      programModKey: this.keyring.getLazyLoadKeyProxy(ChildKey.REGISTRATION),
       programDeployer: this.account.programDeployKey,
       verifyingKey: this.account.verifyingKey[0]
     })
