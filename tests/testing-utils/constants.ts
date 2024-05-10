@@ -10,12 +10,6 @@ export const charlieStashAddress =
 export const whitelisted_test_evm_address =
   '0x772b9a9e8aa1c9db861c6611a82d251db4fac990'
 
-  export const DEFAULT_PROGRAM_INTERFACE = {
-    pointer: '0x0000000000000000000000000000000000000000000000000000000000000000',
-    userConfig: {
-      sr25519_public_keys: [/*instert useres adress here needs to be the device key*/]
-    }
-  }
 
 /// A transaction request that satisfies the test whitelisted constraints
 // export const whitelisted_test_tx_req = {

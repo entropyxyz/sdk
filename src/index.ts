@@ -156,6 +156,7 @@ export default class Entropy {
     await this.ready && this.substrate.isReady
     const defaultProgram = DEFAULT_PROGRAM_INTERFACE
     defaultProgram.userConfig.sr25519_public_keys.push(this.account.deviceKey.address)
+
     const account = params.account || this.account
 
     if (!account) {

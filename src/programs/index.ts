@@ -3,7 +3,6 @@ import { SubmittableExtrinsic } from '@polkadot/api/types'
 import ExtrinsicBaseClass from '../extrinsic'
 import ProgramDev from './dev'
 import { Signer } from '../keys/types/internal'
-import { verify } from '../crypto'
 
 export interface ProgramInstance {
   programPointer: string
