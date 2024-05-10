@@ -1,6 +1,6 @@
 /**
  * A utility class to allow consumers of the sdk to subscribe
- * to key creations and "account" updates
+ * to key creations and "account" updates.
  */
 
 import {
@@ -15,6 +15,14 @@ import {
 
 const ready = cryptoWaitReady()
 
+
+/**
+ * A proxy object that wraps the crypto functions from the @polkadot/util-crypto library.
+ * It ensures that the crypto functions are only accessed after the cryptoWaitReady promise is resolved.
+ *
+ * @private
+ * @type {Proxy<Object>}
+ */
 const crypto = new Proxy({
   sr25519PairFromSeed,
   mnemonicToMiniSecret,
@@ -29,6 +37,14 @@ const crypto = new Proxy({
   }
 })
 
+
+/**
+ * Creates a new instance of the BasePair class.
+ *
+ * @param {Object} options - The options for creating the instance.
+ * @param {string} [options.seed] - The seed for the key pair (optional).
+ * @param {string} [options.path] - The derivation path for the key pair (optional).
+ */
 export default class BasePair {
   // Not sure what the interface/type should be here, leaving as any for now
   crypto: any;

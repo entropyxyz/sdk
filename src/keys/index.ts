@@ -1,3 +1,8 @@
+/**
+ * A utility class to allow consumers of the sdk to subscribe
+ * to key creations and "account" updates
+ */
+
 import EventEmitter from 'node:events'
 import { v4 as uuidv4 } from 'uuid'
 import { Keypair } from '@polkadot/util-crypto/types'
@@ -5,12 +10,6 @@ import * as utils from './utils'
 import { EntropyAccount, KeyMaterial, PairMaterial, Seed, UIDv4 } from './types/json'
 import { ChildKey, ChildKeyBasePaths } from './types/constants'
 import { Signer } from './types/internal'
-
-/**
- * A utility class to allow consumers of the sdk to subscribe
- * to key creations and "account" updates
- */
-
 
 export default class Keyring {
   // private
