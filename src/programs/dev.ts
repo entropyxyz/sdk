@@ -73,16 +73,19 @@ export default class ProgramDev extends ExtrinsicBaseClass {
 
   async deploy(
     program: ArrayBuffer,
-    configurationInterface?: unknown
+    configurationSchema: unknown,
+    auxiliaryDataSchema: unknown,
+    oracleDataPointer: []
+
   ): Promise<string> {
     // converts program and configurationInterface into a palatable format
-    const formatedConfig = JSON.stringify(configurationInterface)
+    const formatedConfig = JSON.stringify(configurationSchema)
     // programModKey is the caller of the extrinsic
     const tx: SubmittableExtrinsic<'promise'> = this.substrate.tx.programs.setProgram(
       util.u8aToHex(new Uint8Array(program)), // new program
       formatedConfig, // config schema
-      '', // auxilary config schema
-      [] // oracle data pointer
+      auxiliaryDataSchema, // auxilary config schema
+      oracleDataPointer // oracle data pointer
     )
     const record = await this.sendAndWaitFor(tx, {
       section: 'programs',

@@ -6,7 +6,9 @@ import {
   keyExtractPath,
   encodeAddress
 } from '@polkadot/util-crypto'
-
+import { PolkadotSigner } from './types/internal'
+import { UIDv4 } from './types/json'
+import { Keypair } from '@polkadot/util-crypto/types'
 
 export const UIDv4regex = /^(?:[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}|00000000-0000-0000-0000-000000000000)$/i
 
@@ -18,7 +20,7 @@ export async function seedFromMnemonic (m) {
 // for the device key generate a random number example: `device-key:${uid}`
 export function getPath ({type, uid}: {type: string, uid: UIDv4}): string {
   if (UIDv4regex.test(uid)) {
-    return `//entropy//${type}///${UIDV4}`
+    return `//entropy//${type}///${uid}`
   }
   throw new TypeError('uid is not correct type please provide the correct regex matching string')
 }
@@ -31,6 +33,8 @@ export function generateMnemonic () {
 export function generateSeed (): string {
   const mnemonic = mnemonicGenerate()
   const mnemonicMini = mnemonicToMiniSecret(mnemonic)
+
+  return mnemonic
 }
 
 
@@ -42,7 +46,7 @@ export function generateSeed (): string {
  * generates A usable signer with meta info about the account i.e. address etc
  * */
 
-export function generateKeyPairFromSeed (seed: string, dervation?: string): { address: string; pair: PoladotSigner } {
+export function generateKeyPairFromSeed (seed: string, dervation?: string): { address: string; pair: PolkadotSigner } {
   let pair
   if (dervation) {
     const masterPair = sr25519PairFromSeed(seed)

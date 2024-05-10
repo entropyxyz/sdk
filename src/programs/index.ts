@@ -3,6 +3,7 @@ import { SubmittableExtrinsic } from '@polkadot/api/types'
 import ExtrinsicBaseClass from '../extrinsic'
 import ProgramDev from './dev'
 import { Signer } from '../types'
+import { verify } from 'crypto'
 
 export interface ProgramInstance {
   programPointer: string
@@ -31,6 +32,7 @@ export default class ProgramManager extends ExtrinsicBaseClass {
     substrate,
     deployer,
     programModKey,
+    verifyingKey
   }: {
     substrate: ApiPromise
     deployer: Signer
@@ -39,7 +41,7 @@ export default class ProgramManager extends ExtrinsicBaseClass {
   }) {
     super({ substrate, signer: programModKey })
     this.dev = new ProgramDev({substrate, signer: deployer})
-    this.account.verifyingKey = verifyingKey
+    this.verifyingKey = verifyingKey
   }
 
   /**
@@ -53,13 +55,13 @@ export default class ProgramManager extends ExtrinsicBaseClass {
    * @alpha
    */
 
-  async get (programModAccount: string = this.signer.address): Promise<ProgramInstance[]> {
+  async get (verifyingKey: string): Promise<ProgramInstance[]> {
     const registeredOption = await this.substrate.query.registry.registered(
-      programModAccount
-    )
+      verifyingKey
+        )
 
     if (registeredOption.isEmpty) {
-      throw new Error(`No programs found for account: ${programModAccount}`)
+      throw new Error(`No programs found for account: ${verifyingKey}`)
     }
 
     const registeredInfo = registeredOption.toJSON()
@@ -85,33 +87,27 @@ export default class ProgramManager extends ExtrinsicBaseClass {
    */
 
   async set (
-    verifyingKey: string = this.account.verifyingKey,
+    verifyingKey: string = this.verifyingKey,
     newList: ProgramInstance[],
-    programModAccount : string = this.signer.address
   ): Promise<void> {
     const registeredInfoOption = await this.substrate.query.registry.registered(
-      programModAccount
+      verifyingKey
     )
 
     if (registeredInfoOption.isEmpty) {
-      throw new Error(`Account not registered: ${programModAccount}`)
+      throw new Error(`Account not registered: ${verifyingKey}`)
     }
 
     const registeredInfo = registeredInfoOption.toJSON()
     // @ts-ignore: next line :{
     const isAuthorized = registeredInfo.deployer === deployer
     if (!isAuthorized) {
-      throw new Error(`Unauthorized modification attempt by ${programModAccount}`)
+      throw new Error(`Unauthorized modification attempt by ${verifyingKey}`)
     }
-
-    const newProgramInstances = newList.map((data) => ({
-      programPointer: data.programPointer,
-      programConfig: data.programConfig,
-    }))
 
     const tx: SubmittableExtrinsic<'promise'> = this.substrate.tx.registry.changeProgramInstance(
       verifyingKey,
-      newProgramInstances
+      newList.map(({ programPointer, programConfig }) => ({ programPointer, programConfig }))
     )
     await this.sendAndWaitFor(tx, {
       section: 'registry',
@@ -132,16 +128,17 @@ export default class ProgramManager extends ExtrinsicBaseClass {
 
   async remove(
     programHashToRemove: string,
-    programModKey = this.signer.address,
+    programModKey,
+    verifyingKey
   ): Promise<void> {
-    const currentPrograms = await this.get(programModKey)
+    const currentPrograms = await this.get(verifyingKey)
     // creates new array that contains all of the currentPrograms except programHashToRemove
     const updatedPrograms = currentPrograms.filter(
-      (program) => program.programPointer !== programHashToRemove
-    )
+      program => program.programPointer !== programHashToRemove
+    );
 
 
-    await this.set(updatedPrograms, programModKey)
+    await this.set(programModKey, updatedPrograms)
   }
 
   /**
@@ -158,14 +155,11 @@ export default class ProgramManager extends ExtrinsicBaseClass {
 
   async add (
     newProgram: ProgramInstance,
-    programModKey = this.signer.address,
-    verifyingKey:string = this.signer.verifyingKeys[0]
+    programModKey,
+    verifyingKey:string = this.verifyingKey[0]
   ): Promise<void> {
     const currentPrograms = await this.get(verifyingKey)
-    await this.set(
-      [...currentPrograms, newProgram],
-      verifyingKey,
-      programModKey
-    )
+       await this.set(programModKey, [...currentPrograms, newProgram]);
+
   }
 }
