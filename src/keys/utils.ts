@@ -7,6 +7,7 @@ import { Keypair } from '@polkadot/util-crypto/types'
 export const UIDv4regex = /^(?:[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}|00000000-0000-0000-0000-000000000000)$/i
 
 const {
+  sr25519PairFromSeed,
   mnemonicToMiniSecret,
   mnemonicGenerate,
   keyFromPath,
@@ -52,11 +53,15 @@ export function generateKeyPairFromSeed (seed: string, dervation?: string): { ad
   // for our code
   const polkadotKeyring = new Keyring()
   if (dervation) {
-    const masterPair = polkadotKeyring.addFromUri(seed)
+    const masterPair = sr25519PairFromSeed(seed)
     const { path } = keyExtractPath(dervation)
-    pair = keyFromPath(masterPair, path, 'sr25519')
+    const kp = keyFromPath(masterPair, path, 'sr25519')
+    pair = polkadotKeyring.addFromPair(kp)
+    pair.secretKey = kp.secretKey
   } else {
+    const masterPair = sr25519PairFromSeed(seed)
     pair = polkadotKeyring.addFromUri(seed)
+    pair.secretKey = masterPair.secretKey
   }
 
   return {

@@ -19,6 +19,7 @@ export type PolkadotKeys = Keys
 */
 
 export interface Signer {
+  secretKey: Uint8Array
   address: string
   pair: PolkadotSigner
   verifyingKeys: string[]
