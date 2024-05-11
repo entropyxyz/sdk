@@ -18,8 +18,11 @@ export type PolkadotKeys = Keys
  * SS58 Address:      5Gv8YYFu8H1btvmrJy9FjjAWfb99wrhV3uhPFoNEr918utyR
 */
 
-export interface Signer {
+export interface Pair extends PolkadotSigner {
   secretKey: Uint8Array
+}
+
+export interface Signer {
   address: string
   pair: PolkadotSigner
   verifyingKeys: string[]
