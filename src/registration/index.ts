@@ -1,9 +1,9 @@
 import ExtrinsicBaseClass from '../extrinsic'
-import { SS58Address } from '../keys/types/json'
+import { HexString, SS58Address } from '../keys/types/json'
 import { ApiPromise } from '@polkadot/api'
 import { ProgramInstance } from '../programs'
-import { DEFAULT_PROGRAM_INTERFACE } from '../../tests/testing-utils'
 import { Signer } from '../keys/types/internal'
+import { Address } from '../types/internal'
 
 export interface RegistrationParams {
   programDeployer?: SS58Address
@@ -11,6 +11,10 @@ export interface RegistrationParams {
   programData: ProgramInstance[]
 }
 
+export interface AccountRegisteredSuccess {
+  accountId: Address
+  verifyingKey: HexString
+}
 
 export interface RegisteredInfo {
   keyVisibility: KeyVisibilityInfo
@@ -73,7 +77,7 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
     programDeployer,
     keyVisibility = 'Public',
     programData
-  }: RegistrationParams): Promise<RegisteredInfo> {
+  }: RegistrationParams): Promise<AccountRegisteredSuccess> {
 
     // this is sloppy
     // TODO: store multiple signers via SS58Address. and respond accordingly
@@ -95,7 +99,7 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
     //   throw new Error('already registered')
     // }
 
-    const registered: Promise<RegisteredInfo> = new Promise(
+    const registered: Promise<AccountRegisteredSuccess> = new Promise(
       (resolve, reject) => {
         try {
           console.log("in registration manager", this.verifyingKey)
@@ -119,14 +123,6 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
                 if (!registeredData.isSome) {
                   throw new Error('Registration information not found')
                 }
-                // @ts-ignore: next line
-                const data = registeredData.unwrap()
-                resolve({
-                  keyVisibility: data.keyVisibility.toJSON() as KeyVisibilityInfo,
-                  programsData: data.programsData.toJSON(),
-                  programDeployer: data.programDeployer.toJSON(),
-                  versionNumber: data.versionNumber   
-                })
               }
             }
           )
@@ -143,12 +139,15 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
       programData.map((programInfo) => { return {programPointer: programInfo.programPointer, programConfig: programInfo.programConfig} })
     )
 
-    const [accountId, verifyingKeyBytes] = await this.sendAndWaitFor (registerTx,{
+    const registrationTxResult = await this.sendAndWaitFor (registerTx,{
       section: 'registry',
       name: 'AccountRegistered',
     })
 
-    console.log("account id and verifyingKey:", accountId, verifyingKeyBytes)
-    return registered
+    // @ts-ignore: next line
+    const { verifyingKey } = registrationTxResult.event.data.toHuman()
+
+    
+    return verifyingKey
   }
 }

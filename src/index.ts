@@ -164,10 +164,12 @@ export default class Entropy {
     ) {
       throw new TypeError('Incompatible address type')
     }
-    await this.registrationManager.register(params)
-    this.keyring.accounts[ChildKey.REGISTRATION].verifyingKeys.push[verifyingKey]
-    // TODO: if there is already a verifyingKey for DeviceKey -- need to make decision if we push to new device key or existing
-    this.keyring.accounts[ChildKey.DEVICE_KEY].verifyingKeys.push[verifyingKey]
+    
+    const verifyingKey = await this.registrationManager.register(params)
+
+    // fuck frankie TODO: Make legit function 
+    const vk = this.keyring.accounts[ChildKey.DEVICE_KEY].verifyingKeys
+    this.keyring.accounts[ChildKey.DEVICE_KEY].verifyingKeys = [...vk, verifyingKey]
 
 
     // this.subscribeToAccountRegisteredEvents((verifyingKey: string) => {

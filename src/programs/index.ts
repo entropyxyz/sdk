@@ -40,7 +40,7 @@ export default class ProgramManager extends ExtrinsicBaseClass {
     this.dev = new ProgramDev({substrate, signer: deployer})
   }
   get verifyingKey () {
-    return this.signer.verfiyingKeys ? this.signer.verfiyingKeys[0] : undefined
+    return this.signer.verifyingKeys ? this.signer.verifyingKeys[0] : undefined
   }
   /**
    * Retrieves the program associated with a given programModKey (account)

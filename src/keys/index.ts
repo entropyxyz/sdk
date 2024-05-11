@@ -49,9 +49,9 @@ export default class Keyring {
       const account: PairMaterial = {
         path: '',
         type: name,
-      };
-      if (path) account.path = path
+      }
       const { path, seed, verifyingKeys, address, type } = this.accounts[name]
+      if (path) account.path = path
       if (seed) account.seed = seed
       accounts[name] = account
       if (verifyingKeys) account.verifyingKeys = verifyingKeys
@@ -68,9 +68,11 @@ export default class Keyring {
     const verifyingKeys = account.verifyingKeys
     this.accounts[name].path = derivationPath
     if (seed) this.accounts[name].seed = seed
+    if (verifyingKeys) 
+      this.accounts[name].verifyingKeys = verifyingKeys 
+      this.accounts[name].type = name
   }
-    if (verifyingKeys) this.accounts[name].verifyingKeys = verifyingKeys
-    this.accounts[name].type = name
+
   // internal to the sdk should not necissarl be advertised but can be used by consumers
   getRegisteringKey (): Signer {
     const type = ChildKey.REGISTRATION

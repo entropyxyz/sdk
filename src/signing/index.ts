@@ -72,6 +72,10 @@ export default class SignatureRequestManager {
     }
   }
 
+  get verifyingKey () {
+    return this.signer.verifyingKeys ? this.signer.verifyingKeys[0] : undefined
+  }
+
   /**
    * Signs a transaction using the appropriate adapter.
    *
