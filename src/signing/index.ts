@@ -80,7 +80,7 @@ export default class SignatureRequestManager {
    * @throws {Error} if an adapter for the transaction type is not found, or if the adapter lacks a preSign function.
    */
 
-  async signWithAddapter({ txParams, type }: SigTxOps): Promise<unknown> {
+  async signWithAdapter({ txParams, type }: SigTxOps): Promise<unknown> {
     if (!this.adapters[type])
       throw new Error(`No transaction adapter for type: ${type} submit as hash`)
     if (!this.adapters[type].preSign)

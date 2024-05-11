@@ -194,7 +194,7 @@ export default class Entropy {
    * @throws {Error} Will throw an error if the transaction type does not have a corresponding adapter.
    */
 
-  async signTransaction (params: SigTxOps): Promise<unknown> {
+  async signWithAdapter (params: SigTxOps): Promise<unknown> {
     await this.ready && this.substrate.isReady
     return this.signingManager.signTransaction(params)
   }
