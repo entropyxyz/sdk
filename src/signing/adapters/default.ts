@@ -1,5 +1,5 @@
-import * as eth from './eth'
+import * as deviceKeyProxy from './device-key-proxy'
 
 export const defaultAdapters = {
-  eth,
+  deviceKeyProxy,
 }

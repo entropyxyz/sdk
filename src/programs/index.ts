@@ -26,7 +26,7 @@ export default class ProgramManager extends ExtrinsicBaseClass {
    * @alpha
    */
   dev: ProgramDev
-  verifyingKey?: string
+
   constructor ({
     substrate,
     deployer,
@@ -39,7 +39,9 @@ export default class ProgramManager extends ExtrinsicBaseClass {
     super({ substrate, signer: programModKey })
     this.dev = new ProgramDev({substrate, signer: deployer})
   }
-
+  get verifyingKey () {
+    return this.signer.verfiyingKeys ? this.signer.verfiyingKeys[0] : undefined
+  }
   /**
    * Retrieves the program associated with a given programModKey (account)
    * @param {string} programModAccount - The account key, defaulting to the signer's wallet address if not provided.
@@ -51,9 +53,6 @@ export default class ProgramManager extends ExtrinsicBaseClass {
    * @alpha
    */
 
-  get verifyingKey () {
-    return this.signer.verfiyingKeys ? this.signer.verfiyingKeys[0] : undefined
-  }
 
   async get (verifyingKey: string): Promise<ProgramInstance[]> {
     const registeredOption = await this.substrate.query.registry.registered(

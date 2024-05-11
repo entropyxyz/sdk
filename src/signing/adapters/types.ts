@@ -16,13 +16,7 @@ export interface PRESIGN_RESULT {
 export interface Adapter {
   type: string
   hash: string
-  preSign: (deviceKey: Signer, sigReq: MsgParams) => Promise<PRESIGN_RESULT>
-  postSign: (sig: Uint8Array, msgParams: MsgParams) => Promise<unknown>
-}
-
-export interface OptAdapter {
-  type: string
-  hash?: string
-  preSign?: (sigReq: MsgParams) => Promise<string>
+  preSign?: (deviceKey: Signer, sigReq: MsgParams) => Promise<PRESIGN_RESULT>
   postSign?: (sig: Uint8Array, msgParams: MsgParams) => Promise<unknown>
+  [key: string]: unknown 
 }

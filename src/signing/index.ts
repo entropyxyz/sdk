@@ -29,12 +29,12 @@ export interface SigOps {
   sigRequestHash: string
   hash: string
   type?: string
-  auxilaryData?: unknown[]
+  auxiliaryData?: unknown[]
 }
 
 export interface UserSignatureRequest {
   message: string
-  auxilaryData?: unknown[]
+  auxiliaryData?: unknown[]
   validatorsInfo: ValidatorInfo[]
   timestamp: { secs_since_epoch: number; nanos_since_epoch: number }
   hash: string
@@ -91,12 +91,12 @@ export default class SignatureRequestManager {
       )
 
 
-    const { sigRequestHash, auxilaryData } = await this.adapters[type].preSign(this.signer, msg)
+    const { sigRequestHash, auxiliaryData } = await this.adapters[type].preSign(this.signer, msg)
 
     const signature = await this.sign({
       sigRequestHash,
       hash: this.adapters[type].hash,
-      auxilaryData,
+      auxiliaryData,
     })
     if (this.adapters[type].postSign) {
       return await this.adapters[type].postSign(signature, msg)
@@ -125,7 +125,7 @@ export default class SignatureRequestManager {
   async sign({
     sigRequestHash,
     hash,
-    auxilaryData,
+    auxiliaryData,
   }: SigOps): Promise<Uint8Array> {
     const strippedsigRequestHash = stripHexPrefix(sigRequestHash)
     const validatorsInfo: Array<ValidatorInfo> = await this.pickValidators(
@@ -134,13 +134,12 @@ export default class SignatureRequestManager {
     // TO-DO: this needs to be and accounId ie hex string of the address
     // which means you need a new key ie device key here
 
-    const signatureVerifyingKey = this.account.verifyingKey
+    const signatureVerifyingKey = this.verifyingKey
 
-    
-
+  
     const txRequests: Array<EncMsg> = await this.formatTxRequests({
       strippedsigRequestHash,
-      auxilaryData,
+      auxiliaryData,
       validatorsInfo: validatorsInfo,
       hash,
       signatureVerifyingKey,
@@ -181,13 +180,13 @@ export default class SignatureRequestManager {
 
   async formatTxRequests({
     strippedsigRequestHash,
-    auxilaryData,
+    auxiliaryData,
     validatorsInfo,
     hash,
     signatureVerifyingKey
   }: {
     strippedsigRequestHash: string
-    auxilaryData?: unknown[]
+    auxiliaryData?: unknown[]
     validatorsInfo: Array<ValidatorInfo>
     hash?: string
     signatureVerifyingKey: string
@@ -199,13 +198,13 @@ export default class SignatureRequestManager {
 
           const txRequestData: UserSignatureRequest = {
             message: stripHexPrefix(strippedsigRequestHash),
-            auxilaryData,
+            auxiliaryData,
             validatorsInfo: validatorsInfo,
             timestamp: this.getTimeStamp(),
             hash,
             signatureVerifyingKey
           }
-          if (auxilaryData) txRequestData.auxilaryData = auxilaryData.map(i => JSON.stringify(i))
+          if (auxiliaryData) txRequestData.auxiliaryData = auxiliaryData.map(i => JSON.stringify(i))
           const serverDHKey = await crypto.fromHex(validator.x25519_public_key)
 
           const formattedValidators = await Promise.all(
