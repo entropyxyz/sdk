@@ -3,6 +3,7 @@ import { Transaction } from 'ethereumjs-tx'
 import { HexString } from '../../keys/types/json'
 import { Signer } from '../../keys/types/internal'
 import { u8aToHex } from '@polkadot/util'
+import { AUX_DATA, PRESIGN_RESULT } from './types'
 export interface UserConfig {
     ecdsaPublicKeys: HexString[]
     sr25519PublicKeys: HexString[]
@@ -15,7 +16,7 @@ export interface DeviceKeyProxyProgramInterface {
     auxilary_data: AuxData
 }
 
-export interface AuxData {
+export interface AuxData extends AUX_DATA {
     /// "ecdsa", "ed25519", "sr25519"
     publicKeyType: HexString,
     /// base64-encoded public key
@@ -45,9 +46,9 @@ export const DEVICE_KEY_PROXY_PROGRAM_INTERFACE = {
 
 export const ADAPTER_PROGRAMS = [DEVICE_KEY_PROXY_PROGRAM_INTERFACE]
 
-export interface PreSignResult {
+export interface PreSignResult extends PRESIGN_RESULT {
     sigRequestHash: HexString, 
-    auxilaryData: [AuxData]
+    auxiliaryData: [AuxData]
 }
 
 
@@ -58,13 +59,13 @@ export async function preSign (deviceKey: Signer, message: unknown): Promise<Pre
   const sigRequestHash = u8aToHex(signedMessage)
   const publicKey = u8aToHex(deviceKey.pair.publicKey)
 
-  const auxilaryData: [AuxData] = [{
+  const auxiliaryData: [AuxData] = [{
     publicKeyType: 'sr25519',
     publicKey: publicKey,
     signature: sigRequestHash,
   }]
 
-  return { sigRequestHash, auxilaryData }
+  return { sigRequestHash, auxiliaryData }
 }
 
 

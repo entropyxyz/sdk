@@ -1,4 +1,4 @@
-import { ApiPromise } from '@polkadot/api'
+import { ApiPromise, Keyring } from '@polkadot/api'
 import { Signer } from '../keys/types/internal'
 import { defaultAdapters } from './adapters/default'
 import { Adapter } from './adapters/types'
@@ -7,6 +7,7 @@ import { stripHexPrefix, sendHttpPost } from '../utils'
 import { crypto, CryptoLib } from '../utils/crypto'
 import { Transaction } from 'ethereumjs-tx'
 import { SS58Address } from '../keys/types/json'
+import { ChildKey } from '../keys/types/constants'
 
 export interface Config {
   signer: Signer
@@ -15,12 +16,12 @@ export interface Config {
   crypto: CryptoLib
 }
 
-export interface TxParams {
+export interface MsgParams {
   [key: string]: Transaction | unknown
 }
 
-export interface SigTxOps {
-  txParams: TxParams
+export interface SigMsgOps {
+  msg: MsgParams
   type?: string
 }
 
@@ -47,6 +48,7 @@ export interface UserSignatureRequest {
 export default class SignatureRequestManager {
   adapters: { [key: string | number]: Adapter }
   crypto: CryptoLib
+  keyring: Keyring
   signer: Signer
   substrate: ApiPromise
 
@@ -80,7 +82,7 @@ export default class SignatureRequestManager {
    * @throws {Error} if an adapter for the transaction type is not found, or if the adapter lacks a preSign function.
    */
 
-  async signWithAdapter({ txParams, type }: SigTxOps): Promise<unknown> {
+  async signWithAdapter({ msg, type }: SigMsgOps): Promise<unknown> {
     if (!this.adapters[type])
       throw new Error(`No transaction adapter for type: ${type} submit as hash`)
     if (!this.adapters[type].preSign)
@@ -88,14 +90,16 @@ export default class SignatureRequestManager {
         `Adapter for type: ${type} has no preSign function. Adapters must have a preSign function`
       )
 
-    const { sigRequestHash, auxilaryData } = await this.adapters[type].preSign(this.signer, txParams)
+
+    const { sigRequestHash, auxilaryData } = await this.adapters[type].preSign(this.signer, msg)
+
     const signature = await this.sign({
       sigRequestHash,
       hash: this.adapters[type].hash,
       auxilaryData,
     })
     if (this.adapters[type].postSign) {
-      return await this.adapters[type].postSign(signature, txParams)
+      return await this.adapters[type].postSign(signature, msg)
     }
     return signature
   }
