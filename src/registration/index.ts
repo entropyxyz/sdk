@@ -51,9 +51,8 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
 
 
   constructor ({
-
     substrate,
-    signer
+    signer,
   }: {
     substrate: ApiPromise
     signer: Signer

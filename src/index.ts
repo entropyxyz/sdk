@@ -1,18 +1,15 @@
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import { isValidSubstrateAddress } from './utils'
 import RegistrationManager, { RegistrationParams } from './registration'
-import SignatureRequestManager, { SigOps, SigTxOps } from './signing'
+import SignatureRequestManager, { SigOps, SigMsgOps } from './signing'
 import { crypto, } from './utils/crypto'
 import { Adapter } from './signing/adapters/types'
-import { Keyring } from './keys'
-import { Signer } from './keys/types/internal'
-import {
-  EntropyAccount,
-} from './types'
 import ProgramManager from './programs'
-import { DEFAULT_PROGRAM_INTERFACE } from '../tests/testing-utils'
-import { ChildKey } from './keys'
+import Keyring from './keys'
+import { EntropyAccount } from './keys/types/json'
 
+import { ChildKey } from './keys/types/constants'
+import { DEVICE_KEY_PROXY_PROGRAM_INTERFACE } from './signing/adapters/device-key-proxy'
 
 
 export interface EntropyOpts {
@@ -105,7 +102,7 @@ export default class Entropy {
     this.programs = new ProgramManager({
       substrate: this.substrate,
       programModKey: this.keyring.getLazyLoadKeyProxy(ChildKey.REGISTRATION),
-      programDeployer: this.keyring.getLazyLoadKeyProxy(ChildKey.PROGRAM_DEV),
+      deployer: this.keyring.getLazyLoadKeyProxy(ChildKey.PROGRAM_DEV),
     })
     this.#ready(true)
   }
@@ -149,10 +146,12 @@ export default class Entropy {
     params: RegistrationParams & { account?: EntropyAccount }
   ): Promise<void> {
     await this.ready && this.substrate.isReady
-    const defaultProgram = DEFAULT_PROGRAM_INTERFACE
-    defaultProgram.userConfig.sr25519_public_keys.push(this.account.deviceKey.address)
+    const defaultProgram = DEVICE_KEY_PROXY_PROGRAM_INTERFACE
 
-    const account = params.account || this.account
+    const deviceKey = this.keyring.getLazyLoadKeyProxy(ChildKey.DEVICE_KEY)
+    defaultProgram.userConfig.sr25519PublicKeys.push(deviceKey)
+
+    const account = this.keyring
 
     if (!account) {
       throw new Error('No account provided for registration')
@@ -196,9 +195,9 @@ export default class Entropy {
    * @throws {Error} Will throw an error if the transaction type does not have a corresponding adapter.
    */
 
-  async signWithAdapter (params: SigTxOps): Promise<unknown> {
+  async signWithAdapter (params: SigMsgOps): Promise<unknown> {
     await this.ready && this.substrate.isReady
-    return this.signingManager.signTransaction(params)
+    return this.signingManager.signWithAdapter(params)
   }
 
   /**

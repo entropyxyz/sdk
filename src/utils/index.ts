@@ -1,7 +1,6 @@
 import { decodeAddress, encodeAddress } from '@polkadot/keyring'
 import { hexToU8a, isHex } from '@polkadot/util'
-import { Address } from '../types'
-
+import { Address } from '../types/internal'
 export interface AnyObject {
   [key: string]: number | string | string[] | AnyObject
 }
