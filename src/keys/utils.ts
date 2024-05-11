@@ -1,5 +1,6 @@
-import { crypto } from '../util/crypto'
+import { Keypair } from '@polkadot/util-crypto/types'
 import { Keyring } from '@polkadot/keyring'
+import { crypto } from '../util/crypto'
 import { PolkadotSigner } from './types/internal'
 import { UIDv4 } from './types/json'
 import { Pair } from './types/internal'
