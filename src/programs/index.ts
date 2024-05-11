@@ -26,21 +26,18 @@ export default class ProgramManager extends ExtrinsicBaseClass {
    * @alpha
    */
   dev: ProgramDev
-  verifyingKey: string
+  verifyingKey?: string
   constructor ({
     substrate,
     deployer,
     programModKey,
-    verifyingKey
   }: {
     substrate: ApiPromise
     deployer: Signer
     programModKey: Signer
-    verifyingKey: string
   }) {
     super({ substrate, signer: programModKey })
     this.dev = new ProgramDev({substrate, signer: deployer})
-    this.verifyingKey = verifyingKey
   }
 
   /**
@@ -53,6 +50,10 @@ export default class ProgramManager extends ExtrinsicBaseClass {
    * The response is then processed and converted to an ArrayBuffer before being returned
    * @alpha
    */
+
+  get verifyingKey () {
+    return this.signer.verfiyingKeys ? this.signer.verfiyingKeys[0] : undefined
+  }
 
   async get (verifyingKey: string): Promise<ProgramInstance[]> {
     const registeredOption = await this.substrate.query.registry.registered(

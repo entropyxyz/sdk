@@ -102,15 +102,10 @@ export default class Entropy {
       crypto,
     })
 
-    const programModKeyPair = isValidPair(this.account.programModKey as Signer)
-      ? this.account.programModKey
-      : undefined
-
     this.programs = new ProgramManager({
       substrate: this.substrate,
       programModKey: this.keyring.getLazyLoadKeyProxy(ChildKey.REGISTRATION),
-      programDeployer: this.account.programDeployKey,
-      verifyingKey: this.account.verifyingKey[0]
+      programDeployer: this.keyring.getLazyLoadKeyProxy(ChildKey.PROGRAM_DEV),
     })
     this.#ready(true)
   }
