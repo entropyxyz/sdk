@@ -2,7 +2,7 @@ import { crypto } from '../util/crypto'
 import { Keyring } from '@polkadot/keyring'
 import { PolkadotSigner } from './types/internal'
 import { UIDv4 } from './types/json'
-import { Keypair } from '@polkadot/util-crypto/types'
+import { Pair } from './types/internal'
 
 export const UIDv4regex = /^(?:[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}|00000000-0000-0000-0000-000000000000)$/i
 
@@ -47,7 +47,7 @@ export function generateSeed (): string {
  * generates A usable signer with meta info about the account i.e. address etc
  * */
 
-export function generateKeyPairFromSeed (seed: string, dervation?: string): { address: string; pair: PolkadotSigner } {
+export function generateKeyPairFromSeed (seed: string, dervation?: string): { address: string; pair: Pair } {
   let pair
   // discard the keyring on every use because are keyring is better suited
   // for our code
