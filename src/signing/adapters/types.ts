@@ -10,7 +10,7 @@ export interface AUX_DATA {
 }
 export interface PRESIGN_RESULT {
   sigRequestHash: HexString
-  auxiliaryData: AUX_DATA
+  auxiliaryData: AUX_DATA[]
 
 }
 export interface Adapter {
