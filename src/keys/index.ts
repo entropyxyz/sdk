@@ -50,12 +50,12 @@ export default class Keyring {
         path: '',
         type: name,
       };
-      const { path, seed, verfiyingKeys, address, type } = this.accounts[name]
       if (path) account.path = path
+      const { path, seed, verifyingKeys, address, type } = this.accounts[name]
       if (seed) account.seed = seed
-      if (verfiyingKeys) account.verifyingKeys = verfiyingKeys
-      if (address) account.address = address
       accounts[name] = account
+      if (verifyingKeys) account.verifyingKeys = verifyingKeys
+      if (address) account.address = address
     })
     return accounts
   }
@@ -64,13 +64,13 @@ export default class Keyring {
     const name = account.type
     const derivationPath = account.path
     const seed = account.seed
-    const verfiyingKeys = account.verifyingKeys
     this.accounts[name] = utils.generateKeyPairFromSeed(seed || this.#seed.toString(), derivationPath)
+    const verifyingKeys = account.verifyingKeys
     this.accounts[name].path = derivationPath
     if (seed) this.accounts[name].seed = seed
-    if (verfiyingKeys) this.accounts[name].verfiyingKeys = verfiyingKeys
-    this.accounts[name].type = name
   }
+    if (verifyingKeys) this.accounts[name].verifyingKeys = verifyingKeys
+    this.accounts[name].type = name
   // internal to the sdk should not necissarl be advertised but can be used by consumers
   getRegisteringKey (): Signer {
     const type = ChildKey.REGISTRATION
@@ -96,7 +96,18 @@ export default class Keyring {
   // stored for no reason
   getLazyLoadKeyProxy (type): Signer {
     return new Proxy (this.accounts[type], {
-      get: (account, key) =>  this[`get${type}Key`]()
+      get: (account, key) =>  {
+        const signer = this[`get${type}Key`]()
+        if (key === 'verifyingKeys') {
+          return signer.verifyingKeys || []
+        }
+        return signer
+      },
+      set: (_, key, value) => {
+        this.accounts[key] = value
+        if (key === 'verifyingKeys') this.accounts.emit('account-update')
+        return value
+      }
     })
   }
 

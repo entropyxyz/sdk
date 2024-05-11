@@ -21,6 +21,7 @@ export type PolkadotKeys = Keys
 export interface Signer {
   address: string
   pair: PolkadotSigner
+  verifyingKeys: string[]
 }
 
 
