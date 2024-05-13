@@ -1,8 +1,8 @@
-import { ApiPromise, Keyring } from '@polkadot/api'
+import { ApiPromise } from '@polkadot/api'
 import { Signer } from '../keys/types/internal'
 import { defaultAdapters } from './adapters/default'
 import { Adapter } from './adapters/types'
-import { EncMsg, ValidatorInfo } from '../types'
+import { EncMsg, ValidatorInfo } from '../types/internal'
 import { stripHexPrefix, sendHttpPost } from '../utils'
 import { crypto, CryptoLib } from '../utils/crypto'
 import { Transaction } from 'ethereumjs-tx'
@@ -48,7 +48,6 @@ export interface UserSignatureRequest {
 export default class SignatureRequestManager {
   adapters: { [key: string | number]: Adapter }
   crypto: CryptoLib
-  keyring: Keyring
   signer: Signer
   substrate: ApiPromise
 

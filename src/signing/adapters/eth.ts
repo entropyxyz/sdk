@@ -1,4 +1,3 @@
-import { Arch } from '../../types'
 import { keccak256 } from 'ethereum-cryptography/keccak.js'
 import { Transaction } from 'ethereumjs-tx'
 
@@ -22,7 +21,6 @@ export async function postSign(sig: Uint8Array, txParams): Promise<string> {
 }
 
 export const type = 'eth'
-export const arch = Arch.Evm
 export const hash = 'keccak'
 
 export function pubToAddress(publicKey: string) {

@@ -2,8 +2,6 @@
  * These are internal facing types
  * */
 import Entropy from './../index'
-import { Keypair } from '@polkadot/util-crypto/types'
-import { KeyringPair } from '@polkadot/keyring/types'
 import type { AccountId32 } from '@polkadot/types/interfaces/runtime'
 import { U8aFixed } from '@polkadot/types-codec'
 

@@ -24,7 +24,7 @@ export interface Pair extends PolkadotSigner {
 
 export interface Signer {
   address: string
-  pair: PolkadotSigner
+  pair: Pair
   verifyingKeys: string[]
 }
 
