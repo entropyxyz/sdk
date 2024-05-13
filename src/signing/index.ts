@@ -5,7 +5,6 @@ import { Adapter } from './adapters/types'
 import { EncMsg, ValidatorInfo } from '../types/internal'
 import { stripHexPrefix, sendHttpPost } from '../utils'
 import { crypto, CryptoLib } from '../utils/crypto'
-import { Transaction } from 'ethereumjs-tx'
 import { SS58Address } from '../keys/types/json'
 import { ChildKey } from '../keys/types/constants'
 
@@ -17,7 +16,7 @@ export interface Config {
 }
 
 export interface MsgParams {
-  [key: string]: Transaction | unknown
+  [key: string]: unknown
 }
 
 export interface SigMsgOps {

@@ -10,9 +10,11 @@ import {
   encodeAddress
 } from '@polkadot/util-crypto'
 
-import * as PolkadotCrypto from '@polkadot/util-crypto'
+import * as polkadotCryptoUtil from '@polkadot/util-crypto'
 
 import { u8aToHex } from '@polkadot/util'
+
+import * as PolkadotCryptoTypes from './types/internal';
 
 interface ResolveType {
   (value?: void | PromiseLike<void>): void
@@ -39,7 +41,10 @@ loadCryptoLib()
  */
 
 export interface CryptoLib {
-  polkadotCrypto: PolkadotCrypto
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  // fuck-polkadot
+  polkadotCrypto: any
   verifySignature: (message: string, signature: string, address: string) => Promise<boolean>
 
   fromHex: (input: string) => Promise<Uint8Array>
@@ -100,7 +105,7 @@ export const crypto: CryptoLib = new Proxy({} as CryptoLib, {
       if (!cryptoLib) {
         throw new Error('cryptoLib loaded incorrectly. Did you await the wasmGlobalsReady function?')
       }
-      if (key === 'polkadotCrypto') return PolkadotCrypto
+      if (key === 'polkadotCrypto') return polkadotCryptoUtil
       if (key === 'verifySignature') return verifySignature
       if (cryptoLib.Hpke[key]) {
         return cryptoLib.Hpke[key](...params)

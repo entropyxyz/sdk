@@ -47,8 +47,6 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
    */
 
   verifyingKey: string
-  signer: Signer
-
 
   constructor ({
     substrate,
