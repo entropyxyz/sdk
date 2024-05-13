@@ -86,8 +86,8 @@
     "ethereum-cryptography": "^2.1.2",
     "ethereumjs-tx": "^2.1.2",
     "hpke-js": "^1.2.7",
-    "uuid": "^9.0.1",
-    "tsx": "^4.9.3"
+    "tsx": "^4.9.3",
+    "uuid": "^9.0.1"
   },
   "lint-staged": {
     "*.ts": "eslint --fix",
