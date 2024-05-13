@@ -7,6 +7,7 @@ import { stripHexPrefix, sendHttpPost } from '../utils'
 import { crypto, CryptoLib } from '../utils/crypto'
 import { SS58Address } from '../keys/types/json'
 import { ChildKey } from '../keys/types/constants'
+import { AuxData } from './adapters/device-key-proxy'
 
 export interface Config {
   signer: Signer
@@ -28,7 +29,7 @@ export interface SigOps {
   sigRequestHash: string
   hash: string
   type?: string
-  auxiliaryData?: unknown[]
+  auxiliaryData?: AuxData[]
 }
 
 export interface UserSignatureRequest {
@@ -39,6 +40,7 @@ export interface UserSignatureRequest {
   hash: string
   signatureVerifyingKey: string
 }
+
 /**
  * `SignatureRequestManager` facilitates signature requests using Polkadot/Substrate API.
  * This manager handles transaction signing using pre-defined adapters and cryptographic utilities.
@@ -95,10 +97,11 @@ export default class SignatureRequestManager {
 
     const { sigRequestHash, auxiliaryData } = await this.adapters[type].preSign(this.signer, msg)
 
+  
     const signature = await this.sign({
       sigRequestHash,
       hash: this.adapters[type].hash,
-      auxiliaryData,
+      auxiliaryData: auxiliaryData as AuxData[],
     })
     if (this.adapters[type].postSign) {
       return await this.adapters[type].postSign(signature, msg)
@@ -197,7 +200,6 @@ export default class SignatureRequestManager {
       validatorsInfo.map(
         async (validator: ValidatorInfo): Promise<EncMsg> => {
           // TODO: auxilaryData full implementation
-
           const txRequestData: UserSignatureRequest = {
             message: stripHexPrefix(strippedsigRequestHash),
             auxiliaryData,
@@ -296,6 +298,7 @@ export default class SignatureRequestManager {
     const rawValidatorInfo = await Promise.all(
       stashKeys.map((stashKey) =>
         this.substrate.query.stakingExtension.thresholdServers(stashKey)
+
       )
     )
     const validatorsInfo: Array<ValidatorInfo> = rawValidatorInfo.map(
