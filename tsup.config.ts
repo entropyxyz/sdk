@@ -5,6 +5,7 @@ export default defineConfig((options) => {
     entry: [
       `src/index.ts`,
       'src/keys/index.ts',
+      'src/keys/utils.ts',
       'src/utils/index.ts',
       'src/utils/crypto.ts',
     ],

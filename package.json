@@ -6,11 +6,13 @@
   "files": [
     "dist",
     "dist/keys",
+    "dist/keys/utils.ts",
     "dist/utils"
   ],
   "exports": {
     ".": "./dist/index.js",
     "./keys": "./dist/keys/index.js",
+    "./keys/utils": "./dist/keys/utils.js",
     "./cypto-utils": "./dist/utils/crypto.js",
     "./gen-utils": "./dist/utils/index.js"
   },
