@@ -57,7 +57,7 @@ test('Crypto', async (t) => {
 
     const result = await run(
       'encryptAndSign',
-      crypto.encryptAndSign(aliceSecretKey, thresholdKey, alicePublicKey)
+      crypto.encryptAndSign(aliceSecretKey, serverDHKey, thresholdKey, alicePublicKey)
     )
     const expected = await run(
       'decryptAndVerify',

@@ -111,9 +111,9 @@ export default class Entropy {
    * Registers an address with Entropy using the provided parameters.
    *
    * @param {RegistrationParams & { account?: EntropyAccount }} params - The registration parameters.
-   * @param {Address} params.programModAccount - The address authorized to set programs on behalf of the user.
-   * @param {'Private' | 'Public' } [params.keyVisibility] - Visibility setting for the key.
-   * @param {ProgramData[]} [params.programPointer] - Optional initial programs associated with the user.
+   * @param {Address} params.programDeployer - The address authorized to set programs on behalf of the user.
+   * @param {'Public' } [params.keyVisibility] - Visibility setting for the key.
+   * @param {ProgramData[]} [params.programData] - Optional initial programs associated with the user.
    * @returns {Promise<void>} A promise indicating the completion of the registration process.
    * @throws {TypeError} - If the provided address format is incompatible.
    * @throws {Error} - If the address is already registered or if there's a problem during registration.

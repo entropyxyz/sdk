@@ -6,8 +6,8 @@ import { Signer } from '../keys/types/internal'
 import { Address } from '../types/internal'
 
 export interface RegistrationParams {
-  programDeployer?: SS58Address
   keyVisibility?: 'Public'
+  programDeployer?: SS58Address
   programData: ProgramInstance[]
 }
 
