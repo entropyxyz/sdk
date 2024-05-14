@@ -2,6 +2,7 @@ import * as readline from 'readline'
 
 import Entropy, { wasmGlobalsReady } from '../../src'
 import Keyring from '../../src/keys'
+import { KeyMaterial } from '../../src/keys/types/json'
 import { charlieStashSeed } from './constants'
 
 export * from './constants'
@@ -15,7 +16,7 @@ export async function createTestAccount(
 
   await wasmGlobalsReady()
 
-  const keyring = new Keyring({ seed })
+  const keyring = new Keyring({ seed } as KeyMaterial)
 
   // HACK: (mix) locally 5s is sufficient... github crashes out?
   entropy = new Entropy({ keyring })

@@ -73,7 +73,7 @@ export type KeyMaterial = HexSeedMaterial & MnemonicSeedMaterial
  * Represents key material using a hexadecimal seed.
  */
 export interface HexSeedMaterial {
-  seed: Seed
+  seed?: Seed
   // one day this would be nice to have
   // path?: Path
 }
@@ -82,7 +82,7 @@ export interface HexSeedMaterial {
  * Represents key material using a mnemonic seed.
  */
 export interface MnemonicSeedMaterial {
-  mnemonic: Mnemonic
+  mnemonic?: Mnemonic
   // one day this would be nice to have
   // path?: Path
 }
