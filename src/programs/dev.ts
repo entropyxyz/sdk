@@ -39,7 +39,7 @@ export default class ProgramDev extends ExtrinsicBaseClass {
    * @param {Signer} signer - The Signer instance.
    */
 
-  constructor({
+  constructor ({
     substrate,
     signer,
   }: {
@@ -56,7 +56,7 @@ export default class ProgramDev extends ExtrinsicBaseClass {
    * @returns {Promise<ProgramInfo>} A promise that resolves to the program information.
    */
 
-  async get(pointer: string): Promise<ProgramInfo> {
+  async get (pointer: string): Promise<ProgramInfo> {
     // fetch program bytecode using the program pointer at the specific block hash
     const responseOption = await this.substrate.query.programs.programs(pointer)
 
@@ -76,7 +76,7 @@ export default class ProgramDev extends ExtrinsicBaseClass {
    * @returns {Promise<HexString>} A promise that resolves to the hash of the deployed program.
    */
 
-  async deploy(
+  async deploy (
     program: ArrayBuffer,
     configurationSchema?: unknown,
     auxiliaryDataSchema?: unknown,
@@ -108,7 +108,7 @@ export default class ProgramDev extends ExtrinsicBaseClass {
    * @returns {Promise<void>} A promise that resolves when the program is removed.
    */
   
-  async remove(programHash: string | Uint8Array): Promise<void> {
+  async remove (programHash: string | Uint8Array): Promise<void> {
     const tx: SubmittableExtrinsic<'promise'> =
       this.substrate.tx.programs.removeProgram(programHash)
 

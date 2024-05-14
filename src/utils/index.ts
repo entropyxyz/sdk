@@ -16,7 +16,7 @@ export interface AnyObject {
  * @returns {string} The type of the variable as a string.
  */
 
-export function typeofthing(thing) {
+export function typeofthing (thing) {
   const thingType = typeof thing
   if (thingType === 'object') {
     if (Array.isArray(thing)) return 'array'
@@ -34,7 +34,7 @@ export function typeofthing(thing) {
  * @returns {string} The string without the '0x' prefix.
  */
 
-export function stripHexPrefix(str: string): string {
+export function stripHexPrefix (str: string): string {
   if (str.startsWith('0x')) return str.slice(2)
   return str
 }
@@ -46,7 +46,7 @@ export function stripHexPrefix(str: string): string {
  * @returns {boolean} True if the address is valid, false otherwise.
  */
 
-export function isValidSubstrateAddress(address: Address) {
+export function isValidSubstrateAddress (address: Address) {
   try {
     encodeAddress(isHex(address) ? hexToU8a(address) : decodeAddress(address))
 
@@ -65,7 +65,7 @@ export function isValidSubstrateAddress(address: Address) {
  * @throws {Error} If the request fails or the response is not OK.
  */
 
-export async function sendHttpPost(url: string, data: any): Promise<any> {
+export async function sendHttpPost (url: string, data: any): Promise<any> {
   const headers = {
     'Content-Type': 'application/json',
   }
@@ -85,7 +85,7 @@ export async function sendHttpPost(url: string, data: any): Promise<any> {
 
   const reader = response.body.getReader()
   const start = (controller) => {
-    async function pump() {
+    async function pump () {
       const { done, value } = await reader.read()
       if (done) {
         controller.close()
@@ -115,7 +115,7 @@ export async function sendHttpPost(url: string, data: any): Promise<any> {
  * @returns {string} The hexadecimal representation of the buffer.
  */
 
-export function buf2hex(buffer: ArrayBuffer): string {
+export function buf2hex (buffer: ArrayBuffer): string {
   return [...new Uint8Array(buffer)]
     .map((x) => x.toString(16).padStart(2, '0'))
     .join('')
@@ -128,7 +128,7 @@ export function buf2hex(buffer: ArrayBuffer): string {
  * @returns {ArrayBuffer} The ArrayBuffer representation of the hexadecimal string.
  */
 
-export function hex2buf(hex: string): ArrayBuffer {
+export function hex2buf (hex: string): ArrayBuffer {
   const bytes = new Uint8Array(Math.ceil(hex.length / 2))
   for (let i = 0; i < bytes.length; i++) {
     bytes[i] = parseInt(hex.slice(i * 2, i * 2 + 2), 16)

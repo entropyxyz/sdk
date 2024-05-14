@@ -64,7 +64,7 @@ export default class ProgramManager extends ExtrinsicBaseClass {
   async get (verifyingKey: string): Promise<ProgramInstance[]> {
     const registeredOption = await this.substrate.query.registry.registered(
       verifyingKey
-        )
+    )
 
     if (registeredOption.isEmpty) {
       throw new Error(`No programs found for account: ${verifyingKey}`)
@@ -131,7 +131,7 @@ export default class ProgramManager extends ExtrinsicBaseClass {
    * @alpha
    */
 
-  async remove(
+  async remove (
     programHashToRemove: string,
     programModKey,
     verifyingKey
@@ -164,6 +164,6 @@ export default class ProgramManager extends ExtrinsicBaseClass {
     verifyingKey:string = this.verifyingKey[0]
   ): Promise<void> {
     const currentPrograms = await this.get(verifyingKey)
-       await this.set(programModKey, [...currentPrograms, newProgram])
+    await this.set(programModKey, [...currentPrograms, newProgram])
   }
 }

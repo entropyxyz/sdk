@@ -158,7 +158,7 @@ export default class Entropy {
    * @throws {Error} - If there's an error in the signing routine.
    */
 
-  async sign(params: SigOps): Promise<Uint8Array> {
+  async sign (params: SigOps): Promise<Uint8Array> {
     await this.ready
     return this.signingManager.sign(params)
   }

@@ -99,7 +99,7 @@ export default class Keyring {
     if (seed) this.accounts[name].seed = seed
     if (verifyingKeys) 
       this.accounts[name].verifyingKeys = verifyingKeys 
-      this.accounts[name].type = name
+    this.accounts[name].type = name
   }
 
   /**

@@ -19,18 +19,18 @@ export default class ExtrinsicBaseClass {
   substrate: ApiPromise
   signer: Signer
 
-/**
+  /**
  * Initializes a new instance of the `ExtrinsicBaseClass`.
  *
  * @param substrate - The instance of the Polkadot/Substrate API.
  * @param signer - The signer object containing the wallet and other signing-related functionalities.
  */
 
-  constructor({ substrate, signer }) {
+  constructor ({ substrate, signer }) {
     this.substrate = substrate
     this.signer = signer
   }
-/**
+  /**
  * Sends an extrinsic and waits for a specific event or rejects with an error.
  *
  * @param call - The extrinsic call to send.
@@ -38,7 +38,7 @@ export default class ExtrinsicBaseClass {
  * @returns A promise that resolves with the filtered event record.
  * @throws {Error} Will reject the promise if a dispatch error occurs or the filtered event is not found.
  */
-  async sendAndWaitFor(
+  async sendAndWaitFor (
     call: SubmittableExtrinsic<'promise'>,
     filter: EventFilter
   ): Promise<EventRecord> {

@@ -28,20 +28,20 @@ export interface AuxData extends AUX_DATA {
 
 
 export const DEVICE_KEY_PROXY_PROGRAM_INTERFACE = {
-    pointer: '0x0000000000000000000000000000000000000000000000000000000000000000',
-    userConfig: {  
-        ecdsaPublicKeys: [],
-        sr25519PublicKeys: [],
-        ed25519PublicKeys: [],
-    },
-    auxilary_data: [{
-        publicKeyType: '',
-        publicKey: '',
-        signature: '',
+  pointer: '0x0000000000000000000000000000000000000000000000000000000000000000',
+  userConfig: {  
+    ecdsaPublicKeys: [],
+    sr25519PublicKeys: [],
+    ed25519PublicKeys: [],
+  },
+  auxilary_data: [{
+    publicKeyType: '',
+    publicKey: '',
+    signature: '',
         
-    }],
+  }],
 
-  }
+}
 
 export const ADAPTER_PROGRAMS = [DEVICE_KEY_PROXY_PROGRAM_INTERFACE]
 
