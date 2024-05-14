@@ -135,3 +135,20 @@ export function hex2buf (hex: string): ArrayBuffer {
   }
   return bytes.buffer
 }
+
+export function hexStringToUint8Array (hex: string): Uint8Array {
+  if (hex.startsWith('0x')) {
+    hex = hex.slice(2)
+  }
+  if (hex.length % 2 !== 0) {
+    throw new Error("Hex string must have an even number of characters")
+  }
+
+  const byteArray = new Uint8Array(hex.length / 2)
+
+  for (let i = 0; i < byteArray.length; i++) {
+    byteArray[i] = parseInt(hex.substr(i * 2, 2), 16)
+  }
+
+  return byteArray
+}

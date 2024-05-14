@@ -3,6 +3,7 @@ import { crypto, cryptoIsLoaded } from '../src/utils/crypto'
 import { stripHexPrefix } from '../src/utils'
 import { promiseRunner, readKey } from './testing-utils'
 import { charlieStashSeed } from './testing-utils/constants'
+import { hexStringToUint8Array } from '../src/utils'
 test('Crypto', async (t) => {
   const run = promiseRunner(t)
 
@@ -31,8 +32,13 @@ test('Crypto', async (t) => {
   }
 
   /* Encrypt + sign */
+
+ 
+
   {
-    const charlieSecretSeed: Uint8Array = Uint8Array.from(charlieStashSeed.split('0x')[1])
+    const charlieSecretSeed: Uint8Array = hexStringToUint8Array(charlieStashSeed)
+
+    console.log("charlieSecretSeed", charlieSecretSeed)
 
     const charliePublicKeyPair = await run(
       'publicKeyFromSecret works',
