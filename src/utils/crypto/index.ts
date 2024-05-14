@@ -1,13 +1,7 @@
 import {
   cryptoWaitReady,
   decodeAddress,
-  signatureVerify,
-  sr25519PairFromSeed,
-  mnemonicToMiniSecret,
-  mnemonicGenerate,
-  keyFromPath,
-  keyExtractPath,
-  encodeAddress
+  signatureVerify
 } from '@polkadot/util-crypto'
 
 import * as polkadotCryptoUtil from '@polkadot/util-crypto'
@@ -48,9 +42,6 @@ export interface CryptoLib {
   verifySignature: (message: string, signature: string, address: string) => Promise<boolean>
 
   fromHex: (input: string) => Promise<Uint8Array>
-   /**
-]   * Uses the provided secret key for encryption and the server's Diffie-Hellman (DH) key for the signature.
-   */
 
   /**
    *
@@ -77,20 +68,25 @@ export interface CryptoLib {
    * @param serverDHKey
    * @returns
    */
+
   encryptAndSign: (
     secretKey: Uint8Array,
     encodedPayload: Uint8Array,
     publicX25519key: Uint8Array,
     serverDHKey: Uint8Array
   ) => Promise<string>
+
   /**
    * Decrypts a provided message and verifies its authenticity.
    * Uses the provided secret key for decryption.
    */
+
   decryptAndVerify: (X25519Keypair: Uint8Array, msg: string) => Promise<string>
+
   /**
    * Derives the public key from the provided secret key.
    */
+  
   publicKeyFromSecret: (X25519Keypair: Uint8Array) => Promise<Uint8Array>
 }
 

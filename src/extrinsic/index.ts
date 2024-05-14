@@ -11,38 +11,33 @@ interface Decoded extends RegistryError {
   docs: string[]
   section: string
 }
-
 /**
- * A utility class to simplify extrinsic operations with the Polkadot/Substrate API.
- * Allows the user to send extrinsics and automatically handles errors, events, and certain special conditions like free transactions.
- *
+ * A utility class to simplify extrinsic operations with Entropy
+ * Allows the user to send extrinsics and automatically handles errors, and events
  */
-
 export default class ExtrinsicBaseClass {
   substrate: ApiPromise
   signer: Signer
 
-  /**
-   * Initializes a new instance of the `ExtrinsicBaseClass`.
-   *
-   * @param substrate - The instance of the Polkadot/Substrate API.
-   * @param signer - The signer object containing the wallet and other signing-related functionalities.
-   */
+/**
+ * Initializes a new instance of the `ExtrinsicBaseClass`.
+ *
+ * @param substrate - The instance of the Polkadot/Substrate API.
+ * @param signer - The signer object containing the wallet and other signing-related functionalities.
+ */
 
   constructor({ substrate, signer }) {
     this.substrate = substrate
     this.signer = signer
   }
-
-  /**
-   * Sends an extrinsic and waits for a specific event or rejects with an error.
-   *
-   * @param call - The extrinsic call to send.
-   * @param filter - An event filter to wait for.
-   * @returns A promise that resolves with the filtered event record.
-   * @throws {Error} Will reject the promise if a dispatch error occurs or the filtered event is not found.
-   */
-
+/**
+ * Sends an extrinsic and waits for a specific event or rejects with an error.
+ *
+ * @param call - The extrinsic call to send.
+ * @param filter - An event filter to wait for.
+ * @returns A promise that resolves with the filtered event record.
+ * @throws {Error} Will reject the promise if a dispatch error occurs or the filtered event is not found.
+ */
   async sendAndWaitFor(
     call: SubmittableExtrinsic<'promise'>,
     filter: EventFilter

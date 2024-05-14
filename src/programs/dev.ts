@@ -4,13 +4,14 @@ import { Signer } from '../keys/types/internal'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
 import { hex2buf, stripHexPrefix } from '../utils'
 import * as util from '@polkadot/util'
+import { HexString } from '../keys/types/json'
 
 /**
  * Represents program information.
  *
  * @interface ProgramInfo
  * @property {ArrayBuffer} bytecode - The bytecode of the program.
- * @property {unknown} [configurationInterface] - Optional. The configuration interface of the program.
+ * @property {unknown} [interfaceDescription] - Optional. The configuration interface of the program.
  * @property {string} deployer - The address of the deployer of the program.
  * @property {number} refCounter - The reference count for the program.
  */
@@ -30,6 +31,7 @@ export interface ProgramInfo {
  */
 
 export default class ProgramDev extends ExtrinsicBaseClass {
+
   /**
    * Constructs a ProgramDev instance.
    *
@@ -50,8 +52,8 @@ export default class ProgramDev extends ExtrinsicBaseClass {
   /**
    * Retrieves program information using a program pointer.
    *
-   * @param {string} pointer - The program pointer.
-   * @returns {Promise<ProgramInfo>} - A Promise resolving to the program information.
+   * @param {string} pointer - The program pointer to fetch the program bytecode.
+   * @returns {Promise<ProgramInfo>} A promise that resolves to the program information.
    */
 
   async get(pointer: string): Promise<ProgramInfo> {
@@ -63,12 +65,15 @@ export default class ProgramDev extends ExtrinsicBaseClass {
     return this.#formatProgramInfo(programInfo)
   }
 
+
   /**
    * Deploys a new program.
    *
-   * @param {ArrayBuffer} program - The program to deploy.
-   * @param {unknown} [configurationInterface] - Optional. The configuration interface of the program.
-   * @returns {Promise<string>} - A Promise resolving to the hash of the deployed program.
+   * @param {ArrayBuffer} program - The program bytecode to deploy.
+   * @param {unknown} configurationSchema - The configuration schema for the program.
+   * @param {unknown} auxiliaryDataSchema - The auxiliary data schema for the program.
+   * @param {[]} oracleDataPointer - The oracle data pointer.
+   * @returns {Promise<HexString>} A promise that resolves to the hash of the deployed program.
    */
 
   async deploy(
@@ -76,8 +81,7 @@ export default class ProgramDev extends ExtrinsicBaseClass {
     configurationSchema: unknown,
     auxiliaryDataSchema: unknown,
     oracleDataPointer: []
-
-  ): Promise<string> {
+  ): Promise<HexString> {
     // converts program and configurationInterface into a palatable format
     const formatedConfig = JSON.stringify(configurationSchema)
     // programModKey is the caller of the extrinsic
@@ -97,12 +101,12 @@ export default class ProgramDev extends ExtrinsicBaseClass {
   }
 
   /**
-   * Removes a program.
+   * Removes an existing program.
    *
    * @param {string | Uint8Array} programHash - The hash of the program to remove.
-   * @returns {Promise<void>} - A Promise resolving when the program is removed.
+   * @returns {Promise<void>} A promise that resolves when the program is removed.
    */
-
+  
   async remove(programHash: string | Uint8Array): Promise<void> {
     const tx: SubmittableExtrinsic<'promise'> =
       this.substrate.tx.programs.removeProgram(programHash)
@@ -121,6 +125,7 @@ export default class ProgramDev extends ExtrinsicBaseClass {
    * @param {ProgramInfoJSON} programInfo - The program information in JSON format.
    * @returns {ProgramInfo} - The formatted program information.
    */
+  
   #formatProgramInfo (programInfo): ProgramInfo {
     const { interfaceDescription, deployer, refCounter } = programInfo
     const bytecode = hex2buf(stripHexPrefix(programInfo.bytecode)) // Convert hex string to ArrayBuffer

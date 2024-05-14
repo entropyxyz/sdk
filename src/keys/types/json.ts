@@ -34,6 +34,7 @@ export type DerivationPath = string
 /**
  * 12 or 24? words separated by spaces defined by bip39
  * */
+
 export type Mnemonic = string
 
 export interface KeyMaterial extends HexSeedMaterial, MnemonicSeedMaterial {}

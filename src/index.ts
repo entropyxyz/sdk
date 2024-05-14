@@ -7,52 +7,28 @@ import { Adapter } from './signing/adapters/types'
 import ProgramManager from './programs'
 import Keyring from './keys'
 import { EntropyAccount } from './keys/types/json'
-
 import { ChildKey } from './keys/types/constants'
 import { DEVICE_KEY_PROXY_PROGRAM_INTERFACE } from './signing/adapters/device-key-proxy'
 
 
 export interface EntropyOpts {
-  /** keyring class instance object. */
+  /** Keyring class instance object. */
   keyring: Keyring
-  /** local or devnet endpoint for establishing a connection to validators */
+  /** Local or devnet endpoint for establishing a connection to validators */
   endpoint?: string
   /** A collection of signing adapters. */
   adapters?: { [key: string | number]: Adapter }
 }
 
 /**
- * @remarks
- * The main interface for users wanting to interact with Entropy.
- * This class provides methods to register, check registration status,
- * and sign transactions. Users can await the `ready` promise to ensure
- * that the class has been initialized before performing operations.
- *
- * @example
- * ```typescript
- * const signer = await getWallet(charlieStashSeed)
- *
- * const entropyAccount: EntropyAccount = {
- *   sigRequestKey: signer,
- *   programModKey: signer,
- * }
- *
- * const entropy = new Entropy({ account: entropyAccount })
- * await entropy.ready
- *
- * await entropy.register({
- *   programModAccount: '5Gw3s7q9...',
- * })
- * ```
- * @alpha
+ * The main class to handle all interactions with the Entropy SDK.
  */
-
 export default class Entropy {
   /** @internal */
   #ready?: (value?: unknown) => void
   /** @internal */
   #fail?: (reason?: unknown) => void
-  /** A promise that resolves once chacha20poly1305 cryptoLib has been loaded */
+  /** A promise that resolves once the cryptographic library has been loaded. */
   ready: Promise<boolean>
   registrationManager: RegistrationManager
   isRegistered: (verifyingKey: string) => Promise<boolean>
@@ -65,7 +41,6 @@ export default class Entropy {
    * Initializes an instance of the Entropy class.
    *
    * @param {EntropyOpts} opts - The configuration options for the Entropy instance.
-   * @param {EntropyAccount} [opts.account] - Account information for wallet initialization.
    * @param {string} [opts.endpoint] - The endpoint for connecting to validators, either local or devnet.
    * @param {Adapter[]} [opts.adapters] - A collection of signing adapters for handling various transaction types.
    */
@@ -80,6 +55,14 @@ export default class Entropy {
       this.#fail(error)
     })
   }
+  
+  /**
+   * Initializes the Entropy instance by setting up the keyring, substrate API, and managers.
+   *
+   * @param {EntropyOpts} opts - The options for configuring the Entropy instance.
+   * @returns {Promise<void>} A promise that resolves when the initialization is complete.
+   * @private
+   */
 
   async #init (opts: EntropyOpts) {
     this.keyring = opts.keyring
@@ -108,39 +91,15 @@ export default class Entropy {
   }
 
   /**
-   * Registers an address with Entropy using the provided parameters.
+   * Registers a new account with the provided parameters.
    *
    * @param {RegistrationParams & { account?: EntropyAccount }} params - The registration parameters.
-   * @param {Address} params.programDeployer - The address authorized to set programs on behalf of the user.
+   * @param {Address} params.programModAccount - The address authorized to set programs on behalf of the user.
    * @param {'Public' } [params.keyVisibility] - Visibility setting for the key.
    * @param {ProgramData[]} [params.programData] - Optional initial programs associated with the user.
-   * @returns {Promise<void>} A promise indicating the completion of the registration process.
-   * @throws {TypeError} - If the provided address format is incompatible.
+   * @returns {Promise<void>} A promise that resolves when the registration is complete.
    * @throws {Error} - If the address is already registered or if there's a problem during registration.
    */
-
-  // FRANKIE im not entirely sure this is the way we want to be doing things
-  // async subscribeToAccountRegisteredEvents (callback: (verifyingKey: string) => void) {
-  //   await this.substrate.query.system.events((events) => {
-  //     events.forEach((record) => {
-  //       const { event } = record
-  //       if (event.section === 'registry' && event.method === 'AccountRegistered') {
-  //         const [accountId, verifyingKeyBytes] = event.data
-  //         if (this.account && this.account.sigRequestKey && this.account.sigRequestKey.wallet.address === accountId.toString()) {
-  //           const verifyingKey = verifyingKeyBytes.toString()
-  //           this.account.verifyingKey = verifyingKey
-  //           console.log(`Account ID: ${accountId.toString()}, Verifying Key: ${verifyingKey}`)
-  //           callback(verifyingKey)
-  //         }
-  //       }
-  //     })
-  //   })
-  //   // const yodos = this.substrate.disconnect()
-  //   // console.log("yodos", yodos)
-  //   // const yotres = this.substrate.isReady
-  //   // console.log("yotres", yotres)
-  // }
-
 
   async register (
     params: RegistrationParams & { account?: EntropyAccount }
@@ -170,10 +129,6 @@ export default class Entropy {
     const vk = this.keyring.accounts[ChildKey.DEVICE_KEY].verifyingKeys
     this.keyring.accounts[ChildKey.DEVICE_KEY].verifyingKeys = [...vk, verifyingKey]
 
-
-    // this.subscribeToAccountRegisteredEvents((verifyingKey: string) => {
-    //   console.log(`Received verifyingKey after registration: ${verifyingKey}`)
-    // })
   }
 
   /**
@@ -185,9 +140,7 @@ export default class Entropy {
    * with the `preSign` function of the selected adapter, followed by the actual signing of the
    * transaction request hash, and if necessary, the `postSign` function of the adapter.
    *
-   * @param {SigTxOps} params - The parameters for signing the transaction.
-   * @param {TxParams} params.txParams - Transaction-specific parameters.
-   * @param {string} [params.type] - The type of the transaction for adapter selection.
+   * @param {SigMsgOps} params - The parameters for signing the transaction.
    * @returns {Promise<unknown>} - A promise resolving to the transaction signature.
    * @throws {Error} - If no adapter is found for the specified transaction type.
    * @returns A promise that returns the transaction signature. Note that the structure
@@ -206,9 +159,6 @@ export default class Entropy {
    * for signing. It returns the signature from the first validator after validation.
    *
    * @param {SigOps} params - The signature operation parameters.
-   * @param {string} params.sigRequestHash - The hash of the signature request.
-   * @param {string} [params.hash] - The hash type.
-   * @param {unknown[]} [params.auxilaryData] - Additional data for the signature operation.
    * @returns {Promise<Uint8Array>} - A promise resolving to the signed hash as a Uint8Array.
    * @throws {Error} - If there's an error in the signing routine.
    */

@@ -1,13 +1,7 @@
 import EventEmitter from 'node:events'
-import { Keypair } from '@polkadot/util-crypto/types'
 import { Keys } from '@polkadot/types/interfaces/types'
-import { Signer as RawPolkadotSigner } from '@polkadot/api/types'
 import { KeyringPair } from '@polkadot/keyring/types'
-
-import { ChildKey, EntropyAccountType } from './constants'
-
-export type PolkadotSigner = KeyringPair
-export type PolkadotKeys = Keys
+import { ChildKey } from './constants'
 
 /**
  * keep this in mind when dealing with polkadot:
@@ -18,16 +12,16 @@ export type PolkadotKeys = Keys
  * SS58 Address:      5Gv8YYFu8H1btvmrJy9FjjAWfb99wrhV3uhPFoNEr918utyR
 */
 
+export type PolkadotSigner = KeyringPair
+export type PolkadotKeys = Keys
 export interface Pair extends PolkadotSigner {
   secretKey: Uint8Array
 }
-
 export interface Signer {
   address: string
   pair: Pair
   verifyingKeys: string[]
 }
-
 
 export interface InternalAccounts extends EventEmitter {
   [ChildKey.REGISTRATION]: Signer
