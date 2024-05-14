@@ -94,7 +94,7 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
           console.log("in registration manager", this.verifyingKey)
           if (!this.verifyingKey) {
             console.log("No verifying key available.")
-            return
+            return registered
           }
 
           const unsubPromise = this.substrate.rpc.chain.subscribeNewHeads(

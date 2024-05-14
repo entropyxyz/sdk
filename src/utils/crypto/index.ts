@@ -8,7 +8,6 @@ import * as polkadotCryptoUtil from '@polkadot/util-crypto'
 
 import { u8aToHex } from '@polkadot/util'
 
-import * as PolkadotCryptoTypes from './types/internal';
 
 interface ResolveType {
   (value?: void | PromiseLike<void>): void
@@ -86,7 +85,7 @@ export interface CryptoLib {
   /**
    * Derives the public key from the provided secret key.
    */
-  
+
   publicKeyFromSecret: (X25519Keypair: Uint8Array) => Promise<Uint8Array>
 }
 
