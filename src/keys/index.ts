@@ -32,7 +32,7 @@ export default class Keyring {
     accounts.type = accounts.type || EntropyAccountType.MIXED_ACCOUNT 
     this.accounts = accounts as AccountsEmitter
 
-    const { seed, mnemonic } = account
+    const { seed, mnemonic } = account as KeyMaterial
     if (!seed || !mnemonic) throw new Error('Need at least a seed or mnemonic to create keys')
     const populateSeed = async () => {
       if (mnemonic) {
@@ -42,7 +42,7 @@ export default class Keyring {
       }
     }
     populateSeed()
-    if (Object.keys(account).length > 2) this.#deriveKeys(account as KeyMaterial)
+    if (Object.keys(account).length > 2) this.#deriveKeys(account as EntropyAccount)
   }
 
   /**
