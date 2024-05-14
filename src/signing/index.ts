@@ -6,7 +6,7 @@ import { EncMsg, ValidatorInfo } from '../types/internal'
 import { stripHexPrefix, sendHttpPost } from '../utils'
 import { crypto } from '../utils/crypto'
 import { AuxData } from './adapters/device-key-proxy'
-import { CryptoLib } from '../utils/crypto/types'
+import { CryptoLib, EntropyProtocolKeypair } from '../utils/crypto/types'
 
 export interface Config {
   signer: Signer
@@ -238,14 +238,15 @@ export default class SignatureRequestManager {
           (x) => x.charCodeAt(0)
         )
 
-        const publicX25519key = await crypto.fromSecretKey(
-          this.signer.pair.secretKey
-        ).publicKey
+        const entropyKeyPair: EntropyProtocolKeypair =
+          await crypto.fromSecretKey(this.signer.pair.secretKey)
+
+        const { publicKey } = entropyKeyPair
 
         const encryptedMessage = await crypto.encryptAndSign(
           this.signer.pair.secretKey,
           encoded,
-          publicX25519key,
+          publicKey,
           serverDHKey
         )
 

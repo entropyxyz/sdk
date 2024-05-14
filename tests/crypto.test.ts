@@ -41,7 +41,7 @@ test('Crypto', async (t) => {
 
     const alicePublicKey = await run(
       'publicKeyFromSecret works',
-      crypto.publicKeyFromSecret(aliceSecretKey)
+      crypto.fromSecretKey(aliceSecretKey)
     )
 
     const serverDHKey = await run(
@@ -56,7 +56,12 @@ test('Crypto', async (t) => {
 
     const result = await run(
       'encryptAndSign',
-      crypto.encryptAndSign(aliceSecretKey, serverDHKey, thresholdKey, alicePublicKey)
+      crypto.encryptAndSign(
+        aliceSecretKey,
+        serverDHKey,
+        thresholdKey,
+        alicePublicKey
+      )
     )
     const expected = await run(
       'decryptAndVerify',

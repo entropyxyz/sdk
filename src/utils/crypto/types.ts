@@ -55,7 +55,7 @@ export interface CryptoLib {
    * Derives the public key from the provided secret key.
    */
 
-  publicKeyFromSecret: (X25519Keypair: Uint8Array) => Promise<Uint8Array>
+  fromSecretKey: (X25519Keypair: Uint8Array) => Promise<EntropyProtocolKeypair>
 }
 
 export interface ResolveType {
@@ -64,4 +64,9 @@ export interface ResolveType {
 
 export interface ResObjectType {
   resolve: ResolveType
+}
+
+export interface EntropyProtocolKeypair extends Uint8Array {
+  publicKey: Uint8Array
+  secretKey: Uint8Array
 }
