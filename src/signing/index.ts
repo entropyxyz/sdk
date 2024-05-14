@@ -5,8 +5,7 @@ import { Adapter } from './adapters/types'
 import { EncMsg, ValidatorInfo } from '../types/internal'
 import { stripHexPrefix, sendHttpPost } from '../utils'
 import { crypto, CryptoLib } from '../utils/crypto'
-import { SS58Address } from '../keys/types/json'
-import { ChildKey } from '../keys/types/constants'
+import { AuxData } from './adapters/device-key-proxy'
 
 export interface Config {
   signer: Signer
@@ -28,9 +27,12 @@ export interface SigOps {
   sigRequestHash: string
   hash: string
   type?: string
-  auxiliaryData?: unknown[]
+  auxiliaryData?: AuxData[]
 }
 
+/**
+ * A class to manage the creation, signing, and verification of signature requests.
+ */
 export interface UserSignatureRequest {
   message: string
   auxiliaryData?: unknown[]
@@ -39,10 +41,16 @@ export interface UserSignatureRequest {
   hash: string
   signatureVerifyingKey: string
 }
-/**
- * `SignatureRequestManager` facilitates signature requests using Polkadot/Substrate API.
- * This manager handles transaction signing using pre-defined adapters and cryptographic utilities.
- */
+
+  /**
+   * Constructs a SignatureRequestManager instance.
+   *
+   * @param {Config} config - The configuration for the SignatureRequestManager.
+   * @param {Signer} config.signer - The Signer instance.
+   * @param {ApiPromise} config.substrate - The Substrate API instance.
+   * @param {Adapter} config.adapters - The adapters for handling different types of transactions.
+   * @param {CryptoLib} config.crypto - The cryptographic library.
+   */
 
 export default class SignatureRequestManager {
   adapters: { [key: string | number]: Adapter }
@@ -70,18 +78,24 @@ export default class SignatureRequestManager {
     }
   }
 
+  /**
+   * Retrieves the primary verifying key of the signer.
+   *
+   * @returns {string | undefined} The primary verifying key if available, otherwise undefined.
+   */
+
   get verifyingKey () {
     return this.signer.verifyingKeys ? this.signer.verifyingKeys[0] : undefined
   }
 
   /**
-   * Signs a transaction using the appropriate adapter.
+   * Signs a message using the appropriate adapter.
    *
-   * @param {SigTxOps} sigTxOps - Parameters for the transaction signature operation.
-   * @param {TxParams} sigTxOps.txParams - The parameters of the transaction to be signed.
+   * @param {SigMsgOps} params - The message and type for signing.
+   * @param {TxParams} SigMsgOps.txParams - The parameters of the transaction to be signed.
    * @param {string} [sigTxOps.type] - The type of transaction.
    * @returns {Promise<unknown>} A promise resolving with the signed transaction.
-   * @throws {Error} if an adapter for the transaction type is not found, or if the adapter lacks a preSign function.
+   * @throws {Error} If no adapter or preSign function is found for the given type.
    */
 
   async signWithAdapter({ msg, type }: SigMsgOps): Promise<unknown> {
@@ -95,10 +109,11 @@ export default class SignatureRequestManager {
 
     const { sigRequestHash, auxiliaryData } = await this.adapters[type].preSign(this.signer, msg)
 
+  
     const signature = await this.sign({
       sigRequestHash,
       hash: this.adapters[type].hash,
-      auxiliaryData,
+      auxiliaryData: auxiliaryData as AuxData[],
     })
     if (this.adapters[type].postSign) {
       return await this.adapters[type].postSign(signature, msg)
@@ -112,17 +127,11 @@ export default class SignatureRequestManager {
    * @param {SigOps} sigOps - Parameters for the signature operation.
    * @param {string} sigOps.sigRequestHash - The hash of the signature request to be signed.
    * @param {string} [sigOps.hash] - The hash type.
-   * @param {string} [sigOps.type] - The type of signature operation.
    * @param {unknown[]} [sigOps.auxilaryData] - Additional data for the signature operation.
    * @param {signatureVerifyingKey} signatureVerifyingKey - The verifying key for the signature requested
-
    * @returns {Promise<Uint8Array>} A promise resolving to the signed hash as a Uint8Array.
    */
 
-  /** 'Public Access Mode', the UserSignatureRequest given when requesting a signature with the 'sign_tx'
-   * http endpoint must now contain an additional field, signature_request_account: AccountId32. In private and
-   * permissioned modes, this must be identical to the account used to sign the SignedMessage containing the signature request.
-   * In public access mode this may be an Entropy account owned by someone else. **/
 
   async sign({
     sigRequestHash,
@@ -173,11 +182,11 @@ export default class SignatureRequestManager {
    *
    * @param {object} params - Parameters for generating the transaction request.
    * @param {string} params.strippedsigRequestHash - Stripped signature request hash.
-   * @param {unknown[]} [params.auxilaryData] - Additional data for the transaction request.
+   * @param {unknown[]} [params.auxiliaryData] - Additional data for the transaction request.
    * @param {ValidatorInfo[]} params.validatorsInfo - Information about the validators.
    * @param {string} [params.hash] - The hash type.
    * @param {signatureVerifyingKey[]} params.signatureVerifyingKey - The verifying key for the signature requested
-   * @returns {Promise<EncMsg[]>} A promise resolving to an array of encrypted messages for validators.
+   * @returns {Promise<EncMsg[]>} A promise that resolves to the formatted transaction requests.
    */
 
   async formatTxRequests({
@@ -197,7 +206,6 @@ export default class SignatureRequestManager {
       validatorsInfo.map(
         async (validator: ValidatorInfo): Promise<EncMsg> => {
           // TODO: auxilaryData full implementation
-
           const txRequestData: UserSignatureRequest = {
             message: stripHexPrefix(strippedsigRequestHash),
             auxiliaryData,
@@ -296,6 +304,7 @@ export default class SignatureRequestManager {
     const rawValidatorInfo = await Promise.all(
       stashKeys.map((stashKey) =>
         this.substrate.query.stakingExtension.thresholdServers(stashKey)
+
       )
     )
     const validatorsInfo: Array<ValidatorInfo> = rawValidatorInfo.map(

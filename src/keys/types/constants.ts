@@ -1,22 +1,20 @@
 /**
- * This describes the kinds of account that can be passed
- * to the entropy sdk class
+ * This describes the kinds of accounts that can be passed
+ * to the ENTROPY class
  * PROGRAM_DEV_ACCOUNT:
- * describes a kind of user that deploys programs and has either only the mnemonic
- * or the deploy key
- * this way we know we can lazily load registration records
+ * Describes a user that deploys programs and has either only the mnemonic
+ * or the deploy key so that we can lazily load registration records
  * ADMIN_ACCOUNT:
  * Describes an account type that has a "root key" this means
- * it registerd the program set and possibly has full controll to change
+ * it registered the program set and possibly has full control to change
  * the programs it may still be able to request signatures so dont lazy load signing
  * CONSUMER_ACCOOUNT:
- * rpersents an account type that most likley does not have access to modifiy programs
+ * repersents an account type that most likely does not have access to modify programs
  * it may be able to and long term lazly load programs but not now
  * the device key should be passed to signing and used as the "signatureRequestAccount"
  * it should also be used to encrypt the message
- *
- *
- * */
+ */
+
 export const enum EntropyAccountType {
   PROGRAM_DEV_ACCOUNT = 'PROGRAM_DEV_ACCOUNT',
   ADMIN_ACCOUNT = 'ADMIN_ACCOUNT',

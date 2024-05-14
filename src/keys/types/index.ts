@@ -4,7 +4,7 @@
 
 /**
  * All base keys types is a symbolic type to show
- * what can be in a Key object all hard types are dervied
+ * what can be in a Key object all hard types are derived
  * from this. A hard type is a required key in order to
  * generate the right accounts and signers
  * Hard key types can still have the other key but must have that specific

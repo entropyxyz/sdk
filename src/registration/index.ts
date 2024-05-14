@@ -6,8 +6,8 @@ import { Signer } from '../keys/types/internal'
 import { Address } from '../types/internal'
 
 export interface RegistrationParams {
-  programDeployer?: SS58Address
   keyVisibility?: 'Public'
+  programDeployer?: SS58Address
   programData: ProgramInstance[]
 }
 
@@ -23,25 +23,22 @@ export interface RegisteredInfo {
   versionNumber: number
 }
 
-export type KeyVisibilityInfo =
-  | { public: null }
-  | { private: null }
+export type KeyVisibilityInfo = { public: null }
 
 /**
- * The `RegistrationManager` class provides functionality for user registration using the Polkadot/Substrate API.
+ * The `RegistrationManager` class provides functionality for user registration using Entropy
  * It extends the `ExtrinsicBaseClass` to handle extrinsic submissions and utility methods.
  *
- * This class includes methods for registering a user, checking if a user is already registered, and listening for registration events.
+ * A class to manage the registration of accounts, including handling key visibility and program data.
  */
 
-
-
 export default class RegistrationManager extends ExtrinsicBaseClass {
+  
   /**
    * Constructs a new instance of the `RegistrationManager` class.
    *
    * @param {ApiPromise} substrate - The Polkadot/Substrate API instance.
-   * @param {Signer} signer - The signer used for signing transactions.
+   * @param {Signer} signer - The Signer instance.
    * @param verifyingKey - The key verification key that corresponds to a signer.
 
    */
@@ -65,10 +62,9 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
    * @param keyVisibility - Key visibility level ('Public', 'Private'). Defaults to 'Public'.
    * @param programDeployer - Account authorized to modify programs on behalf of the user.
    *
-   * @returns A promise that resolves when the user is successfully registered.
-   * @throws {Error} If the user is already registered.
+   * @returns {Promise<AccountRegisteredSuccess>} A promise that resolves to the registration success information.
+   * @throws {Error} If registration information is not found or any other error occurs during registration.
    */
-  // TO-DO: return the verfiying key have it documented that the user needs to save this otherwise that cant request sigs
 
   async register ({
     programDeployer,
@@ -88,13 +84,6 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
      * @remarks
      * This method queries Entropy to determine if a given SS58Address is registered.
      */
-
-    // const isCurrentlyRegistered = await this.checkRegistrationStatus(
-    //   this.verifyingKey
-    // )
-    // if (isCurrentlyRegistered) {
-    //   throw new Error('already registered')
-    // }
 
     const registered: Promise<AccountRegisteredSuccess> = new Promise(
       (resolve, reject) => {
@@ -129,13 +118,14 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
       }
     )
 
-    // Convert the ProgramData to PalletRegistryProgramInstance and wrap it in an array
+    // Convert the program data to the appropriate format and create a registration transaction.
     const registerTx = this.substrate.tx.registry.register(
       programDeployer,
       keyVisibility,
       programData.map((programInfo) => { return {programPointer: programInfo.programPointer, programConfig: programInfo.programConfig} })
     )
-
+    
+    // Send the registration transaction and wait for the result.
     const registrationTxResult = await this.sendAndWaitFor (registerTx,{
       section: 'registry',
       name: 'AccountRegistered',

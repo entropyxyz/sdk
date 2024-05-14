@@ -24,6 +24,7 @@ export interface AuxData extends AUX_DATA {
     /// base64-encoded signature
     signature: HexString,
     /// The context for the signature only needed in sr25519 signature type FRANKIE LOOK THIS UP 
+    // seems to be 'substrate' 
     context?: HexString,
 }
 
