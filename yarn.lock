@@ -197,15 +197,15 @@
   dependencies:
     "@jridgewell/trace-mapping" "0.3.9"
 
-"@entropyxyz/entropy-protocol-nodejs@^0.1.0":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@entropyxyz/entropy-protocol-nodejs/-/entropy-protocol-nodejs-0.1.0.tgz#2d7e1ab23b53c5c66c57ad9908d7a151479cf994"
-  integrity sha512-XNwEsXYyzZPVfeSPFXjW6KxNHH/Ky1uVwQWe4xz5tq4z47lpnUrHfIXDREsm3fDX2VvrOMDvf7Hpzu2Q40Jb/A==
+"@entropyxyz/entropy-protocol-nodejs@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@entropyxyz/entropy-protocol-nodejs/-/entropy-protocol-nodejs-0.2.0.tgz#ad8870181e43c9acd71765def06c9c53335118f5"
+  integrity sha512-LWSPgTCxdXgenJU71eyzyTr1Cy4mPe8PX0XKRLdy7l4PlMb+9WJgSFo0zItV2GHwzuLCGHhUzND9wQB7PloWzw==
 
-"@entropyxyz/entropy-protocol-web@^0.1.0":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@entropyxyz/entropy-protocol-web/-/entropy-protocol-web-0.1.0.tgz#cb712dd920ededb24f0db7854e8a7a7361e7d301"
-  integrity sha512-fYVg18GQSiB5IvQFticigOX8Df31Jot7YIQuOn6ycXwkLhhXHXSzPlC/rr5rh7PnR44Kse2oa4hG678FAaC8fA==
+"@entropyxyz/entropy-protocol-web@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@entropyxyz/entropy-protocol-web/-/entropy-protocol-web-0.2.0.tgz#b9478438386fefb4b821dbac95ec81d251d2dd55"
+  integrity sha512-lLa/lLNJnwH1R8fJvLlUn1kw7d4Rbnt9LjhUC69HKxkU69J+bw/EY6fAjBnpVbgNmqCnYpf/DBLtMyOayZeNDQ==
 
 "@esbuild/aix-ppc64@0.20.2":
   version "0.20.2"
