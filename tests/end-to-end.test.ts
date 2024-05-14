@@ -2,8 +2,6 @@ import test from 'tape'
 import { readFileSync } from 'fs'
 import * as util from '@polkadot/util'
 import Entropy from '../src'
-import { ProgramData } from '../src/programs'
-
 import {
   promiseRunner,
   spinNetworkUp,
@@ -11,6 +9,7 @@ import {
   charlieStashAddress,
   spinNetworkDown,
 } from './testing-utils'
+import { ProgramInstance } from '../src/programs'
 
 const networkType = 'two-nodes'
 let entropy: Entropy
@@ -52,7 +51,7 @@ test('End To End', async (t) => {
   // convert u8a to hex
   const programConfig = util.u8aToHex(new Uint8Array(byteArray))
 
-  const programData: ProgramData = {
+  const programData: ProgramInstance = {
     programPointer: pointer,
     programConfig: programConfig,
   }
@@ -71,15 +70,12 @@ test('End To End', async (t) => {
   await run(
     'register',
     entropy.register({
-      keyVisibility: 'Permissioned',
-      freeTx: false,
-      // initialPrograms: [{ pointer: programData.pointer, config: programData.config }],
-      initialPrograms: [programData],
-      programModAccount: charlieStashAddress,
+      programDeployer: charlieStashAddress,
+      programData: [programData]
     })
   )
   t.equal(
-    entropy.account.sigRequestKey.wallet.address,
+    entropy.keyring.getRegisteringKey(),
     charlieStashAddress,
     'got right address'
   )

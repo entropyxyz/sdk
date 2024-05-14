@@ -1,7 +1,6 @@
 import test from 'tape'
 import { crypto, cryptoIsLoaded } from '../src/utils/crypto'
 import { stripHexPrefix } from '../src/utils'
-
 import { promiseRunner, readKey } from './testing-utils'
 
 test('Crypto', async (t) => {
