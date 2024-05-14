@@ -73,7 +73,7 @@ export default class Keyring {
         path: '',
         type: name,
       }
-      const { path, seed, verifyingKeys, address, type } = this.accounts[name]
+      const { path, seed, verifyingKeys, address } = this.accounts[name]
       if (path) account.path = path
       if (seed) account.seed = seed
       accounts[name] = account
