@@ -27,7 +27,7 @@ export default class Keyring {
    * @param account - The key material and entropy account used for key generation.
    */
 
-  constructor (account: KeyMaterial & EntropyAccount) {
+  constructor (account: KeyMaterial | EntropyAccount) {
     // these are async wrapped functions of polkadot crypto
     this.crypto = crypto
     this.accounts = new EventEmitter() as AccountsEmitter
