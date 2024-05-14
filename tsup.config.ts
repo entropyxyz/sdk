@@ -7,7 +7,7 @@ export default defineConfig((options) => {
       'src/keys/index.ts',
       'src/keys/utils.ts',
       'src/utils/index.ts',
-      'src/utils/crypto.ts',
+      'src/utils/crypto/index.ts',
     ],
     replaceNodeEnv: true,
     format: ['esm', 'cjs'],
