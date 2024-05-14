@@ -103,19 +103,13 @@ export default class Entropy {
    */
 
   async register (
-    params: RegistrationParams | { account?: EntropyAccount }
+    params: RegistrationParams
   ): Promise<void> {
     await this.ready && this.substrate.isReady
     const defaultProgram = DEVICE_KEY_PROXY_PROGRAM_INTERFACE
 
     const deviceKey = this.keyring.getLazyLoadKeyProxy(ChildKey.DEVICE_KEY)
     defaultProgram.userConfig.sr25519PublicKeys.push(deviceKey)
-
-    const account = this.keyring
-
-    if (!account) {
-      throw new Error('No account provided for registration')
-    }
 
     if (
       params.programDeployer &&
