@@ -12,7 +12,6 @@ const {
   mnemonicGenerate,
   keyFromPath,
   keyExtractPath,
-  encodeAddress
 } = crypto.polkadotCrypto
 
 /**
@@ -63,7 +62,7 @@ export function generateSeed (): string {
   const mnemonic = mnemonicGenerate()
   const mnemonicMini = mnemonicToMiniSecret(mnemonic)
 
-  return mnemonic
+  return mnemonicMini
 }
 
 
