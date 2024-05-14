@@ -5,6 +5,11 @@ import { EntropyAccount, KeyMaterial, PairMaterial, Seed, UIDv4 } from './types/
 import { ChildKey, ChildKeyBasePaths, EntropyAccountType } from './types/constants'
 import { Signer } from './types/internal'
 
+export interface AccountsEmitter extends EventEmitter {
+  type: EntropyAccountType
+}
+
+
 /**
  * A utility class to allow consumers of the SDK to subscribe to key creations and "account" updates.
  */
@@ -13,7 +18,7 @@ export default class Keyring {
   // it's a unit8array if it comes from a mnemonic and a string if it comes from the user
   // The seed used to generate keys, can be a Uint8Array (from mnemonic) or a string (user-provided).
   #seed: Uint8Array | string
-  accounts: EventEmitter
+  accounts: AccountsEmitter
   crypto: Crypto
 
   /**

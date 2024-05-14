@@ -10,7 +10,7 @@
  *
  * */
 
-import { ChildKey } from "./constants"
+import { ChildKey, EntropyAccountType } from "./constants"
 
 export type UIDv4 = string
 
@@ -99,6 +99,7 @@ export interface EntropyAccount {
   mnemonic?: Mnemonic
   seed?: Seed
   verifyingKeys?: string[]
+  type: EntropyAccountType
 }
 
 /**
