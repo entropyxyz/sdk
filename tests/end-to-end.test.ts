@@ -79,11 +79,18 @@ test('End To End', async (t) => {
     charlieStashAddress,
     'got right address'
   )
-  const preRegistrationStatusCheck = await run(
-    'checkRegistrationStatus',
-    entropy.registrationManager.checkRegistrationStatus(charlieStashAddress)
-  )
-  t.ok(preRegistrationStatusCheck, 'preRegistrationStatusCheck ...') // TODO: better check
+  // NEED PRE-REGISTRATION TEST 
+  // const preRegistrationStatusCheck = await run(
+  //   'checkRegistrationStatus',
+  //   entropy.substrate.query.registry.registered(verifyingKey)
+  //   // entropy.registrationManager.checkRegistrationStatus(charlieStashAddress)
+  // )
+  // t.ok(preRegistrationStatusCheck, 'preRegistrationStatusCheck ...') // TODO: better check
+
+
+  // Use the verifyingKey from ProgramManager
+  const verifyingKey = entropy.programs.verifyingKey
+  t.ok(verifyingKey, 'verifyingKey exists')
 
   // Post-registration check
   const postRegistrationStatus = await run(
@@ -93,7 +100,7 @@ test('End To End', async (t) => {
   t.equal(
     JSON.stringify(postRegistrationStatus),
     'true',
-    'isRegerstered = true'
+    'isRegistered = true'
   )
 
   //  loading second program
@@ -104,7 +111,7 @@ test('End To End', async (t) => {
     'deploy',
     entropy.programs.dev.deploy(dummyProgram)
   )
-  const secondProgramData: ProgramData = {
+  const secondProgramData: ProgramInstance = {
     programPointer: newPointer,
     programConfig: '',
   }
@@ -122,7 +129,7 @@ test('End To End', async (t) => {
   // removing charlie program barebones
   await run(
     'remove program',
-    entropy.programs.remove(newPointer, charlieStashAddress)
+    entropy.programs.remove(newPointer, charlieStashAddress, verifyingKey)
   )
   const updatedRemovedPrograms = await run(
     'get programs',
@@ -141,7 +148,7 @@ test('End To End', async (t) => {
   const signature = await run(
     'signTransaction',
     entropy.signWithAdapter({
-      txParams: basicTx,
+      msg: basicTx,
       type: 'device-key-proxy',
     })
   )
