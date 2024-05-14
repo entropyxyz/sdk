@@ -1,6 +1,6 @@
 How "Key mangment should be done in the sdk"
 
-the user hold onto the seed every class will create their own key via a set derivation path except for the device key. the dervation path for the device key should be by
+the user hold onto the seed every class will create their own key via a set derivation path except for the device key. the derivation path for the device key should be by
 Derivation Path
 ```ts
 //store that private key
@@ -41,7 +41,7 @@ this kind of account type looks like this:
 {
   seed
   deviceSeed
-  deviceDervationPath:
+  deviceDerivationPath:
   //this comes from registering a program set
   verfiyingKeys?: string[]
 }
@@ -58,7 +58,7 @@ this is the bare minimum for signing new device keys need to be authorized by th
   seed:
   registeringAdress?:
   verfiyingKeys: string[]
-  dervationPath:
+  derivationPath:
 }
 ```
 
@@ -98,7 +98,7 @@ an entropy account state as a whole:
   seed?:
   // semi ephemeral
   deviceSeed?:
-  deviceDervation?:
+  deviceDerivation?:
 }
 ```
 
