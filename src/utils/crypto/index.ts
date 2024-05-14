@@ -42,6 +42,9 @@ export const crypto: CryptoLib = new Proxy({} as CryptoLib, {
       if (cryptoLib.X25519Keypair[key]) {
         return cryptoLib.X25519Keypair[key](...params)
       }
+      if (cryptoLib.Hpke[key]) {
+        return cryptoLib.Hpke[key](...params)
+      }
       if (cryptoLib[key]) {
         return cryptoLib[key](...params)
       }
