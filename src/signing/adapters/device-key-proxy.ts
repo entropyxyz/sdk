@@ -1,5 +1,3 @@
-import { keccak256 } from 'ethereum-cryptography/keccak.js'
-import { Transaction } from 'ethereumjs-tx'
 import { HexString } from '../../keys/types/json'
 import { Signer } from '../../keys/types/internal'
 import { u8aToHex } from '@polkadot/util'
