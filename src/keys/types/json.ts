@@ -36,7 +36,7 @@ export type DerivationPath = string
  * */
 export type Mnemonic = string
 
-export interface KeyMaterial extends HexSeedMaterial, MnemonicSeedMaterial {}
+export type KeyMaterial = HexSeedMaterial | MnemonicSeedMaterial
 
 export interface HexSeedMaterial {
   seed: Seed

@@ -1,7 +1,7 @@
 import * as readline from 'readline'
 
-import Entropy, { EntropyAccount } from '../../src'
-import { getWallet } from '../../src/keys'
+import Entropy, { wasmGlobalsReady } from '../../src'
+import Keyring from '../../src/keys'
 import { charlieStashSeed } from './constants'
 
 export * from './constants'
@@ -12,17 +12,13 @@ export async function createTestAccount(
   entropy: Entropy,
   seed = charlieStashSeed
 ) {
-  const signer = await getWallet(seed)
 
-  const entropyAccount: EntropyAccount = {
-    sigRequestKey: signer,
-    programModKey: signer,
-    programDeployKey: signer,
-  }
+  await wasmGlobalsReady()
 
-  await sleep(process.env.GITHUB_WORKSPACE ? 20_000 : 5_000)
+  const keyring = new Keyring({ seed })
+
   // HACK: (mix) locally 5s is sufficient... github crashes out?
-  entropy = new Entropy({ account: entropyAccount })
+  entropy = new Entropy({ keyring })
   await entropy.ready.catch((err) => {
     console.log('createTestAccount failed', err)
     throw err

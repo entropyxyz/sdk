@@ -2,7 +2,7 @@ import { ApiPromise, WsProvider } from '@polkadot/api'
 import { isValidSubstrateAddress } from './utils'
 import RegistrationManager, { RegistrationParams } from './registration'
 import SignatureRequestManager, { SigOps, SigMsgOps } from './signing'
-import { crypto, } from './utils/crypto'
+import { crypto, loadCryptoLib } from './utils/crypto'
 import { Adapter } from './signing/adapters/types'
 import ProgramManager from './programs'
 import Keyring from './keys'
@@ -11,6 +11,7 @@ import { EntropyAccount } from './keys/types/json'
 import { ChildKey } from './keys/types/constants'
 import { DEVICE_KEY_PROXY_PROGRAM_INTERFACE } from './signing/adapters/device-key-proxy'
 
+export const wasmGlobalsReady = loadCryptoLib
 
 export interface EntropyOpts {
   /** keyring class instance object. */

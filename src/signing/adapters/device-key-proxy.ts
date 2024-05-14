@@ -63,6 +63,8 @@ export async function preSign (deviceKey: Signer, message: unknown): Promise<Pre
     publicKeyType: 'sr25519',
     publicKey: publicKey,
     signature: sigRequestHash,
+    // this needs to change before main net and needs to match core ideally it is `'entropy'`
+    context: 'substrate',
   }]
 
   return { sigRequestHash, auxiliaryData }
