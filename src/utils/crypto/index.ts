@@ -39,8 +39,8 @@ export const crypto: CryptoLib = new Proxy({} as CryptoLib, {
       }
       if (key === 'polkadotCrypto') return polkadotCryptoUtil
       if (key === 'verifySignature') return verifySignature
-      if (cryptoLib.Hpke[key]) {
-        return cryptoLib[key](...params)
+      if (cryptoLib.X25519Keypair[key]) {
+        return cryptoLib.X25519Keypair[key](...params)
       }
       if (cryptoLib[key]) {
         return cryptoLib[key](...params)
@@ -90,7 +90,6 @@ export async function loadCryptoLib () {
   } else {
     cryptoLib = await import('@entropyxyz/entropy-protocol-web')
   }
-
   await cryptoWaitReady()
   isImported = true
   res.resolve()

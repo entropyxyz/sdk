@@ -1,8 +1,12 @@
 export interface CryptoLib {
+  // fuck-polkadot
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  // fuck-polkadot
   polkadotCrypto: any
+  /**
+   * Derives the public key from the provided secret key.
+   */
+  fromSecretKey: (X25519Keypair: Uint8Array) => Promise<EntropyProtocolKeypair>
   verifySignature: (
     message: string,
     signature: string,
@@ -50,12 +54,6 @@ export interface CryptoLib {
    */
 
   decryptAndVerify: (X25519Keypair: Uint8Array, msg: string) => Promise<string>
-
-  /**
-   * Derives the public key from the provided secret key.
-   */
-
-  fromSecretKey: (X25519Keypair: Uint8Array) => Promise<EntropyProtocolKeypair>
 }
 
 export interface ResolveType {
