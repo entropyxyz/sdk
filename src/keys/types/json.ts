@@ -67,7 +67,7 @@ export type Mnemonic = string
  * Represents the key material, which can be either a hexadecimal seed or a mnemonic seed.
  */
 
-export type KeyMaterial = HexSeedMaterial | MnemonicSeedMaterial
+export type KeyMaterial = HexSeedMaterial & MnemonicSeedMaterial
 
 /**
  * Represents key material using a hexadecimal seed.

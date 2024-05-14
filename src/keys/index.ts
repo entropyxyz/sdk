@@ -4,6 +4,7 @@ import * as utils from './utils'
 import { EntropyAccount, KeyMaterial, PairMaterial, Seed, UIDv4 } from './types/json'
 import { ChildKey, ChildKeyBasePaths, EntropyAccountType } from './types/constants'
 import { Signer } from './types/internal'
+import { AccountsEmitter } from './types'
 
 
 
@@ -27,9 +28,9 @@ export default class Keyring {
   constructor (account: KeyMaterial | EntropyAccount) {
     // these are async wrapped functions of polkadot crypto
     this.crypto = crypto
-    const accounts = new EventEmitter()
-    accounts.type = account.type || EntropyAccountType.MIXED_ACCOUNT
-    this.accounts = accounts
+    const accounts = new EventEmitter() as AccountsEmitter
+    accounts.type = accounts.type || EntropyAccountType.MIXED_ACCOUNT 
+    this.accounts = accounts as AccountsEmitter
 
     const { seed, mnemonic } = account
     if (!seed || !mnemonic) throw new Error('Need at least a seed or mnemonic to create keys')
@@ -41,7 +42,7 @@ export default class Keyring {
       }
     }
     populateSeed()
-    if (Object.keys(account).length > 2) this.#deriveKeys(account)
+    if (Object.keys(account).length > 2) this.#deriveKeys(account as KeyMaterial)
   }
 
   /**

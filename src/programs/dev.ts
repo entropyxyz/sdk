@@ -90,7 +90,7 @@ export default class ProgramDev extends ExtrinsicBaseClass {
       util.u8aToHex(new Uint8Array(program)), // new program
       formatedConfig, // config schema
       auxiliaryDataSchema, // auxilary config schema
-      oracleDataPointer // oracle data pointer
+      // oracleDataPointer // oracle data pointer
     )
     const record = await this.sendAndWaitFor(tx, {
       section: 'programs',
