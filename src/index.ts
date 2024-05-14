@@ -6,7 +6,6 @@ import { crypto, loadCryptoLib } from './utils/crypto'
 import { Adapter } from './signing/adapters/types'
 import ProgramManager from './programs'
 import Keyring from './keys'
-import { EntropyAccount } from './keys/types/json'
 import { ChildKey } from './keys/types/constants'
 import { DEVICE_KEY_PROXY_PROGRAM_INTERFACE } from './signing/adapters/device-key-proxy'
 
