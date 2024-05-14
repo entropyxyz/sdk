@@ -38,8 +38,8 @@ export const crypto: CryptoLib = new Proxy({} as CryptoLib, {
       }
       if (key === 'polkadotCrypto') return polkadotCryptoUtil
       if (key === 'verifySignature') return verifySignature
-      if (cryptoLib.Hpke[key]) {
-        return cryptoLib.Hpke[key](...params)
+      if (cryptoLib[key]) {
+        return cryptoLib[key](...params)
       }
       if (!cryptoLib[key]) {
         throw new Error(

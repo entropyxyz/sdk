@@ -238,9 +238,9 @@ export default class SignatureRequestManager {
           (x) => x.charCodeAt(0)
         )
 
-        const publicX25519key = await crypto.publicKeyFromSecret(
+        const publicX25519key = await crypto.fromSecretKey(
           this.signer.pair.secretKey
-        )
+        ).publicKey
 
         const encryptedMessage = await crypto.encryptAndSign(
           this.signer.pair.secretKey,
