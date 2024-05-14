@@ -103,7 +103,7 @@ export default class Entropy {
    */
 
   async register (
-    params: RegistrationParams & { account?: EntropyAccount }
+    params: RegistrationParams | { account?: EntropyAccount }
   ): Promise<void> {
     await this.ready && this.substrate.isReady
     const defaultProgram = DEVICE_KEY_PROXY_PROGRAM_INTERFACE

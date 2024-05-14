@@ -82,7 +82,7 @@ export interface HexSeedMaterial {
  * Represents key material using a mnemonic seed.
  */
 export interface MnemonicSeedMaterial {
-  menomnic: Mnemonic
+  mnemonic: Mnemonic
   // one day this would be nice to have
   // path?: Path
 }

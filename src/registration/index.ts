@@ -6,7 +6,6 @@ import { Signer } from '../keys/types/internal'
 import { Address } from '../types/internal'
 
 export interface RegistrationParams {
-  keyVisibility?: 'Public'
   programDeployer?: SS58Address
   programData: ProgramInstance[]
 }
@@ -25,6 +24,11 @@ export interface RegisteredInfo {
 
 export type KeyVisibilityInfo = { public: null }
 
+/**
+ * the sdk currently only supports 'public' account types from core
+ * */
+
+const keyVisibility = 'Public'
 /**
  * The `RegistrationManager` class provides functionality for user registration using Entropy
  * It extends the `ExtrinsicBaseClass` to handle extrinsic submissions and utility methods.
@@ -68,7 +72,6 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
 
   async register ({
     programDeployer,
-    keyVisibility = 'Public',
     programData
   }: RegistrationParams): Promise<AccountRegisteredSuccess> {
 

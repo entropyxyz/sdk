@@ -78,9 +78,10 @@ export default class ProgramDev extends ExtrinsicBaseClass {
 
   async deploy(
     program: ArrayBuffer,
-    configurationSchema: unknown,
-    auxiliaryDataSchema: unknown,
-    oracleDataPointer: []
+    configurationSchema?: unknown,
+    auxiliaryDataSchema?: unknown,
+    // not quite supported yet
+    // oracleDataPointer?: []
   ): Promise<HexString> {
     // converts program and configurationInterface into a palatable format
     const formatedConfig = JSON.stringify(configurationSchema)

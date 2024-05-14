@@ -22,7 +22,7 @@ const {
  * @returns {Promise<Uint8Array>} The mini secret seed.
  */
 
-export async function seedFromMnemonic (m) {
+export async function seedFrommnemonic (m) {
   return mnemonicToMiniSecret(m)
 }
 

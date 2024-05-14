@@ -55,11 +55,9 @@ test('Register: handle user registration', async (t) => {
   ({ entropy, pointer } = await testSetup(t))
   t.teardown(testTeardown)
 
-  await entropy.register({
-    programModAccount: charlieStashAddress,
-    keyVisibility: 'Permissioned',
-    freeTx: false,
-    initialPrograms: [{ programPointer: pointer, programConfig: '0x' }],
+  await entropy.registrationManager.register({
+    programDeployer: charlieStashAddress,
+    programData: [{ programPointer: pointer, programConfig: '0x' }],
   })
 
   const isRegisteredAfter = await entropy.isRegistered(charlieStashAddress)
@@ -75,19 +73,16 @@ test('Register: not allow re-registration', async (t) => {
 
   await run(
     'register',
-    entropy.register({
-      initialPrograms: [{ programPointer: pointer, programConfig: '0x' }],
+    entropy.registrationManager.register({
+      programDeployer: entropy.keyring.getRegisteringKey().address,
+      programData: [{ programPointer: pointer, programConfig: '0x' }],
     })
   )
 
-  // await sleep(30_000)
-  // QUESTION: is it not enough to await to trust registration has really happened?
-
-  await entropy
+  await entropy.registrationManager
     .register({
-      programModAccount: charlieStashAddress,
-      freeTx: true,
-      initialPrograms: [{ programPointer: pointer, programConfig: '0x' }],
+      programDeployer: charlieStashAddress,
+      programData: [{ programPointer: pointer, programConfig: '0x' }],
     })
     .then(() => t.fail('throws error on duplicate registrations'))
     .catch((err) => t.match(err.message, /already registered/))

@@ -144,9 +144,9 @@ test('End To End', async (t) => {
 
   const signature = await run(
     'signTransaction',
-    entropy.signTransaction({
+    entropy.signWithAdapter({
       txParams: basicTx,
-      type: 'eth',
+      type: 'device-key-proxy',
     })
   )
 

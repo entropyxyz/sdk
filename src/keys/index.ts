@@ -5,9 +5,6 @@ import { EntropyAccount, KeyMaterial, PairMaterial, Seed, UIDv4 } from './types/
 import { ChildKey, ChildKeyBasePaths, EntropyAccountType } from './types/constants'
 import { Signer } from './types/internal'
 
-export interface AccountsEmitter extends EventEmitter {
-  type: EntropyAccountType
-}
 
 
 /**
@@ -37,7 +34,7 @@ export default class Keyring {
     if (!seed || !mnemonic) throw new Error('Need at least a seed or mnemonic to create keys')
     const populateSeed = async () => {
       if (mnemonic) {
-        this.#seed = await utils.seedFromMnemonic(mnemonic)
+        this.#seed = await utils.seedFrommnemonic(mnemonic)
       } else {
         this.#seed = seed
       }
