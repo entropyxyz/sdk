@@ -30,8 +30,9 @@ export default class Keyring {
   constructor (account: KeyMaterial & EntropyAccount) {
     // these are async wrapped functions of polkadot crypto
     this.crypto = crypto
-    this.accounts = new EventEmitter()
+    this.accounts = new EventEmitter() as AccountsEmitter
     this.accounts.type = account.type || EntropyAccountType.MIXED_ACCOUNT
+
     const { seed, mnemonic } = account
     if (!seed || !mnemonic) throw new Error('Need at least a seed or mnemonic to create keys')
     const populateSeed = async () => {
