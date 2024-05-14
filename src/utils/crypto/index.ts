@@ -1,11 +1,11 @@
 import {
   cryptoWaitReady,
   decodeAddress,
-  signatureVerify
+  signatureVerify,
 } from '@polkadot/util-crypto'
 
 import * as polkadotCryptoUtil from '@polkadot/util-crypto'
-import { CryptoLib, ResObjectType, ResolveType } from './types'
+import { CryptoLib, ResObjectType } from './types'
 import { u8aToHex } from '@polkadot/util'
 
 let isImported = false
@@ -24,7 +24,6 @@ loadCryptoLib()
  * @see {@link https://www.npmjs.com/package/@entropyxyz/entropy-protocol-nodejs}
  */
 
-
 export const cryptoIsLoaded: Promise<void> = new Promise((resolve) => {
   res.resolve = resolve
 })
@@ -34,10 +33,15 @@ export const crypto: CryptoLib = new Proxy({} as CryptoLib, {
     return async (...params) => {
       await cryptoIsLoaded
       if (!cryptoLib) {
-        throw new Error('cryptoLib loaded incorrectly. Did you await the wasmGlobalsReady function?')
+        throw new Error(
+          'cryptoLib loaded incorrectly. Did you await the wasmGlobalsReady function?'
+        )
       }
       if (key === 'polkadotCrypto') return polkadotCryptoUtil
       if (key === 'verifySignature') return verifySignature
+      if (cryptoLib.Hpke[key]) {
+        return cryptoLib[key](...params)
+      }
       if (cryptoLib[key]) {
         return cryptoLib[key](...params)
       }
