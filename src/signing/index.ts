@@ -4,8 +4,9 @@ import { defaultAdapters } from './adapters/default'
 import { Adapter } from './adapters/types'
 import { EncMsg, ValidatorInfo } from '../types/internal'
 import { stripHexPrefix, sendHttpPost } from '../utils'
-import { crypto, CryptoLib } from '../utils/crypto'
+import { crypto } from '../utils/crypto'
 import { AuxData } from './adapters/device-key-proxy'
+import { CryptoLib } from '../utils/crypto/types'
 
 export interface Config {
   signer: Signer
@@ -43,14 +44,14 @@ export interface UserSignatureRequest {
 }
 
 /**
-   * Constructs a SignatureRequestManager instance.
-   *
-   * @param {Config} config - The configuration for the SignatureRequestManager.
-   * @param {Signer} config.signer - The Signer instance.
-   * @param {ApiPromise} config.substrate - The Substrate API instance.
-   * @param {Adapter} config.adapters - The adapters for handling different types of transactions.
-   * @param {CryptoLib} config.crypto - The cryptographic library.
-   */
+ * Constructs a SignatureRequestManager instance.
+ *
+ * @param {Config} config - The configuration for the SignatureRequestManager.
+ * @param {Signer} config.signer - The Signer instance.
+ * @param {ApiPromise} config.substrate - The Substrate API instance.
+ * @param {Adapter} config.adapters - The adapters for handling different types of transactions.
+ * @param {CryptoLib} config.crypto - The cryptographic library.
+ */
 
 export default class SignatureRequestManager {
   adapters: { [key: string | number]: Adapter }
@@ -106,10 +107,11 @@ export default class SignatureRequestManager {
         `Adapter for type: ${type} has no preSign function. Adapters must have a preSign function`
       )
 
+    const { sigRequestHash, auxiliaryData } = await this.adapters[type].preSign(
+      this.signer,
+      msg
+    )
 
-    const { sigRequestHash, auxiliaryData } = await this.adapters[type].preSign(this.signer, msg)
-
-  
     const signature = await this.sign({
       sigRequestHash,
       hash: this.adapters[type].hash,
@@ -132,7 +134,6 @@ export default class SignatureRequestManager {
    * @returns {Promise<Uint8Array>} A promise resolving to the signed hash as a Uint8Array.
    */
 
-
   async sign ({
     sigRequestHash,
     hash,
@@ -147,7 +148,6 @@ export default class SignatureRequestManager {
 
     const signatureVerifyingKey = this.verifyingKey
 
-  
     const txRequests: Array<EncMsg> = await this.formatTxRequests({
       strippedsigRequestHash,
       auxiliaryData,
@@ -194,7 +194,7 @@ export default class SignatureRequestManager {
     auxiliaryData,
     validatorsInfo,
     hash,
-    signatureVerifyingKey
+    signatureVerifyingKey,
   }: {
     strippedsigRequestHash: string
     auxiliaryData?: unknown[]
@@ -203,55 +203,59 @@ export default class SignatureRequestManager {
     signatureVerifyingKey: string
   }): Promise<EncMsg[]> {
     return await Promise.all(
-      validatorsInfo.map(
-        async (validator: ValidatorInfo): Promise<EncMsg> => {
-          // TODO: auxilaryData full implementation
-          const txRequestData: UserSignatureRequest = {
-            message: stripHexPrefix(strippedsigRequestHash),
-            auxiliaryData,
-            validatorsInfo: validatorsInfo,
-            timestamp: this.getTimeStamp(),
-            hash,
-            signatureVerifyingKey
-          }
-          if (auxiliaryData) txRequestData.auxiliaryData = auxiliaryData.map(i => JSON.stringify(i))
-          const serverDHKey = await crypto.fromHex(validator.x25519_public_key)
-
-          const formattedValidators = await Promise.all(
-            validatorsInfo.map(async (v) => {
-              return {
-                ...v,
-                x25519_public_key: Array.from(
-                  await crypto.fromHex(v.x25519_public_key)
-                ),
-              }
-            })
+      validatorsInfo.map(async (validator: ValidatorInfo): Promise<EncMsg> => {
+        // TODO: auxilaryData full implementation
+        const txRequestData: UserSignatureRequest = {
+          message: stripHexPrefix(strippedsigRequestHash),
+          auxiliaryData,
+          validatorsInfo: validatorsInfo,
+          timestamp: this.getTimeStamp(),
+          hash,
+          signatureVerifyingKey,
+        }
+        if (auxiliaryData)
+          txRequestData.auxiliaryData = auxiliaryData.map((i) =>
+            JSON.stringify(i)
           )
+        const serverDHKey = await crypto.fromHex(validator.x25519_public_key)
 
-          const encoded = Uint8Array.from(
-            JSON.stringify({
-              ...txRequestData,
-              validators_info: formattedValidators,
-            }),
-            (x) => x.charCodeAt(0)
-          )
+        const formattedValidators = await Promise.all(
+          validatorsInfo.map(async (v) => {
+            return {
+              ...v,
+              x25519_public_key: Array.from(
+                await crypto.fromHex(v.x25519_public_key)
+              ),
+            }
+          })
+        )
 
-          const publicX25519key = await crypto.publicKeyFromSecret(this.signer.pair.secretKey)
+        const encoded = Uint8Array.from(
+          JSON.stringify({
+            ...txRequestData,
+            validators_info: formattedValidators,
+          }),
+          (x) => x.charCodeAt(0)
+        )
 
-          const encryptedMessage = await crypto.encryptAndSign(
-            this.signer.pair.secretKey,
-            encoded,
-            publicX25519key,
-            serverDHKey
-          )
+        const publicX25519key = await crypto.publicKeyFromSecret(
+          this.signer.pair.secretKey
+        )
 
-          return {
-            msg: encryptedMessage,
-            url: validator.ip_address,
-            tss_account: validator.tss_account,
-            signature_verifying_key: signatureVerifyingKey
-          }
-        })
+        const encryptedMessage = await crypto.encryptAndSign(
+          this.signer.pair.secretKey,
+          encoded,
+          publicX25519key,
+          serverDHKey
+        )
+
+        return {
+          msg: encryptedMessage,
+          url: validator.ip_address,
+          tss_account: validator.tss_account,
+          signature_verifying_key: signatureVerifyingKey,
+        }
+      })
     )
   }
 
@@ -304,7 +308,6 @@ export default class SignatureRequestManager {
     const rawValidatorInfo = await Promise.all(
       stashKeys.map((stashKey) =>
         this.substrate.query.stakingExtension.thresholdServers(stashKey)
-
       )
     )
     const validatorsInfo: Array<ValidatorInfo> = rawValidatorInfo.map(

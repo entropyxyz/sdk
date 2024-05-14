@@ -3,7 +3,11 @@ export interface CryptoLib {
   // @ts-ignore
   // fuck-polkadot
   polkadotCrypto: any
-  verifySignature: (message: string, signature: string, address: string) => Promise<boolean>
+  verifySignature: (
+    message: string,
+    signature: string,
+    address: string
+  ) => Promise<boolean>
 
   fromHex: (input: string) => Promise<Uint8Array>
 
@@ -21,7 +25,7 @@ export interface CryptoLib {
    * @returns
    */
 
-  generateSigningKey: ( sr25519SigningKey: Uint8Array) => Promise<Uint8Array>
+  generateSigningKey: (sr25519SigningKey: Uint8Array) => Promise<Uint8Array>
 
   /**
    * Encrypt and sign a message. Takes an sr25519 secret key, a payload to encrypt, and the recipient's publicX25519key,
@@ -54,11 +58,10 @@ export interface CryptoLib {
   publicKeyFromSecret: (X25519Keypair: Uint8Array) => Promise<Uint8Array>
 }
 
-
-interface ResolveType {
+export interface ResolveType {
   (value?: void | PromiseLike<void>): void
 }
 
-interface ResObjectType {
+export interface ResObjectType {
   resolve: ResolveType
 }
