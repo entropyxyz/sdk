@@ -158,18 +158,16 @@ export default class Keyring {
     return this.accounts[ChildKey.PROGRAM_DEV].signer
   }
 
-
-
   getChildSigner (childKey: ChildKey): Signer {
     switch (childKey) {
-      case ChildKey.DEVICE_KEY:
-        return this.getDeviceKey()
-      case ChildKey.REGISTRATION:
-        return this.getRegisteringKey()
-      case ChildKey.PROGRAM_DEV:
-        return this.getProgramDevKey()
-      default:
-        throw new Error(`unknown child key: ${childKey}`)
+    case ChildKey.DEVICE_KEY:
+      return this.getDeviceKey()
+    case ChildKey.REGISTRATION:
+      return this.getRegisteringKey()
+    case ChildKey.PROGRAM_DEV:
+      return this.getProgramDevKey()
+    default:
+      throw new Error(`unknown child key: ${childKey}`)
     }
   }
 
@@ -208,11 +206,14 @@ export default class Keyring {
    */
 
   #createKey ({ type, uuid }: { type: ChildKey; seed?: Seed; uuid?: UIDv4 }) {
+    console.log('uuid', uuid)
     const path = uuid
       ? `${ChildKeyBasePaths[type]}${uuidv4()}`
       : ChildKeyBasePaths[type]
     this.#formatAccount({ path, type })
-    this.accounts[type] =
-    this.accounts.emit('account-update', this.getAccount())
+    this.accounts[type] = this.accounts.emit(
+      'account-update',
+      this.getAccount()
+    )
   }
 }
