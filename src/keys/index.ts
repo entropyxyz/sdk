@@ -12,6 +12,7 @@ import {
   ChildKey,
   ChildKeyBasePaths,
   EntropyAccountType,
+  EntropyAccountContextType,
 } from './types/constants'
 import { Signer } from './types/internal'
 import { AccountsEmitter } from './types'
@@ -34,23 +35,18 @@ export default class Keyring {
    */
 
   constructor (account: KeyMaterial | EntropyAccount) {
-    // these are async wrapped functions of polkadot crypto
-    this.crypto = crypto
-    const accounts = new EventEmitter() as AccountsEmitter
-    accounts.type = accounts.type || EntropyAccountType.MIXED_ACCOUNT
-    this.accounts = accounts as AccountsEmitter
 
     const { seed, mnemonic } = account as KeyMaterial
     if (!seed && !mnemonic)
       throw new Error('Need at least a seed or mnemonic to create keys')
     if (mnemonic) {
-      this.#seed = utils.seedFrommnemonic(mnemonic)
+      this.#seed = utils.seedFromMnemonic(mnemonic)
     } else {
       this.#seed = seed
     }
-    // Frankie is this what you were expecting with this rewrite?
-    const shouldDeriveKeys = Object.keys(account).length > 2
-    if (shouldDeriveKeys) this.#deriveKeys(account as EntropyAccount)
+    const accountsJson = this.#formatAccounts(account)
+    this.accounts = this.#createFunctionalAccounts(accountsJson)
+
   }
 
   /**
@@ -95,25 +91,89 @@ export default class Keyring {
     return accounts
   }
 
+
+  #createFunctionalAccounts (masterAccountView: EntropyAccount) {
+    const accounts = new EventEmitter() as AccountsEmitter
+    accounts.type = accounts.type || EntropyAccountType.MIXED_ACCOUNT
+    accounts.asJson = masterAccountView
+    Object.keys(masterAccountView).forEach((name) =>{
+      if (name) {
+        const { seed, derivation, address } = masterAccountView[name]
+        if (!seed) throw new TypeError('malformed account: missing seed')
+        const functionalAccount = {
+          seed,
+          derivation,
+          address,
+          signer: generateKeyPairFromSeed(seed, derivation),
+        }
+        accounts[name] = functionalAccount
+      }
+    })
+  }
+
+
   /**
    * Formats and stores account information.
    *
    * @param account - The pair material for the account.
    */
 
-  #formatAccount (account: PairMaterial) {
-    const name = account.type
-    const derivationPath = account.path
-    const seed = account.seed
-    this.accounts[name] = utils.generateKeyPairFromSeed(
-      seed || this.#seed.toString(),
-      derivationPath
-    )
-    const verifyingKeys = account.verifyingKeys
-    this.accounts[name].path = derivationPath
-    if (seed) this.accounts[name].seed = seed
-    if (verifyingKeys) this.accounts[name].verifyingKeys = verifyingKeys
-    this.accounts[name].type = name
+  #jsonAccountCreator (pairMaterial: unknown, debug): PairMaterial {
+    if (!pairMaterial) throw new TypeError('nothing to format please try again')
+    const { seed, address, type } = pairMaterial
+    const path = debug ? '' : getPath({type, uid: uuidv4()})
+    const nonDebugSeed = seed.includes('/') ? seed : `${seed}${path}`
+    const jsonAccount = {
+      seed: debug? seed : nonDebugSeed
+      path,
+      address
+    }
+
+    return jsonAccount
+
+  }
+
+  #formatAccounts (accounts: PairMaterial | EntropyAccount): EntropyAccount {
+    const { seed, mnemonic, debug } = accounts
+    const entropyAccountsJson = {
+      debug,
+      seed: seed ? seed : seedFromMnemonic(mnemonic)
+    }
+
+    if (debug) {
+      Object.keys(ChildKey).forEach((key) => {
+        entropyAccountsJson[key] = this.#jsonAccountCreator({seed: entropyAccountsJson.seed}, debug)
+        if (accounts[key] && accounts[key].verifyingKeys ) entropyAccountsJson[key].verifyingKeys = accounts.verifyingKeys
+        else entropyAccountsJson[key].verifyingKeys = []
+        entropyAccountsJson[key].type = key
+        entropyAccountsJson.userContext = EntropyAccountContectType[entropyAccountsJson.type]
+      })
+      Object.keys(accounts).forEach((key) => {
+        if(entropyAccountsJson[type]) return
+        entropyAccountsJson[key] = this.#jsonAccountCreator(accounts[key], debug)
+        if (accounts[key] && accounts[key].verifyingKeys ) entropyAccountsJson[key].verifyingKeys = accounts.verifyingKeys
+        else entropyAccountsJson[key].verifyingKeys = []
+        entropyAccountsJson[key].type = key
+        entropyAccountsJson.userContext = EntropyAccountContectType[entropyAccountsJson.type]
+      })
+    } else {
+      Object.keys(ChildKey).forEach((key) => {
+        entropyAccountsJson[key] = this.#jsonAccountCreator({seed: entropyAccountsJson.seed, key}, debug)
+        if (accounts[key] && accounts[key].verifyingKeys ) entropyAccountsJson[key].verifyingKeys = accounts.verifyingKeys
+        else entropyAccountsJson[key].verifyingKeys = []
+        entropyAccountsJson[key].type = key
+        entropyAccountsJson.userContext = EntropyAccountContextType[entropyAccountsJson.type]
+      })
+      Object.keys(accounts).forEach((key) => {
+        if(entropyAccountsJson[type]) return
+        entropyAccountsJson[key] = this.#jsonAccountCreator(accounts[key], debug)
+        if (accounts[key] && accounts[key].verifyingKeys ) entropyAccountsJson[key].verifyingKeys = accounts.verifyingKeys
+        else entropyAccountsJson[key].verifyingKeys = []
+        entropyAccountsJson[key].type = key
+        entropyAccountsJson.userContext = EntropyAccountContectType[entropyAccountsJson.type]
+      })
+    }
+    return entropyAccountsJson
   }
 
   /**
@@ -154,6 +214,7 @@ export default class Keyring {
 
   getProgramDevKey (): Signer {
     const type = ChildKey.PROGRAM_DEV
+    console.log('accounts:', this.accounts, this.getAccount())
     if (this.accounts[ChildKey.PROGRAM_DEV]) {
       return this.accounts[ChildKey.PROGRAM_DEV].signer
     }
@@ -187,7 +248,7 @@ export default class Keyring {
     // if (!this.accounts[childKey]) {
     //   this.accounts[childKey] = {}
     // }
-    return new Proxy(this.accounts[childKey] || {}, {
+    return new Proxy(this.accounts || {}, {
       get: (account, key) => {
         const signer = this.getChildSigner(childKey)
         if (key === 'verifyingKeys') {
