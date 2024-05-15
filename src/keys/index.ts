@@ -210,6 +210,7 @@ export default class Keyring {
     const path = uuid
       ? `${ChildKeyBasePaths[type]}${uuid}`
       : ChildKeyBasePaths[type]
+    console.log('Constructed path:', path)
     this.#formatAccount({ path, type })
     this.accounts[type] = this.accounts.emit(
       'account-update',

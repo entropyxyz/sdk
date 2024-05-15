@@ -38,7 +38,7 @@ export enum ChildKey {
  */
 
 export enum ChildKeyBasePaths {
-  registration = '//entropy//registration///',
+  registration = '//entropy//registration//',
   programDev = '//entropy//program-dev',
-  deviceKey = '//entropy//device-key///',
+  deviceKey = '//entropy//device-key//',
 }
