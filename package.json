@@ -9,17 +9,30 @@
     "dist/keys/utils.ts",
     "dist/utils"
   ],
-  "exports": {
-    ".": "./dist/index.js",
-    "./keys": "./dist/keys/index.js",
-    "./keys/utils": "./dist/keys/utils.js",
-    "./cypto-utils": "./dist/utils/crypto.js",
-    "./gen-utils": "./dist/utils/index.js"
-  },
   "type": "module",
+  "exports": {
+    ".": {
+      "module": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "default": "./dist/index.js"
+    },
+    "./keys": {
+      "module": "./dist/keys/index.js",
+      "require": "./dist/keys/index.cjs",
+      "default": "./dist/keys/index.js"
+    },
+    "./crypto-utils": {
+      "module": "./dist/utils/crypto.js",
+      "require": "./dist/utils/crypto.cjs",
+      "default": "./dist/utils/crypto.js"
+    },
+    "./gen-utils": {
+      "module": "./dist/utils/index.js",
+      "require": "./dist/utils/index.cjs",
+      "default": "./dist/utils/index.js"
+    }
+  },
   "types": "dist/index.d.ts",
-  "module": "dist/index.js",
-  "browser": "dist/index.js",
   "scripts": {
     "test": "yarn test:setup && yarn test:types && yarn test:ts && yarn test:only",
     "test:setup": "./dev/bin/check-tools.sh && yarn removedb",
@@ -90,5 +103,6 @@
   "lint-staged": {
     "*.ts": "eslint --fix",
     "*.{js,ts,json,md}": "prettier --write"
-  }
+  },
+  "packageManager": "yarn@1.22.1"
 }
