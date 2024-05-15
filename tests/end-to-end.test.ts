@@ -1,7 +1,7 @@
 import test from 'tape'
 import { readFileSync } from 'fs'
-import * as util from '@polkadot/util'
-import Entropy from '../src'
+import Entropy, { wasmGlobalsReady } from '../src'
+
 import {
   promiseRunner,
   spinNetworkUp,
@@ -12,19 +12,31 @@ import {
 import { ProgramInstance } from '../src/programs'
 
 const networkType = 'two-nodes'
-let entropy: Entropy
 
 test('End To End', async (t) => {
   const run = promiseRunner(t)
-
+  // context: all run does is checks that it runs
   await run('network up', spinNetworkUp(networkType))
-  entropy = await run('account', createTestAccount(entropy))
-
+  // this gets called after all tests are run
   t.teardown(async () => {
     await spinNetworkDown(networkType, entropy).catch((error) =>
       console.error('Error while spinning network down', error.message)
     )
   })
+
+
+  let store = {}
+  await run('wasm', wasmGlobalsReady())
+
+
+  const keyring = new Keyring({ seed: charlieStashSeed })
+
+  keyring.on('account-update', (fullAccount) => {
+    store = fullAccount
+  })
+
+  const entropy = new Entropy({ keyring, endpoint: 'ws://127.0.0.1:9944' })
+
 
   const basicTxProgram: any = readFileSync(
     './tests/testing-utils/template_basic_transaction.wasm'
