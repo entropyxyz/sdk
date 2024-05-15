@@ -72,6 +72,9 @@ export default class Keyring {
    * @returns An object containing the Entropy account details.
    */
 
+  // IMPORTANT!! WE SHOULD DECIDE IF WE WILL ALWAYS BE GENERATING UUID FOR ACCOUNTS OR IF WE
+  // WILL ALLOW USERS TO PASS THEIR OWN STRINGS
+
   getAccount (): EntropyAccount {
     const accounts = {
       type: this.accounts.type || EntropyAccountType.MIXED_ACCOUNT,
@@ -181,6 +184,9 @@ export default class Keyring {
 
   getLazyLoadKeyProxy (childKey: ChildKey): Signer {
     console.log('childKey!!!!', childKey)
+    // if (!this.accounts[childKey]) {
+    //   this.accounts[childKey] = {}
+    // }
     return new Proxy(this.accounts[childKey] || {}, {
       get: (account, key) => {
         const signer = this.getChildSigner(childKey)
