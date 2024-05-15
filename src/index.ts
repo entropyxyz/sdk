@@ -8,6 +8,7 @@ import ProgramManager from './programs'
 import Keyring from './keys'
 import { ChildKey } from './keys/types/constants'
 import { DEVICE_KEY_PROXY_PROGRAM_INTERFACE } from './signing/adapters/device-key-proxy'
+import { HexString } from './keys/types/json'
 
 export const wasmGlobalsReady = loadCryptoLib
 
@@ -31,7 +32,7 @@ export default class Entropy {
   /** A promise that resolves once the cryptographic library has been loaded. */
   ready: Promise<boolean>
   registrationManager: RegistrationManager
-  isRegistered: (verifyingKey: string) => Promise<boolean>
+  isRegistered: (verifyingKey: HexString) => Promise<boolean>
   programs: ProgramManager
   signingManager: SignatureRequestManager
   keyring: Keyring
@@ -55,7 +56,7 @@ export default class Entropy {
       this.#fail(error)
     })
   }
-  
+
   /**
    * Initializes the Entropy instance by setting up the keyring, substrate API, and managers.
    *
@@ -101,10 +102,8 @@ export default class Entropy {
    * @throws {Error} - If the address is already registered or if there's a problem during registration.
    */
 
-  async register (
-    params: RegistrationParams
-  ): Promise<void> {
-    await this.ready && this.substrate.isReady
+  async register (params: RegistrationParams): Promise<void> {
+    (await this.ready) && this.substrate.isReady
     const defaultProgram = DEVICE_KEY_PROXY_PROGRAM_INTERFACE
 
     const deviceKey = this.keyring.getLazyLoadKeyProxy(ChildKey.DEVICE_KEY)
@@ -116,13 +115,15 @@ export default class Entropy {
     ) {
       throw new TypeError('Incompatible address type')
     }
-    
+
     const verifyingKey = await this.registrationManager.register(params)
 
-    // fuck frankie TODO: Make legit function 
+    // fuck frankie TODO: Make legit function
     const vk = this.keyring.accounts[ChildKey.DEVICE_KEY].verifyingKeys
-    this.keyring.accounts[ChildKey.DEVICE_KEY].verifyingKeys = [...vk, verifyingKey]
-
+    this.keyring.accounts[ChildKey.DEVICE_KEY].verifyingKeys = [
+      ...vk,
+      verifyingKey,
+    ]
   }
 
   /**
@@ -143,7 +144,7 @@ export default class Entropy {
    */
 
   async signWithAdapter (params: SigMsgOps): Promise<unknown> {
-    await this.ready && this.substrate.isReady
+    (await this.ready) && this.substrate.isReady
     return this.signingManager.signWithAdapter(params)
   }
 

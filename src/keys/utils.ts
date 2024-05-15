@@ -1,11 +1,12 @@
 import { Keypair } from '@polkadot/util-crypto/types'
-import { Keyring } from '@polkadot/keyring'
+import { Keyring as PolkadotKeyring } from '@polkadot/keyring'
 import { crypto } from '../utils/crypto'
 import { UIDv4 } from './types/json'
 import { Pair } from './types/internal'
 import { sr25519PairFromSeed } from '@polkadot/util-crypto'
 
-export const UIDv4regex = /^(?:[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}|00000000-0000-0000-0000-000000000000)$/i
+export const UIDv4regex =
+  /^(?:[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}|00000000-0000-0000-0000-000000000000)$/i
 
 const {
   // sr25519PairFromSeed,
@@ -22,7 +23,7 @@ const {
  * @returns {Promise<Uint8Array>} The mini secret seed.
  */
 
-export async function seedFrommnemonic (m) {
+export function seedFrommnemonic (m) {
   return mnemonicToMiniSecret(m)
 }
 
@@ -36,11 +37,13 @@ export async function seedFrommnemonic (m) {
  * @throws {TypeError} If the UIDv4 does not match the expected format.
  */
 
-export function getPath ({type, uid}: {type: string, uid: UIDv4}): string {
+export function getPath ({ type, uid }: { type: string; uid: UIDv4 }): string {
   if (UIDv4regex.test(uid)) {
     return `//entropy//${type}///${uid}`
   }
-  throw new TypeError('uid is not correct type please provide the correct regex matching string')
+  throw new TypeError(
+    'uid is not correct type please provide the correct regex matching string'
+  )
 }
 
 /**
@@ -66,9 +69,6 @@ export function generateSeed (): string {
   return mnemonicMini
 }
 
-
-
-
 /**
  * Generates a key pair from a seed and optional derivation path.
  *
@@ -78,11 +78,14 @@ export function generateSeed (): string {
  * @throws {TypeError} If the derivation path is not valid.
  */
 
-export function generateKeyPairFromSeed (seed: string, derivation?: string): { address: string; pair: Pair } {
+export function generateKeyPairFromSeed (
+  seed: string,
+  derivation?: string
+): { address: string; pair: Pair } {
   let pair
   // discard the keyring on every use because are keyring is better suited
   // for our code
-  const polkadotKeyring = new Keyring()
+  const polkadotKeyring = new PolkadotKeyring()
   if (derivation) {
     const masterPair = sr25519PairFromSeed(seed)
     const { path } = keyExtractPath(derivation)
