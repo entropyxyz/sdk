@@ -208,7 +208,7 @@ export default class Keyring {
   #createKey ({ type, uuid }: { type: ChildKey; seed?: Seed; uuid?: UIDv4 }) {
     console.log('uuid', uuid)
     const path = uuid
-      ? `${ChildKeyBasePaths[type]}${uuidv4()}`
+      ? `${ChildKeyBasePaths[type]}${uuid}`
       : ChildKeyBasePaths[type]
     this.#formatAccount({ path, type })
     this.accounts[type] = this.accounts.emit(
