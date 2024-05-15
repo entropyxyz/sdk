@@ -6,8 +6,9 @@ import { Signer } from '../keys/types/internal'
 import { Address } from '../types/internal'
 
 export interface RegistrationParams {
-  programDeployer?: SS58Address
   programData: ProgramInstance[]
+  /** just testing this functionality, not intending to use this as the set program */
+  programDeployer?: SS58Address
 }
 
 export interface AccountRegisteredSuccess {
@@ -37,7 +38,6 @@ const keyVisibility = 'Public'
  */
 
 export default class RegistrationManager extends ExtrinsicBaseClass {
-  
   /**
    * Constructs a new instance of the `RegistrationManager` class.
    *
@@ -72,9 +72,8 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
 
   async register ({
     programDeployer,
-    programData
+    programData,
   }: RegistrationParams): Promise<AccountRegisteredSuccess> {
-
     // this is sloppy
     // TODO: store multiple signers via SS58Address. and respond accordingly
     // however it should be handled in extrinsic class and not here
@@ -91,23 +90,25 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
     const registered: Promise<AccountRegisteredSuccess> = new Promise(
       (resolve, reject) => {
         try {
-          console.log("in registration manager", this.verifyingKey)
+          console.log('in registration manager', this.verifyingKey)
           if (!this.verifyingKey) {
-            console.log("No verifying key available.")
+            console.log('No verifying key available.')
             return registered
           }
 
           const unsubPromise = this.substrate.rpc.chain.subscribeNewHeads(
             async () => {
-              const registeredCheck = await this.substrate.query.registry.registered(
-                this.verifyingKey
-              )
+              const registeredCheck =
+                await this.substrate.query.registry.registered(
+                  this.verifyingKey
+                )
               if (registeredCheck) {
                 const unsub = await unsubPromise
                 unsub()
-                const registeredData = await this.substrate.query.registry.registered(
-                  this.verifyingKey
-                )
+                const registeredData =
+                  await this.substrate.query.registry.registered(
+                    this.verifyingKey
+                  )
                 // @ts-ignore: next line
                 if (!registeredData.isSome) {
                   throw new Error('Registration information not found')
@@ -125,11 +126,16 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
     const registerTx = this.substrate.tx.registry.register(
       programDeployer,
       keyVisibility,
-      programData.map((programInfo) => { return {programPointer: programInfo.programPointer, programConfig: programInfo.programConfig} })
+      programData.map((programInfo) => {
+        return {
+          programPointer: programInfo.programPointer,
+          programConfig: programInfo.programConfig,
+        }
+      })
     )
-    
+
     // Send the registration transaction and wait for the result.
-    const registrationTxResult = await this.sendAndWaitFor (registerTx,{
+    const registrationTxResult = await this.sendAndWaitFor(registerTx, {
       section: 'registry',
       name: 'AccountRegistered',
     })
@@ -137,7 +143,6 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
     // @ts-ignore: next line
     const { verifyingKey } = registrationTxResult.event.data.toHuman()
 
-    
     return verifyingKey
   }
 }

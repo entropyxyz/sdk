@@ -1,11 +1,13 @@
 import test from 'tape'
 import { readFileSync } from 'fs'
+import * as util from '@polkadot/util'
 import Entropy, { wasmGlobalsReady } from '../src'
+import Keyring from '../src/keys'
 
 import {
   promiseRunner,
   spinNetworkUp,
-  createTestAccount,
+  charlieStashSeed,
   charlieStashAddress,
   spinNetworkDown,
 } from './testing-utils'
@@ -24,30 +26,40 @@ test('End To End', async (t) => {
     )
   })
 
-
-  let store = {}
   await run('wasm', wasmGlobalsReady())
 
-
+  let store = {}
   const keyring = new Keyring({ seed: charlieStashSeed })
-
-  keyring.on('account-update', (fullAccount) => {
+  keyring.accounts.on('account-update', (fullAccount) => {
     store = fullAccount
   })
 
-  const entropy = new Entropy({ keyring, endpoint: 'ws://127.0.0.1:9944' })
+  const entropy = new Entropy({
+    keyring,
+    endpoint: 'ws://127.0.0.1:9944',
+  })
 
+  await run('entropy ready', entropy.ready)
 
+  /* deploy */
   const basicTxProgram: any = readFileSync(
-    './tests/testing-utils/template_basic_transaction.wasm'
+    './tests/testing-utils/template_barebones.wasm'
   )
   t.equal(typeof basicTxProgram.toString(), 'string', 'got basic program')
+
+  // QUESTION: how to launch substrate node with a particular address pre-funded
 
   const pointer = await run(
     'deploy program',
     entropy.programs.dev.deploy(basicTxProgram)
   )
   t.equal(typeof pointer, 'string', 'valid pointer')
+
+  // register
+  await run('register', entropy.register())
+  //
+  // sign some data
+  //
 
   const config = `
     {
@@ -83,7 +95,7 @@ test('End To End', async (t) => {
     'register',
     entropy.register({
       programDeployer: charlieStashAddress,
-      programData: [programData]
+      programData: [programData],
     })
   )
   t.equal(
@@ -91,14 +103,13 @@ test('End To End', async (t) => {
     charlieStashAddress,
     'got right address'
   )
-  // NEED PRE-REGISTRATION TEST 
+  // NEED PRE-REGISTRATION TEST
   // const preRegistrationStatusCheck = await run(
   //   'checkRegistrationStatus',
   //   entropy.substrate.query.registry.registered(verifyingKey)
   //   // entropy.registrationManager.checkRegistrationStatus(charlieStashAddress)
   // )
   // t.ok(preRegistrationStatusCheck, 'preRegistrationStatusCheck ...') // TODO: better check
-
 
   // Use the verifyingKey from ProgramManager
   const verifyingKey = entropy.programs.verifyingKey
@@ -109,11 +120,7 @@ test('End To End', async (t) => {
     'isRegistered',
     entropy.isRegistered(charlieStashAddress)
   )
-  t.equal(
-    JSON.stringify(postRegistrationStatus),
-    'true',
-    'isRegistered = true'
-  )
+  t.equal(JSON.stringify(postRegistrationStatus), 'true', 'isRegistered = true')
 
   //  loading second program
   const dummyProgram: any = readFileSync(

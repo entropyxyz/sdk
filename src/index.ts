@@ -94,7 +94,7 @@ export default class Entropy {
   /**
    * Registers a new account with the provided parameters.
    *
-   * @param {RegistrationParams & { account?: EntropyAccount }} params - The registration parameters.
+   * @param {RegistrationParams} params - Optional. The registration parameters.
    * @param {Address} params.programModAccount - The address authorized to set programs on behalf of the user.
    * @param {'Public' } [params.keyVisibility] - Visibility setting for the key.
    * @param {ProgramData[]} [params.programData] - Optional initial programs associated with the user.
@@ -102,12 +102,18 @@ export default class Entropy {
    * @throws {Error} - If the address is already registered or if there's a problem during registration.
    */
 
-  async register (params: RegistrationParams): Promise<void> {
-    (await this.ready) && this.substrate.isReady
+  async register (params?: RegistrationParams): Promise<void> {
     const defaultProgram = DEVICE_KEY_PROXY_PROGRAM_INTERFACE
 
+    params = params || {
+      programData: [defaultProgram],
+      programDeployer: this.keyring.getRegisteringKey().address,
+    }
+
+    await Promise.all([this.ready, this.substrate.isReady])
+
     const deviceKey = this.keyring.getLazyLoadKeyProxy(ChildKey.DEVICE_KEY)
-    defaultProgram.userConfig.sr25519PublicKeys.push(deviceKey)
+    defaultProgram.programConfig.sr25519PublicKeys.push(deviceKey)
 
     if (
       params.programDeployer &&

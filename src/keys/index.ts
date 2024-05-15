@@ -41,7 +41,7 @@ export default class Keyring {
     this.accounts = accounts as AccountsEmitter
 
     const { seed, mnemonic } = account as KeyMaterial
-    if (!seed || !mnemonic)
+    if (!seed && !mnemonic)
       throw new Error('Need at least a seed or mnemonic to create keys')
     if (mnemonic) {
       this.#seed = utils.seedFrommnemonic(mnemonic)
@@ -162,10 +162,15 @@ export default class Keyring {
    * @returns A `Signer` proxy object.
    */
 
-  getLazyLoadKeyProxy (type): Signer {
-    return new Proxy(this.accounts[type], {
+  getLazyLoadKeyProxy (type: ChildKey): Signer {
+    return new Proxy(this.accounts[type] || {}, {
       get: (account, key) => {
-        const signer = this[`get${type}Key`]()
+        const getSigner = this[`get${type}Key`]
+        if (typeof getSigner !== 'function') {
+          throw new Error('missing type: ' + type)
+        }
+
+        const signer = getSigner()
         if (key === 'verifyingKeys') {
           return signer.verifyingKeys || []
         }

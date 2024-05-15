@@ -31,7 +31,6 @@ export interface ProgramInfo {
  */
 
 export default class ProgramDev extends ExtrinsicBaseClass {
-
   /**
    * Constructs a ProgramDev instance.
    *
@@ -65,7 +64,6 @@ export default class ProgramDev extends ExtrinsicBaseClass {
     return this.#formatProgramInfo(programInfo)
   }
 
-
   /**
    * Deploys a new program.
    *
@@ -79,19 +77,20 @@ export default class ProgramDev extends ExtrinsicBaseClass {
   async deploy (
     program: ArrayBuffer,
     configurationSchema?: unknown,
-    auxiliaryDataSchema?: unknown,
+    auxiliaryDataSchema?: unknown
     // not quite supported yet
     // oracleDataPointer?: []
   ): Promise<HexString> {
     // converts program and configurationInterface into a palatable format
     const formatedConfig = JSON.stringify(configurationSchema)
     // programModKey is the caller of the extrinsic
-    const tx: SubmittableExtrinsic<'promise'> = this.substrate.tx.programs.setProgram(
-      util.u8aToHex(new Uint8Array(program)), // new program
-      formatedConfig, // config schema
-      auxiliaryDataSchema, // auxilary config schema
-      // oracleDataPointer // oracle data pointer
-    )
+    const tx: SubmittableExtrinsic<'promise'> =
+      this.substrate.tx.programs.setProgram(
+        util.u8aToHex(new Uint8Array(program)), // new program
+        formatedConfig, // config schema
+        auxiliaryDataSchema, // auxilary config schema
+        [] // oracleDataPointer // oracle data pointer
+      )
     const record = await this.sendAndWaitFor(tx, {
       section: 'programs',
       name: 'ProgramCreated',
@@ -107,7 +106,7 @@ export default class ProgramDev extends ExtrinsicBaseClass {
    * @param {string | Uint8Array} programHash - The hash of the program to remove.
    * @returns {Promise<void>} A promise that resolves when the program is removed.
    */
-  
+
   async remove (programHash: string | Uint8Array): Promise<void> {
     const tx: SubmittableExtrinsic<'promise'> =
       this.substrate.tx.programs.removeProgram(programHash)
@@ -126,7 +125,7 @@ export default class ProgramDev extends ExtrinsicBaseClass {
    * @param {ProgramInfoJSON} programInfo - The program information in JSON format.
    * @returns {ProgramInfo} - The formatted program information.
    */
-  
+
   #formatProgramInfo (programInfo): ProgramInfo {
     const { interfaceDescription, deployer, refCounter } = programInfo
     const bytecode = hex2buf(stripHexPrefix(programInfo.bytecode)) // Convert hex string to ArrayBuffer
