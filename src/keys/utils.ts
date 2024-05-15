@@ -3,18 +3,17 @@ import { Keyring as PolkadotKeyring } from '@polkadot/keyring'
 import { crypto } from '../utils/crypto'
 import { UIDv4 } from './types/json'
 import { Pair } from './types/internal'
-import { sr25519PairFromSeed } from '@polkadot/util-crypto'
 
 export const UIDv4regex =
   /^(?:[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}|00000000-0000-0000-0000-000000000000)$/i
 
 const {
-  // sr25519PairFromSeed,
+  sr25519PairFromSeed,
   mnemonicToMiniSecret,
   mnemonicGenerate,
   keyFromPath,
   keyExtractPath,
-} = crypto.polkadotCrypto
+} = crypto.polkadotCryptoUtil
 
 /**
  * Converts a mnemonic phrase to a mini secret seed.
@@ -91,6 +90,7 @@ export function generateKeyPairFromSeed (
     const { path } = keyExtractPath(derivation)
     const kp = keyFromPath(masterPair, path, 'sr25519')
     pair = polkadotKeyring.addFromPair(kp)
+    console.log('is this really the signer?', pair.signer)
     pair.secretKey = kp.secretKey
   } else {
     const masterPair = sr25519PairFromSeed(seed)

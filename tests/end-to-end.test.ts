@@ -5,6 +5,7 @@ import Entropy, { wasmGlobalsReady } from '../src'
 import Keyring from '../src/keys'
 
 import {
+  sleep,
   promiseRunner,
   spinNetworkUp,
   charlieStashSeed,
@@ -19,6 +20,7 @@ test('End To End', async (t) => {
   const run = promiseRunner(t)
   // context: all run does is checks that it runs
   await run('network up', spinNetworkUp(networkType))
+  await sleep(5_000)
   // this gets called after all tests are run
   t.teardown(async () => {
     await spinNetworkDown(networkType, entropy).catch((error) =>

@@ -51,7 +51,7 @@ export default class Entropy {
       this.#ready = resolve
       this.#fail = reject
     })
-
+    console.log('ready assigned')
     this.#init(opts).catch((error) => {
       this.#fail(error)
     })
@@ -67,10 +67,13 @@ export default class Entropy {
 
   async #init (opts: EntropyOpts) {
     this.keyring = opts.keyring
-
+    console.log('created keyring')
     const wsProvider = new WsProvider(opts.endpoint)
+    console.log('create wsProvide')
     this.substrate = new ApiPromise({ provider: wsProvider })
-    await this.substrate.isReady
+    await this.substrate.isReadyOrError.catch((err) => this.#fail(err))
+
+    console.log('substrate asigned')
 
     this.registrationManager = new RegistrationManager({
       substrate: this.substrate,

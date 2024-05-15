@@ -77,6 +77,7 @@ export default class Keyring {
       type: this.accounts.type || EntropyAccountType.MIXED_ACCOUNT,
     }
     Object.values(ChildKey).forEach((name) => {
+      if (!this.accounts[name]) return
       const account: PairMaterial = {
         path: '',
         type: name,
@@ -120,8 +121,9 @@ export default class Keyring {
 
   getRegisteringKey (): Signer {
     const type = ChildKey.REGISTRATION
-    if (this.accounts[ChildKey.REGISTRATION])
+    if (this.accounts[ChildKey.REGISTRATION]) {
       return this.accounts[ChildKey.REGISTRATION].signer
+    }
     this.#createKey({ type, uuid: uuidv4() })
     return this.accounts[ChildKey.REGISTRATION].signer
   }
@@ -134,8 +136,9 @@ export default class Keyring {
 
   getDeviceKey (): Signer {
     const type = ChildKey.DEVICE_KEY
-    if (this.accounts[ChildKey.DEVICE_KEY])
+    if (this.accounts[ChildKey.DEVICE_KEY]) {
       return this.accounts[ChildKey.DEVICE_KEY].signer
+    }
     this.#createKey({ type, uuid: uuidv4() })
     return this.accounts[ChildKey.DEVICE_KEY].signer
   }
@@ -148,10 +151,26 @@ export default class Keyring {
 
   getProgramDevKey (): Signer {
     const type = ChildKey.PROGRAM_DEV
-    if (this.accounts[ChildKey.PROGRAM_DEV])
+    if (this.accounts[ChildKey.PROGRAM_DEV]) {
       return this.accounts[ChildKey.PROGRAM_DEV].signer
+    }
     this.#createKey({ type })
     return this.accounts[ChildKey.PROGRAM_DEV].signer
+  }
+
+
+
+  getChildSigner (childKey: ChildKey): Signer {
+    switch (childKey) {
+      case ChildKey.DEVICE_KEY:
+        return this.getDeviceKey()
+      case ChildKey.REGISTRATION:
+        return this.getRegisteringKey()
+      case ChildKey.PROGRAM_DEV:
+        return this.getProgramDevKey()
+      default:
+        throw new Error(`unknown child key: ${childKey}`)
+    }
   }
 
   /**
@@ -162,15 +181,11 @@ export default class Keyring {
    * @returns A `Signer` proxy object.
    */
 
-  getLazyLoadKeyProxy (type: ChildKey): Signer {
-    return new Proxy(this.accounts[type] || {}, {
+  getLazyLoadKeyProxy (childKey: ChildKey): Signer {
+    console.log('childKey!!!!', childKey)
+    return new Proxy(this.accounts[childKey] || {}, {
       get: (account, key) => {
-        const getSigner = this[`get${type}Key`]
-        if (typeof getSigner !== 'function') {
-          throw new Error('missing type: ' + type)
-        }
-
-        const signer = getSigner()
+        const signer = this.getChildSigner(childKey)
         if (key === 'verifyingKeys') {
           return signer.verifyingKeys || []
         }
@@ -197,6 +212,7 @@ export default class Keyring {
       ? `${ChildKeyBasePaths[type]}${uuidv4()}`
       : ChildKeyBasePaths[type]
     this.#formatAccount({ path, type })
+    this.accounts[type] =
     this.accounts.emit('account-update', this.getAccount())
   }
 }

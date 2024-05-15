@@ -37,7 +37,7 @@ export const crypto: CryptoLib = new Proxy({} as CryptoLib, {
           'cryptoLib loaded incorrectly. Did you await the wasmGlobalsReady function?'
         )
       }
-      if (key === 'polkadotCrypto') return polkadotCryptoUtil
+      if (key === 'polkadotCryptoUtil') return polkadotCryptoUtil
       if (key === 'verifySignature') return verifySignature
       if (cryptoLib.X25519Keypair[key]) {
         return cryptoLib.X25519Keypair[key](...params)

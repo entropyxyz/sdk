@@ -1,8 +1,7 @@
 export interface CryptoLib {
   // fuck-polkadot
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  polkadotCrypto: any
+  polkadotCryptoUtil: any
   /**
    * Derives the public key from the provided secret key.
    */

@@ -29,6 +29,7 @@ export default class ExtrinsicBaseClass {
   constructor ({ substrate, signer }) {
     this.substrate = substrate
     this.signer = signer
+    console.log('signer in extrinsic base class:', this.signer.pair)
   }
   /**
  * Sends an extrinsic and waits for a specific event or rejects with an error.
@@ -42,9 +43,12 @@ export default class ExtrinsicBaseClass {
     call: SubmittableExtrinsic<'promise'>,
     filter: EventFilter
   ): Promise<EventRecord> {
+
+    const pair = this.signer.pair
+
     return new Promise<EventRecord>((resolve, reject) => {
       call
-        .signAndSend(this.signer.pair, (res: SubmittableResult) => {
+        .signAndSend(pair, (res: SubmittableResult) => {
           const { dispatchError, status } = res
           if (dispatchError) {
             if (dispatchError.isModule) {
