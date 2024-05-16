@@ -106,7 +106,7 @@ export interface EntropyAccount {
   seed?: Seed
   verifyingKeys?: string[]
   type?: EntropyAccountType
-  debug?: true
+  debug?: boolean
   [key: string]: PairMaterial | any
 }
 
