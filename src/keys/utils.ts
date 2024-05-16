@@ -86,7 +86,7 @@ export function generateKeyPairFromSeed (
   let pair
   // discard the keyring on every use because are keyring is better suited
   // for our code
-  const polkadotKeyring = new PolkadotKeyring()
+  const polkadotKeyring = new PolkadotKeyring({ type: 'sr25519' })
   if (derivation) {
     console.log('derivation', derivation)
 
