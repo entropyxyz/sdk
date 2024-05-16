@@ -74,9 +74,9 @@ export default class Keyring {
     Object.keys(masterAccountView).forEach((name) => {
       if (name) {
         if (typeof masterAccountView[name] !== 'object') return
-        const { seed, path, address } = masterAccountView[name]
+        const { seed, path } = masterAccountView[name]
         if (!seed) return
-        const { pair } = utils.generateKeyPairFromSeed(seed, path)
+        const { pair, address } = utils.generateKeyPairFromSeed(seed, path)
         const functionalAccount = {
           seed,
           path,
