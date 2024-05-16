@@ -1,21 +1,15 @@
 import EventEmitter from 'node:events'
-import { v4 as uuidv4 } from 'uuid'
 import * as utils from './utils'
-import {
-  EntropyAccount,
-  KeyMaterial,
-  PairMaterial,
-  Seed,
-  UIDv4,
-} from './types/json'
+import { EntropyAccount, KeyMaterial, PairMaterial } from './types/json'
 import {
   ChildKey,
-  ChildKeyBasePaths,
   EntropyAccountType,
   EntropyAccountContextType,
 } from './types/constants'
 import { Signer } from './types/internal'
 import { AccountsEmitter } from './types'
+
+const ACCOUNTS = Object.keys(ChildKey).map((name) => ChildKey[name])
 
 /**
  * A utility class to allow consumers of the SDK to subscribe to key creations and "account" updates.
@@ -25,6 +19,7 @@ export default class Keyring {
   // it's a unit8array if it comes from a mnemonic and a string if it comes from the user
   // The seed used to generate keys, can be a Uint8Array (from mnemonic) or a string (user-provided).
   #seed: Uint8Array | string
+  #used: string[]
   accounts: AccountsEmitter
   crypto: Crypto
 
@@ -34,9 +29,14 @@ export default class Keyring {
    * @param account - The key material and entropy account used for key generation.
    */
 
-  constructor (account: KeyMaterial | EntropyAccount) {
-
-    const { seed, mnemonic } = account as KeyMaterial
+  constructor (account: KeyMaterial) {
+    this.#used = []
+    Object.keys(account).forEach((key) => {
+      if (typeof account[key] === 'object' && account[key].userContext) {
+        this.#used.push(key)
+      }
+    })
+    const { seed, mnemonic } = account
     if (!seed && !mnemonic)
       throw new Error('Need at least a seed or mnemonic to create keys')
     if (mnemonic) {
@@ -45,21 +45,8 @@ export default class Keyring {
       this.#seed = seed
     }
     const accountsJson = this.#formatAccounts(account)
+    console.log('accountsJson:', accountsJson)
     this.accounts = this.#createFunctionalAccounts(accountsJson)
-
-  }
-
-  /**
-   * Derives keys from the entropy account and formats them.
-   *
-   * @param entropyAccount - The entropy account containing key pair materials.
-   */
-
-  #deriveKeys (entropyAccount: EntropyAccount) {
-    const accounts = Object.keys(entropyAccount)
-    accounts.forEach((keyPairMaterialName: string) => {
-      this.#formatAccounts(entropyAccount[keyPairMaterialName])
-    })
   }
 
   /**
@@ -72,32 +59,24 @@ export default class Keyring {
   // WILL ALLOW USERS TO PASS THEIR OWN STRINGS
 
   getAccount (): EntropyAccount {
-    const accounts = {
-      type: this.accounts.type || EntropyAccountType.MIXED_ACCOUNT,
-    }
-    Object.values(ChildKey).forEach((name) => {
-      if (!this.accounts[name]) return
-      const account: PairMaterial = {
-        path: '',
-        type: name,
-      }
-      const { path, seed, verifyingKeys, address } = this.accounts[name]
-      if (path) account.path = path
-      if (seed) account.seed = seed
-      accounts[name] = account
-      if (verifyingKeys) account.verifyingKeys = verifyingKeys
-      if (address) account.address = address
+    const { debug, seed, type, verifyingKeys } = this.accounts.masterAccountView
+    const entropyAccount = { debug, seed, type, verifyingKeys }
+    this.#used.forEach((accountName) => {
+      entropyAccount[accountName] = this.accounts.masterAccountView[accountName]
     })
-    return accounts
+    return entropyAccount
   }
 
-  #createFunctionalAccounts (masterAccountView: EntropyAccount): AccountsEmitter {
-    const accounts = new EventEmitter()
+  #createFunctionalAccounts (
+    masterAccountView: EntropyAccount
+  ): AccountsEmitter {
+    const accounts = new EventEmitter() as AccountsEmitter
     accounts.type = accounts.type || EntropyAccountType.MIXED_ACCOUNT
-    Object.keys(masterAccountView).forEach((name) =>{
+    Object.keys(masterAccountView).forEach((name) => {
       if (name) {
+        if (typeof masterAccountView[name] !== 'object') return
         const { seed, path, address } = masterAccountView[name]
-        if (!seed) throw new TypeError('malformed account: missing seed')
+        if (!seed) return
         const { pair } = utils.generateKeyPairFromSeed(seed, path)
         const functionalAccount = {
           seed,
@@ -109,8 +88,8 @@ export default class Keyring {
       }
     })
     accounts.masterAccountView = masterAccountView
+    return accounts
   }
-
 
   /**
    * Formats and stores account information.
@@ -118,109 +97,57 @@ export default class Keyring {
    * @param account - The pair material for the account.
    */
 
-  #jsonAccountCreator (pairMaterial: PairMaterial & unknown, debug): PairMaterial {
+  #jsonAccountCreator (pairMaterial: PairMaterial, debug): PairMaterial {
     if (!pairMaterial) throw new TypeError('nothing to format please try again')
-    const { seed, address, type } = pairMaterial
-    const path = debug ? '' : utils.getPath({type, uid: uuidv4()})
-    const nonDebugSeed = seed.includes('/') ? seed : `${seed}${path}`
-    const jsonAccount = {
-      seed: debug? seed : nonDebugSeed,
+    const {
+      seed,
+      address,
+      type,
+      userContext,
+      verifyingKeys = [],
       path,
-      address
+    } = pairMaterial
+    const derivation = path || debug ? '' : utils.getPath(type)
+
+    const jsonAccount = {
+      seed: seed,
+      path: derivation,
+      address,
+      type,
+      verifyingKeys,
+      userContext: userContext || EntropyAccountContextType[type],
     }
 
     return jsonAccount
-
   }
 
-  #formatAccounts (accounts: KeyMaterial | EntropyAccount): EntropyAccount {
-    const { seed, mnemonic, debug } = accounts
+  #formatAccounts (accounts: EntropyAccount): EntropyAccount {
+    const { seed, mnemonic, debug, type } = accounts
     const entropyAccountsJson = {
       debug,
-      seed: seed ? seed :utils. seedFromMnemonic(mnemonic)
+      seed: seed ? seed : utils.seedFromMnemonic(mnemonic),
+      type,
     }
-    this.#used = Object.keys(accounts)
-    if (debug) {
-      Object.keys(ChildKey).forEach((key) => {
-        entropyAccountsJson[key] = this.#jsonAccountCreator({seed: entropyAccountsJson.seed}, debug)
-        if (accounts[key] && accounts[key].verifyingKeys ) entropyAccountsJson[key].verifyingKeys = accounts.verifyingKeys
-        else entropyAccountsJson[key].verifyingKeys = []
-        entropyAccountsJson[key].type = key
-        entropyAccountsJson.userContext = EntropyAccountContectType[entropyAccountsJson.type]
+    Object.keys(accounts)
+      .concat(ACCOUNTS)
+      .forEach((key) => {
+        let account: PairMaterial
+        if (entropyAccountsJson[key]) return
+        if (accounts[key] && accounts[key].userContext) account = accounts[key]
+        else if (ChildKey[key]) account = { type: ChildKey[key], seed }
+        if (!account) return
+        entropyAccountsJson[key] = this.#jsonAccountCreator(account, debug)
       })
-      Object.keys(accounts).forEach((key) => {
-        if(entropyAccountsJson[type]) return
-        entropyAccountsJson[key] = this.#jsonAccountCreator(accounts[key], debug)
-        if (accounts[key] && accounts[key].verifyingKeys ) entropyAccountsJson[key].verifyingKeys = accounts.verifyingKeys
-        else entropyAccountsJson[key].verifyingKeys = []
-        entropyAccountsJson[key].type = key
-        entropyAccountsJson.userContext = EntropyAccountContectType[entropyAccountsJson.type]
-      })
-    } else {
-      Object.keys(ChildKey).forEach((key) => {
-        entropyAccountsJson[key] = this.#jsonAccountCreator({seed: entropyAccountsJson.seed, key}, debug)
-        if (accounts[key] && accounts[key].verifyingKeys ) entropyAccountsJson[key].verifyingKeys = accounts.verifyingKeys
-        else entropyAccountsJson[key].verifyingKeys = []
-        entropyAccountsJson[key].type = key
-        entropyAccountsJson.userContext = EntropyAccountContextType[entropyAccountsJson.type]
-      })
-      Object.keys(accounts).forEach((key) => {
-        if(entropyAccountsJson[type]) return
-        entropyAccountsJson[key] = this.#jsonAccountCreator(accounts[key], debug)
-        if (accounts[key] && accounts[key].verifyingKeys ) entropyAccountsJson[key].verifyingKeys = accounts.verifyingKeys
-        else entropyAccountsJson[key].verifyingKeys = []
-        entropyAccountsJson[key].type = key
-        entropyAccountsJson.userContext = EntropyAccountContectType[entropyAccountsJson.type]
-      })
-    }
-    return entropyAccountsJson
+    return entropyAccountsJson as EntropyAccount
   }
 
-  /**
-   * Retrieves the registering key for signing.
-   *
-   * @returns A `Signer` object for registration.
-   */
-
-  getRegisteringKey (): Signer {
-    const type = ChildKey.REGISTRATION
-    if (this.accounts[ChildKey.REGISTRATION]) {
-      return this.accounts[ChildKey.REGISTRATION].signer
-    }
-    this.#createKey({ type, uuid: uuidv4() })
-    return this.accounts[ChildKey.REGISTRATION].signer
-  }
-
-  /**
-   * Retrieves the device key for signing.
-   *
-   * @returns A `Signer` object for the device key.
-   */
-
-  getDeviceKey (): Signer {
-    const type = ChildKey.DEVICE_KEY
-    if (this.accounts[ChildKey.DEVICE_KEY]) {
-      return this.accounts[ChildKey.DEVICE_KEY].signer
-    }
-    this.#createKey({ type, uuid: uuidv4() })
-    return this.accounts[ChildKey.DEVICE_KEY].signer
-  }
-
-  /**
-   * Retrieves the program development key for signing.
-   *
-   * @returns A `Signer` object for program development.
-   */
-
-  getProgramDevKey (): Signer {
-    const type = ChildKey.PROGRAM_DEV
-    console.log('accounts:', this.accounts, this.getAccount())
-    if (this.accounts[ChildKey.PROGRAM_DEV]) {
-      return this.accounts[ChildKey.PROGRAM_DEV].signer
-    }
-    this.#createKey({ type })
-    return this.accounts[ChildKey.PROGRAM_DEV].signer
-  }
+  // #createSingleEntropyAccount (key: ChildKey | string): PairMaterial {
+  // entropyAccountsJson[key] = this.#jsonAccountCreator({seed: entropyAccountsJson.seed, key}, debug)
+  // if (account && account.verifyingKeys ) entropyAccountsJson[key].verifyingKeys = accounts.verifyingKeys
+  // else entropyAccountsJson[key].verifyingKeys = []
+  // entropyAccountsJson[key].type = key
+  // entropyAccountsJson[key].userContext = EntropyAccountContextType[key]
+  // }
 
   /**
    * Lazily loads a key proxy for a given type.
@@ -235,16 +162,19 @@ export default class Keyring {
     // if (!this.accounts[childKey]) {
     //   this.accounts[childKey] = {}
     // }
+    console.log('childKey proxy get:', childKey, this.accounts)
     return new Proxy(this.accounts[childKey], {
-      set: (account, k, v) => {
+      set: (account, k: string, v) => {
         if (k === 'used') {
-          if (this.accounts[childKey].used) this.accounts.emit(`${childKey}#new`, this.getAccount())
+          this.#used.push(childKey)
+          if (this.accounts[childKey].used)
+            this.accounts.emit(`${childKey}#new`, this.getAccount())
         } else {
           this.accounts.emit(`${childKey}#account-update`, this.getAccount())
         }
         this.accounts.masterAccountView[childKey][k] = v
-        return this.accounts[childKey][k] = v
-      }
+        return (this.accounts[childKey][k] = v)
+      },
     })
   }
 }

@@ -10,7 +10,11 @@
  *
  * */
 
-import { ChildKey, EntropyAccountType, EntropyAccountContextType } from "./constants"
+import {
+  ChildKey,
+  EntropyAccountType,
+  EntropyAccountContextType,
+} from './constants'
 
 export type UIDv4 = string
 
@@ -67,7 +71,9 @@ export type Mnemonic = string
  * Represents the key material, which can be either a hexadecimal seed or a mnemonic seed.
  */
 
-export type KeyMaterial = HexSeedMaterial & MnemonicSeedMaterial
+export type KeyMaterial =
+  | (HexSeedMaterial & MnemonicSeedMaterial)
+  | EntropyAccount //HexSeedMaterial & MnemonicSeedMaterial
 
 /**
  * Represents key material using a hexadecimal seed.
@@ -92,23 +98,26 @@ export interface MnemonicSeedMaterial {
  */
 export interface EntropyAccount {
   // rename these to match child key
-  registeringKey?: PairMaterial
-  programDeployKey?: PairMaterial
-  deviceKey?: PairMaterial
+  [ChildKey.registration]?: PairMaterial
+  [ChildKey.programDev]?: PairMaterial
+  [ChildKey.deviceKey]?: PairMaterial
   // end rename
   mnemonic?: Mnemonic
   seed?: Seed
   verifyingKeys?: string[]
-  type: EntropyAccountType
+  type?: EntropyAccountType
+  debug?: true
+  [key: string]: PairMaterial | any
 }
 
 /**
  * Represents the material for a key pair, including address, path, seed, type, and verifying keys.
- */export interface PairMaterial {
+ */
+export interface PairMaterial {
   // 32 bytes Optional SS58 address for the key pair.
   address?: SS58Address
   // Derivation path used for generating the key pair.
-  path: DerivationPath
+  path?: DerivationPath
   // Optional seed for the key pair.
   seed?: Seed
   // List of verifying keys associated with the key pair.
@@ -116,5 +125,5 @@ export interface EntropyAccount {
   // Type of the key, corresponding to a child key.
   type: ChildKey
   // a key type concept
-  contextType: EntropyAccountContextType
+  userContext?: EntropyAccountContextType
 }

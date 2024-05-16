@@ -6,7 +6,6 @@ import { charlieStashSeed } from './testing-utils/constants'
 import { hexStringToUint8Array } from '../src/utils'
 import { generateKeyPairFromSeed } from '../src/keys/utils'
 
-
 test('Crypto', async (t) => {
   const run = promiseRunner(t)
 
@@ -36,13 +35,11 @@ test('Crypto', async (t) => {
 
   /* Encrypt + sign */
 
- 
-
   {
-    const charlieSecretSeed: Uint8Array = hexStringToUint8Array(charlieStashSeed)
+    const charlieSecretSeed: Uint8Array =
+      hexStringToUint8Array(charlieStashSeed)
 
     const charlieKeyPair = generateKeyPairFromSeed(charlieStashSeed)
-
     const charliePublicKeyPair = await run(
       'publicKeyFromSecret works',
       crypto.fromSecretKey(charlieSecretSeed)
@@ -50,8 +47,8 @@ test('Crypto', async (t) => {
     const charliePublicKey = charliePublicKeyPair.publicKey()
     const charlieSecretKey = charliePublicKeyPair.secretKey()
 
-    console.log( " charlier  public ", charliePublicKey)
-    console.log (" Charlie secret",charlieSecretKey )
+    console.log(' charlier  public ', charliePublicKey)
+    console.log(' Charlie secret', charlieSecretKey)
 
     const serverDHKey = await run(
       'fromHex works',
@@ -69,7 +66,7 @@ test('Crypto', async (t) => {
         charlieKeyPair.pair.secretKey,
         thresholdKey,
         charliePublicKey,
-        serverDHKey,
+        serverDHKey
       )
     )
     const expected = await run(

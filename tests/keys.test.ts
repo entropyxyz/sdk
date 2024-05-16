@@ -18,21 +18,29 @@ test('Keys: create a keyring with seed', async (t) => {
   const keyring = new Keyring({ seed: charlieStashSeed })
 
   t.true(Object.keys(keyring).includes('accounts'), 'has wallet')
-  t.true(Object.keys(keyring.getRegisteringKey()).includes('pair'), 'has pair')
+  t.true(
+    Object.keys(keyring.accounts.registration).includes('pair'),
+    'has pair'
+  )
   // it should generate valid Signer from seed
-  t.true(Object.keys(keyring.getDeviceKey()).includes('pair'), 'has pair')
-  t.true(Object.keys(keyring.getDeviceKey()).includes('pair'), 'has pair')
+  t.true(Object.keys(keyring.accounts.deviceKey).includes('pair'), 'has pair')
+  t.true(Object.keys(keyring.accounts.deviceKey).includes('pair'), 'has pair')
 })
 
 test('Keys: create a keyring with a mnemonic', async (t) => {
   t.plan(2)
   await testSetup()
   // it should generate valid Signer from mnemonic
-  const keyring = new Keyring({ mnemonic: testMnemonic } as MnemonicSeedMaterial)
+  const keyring = new Keyring({
+    mnemonic: testMnemonic,
+  } as MnemonicSeedMaterial)
 
   t.true(Object.keys(keyring).includes('accounts'), 'has wallet')
-  t.true(Object.keys(keyring.getRegisteringKey()).includes('pair'), 'has pair')
+  t.true(
+    Object.keys(keyring.accounts.registration).includes('pair'),
+    'has pair'
+  )
   // it should generate valid Signer from seed
-  t.true(Object.keys(keyring.getDeviceKey()).includes('pair'), 'has pair')
-  t.true(Object.keys(keyring.getDeviceKey()).includes('pair'), 'has pair')
+  t.true(Object.keys(keyring.accounts.deviceKey).includes('pair'), 'has pair')
+  t.true(Object.keys(keyring.accounts.deviceKey).includes('pair'), 'has pair')
 })

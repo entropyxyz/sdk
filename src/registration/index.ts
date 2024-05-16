@@ -73,7 +73,7 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
   async register ({
     programDeployer,
     programData,
-  }: RegistrationParams): Promise<AccountRegisteredSuccess> {
+  }: RegistrationParams): Promise<HexString> {
     // this is sloppy
     // TODO: store multiple signers via SS58Address. and respond accordingly
     // however it should be handled in extrinsic class and not here

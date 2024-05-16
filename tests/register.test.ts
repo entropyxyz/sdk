@@ -41,7 +41,7 @@ let pointer: string
 let isRegisteredBefore: boolean
 
 test('Register Tests: check pre-registration status', async (t) => {
-  ({ entropy, pointer } = await testSetup(t))
+  ;({ entropy, pointer } = await testSetup(t))
   t.teardown(testTeardown)
 
   // Check if already registered before the test
@@ -52,7 +52,7 @@ test('Register Tests: check pre-registration status', async (t) => {
 })
 
 test('Register: handle user registration', async (t) => {
-  ({ entropy, pointer } = await testSetup(t))
+  ;({ entropy, pointer } = await testSetup(t))
   t.teardown(testTeardown)
 
   await entropy.registrationManager.register({
@@ -67,14 +67,14 @@ test('Register: handle user registration', async (t) => {
 })
 
 test('Register: not allow re-registration', async (t) => {
-  ({ entropy, pointer } = await testSetup(t))
+  ;({ entropy, pointer } = await testSetup(t))
   t.teardown(testTeardown)
   const run = promiseRunner(t)
 
   await run(
     'register',
     entropy.registrationManager.register({
-      programDeployer: entropy.keyring.getRegisteringKey().address,
+      programDeployer: entropy.keyring.accounts.registration.address,
       programData: [{ programPointer: pointer, programConfig: '0x' }],
     })
   )
@@ -91,7 +91,7 @@ test('Register: not allow re-registration', async (t) => {
 })
 
 test('Register Tests: verify registration status of a new address', async (t) => {
-  ({ entropy, pointer } = await testSetup(t))
+  ;({ entropy, pointer } = await testSetup(t))
   t.teardown(testTeardown)
 
   const isNewAddressRegistered = await entropy.isRegistered(

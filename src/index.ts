@@ -77,10 +77,10 @@ export default class Entropy {
 
     this.registrationManager = new RegistrationManager({
       substrate: this.substrate,
-      signer: this.keyring.getLazyLoadKeyProxy(ChildKey.REGISTRATION),
+      signer: this.keyring.getLazyLoadAccountProxy(ChildKey.registration),
     })
     this.signingManager = new SignatureRequestManager({
-      signer: this.keyring.getLazyLoadKeyProxy(ChildKey.DEVICE_KEY),
+      signer: this.keyring.getLazyLoadAccountProxy(ChildKey.deviceKey),
       substrate: this.substrate,
       adapters: opts.adapters,
       crypto,
@@ -88,8 +88,10 @@ export default class Entropy {
 
     this.programs = new ProgramManager({
       substrate: this.substrate,
-      programModKey: this.keyring.getLazyLoadKeyProxy(ChildKey.REGISTRATION),
-      deployer: this.keyring.getLazyLoadKeyProxy(ChildKey.PROGRAM_DEV),
+      programModKey: this.keyring.getLazyLoadAccountProxy(
+        ChildKey.registration
+      ),
+      deployer: this.keyring.getLazyLoadAccountProxy(ChildKey.programDev),
     })
     this.#ready(true)
   }
@@ -110,12 +112,12 @@ export default class Entropy {
 
     params = params || {
       programData: [defaultProgram],
-      programDeployer: this.keyring.getRegisteringKey().address,
+      programDeployer: this.keyring.accounts.registration.address,
     }
 
     await Promise.all([this.ready, this.substrate.isReady])
 
-    const deviceKey = this.keyring.getLazyLoadKeyProxy(ChildKey.DEVICE_KEY)
+    const deviceKey = this.keyring.getLazyLoadAccountProxy(ChildKey.deviceKey)
     defaultProgram.programConfig.sr25519PublicKeys.push(deviceKey)
 
     if (
@@ -128,8 +130,8 @@ export default class Entropy {
     const verifyingKey = await this.registrationManager.register(params)
 
     // fuck frankie TODO: Make legit function
-    const vk = this.keyring.accounts[ChildKey.DEVICE_KEY].verifyingKeys
-    this.keyring.accounts[ChildKey.DEVICE_KEY].verifyingKeys = [
+    const vk = this.keyring.accounts[ChildKey.deviceKey].verifyingKeys
+    this.keyring.accounts[ChildKey.deviceKey].verifyingKeys = [
       ...vk,
       verifyingKey,
     ]

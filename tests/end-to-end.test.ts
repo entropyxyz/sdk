@@ -101,7 +101,7 @@ test('End To End', async (t) => {
     })
   )
   t.equal(
-    entropy.keyring.getRegisteringKey(),
+    entropy.keyring.accounts.registration,
     charlieStashAddress,
     'got right address'
   )

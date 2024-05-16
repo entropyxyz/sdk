@@ -1,16 +1,14 @@
 import { Keypair } from '@polkadot/util-crypto/types'
 import { Keyring as PolkadotKeyring } from '@polkadot/keyring'
 import { crypto } from '../utils/crypto'
-import { UIDv4 } from './types/json'
 import { Pair } from './types/internal'
+import { ChildKeyBasePaths } from './types/constants'
 import {
   sr25519PairFromSeed,
   keyExtractPath,
   keyFromPath,
+  randomAsHex,
 } from '@polkadot/util-crypto'
-
-export const UIDv4regex =
-  /^(?:[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}|00000000-0000-0000-0000-000000000000)$/i
 
 const {
   // sr25519PairFromSeed,
@@ -41,13 +39,12 @@ export function seedFromMnemonic (m) {
  * @throws {TypeError} If the UIDv4 does not match the expected format.
  */
 
-export function getPath ({ type, uid }: { type: string; uid: UIDv4 }): string {
-  if (UIDv4regex.test(uid)) {
-    return `//entropy//${type}///${uid}`
+export function getPath (type): string {
+  const basePath = ChildKeyBasePaths[type]
+  if (basePath.endsWith('//')) {
+    return `${basePath}${randomAsHex().slice(2)}`
   }
-  throw new TypeError(
-    'uid is not correct type please provide the correct regex matching string'
-  )
+  return basePath
 }
 
 /**
@@ -94,10 +91,10 @@ export function generateKeyPairFromSeed (
     console.log('derivation', derivation)
 
     const masterPair = sr25519PairFromSeed(seed)
+    console.log('derivation', derivation)
     const { path } = keyExtractPath(derivation)
     const kp = keyFromPath(masterPair, path, 'sr25519')
     pair = polkadotKeyring.addFromPair(kp)
-    console.log('is this really the signer?', pair.signer)
     pair.secretKey = kp.secretKey
   } else {
     const masterPair = sr25519PairFromSeed(seed)

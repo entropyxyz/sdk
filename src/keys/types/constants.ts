@@ -28,18 +28,17 @@ export const enum EntropyAccountType {
  */
 
 export enum ChildKey {
-  REGISTRATION = 'registration',
-  PROGRAM_DEV = 'programDev',
-  DEVICE_KEY = 'deviceKey',
+  registration = 'registration',
+  programDev = 'programDev',
+  deviceKey = 'deviceKey',
 }
 
-export const enum EntropyAccountContextType {
+export enum EntropyAccountContextType {
   programDev = 'PROGRAM_DEV_KEY',
   registration = 'ADMIN_KEY',
   deviceKey = 'CONSUMER_KEY',
   undefined = 'MIXED_KEY',
 }
-
 
 /**
  * Enumeration representing the base paths for different accounts keys used in Entropy.
@@ -51,10 +50,9 @@ export enum ChildKeyBasePaths {
   deviceKey = '//entropy//device-key//',
 }
 
-
 // export const ENTROPY_ACCOUNT_BASE = {
 //   seed: undefined // comes from the user
-//   [ChildKey.REGISTRATION]: {
+//   [ChildKey.registration]: {
 //     seed: undefined // this is the one we create
 //     dervation: undefined //has the uuid
 //     address: undefined
@@ -63,7 +61,7 @@ export enum ChildKeyBasePaths {
 //     } // the signer is functional code and gets generated upon request
 //     type: EntropyAccountType.ADMIN_ACCOUNT
 //   },
-//   [ChildKey.PROGRAM_DEV]: {
+//   [ChildKey.programDev]: {
 //     seed
 //     dervation //has the uuid
 //     address
@@ -73,7 +71,7 @@ export enum ChildKeyBasePaths {
 //     } // the signer is functional code and gets generated upon request
 //     type: EntropyAccountType.PROGRAM_DEV_ACCOUNT
 //   },
-//   [ChildKey.DEVICE_KEY]: {
+//   [ChildKey.deviceKey]: {
 //     seed
 //     dervation //has the uuid
 //     signer: {
@@ -85,5 +83,3 @@ export enum ChildKeyBasePaths {
 //   type: EntropyAccountType.MIXED_ACCOUNT
 //   debug: false
 // }
-
-
