@@ -1,3 +1,3 @@
 #! /usr/bin/env bash
 
-export ENTROPY_CORE_VERSION=test-vi-release-v0.0.12-rc3.beta
+export ENTROPY_CORE_VERSION=release-v0.1.0-rc.1

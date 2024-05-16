@@ -89,16 +89,62 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
         }
       })
     )
-
+    // @ts-ignore: next line
     // Send the registration transaction and wait for the result.
-    const registrationTxResult = await this.sendAndWaitFor(registerTx, {
+    const registrationTxResult = this.sendAndWaitFor(registerTx, {
       section: 'registry',
       name: 'AccountRegistered',
+    }).catch((error) => {
+      if (error.message === 'Event record not found') {
+        const { records } = error
+        const fails = records.findRecord({
+          section: 'registry',
+          name: 'FailedRegistration',
+        })
+        if (fails) throw new Error('Failed to Register')
+      } else {
+        throw error
+      }
     })
+    const dataFromEvents = this.#getVerifiyingKeyFromRegisterEvent(
+      this.signer.pair.address
+    )
+
+    await registrationTxResult
+    const { verifyingKey } = await dataFromEvents
 
     // @ts-ignore: next line
-    const { verifyingKey } = registrationTxResult.event.data.toHuman()
 
     return verifyingKey
+  }
+
+  #getVerifiyingKeyFromRegisterEvent (
+    address: SS58Address
+  ): Promise<{ verifyingKey: string; address: string }> {
+    const wantedMethods = ['FailedRegistration', 'AccountRegistered']
+    let unsub
+    return new Promise((res, reject) => {
+      unsub = this.substrate.query.system.events((events) => {
+        events.forEach((record) => {
+          const { event } = record
+          const { section, method } = event
+          console.log('event:', [section.toString(), method], address)
+          if (wantedMethods.includes(method)) {
+            if (method === wantedMethods[0]) {
+              if (event?.data?.toHuman().address === address) {
+                reject(event)
+                unsub()
+              }
+            }
+            if (method === wantedMethods[1]) {
+              if (event?.data?.toHuman().address === address) {
+                res(event?.data?.toHuman())
+                unsub()
+              }
+            }
+          }
+        })
+      })
+    })
   }
 }
