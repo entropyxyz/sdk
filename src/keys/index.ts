@@ -45,7 +45,6 @@ export default class Keyring {
       this.#seed = seed
     }
     const accountsJson = this.#formatAccounts(account)
-    console.log('accountsJson:', accountsJson)
     this.accounts = this.#createFunctionalAccounts(accountsJson)
   }
 
@@ -158,11 +157,9 @@ export default class Keyring {
    */
 
   getLazyLoadAccountProxy (childKey: ChildKey): Signer {
-    console.log('childKey!!!!', childKey)
     // if (!this.accounts[childKey]) {
     //   this.accounts[childKey] = {}
     // }
-    console.log('childKey proxy get:', childKey, this.accounts)
     return new Proxy(this.accounts[childKey], {
       set: (account, k: string, v) => {
         if (k === 'used') {

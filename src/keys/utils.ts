@@ -41,7 +41,7 @@ export function seedFromMnemonic (m) {
 
 export function getPath (type): string {
   const basePath = ChildKeyBasePaths[type]
-  if (basePath.endsWith('//')) {
+  if (basePath.endsWith('/')) {
     return `${basePath}${randomAsHex().slice(2)}`
   }
   return basePath
@@ -94,7 +94,8 @@ export function generateKeyPairFromSeed (
     console.log('derivation', derivation)
     const { path } = keyExtractPath(derivation)
     const kp = keyFromPath(masterPair, path, 'sr25519')
-    pair = polkadotKeyring.addFromPair(kp)
+    pair = polkadotKeyring.addFromUri(`${seed}${derivation}`)
+    console.log('path address check', derivation, pair.publicKey, kp.publicKey)
     pair.secretKey = kp.secretKey
   } else {
     const masterPair = sr25519PairFromSeed(seed)

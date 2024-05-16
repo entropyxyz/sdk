@@ -29,7 +29,6 @@ export default class ExtrinsicBaseClass {
   constructor ({ substrate, signer }) {
     this.substrate = substrate
     this.signer = signer
-    console.log('signer in extrinsic base class:', this.signer.pair)
   }
   /**
    * Sends an extrinsic and waits for a specific event or rejects with an error.
