@@ -31,7 +31,7 @@ test('End To End', async (t) => {
   await run('wasm', wasmGlobalsReady())
 
   let store = {}
-  const keyring = new Keyring({ seed: charlieStashSeed })
+  const keyring = new Keyring({ seed: charlieStashSeed, debug: true })
   keyring.accounts.on('account-update', (fullAccount) => {
     store = fullAccount
   })

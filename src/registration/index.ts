@@ -78,50 +78,6 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
     // TODO: store multiple signers via SS58Address. and respond accordingly
     // however it should be handled in extrinsic class and not here
 
-    /**
-     * Verifies the registration status of an SS58Address.
-     *
-     * @param {SS58Address} SS58Address - The SS58Address for which registration status needs to be checked.
-     * @returns {Promise<boolean>} A promise which resolves to `true` if the SS58Address is registered, otherwise `false`.
-     * @remarks
-     * This method queries Entropy to determine if a given SS58Address is registered.
-     */
-
-    const registered: Promise<AccountRegisteredSuccess> = new Promise(
-      (resolve, reject) => {
-        try {
-          console.log('in registration manager', this.verifyingKey)
-          if (!this.verifyingKey) {
-            console.log('No verifying key available.')
-            return registered
-          }
-
-          const unsubPromise = this.substrate.rpc.chain.subscribeNewHeads(
-            async () => {
-              const registeredCheck =
-                await this.substrate.query.registry.registered(
-                  this.verifyingKey
-                )
-              if (registeredCheck) {
-                const unsub = await unsubPromise
-                unsub()
-                const registeredData =
-                  await this.substrate.query.registry.registered(
-                    this.verifyingKey
-                  )
-                // @ts-ignore: next line
-                if (!registeredData.isSome) {
-                  throw new Error('Registration information not found')
-                }
-              }
-            }
-          )
-        } catch (e) {
-          reject(e)
-        }
-      }
-    )
-
     // Convert the program data to the appropriate format and create a registration transaction.
     const registerTx = this.substrate.tx.registry.register(
       programDeployer,

@@ -111,7 +111,7 @@ export default class Entropy {
     }
 
     await Promise.all([this.ready, this.substrate.isReady])
-
+    console.log('READY')
     const deviceKey = this.keyring.getLazyLoadAccountProxy(ChildKey.deviceKey)
     defaultProgram.programConfig.sr25519PublicKeys.push(deviceKey)
 

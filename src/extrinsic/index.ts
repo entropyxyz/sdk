@@ -69,7 +69,7 @@ export default class ExtrinsicBaseClass {
             if (record) {
               resolve(record)
             } else {
-              reject(Error('Event record not found'))
+              reject({ fail: 'Event record not found', records: res })
             }
           }
         })
