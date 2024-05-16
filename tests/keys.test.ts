@@ -1,7 +1,7 @@
 import test from 'tape'
 import Keyring from '../src/keys'
 import { HexSeedMaterial, MnemonicSeedMaterial } from '../src/keys/types/json'
-import { generateMnemonic, seedFrommnemonic } from '../src/keys/utils'
+import { generateMnemonic, seedFromMnemonic } from '../src/keys/utils'
 import { charlieStashSeed } from './testing-utils/constants'
 
 let testMnemonic: string

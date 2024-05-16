@@ -58,7 +58,7 @@ export default class Keyring {
   #deriveKeys (entropyAccount: EntropyAccount) {
     const accounts = Object.keys(entropyAccount)
     accounts.forEach((keyPairMaterialName: string) => {
-      this.#formatAccount(entropyAccount[keyPairMaterialName])
+      this.#formatAccounts(entropyAccount[keyPairMaterialName])
     })
   }
 
@@ -91,24 +91,24 @@ export default class Keyring {
     return accounts
   }
 
-
-  #createFunctionalAccounts (masterAccountView: EntropyAccount) {
-    const accounts = new EventEmitter() as AccountsEmitter
+  #createFunctionalAccounts (masterAccountView: EntropyAccount): AccountsEmitter {
+    const accounts = new EventEmitter()
     accounts.type = accounts.type || EntropyAccountType.MIXED_ACCOUNT
-    accounts.asJson = masterAccountView
     Object.keys(masterAccountView).forEach((name) =>{
       if (name) {
-        const { seed, derivation, address } = masterAccountView[name]
+        const { seed, path, address } = masterAccountView[name]
         if (!seed) throw new TypeError('malformed account: missing seed')
+        const { pair } = utils.generateKeyPairFromSeed(seed, path)
         const functionalAccount = {
           seed,
-          derivation,
+          path,
           address,
-          signer: generateKeyPairFromSeed(seed, derivation),
+          pair,
         }
         accounts[name] = functionalAccount
       }
     })
+    accounts.masterAccountView = masterAccountView
   }
 
 
@@ -118,13 +118,13 @@ export default class Keyring {
    * @param account - The pair material for the account.
    */
 
-  #jsonAccountCreator (pairMaterial: unknown, debug): PairMaterial {
+  #jsonAccountCreator (pairMaterial: PairMaterial & unknown, debug): PairMaterial {
     if (!pairMaterial) throw new TypeError('nothing to format please try again')
     const { seed, address, type } = pairMaterial
-    const path = debug ? '' : getPath({type, uid: uuidv4()})
+    const path = debug ? '' : utils.getPath({type, uid: uuidv4()})
     const nonDebugSeed = seed.includes('/') ? seed : `${seed}${path}`
     const jsonAccount = {
-      seed: debug? seed : nonDebugSeed
+      seed: debug? seed : nonDebugSeed,
       path,
       address
     }
@@ -133,13 +133,13 @@ export default class Keyring {
 
   }
 
-  #formatAccounts (accounts: PairMaterial | EntropyAccount): EntropyAccount {
+  #formatAccounts (accounts: KeyMaterial | EntropyAccount): EntropyAccount {
     const { seed, mnemonic, debug } = accounts
     const entropyAccountsJson = {
       debug,
-      seed: seed ? seed : seedFromMnemonic(mnemonic)
+      seed: seed ? seed :utils. seedFromMnemonic(mnemonic)
     }
-
+    this.#used = Object.keys(accounts)
     if (debug) {
       Object.keys(ChildKey).forEach((key) => {
         entropyAccountsJson[key] = this.#jsonAccountCreator({seed: entropyAccountsJson.seed}, debug)
@@ -222,19 +222,6 @@ export default class Keyring {
     return this.accounts[ChildKey.PROGRAM_DEV].signer
   }
 
-  getChildSigner (childKey: ChildKey): Signer {
-    switch (childKey) {
-    case ChildKey.DEVICE_KEY:
-      return this.getDeviceKey()
-    case ChildKey.REGISTRATION:
-      return this.getRegisteringKey()
-    case ChildKey.PROGRAM_DEV:
-      return this.getProgramDevKey()
-    default:
-      throw new Error(`unknown child key: ${childKey}`)
-    }
-  }
-
   /**
    * Lazily loads a key proxy for a given type.
    * This is so we dont just generate a bunch of useless keys that are getting
@@ -243,45 +230,21 @@ export default class Keyring {
    * @returns A `Signer` proxy object.
    */
 
-  getLazyLoadKeyProxy (childKey: ChildKey): Signer {
+  getLazyLoadAccountProxy (childKey: ChildKey): Signer {
     console.log('childKey!!!!', childKey)
     // if (!this.accounts[childKey]) {
     //   this.accounts[childKey] = {}
     // }
-    return new Proxy(this.accounts || {}, {
-      get: (account, key) => {
-        const signer = this.getChildSigner(childKey)
-        if (key === 'verifyingKeys') {
-          return signer.verifyingKeys || []
+    return new Proxy(this.accounts[childKey], {
+      set: (account, k, v) => {
+        if (k === 'used') {
+          if (this.accounts[childKey].used) this.accounts.emit(`${childKey}#new`, this.getAccount())
+        } else {
+          this.accounts.emit(`${childKey}#account-update`, this.getAccount())
         }
-        return signer
-      },
-      set: (_, key, value) => {
-        this.accounts[key] = value
-        if (key === 'verifyingKeys') this.accounts.emit('account-update')
-        return value
-      },
+        this.accounts.masterAccountView[childKey][k] = v
+        return this.accounts[childKey][k] = v
+      }
     })
-  }
-
-  /**
-   * Creates a new key and formats the account.
-   *
-   * @param params - The parameters for key creation.
-   * @param params.type - The type of the key.
-   * @param params.uuid - The UUID for the key.
-   */
-
-  #createKey ({ type, uuid }: { type: ChildKey; seed?: Seed; uuid?: UIDv4 }) {
-    console.log('uuid', uuid)
-    const path = uuid
-      ? `${ChildKeyBasePaths[type]}${uuid}`
-      : ChildKeyBasePaths[type]
-    console.log('Constructed path:', path)
-    this.#formatAccount({ path, type })
-    this.accounts[type] = this.accounts.emit(
-      'account-update',
-      this.getAccount()
-    )
   }
 }

@@ -10,7 +10,7 @@
  *
  * */
 
-import { ChildKey, EntropyAccountType } from "./constants"
+import { ChildKey, EntropyAccountType, EntropyAccountContextType } from "./constants"
 
 export type UIDv4 = string
 
@@ -111,8 +111,10 @@ export interface EntropyAccount {
   path: DerivationPath
   // Optional seed for the key pair.
   seed?: Seed
-  // Type of the key, corresponding to a child key.
-  type: ChildKey
   // List of verifying keys associated with the key pair.
   verifyingKeys?: VerifyingKey[]
+  // Type of the key, corresponding to a child key.
+  type: ChildKey
+  // a key type concept
+  contextType: EntropyAccountContextType
 }

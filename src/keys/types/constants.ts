@@ -52,38 +52,38 @@ export enum ChildKeyBasePaths {
 }
 
 
-export const ENTROPY_ACCOUNT_BASE = {
-  seed: undefined // comes from the user
-  [ChildKey.REGISTRATION]: {
-    seed: undefined // this is the one we create
-    dervation: undefined //has the uuid
-    address: undefined
-    signer: {
-      pair: undefined
-    } // the signer is functional code and gets generated upon request
-    type: EntropyAccountType.ADMIN_ACCOUNT
-  },
-  [ChildKey.PROGRAM_DEV]: {
-    seed
-    dervation //has the uuid
-    address
-    signer: {
-      pair
-      address
-    } // the signer is functional code and gets generated upon request
-    type: EntropyAccountType.PROGRAM_DEV_ACCOUNT
-  },
-  [ChildKey.DEVICE_KEY]: {
-    seed
-    dervation //has the uuid
-    signer: {
-      pair
-      address
-    } // the signer is functional code and gets generated upon request
-    type: EntropyAccountType.CONSUMER_ACCOUNT
-  },
-  type: EntropyAccountType.MIXED_ACCOUNT
-  debug: false
-}
+// export const ENTROPY_ACCOUNT_BASE = {
+//   seed: undefined // comes from the user
+//   [ChildKey.REGISTRATION]: {
+//     seed: undefined // this is the one we create
+//     dervation: undefined //has the uuid
+//     address: undefined
+//     signer: {
+//       pair: undefined
+//     } // the signer is functional code and gets generated upon request
+//     type: EntropyAccountType.ADMIN_ACCOUNT
+//   },
+//   [ChildKey.PROGRAM_DEV]: {
+//     seed
+//     dervation //has the uuid
+//     address
+//     signer: {
+//       pair
+//       address
+//     } // the signer is functional code and gets generated upon request
+//     type: EntropyAccountType.PROGRAM_DEV_ACCOUNT
+//   },
+//   [ChildKey.DEVICE_KEY]: {
+//     seed
+//     dervation //has the uuid
+//     signer: {
+//       pair
+//       address
+//     } // the signer is functional code and gets generated upon request
+//     type: EntropyAccountType.CONSUMER_ACCOUNT
+//   },
+//   type: EntropyAccountType.MIXED_ACCOUNT
+//   debug: false
+// }
 
 
