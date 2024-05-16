@@ -3,26 +3,42 @@
   "version": "0.1.4",
   "license": "AGPL-3.0-only",
   "description": "JS SDK for entropy blockchain ",
+  "type": "module",
+  "exports": {
+    ".": {
+      "module": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "default": "./dist/index.js"
+    },
+    "./keys": {
+      "module": "./dist/keys/index.js",
+      "require": "./dist/keys/index.cjs",
+      "default": "./dist/keys/index.js"
+    },
+    "./crypto-utils": {
+      "module": "./dist/utils/crypto.js",
+      "require": "./dist/utils/crypto.cjs",
+      "default": "./dist/utils/crypto.js"
+    },
+    "./gen-utils": {
+      "module": "./dist/utils/index.js",
+      "require": "./dist/utils/index.cjs",
+      "default": "./dist/utils/index.js"
+    }
+  },
+  "types": "dist/index.d.ts",
   "files": [
     "dist",
     "dist/keys",
     "dist/utils"
   ],
-  "exports": {
-    ".": "./dist/index.js",
-    "./keys": "./dist/keys/index.js",
-    "./cypto-utils": "./dist/utils/crypto.js",
-    "./gen-utils": "./dist/utils/index.js"
-  },
-  "type": "module",
-  "types": "dist/index.d.ts",
-  "module": "dist/index.js",
-  "browser": "dist/index.js",
   "scripts": {
-    "test": "yarn test:setup && yarn test:types && yarn test:ts && yarn test:only",
-    "test:setup": "./dev/bin/check-tools.sh && yarn removedb",
+    "test": "yarn test:setup && yarn test:import && yarn test:require yarn test:types && yarn test:ts && yarn test:only",
+    "test:setup": "yarn bundle && ./dev/bin/check-tools.sh && yarn removedb",
     "test:types": "tsc",
     "test:ts": "set -e; for t in tests/*.test.ts; do npx tsx $t | tap-spec; done",
+    "test:import": "node tests/import.test.mjs | tap-spec",
+    "test:require": "node tests/require.test.cjs | tap-spec",
     "test:only": "if grep -r --exclude-dir=node_modules --exclude-dir=.git --color 'test\\.only' ; then exit 1; fi",
     "test:coverage": "nyc yarn test",
     "lint": "yarn lint:ts && yarn lint:eslint",

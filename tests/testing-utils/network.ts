@@ -31,16 +31,16 @@ export async function spinNetworkDown(
 }
 
 export async function disconnect(api: ApiPromise) {
-  console.log('Attempting to disconnect...')
+  // console.log('Attempting to disconnect...')
   if (api.isConnected) {
     try {
       await api.disconnect()
-      console.log('Disconnected successfully.')
+      // console.log('Disconnected successfully.')
     } catch (error) {
-      console.error(`Error while disconnecting: ${error.message}`)
+      console.error('Error while disconnecting:', error.message)
     }
   } else {
-    console.log('API is already disconnected.')
+    // console.log('API is already disconnected.')
   }
 }
 
