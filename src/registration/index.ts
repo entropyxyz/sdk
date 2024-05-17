@@ -1,9 +1,10 @@
+import { ApiPromise } from '@polkadot/api'
 import ExtrinsicBaseClass from '../extrinsic'
 import { HexString, SS58Address } from '../keys/types/json'
-import { ApiPromise } from '@polkadot/api'
 import { ProgramInstance } from '../programs'
 import { Signer } from '../keys/types/internal'
 import { Address } from '../types/internal'
+import { debug } from '../utils'
 
 export interface RegistrationParams {
   programData: ProgramInstance[]
@@ -128,7 +129,7 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
         events.forEach((record) => {
           const { event } = record
           const { section, method } = event
-          console.log('event:', [section.toString(), method], address)
+          debug('event:', [section.toString(), method], address)
           if (wantedMethods.includes(method)) {
             if (method === wantedMethods[0]) {
               if (event?.data?.toHuman().address === address) {

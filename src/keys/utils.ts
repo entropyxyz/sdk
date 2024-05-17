@@ -1,14 +1,15 @@
 import { Keypair } from '@polkadot/util-crypto/types'
 import { Keyring as PolkadotKeyring } from '@polkadot/keyring'
-import { crypto } from '../utils/crypto'
-import { Pair } from './types/internal'
-import { ChildKeyBasePaths } from './types/constants'
 import {
   sr25519PairFromSeed,
   keyExtractPath,
   keyFromPath,
   randomAsHex,
 } from '@polkadot/util-crypto'
+import { debug } from '../utils'
+import { crypto } from '../utils/crypto'
+import { Pair } from './types/internal'
+import { ChildKeyBasePaths } from './types/constants'
 
 const {
   // sr25519PairFromSeed,
@@ -88,14 +89,12 @@ export function generateKeyPairFromSeed (
   // for our code
   const polkadotKeyring = new PolkadotKeyring({ type: 'sr25519' })
   if (derivation) {
-    console.log('derivation', derivation)
-
+    debug('derivation', derivation)
     const masterPair = sr25519PairFromSeed(seed)
-    console.log('derivation', derivation)
     const { path } = keyExtractPath(derivation)
     const kp = keyFromPath(masterPair, path, 'sr25519')
     pair = polkadotKeyring.addFromUri(`${seed}${derivation}`)
-    console.log('path address check', derivation, pair.publicKey, kp.publicKey)
+    debug('path address check', derivation, pair.publicKey, kp.publicKey)
     pair.secretKey = kp.secretKey
   } else {
     const masterPair = sr25519PairFromSeed(seed)

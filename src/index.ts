@@ -1,5 +1,5 @@
 import { ApiPromise, WsProvider } from '@polkadot/api'
-import { isValidSubstrateAddress } from './utils'
+import { debug, isValidSubstrateAddress } from './utils'
 import RegistrationManager, { RegistrationParams } from './registration'
 import SignatureRequestManager, { SigOps, SigMsgOps } from './signing'
 import { crypto, loadCryptoLib } from './utils/crypto'
@@ -111,7 +111,8 @@ export default class Entropy {
     }
 
     await Promise.all([this.ready, this.substrate.isReady])
-    console.log('READY')
+    debug('READY')
+
     const deviceKey = this.keyring.getLazyLoadAccountProxy(ChildKey.deviceKey)
     defaultProgram.programConfig.sr25519PublicKeys.push(deviceKey)
 

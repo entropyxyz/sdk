@@ -1,6 +1,9 @@
 import { decodeAddress, encodeAddress } from '@polkadot/keyring'
 import { hexToU8a, isHex } from '@polkadot/util'
+import Debug from 'debug'
 import { Address } from '../types/internal'
+
+export const debug = Debug('@entropyxyz/sdk')
 
 /**
  * Represents a generic object where keys are strings and values can be numbers, strings, string arrays, or nested objects.
@@ -141,7 +144,7 @@ export function hexStringToUint8Array (hex: string): Uint8Array {
     hex = hex.slice(2)
   }
   if (hex.length % 2 !== 0) {
-    throw new Error("Hex string must have an even number of characters")
+    throw new Error('Hex string must have an even number of characters')
   }
 
   const byteArray = new Uint8Array(hex.length / 2)
