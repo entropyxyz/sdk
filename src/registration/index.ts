@@ -118,8 +118,8 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
   #getVerifiyingKeyFromRegisterEvent (address: SS58Address): Promise<string> {
     const wantedMethods = ['FailedRegistration', 'AccountRegistered']
     let unsub
-    return new Promise((res, reject) => {
-      unsub = this.substrate.query.system.events((events) => {
+    return new Promise(async (res, reject) => {
+      unsub = await this.substrate.query.system.events((events) => {
         events.forEach(async (record) => {
           const { event } = record
           const { method } = event
@@ -127,13 +127,13 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
             if (method === wantedMethods[0]) {
               if (event?.data?.toHuman()[0] === address) {
                 reject(new Error('Registration Failed'))
-                await unsub()
+                unsub()
               }
             }
             if (method === wantedMethods[1]) {
               if (event?.data?.toHuman()[0] === address) {
                 res(event?.data?.toHuman()[1])
-                await unsub()
+                unsub()
               }
             }
           }

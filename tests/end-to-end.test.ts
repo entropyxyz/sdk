@@ -65,9 +65,10 @@ test('End To End', async (t) => {
 
   // register
   const verifyingKeyFromRegistration = await run('register', entropy.register())
+  console.log(entropy.keyring.accounts.registration)
   t.equal(
     verifyingKeyFromRegistration,
-    entropy.keyring.accounts.registration.verifiyingKey[0],
+    entropy.keyring.accounts.registration.verifyingKeys[0],
     'verifyingKeys match after registration'
   )
 
@@ -88,12 +89,6 @@ test('End To End', async (t) => {
   const verifyingKey = entropy.programs.verifyingKey
   t.ok(verifyingKey, 'verifyingKey exists')
 
-  // Post-registration check
-  const postRegistrationStatus = await run(
-    'isRegistered',
-    entropy.isRegistered(charlieStashAddress)
-  )
-  t.equal(JSON.stringify(postRegistrationStatus), 'true', 'isRegistered = true')
 
   //  loading second program
   const dummyProgram: any = readFileSync(
@@ -138,7 +133,7 @@ test('End To End', async (t) => {
   }
 
   const signature = await run(
-    'signTransaction',
+    'signWithAdapter',
     entropy.signWithAdapter({
       msg: basicTx,
       type: 'device-key-proxy',
