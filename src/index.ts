@@ -98,11 +98,11 @@ export default class Entropy {
    * @param {Address} params.programModAccount - The address authorized to set programs on behalf of the user.
    * @param {'Public' } [params.keyVisibility] - Visibility setting for the key.
    * @param {ProgramData[]} [params.programData] - Optional initial programs associated with the user.
-   * @returns {Promise<void>} A promise that resolves when the registration is complete.
+   * @returns {Promise<HexString>} A promise that resolves the verifying key for the new account when the registration is complete.
    * @throws {Error} - If the address is already registered or if there's a problem during registration.
    */
 
-  async register (params?: RegistrationParams): Promise<void> {
+  async register (params?: RegistrationParams): Promise<HexString> {
     const defaultProgram = DEVICE_KEY_PROXY_PROGRAM_INTERFACE
 
     params = params || {
@@ -114,7 +114,10 @@ export default class Entropy {
     debug('READY')
 
     const deviceKey = this.keyring.getLazyLoadAccountProxy(ChildKey.deviceKey)
-    defaultProgram.programConfig.sr25519PublicKeys.push(deviceKey)
+    deviceKey.used = true
+    defaultProgram.programConfig.sr25519PublicKeys.push(
+      deviceKey.pair.publicKey
+    )
 
     if (
       params.programDeployer &&
@@ -126,11 +129,12 @@ export default class Entropy {
     const verifyingKey = await this.registrationManager.register(params)
 
     // fuck frankie TODO: Make legit function
-    const vk = this.keyring.accounts[ChildKey.deviceKey].verifyingKeys
+    const vk = this.keyring.accounts[ChildKey.deviceKey].verifyingKeys || []
     this.keyring.accounts[ChildKey.deviceKey].verifyingKeys = [
       ...vk,
       verifyingKey,
     ]
+    return verifyingKey
   }
 
   /**

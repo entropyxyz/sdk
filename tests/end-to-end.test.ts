@@ -36,6 +36,12 @@ test('End To End', async (t) => {
     store = fullAccount
   })
 
+  t.equal(
+    keyring.accounts.registration.address,
+    charlieStashAddress,
+    'got right address'
+  )
+
   const entropy = new Entropy({
     keyring,
     endpoint: 'ws://127.0.0.1:9944',
@@ -58,53 +64,17 @@ test('End To End', async (t) => {
   t.equal(typeof pointer, 'string', 'valid pointer')
 
   // register
-  await run('register', entropy.register())
+  const verifyingKeyFromRegistration = await run('register', entropy.register())
+  t.equal(
+    verifyingKeyFromRegistration,
+    entropy.keyring.accounts.registration.verifiyingKey[0],
+    'verifyingKeys match after registration'
+  )
+
   //
   // sign some data
   //
 
-  const config = `
-    {
-      "allowlisted_addresses": [
-        "772b9a9e8aa1c9db861c6611a82d251db4fac990"
-      ]
-    }
-  `
-  // convert to bytes
-  const encoder = new TextEncoder()
-  const byteArray = encoder.encode(config)
-
-  // convert u8a to hex
-  const programConfig = util.u8aToHex(new Uint8Array(byteArray))
-
-  const programData: ProgramInstance = {
-    programPointer: pointer,
-    programConfig: programConfig,
-  }
-
-  // Pre-registration check
-  const preRegistrationStatus = await run(
-    'isRegistered',
-    entropy.isRegistered(charlieStashAddress)
-  )
-  t.equal(
-    JSON.stringify(preRegistrationStatus),
-    'false',
-    'charlie not yet registered'
-  )
-
-  await run(
-    'register',
-    entropy.register({
-      programDeployer: charlieStashAddress,
-      programData: [programData],
-    })
-  )
-  t.equal(
-    entropy.keyring.accounts.registration,
-    charlieStashAddress,
-    'got right address'
-  )
   // NEED PRE-REGISTRATION TEST
   // const preRegistrationStatusCheck = await run(
   //   'checkRegistrationStatus',
@@ -114,6 +84,7 @@ test('End To End', async (t) => {
   // t.ok(preRegistrationStatusCheck, 'preRegistrationStatusCheck ...') // TODO: better check
 
   // Use the verifyingKey from ProgramManager
+
   const verifyingKey = entropy.programs.verifyingKey
   t.ok(verifyingKey, 'verifyingKey exists')
 
