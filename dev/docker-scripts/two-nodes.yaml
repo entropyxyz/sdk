@@ -27,6 +27,7 @@ services:
       - "0.0.0.0:3001"
       - "--chain-endpoint"
       - "ws://alice-chain-node:9944"
+      - '--no-sync'
 
   # In a local devnet setup, for now, this is "Alice's chain."
   alice-chain-node:
@@ -47,7 +48,6 @@ services:
       - "--node-key=0000000000000000000000000000000000000000000000000000000000000001"
       - "--tss-server-endpoint"
       - "http://alice-tss-server:3001"
-
   # "Bob's TSS server."
   bob-tss-server:
     image: entropyxyz/entropy-tss:$ENTROPY_CORE_VERSION
@@ -59,6 +59,7 @@ services:
       - "0.0.0.0:3002"
       - "--chain-endpoint"
       - "ws://bob-chain-node:9944"
+      - '--no-sync'
 
   # "Bob's chain node."
   bob-chain-node:
