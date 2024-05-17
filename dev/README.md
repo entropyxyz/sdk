@@ -28,6 +28,35 @@ You can close them down like this:
 docker compose --file dev/docker-scripts/two-nodes.yaml down
 ```
 
+### Gotcha 2 - ports still in use?
+
+Is something still using port 9944?
+
+```bash
+ps auxw | grep 9944
+```
+
+NOTE: this just kills + removes everything
+
+```bash
+docker stop $(docker ps -a -q)
+docker rm $(docker ps -a -q)
+```
+
+### Gotcha 3 - `latest` tag
+
+If you use the `latest` tag ... this is a moving target
+
+```bash
+export ENTROPY_CORE_VERSION=latest
+```
+
+If you must do this you should run
+
+```bash
+docker compose --file dev/docker-scripts/two-nodes.yaml pull
+```
+
 ## When updating core version:
 
 1. change docker version in `./dev/bin/ENTROPY_CORE_VERSION.sh`
