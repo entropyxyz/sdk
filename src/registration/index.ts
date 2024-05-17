@@ -111,35 +111,29 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
     )
 
     await registrationTxResult
-    const { verifyingKey } = await dataFromEvents
-
-    // @ts-ignore: next line
-
+    const verifyingKey = await dataFromEvents
     return verifyingKey
   }
 
-  #getVerifiyingKeyFromRegisterEvent (
-    address: SS58Address
-  ): Promise<{ verifyingKey: string; address: string }> {
+  #getVerifiyingKeyFromRegisterEvent (address: SS58Address): Promise<string> {
     const wantedMethods = ['FailedRegistration', 'AccountRegistered']
     let unsub
     return new Promise((res, reject) => {
       unsub = this.substrate.query.system.events((events) => {
-        events.forEach((record) => {
+        events.forEach(async (record) => {
           const { event } = record
-          const { section, method } = event
-          console.log('event:', [section.toString(), method], address)
-          if (wantedMethods.includes(method)) {
+          const { method } = event
+          if (wantedMethods.includes(method.toString())) {
             if (method === wantedMethods[0]) {
-              if (event?.data?.toHuman().address === address) {
-                reject(event)
-                unsub()
+              if (event?.data?.toHuman()[0] === address) {
+                reject(new Error('Registration Failed'))
+                await unsub()
               }
             }
             if (method === wantedMethods[1]) {
-              if (event?.data?.toHuman().address === address) {
-                res(event?.data?.toHuman())
-                unsub()
+              if (event?.data?.toHuman()[0] === address) {
+                res(event?.data?.toHuman()[1])
+                await unsub()
               }
             }
           }
