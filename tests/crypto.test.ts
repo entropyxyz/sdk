@@ -65,8 +65,7 @@ test('Crypto', async (t) => {
       crypto.encryptAndSign(
         charlieKeyPair.pair.secretKey,
         thresholdKey,
-        charliePublicKey,
-        serverDHKey
+        charliePublicKey
       )
     )
     const expected = await run(

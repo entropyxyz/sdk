@@ -130,7 +130,7 @@ test('End To End', async (t) => {
     'signWithAdapter',
     entropy.signWithAdapter({
       msg: basicTx,
-      type: 'device-key-proxy',
+      type: 'deviceKeyProxy',
     })
   )
 

@@ -35,16 +35,14 @@ export interface CryptoLib {
    * all given as Uint8Arrays. Returns an EncryptedSignedMessage as a JSON serialized string.
    * @param secretKey
    * @param encodedPayload
-   * @param publicX25519key
-   * @param serverDHKey
+   * @param recipientPublicX25519Key
    * @returns
    */
 
   encryptAndSign: (
     secretKey: Uint8Array,
     encodedPayload: Uint8Array,
-    publicX25519key: Uint8Array,
-    serverDHKey: Uint8Array
+    recipientPublicX25519Key: Uint8Array
   ) => Promise<string>
 
   /**

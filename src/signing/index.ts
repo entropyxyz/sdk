@@ -6,7 +6,7 @@ import { EncMsg, ValidatorInfo } from '../types/internal'
 import { stripHexPrefix, sendHttpPost } from '../utils'
 import { crypto } from '../utils/crypto'
 import { AuxData } from './adapters/device-key-proxy'
-import { CryptoLib, EntropyProtocolKeypair } from '../utils/crypto/types'
+import { CryptoLib } from '../utils/crypto/types'
 
 export interface Config {
   signer: Signer
@@ -40,7 +40,7 @@ export interface UserSignatureRequest {
   validatorsInfo: ValidatorInfo[]
   timestamp: { secs_since_epoch: number; nanos_since_epoch: number }
   hash: string
-  signatureVerifyingKey: string
+  signature_verifying_key: string
 }
 
 /**
@@ -211,7 +211,7 @@ export default class SignatureRequestManager {
           validatorsInfo: validatorsInfo,
           timestamp: this.getTimeStamp(),
           hash,
-          signatureVerifyingKey,
+          signature_verifying_key: signatureVerifyingKey,
         }
         if (auxiliaryData)
           txRequestData.auxiliaryData = auxiliaryData.map((i) =>
@@ -238,15 +238,9 @@ export default class SignatureRequestManager {
           (x) => x.charCodeAt(0)
         )
 
-        const entropyKeyPair: EntropyProtocolKeypair =
-          await crypto.fromSecretKey(this.signer.pair.secretKey)
-
-        const { publicKey } = entropyKeyPair
-
         const encryptedMessage = await crypto.encryptAndSign(
           this.signer.pair.secretKey,
           encoded,
-          publicKey,
           serverDHKey
         )
 
