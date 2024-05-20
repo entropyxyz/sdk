@@ -137,25 +137,61 @@ export default class ProgramManager extends ExtrinsicBaseClass {
    * @alpha
    */
 
+  // async remove (
+  //   programHashToRemove: string,
+  //   // programModKey = this.signer.pair.address,
+  //   verifyingKey = this.verifyingKey
+  // ): Promise<void> {
+  //   const currentPrograms = await this.get(verifyingKey)
+  //   console.log("Cprograms", currentPrograms)
+  //   // creates new array that contains all of the currentPrograms except programHashToRemove
+  //   const updatedPrograms = currentPrograms.filter(
+  //     (program) => program.programPointer !== programHashToRemove
+  //   )
+
+  //   console.log("UODAte", updatedPrograms)
+  //   await this.set(verifyingKey, updatedPrograms)
+  //   console.log("FK", this.signer.verifyingKeys)
+  //   this.signer.verifyingKeys = this.signer.verifyingKeys.reduce(
+  //     (agg, pointer): string[] => {
+  //       if (pointer === programHashToRemove) return agg
+  //       agg.push(pointer)
+  //       return agg
+  //     },
+  //     []
+  //   )
   async remove (
     programHashToRemove: string,
-    // programModKey = this.signer.pair.address,
     verifyingKey = this.verifyingKey
   ): Promise<void> {
     const currentPrograms = await this.get(verifyingKey)
-    // creates new array that contains all of the currentPrograms except programHashToRemove
+    console.log('Current programs before removal:', currentPrograms)
+
+    if (
+      !currentPrograms.some(
+        (program) => program.programPointer === programHashToRemove
+      )
+    ) {
+      console.error('Program to remove not found:', programHashToRemove)
+      throw new Error('Program to remove not found')
+    }
+
     const updatedPrograms = currentPrograms.filter(
       (program) => program.programPointer !== programHashToRemove
     )
 
+    console.log('Updated programs after removal attempt:', updatedPrograms)
     await this.set(verifyingKey, updatedPrograms)
+    // console.log("sent", sent)
+    console.log('Updated verifying keys:', this.signer.verifyingKeys)
+
     // this.signer.verifyingKeys = this.signer.verifyingKeys.reduce(
-    //   (agg, pointer): string[] => {
-    //     if (pointer === programHashToRemove) return agg
-    //     agg.push(pointer)
-    //     return agg
-    //   },
-    //   []
+    //   (agg, pointer) => {
+    //     if (pointer !== programHashToRemove) {
+    //       agg.push(pointer)
+    //     }
+    //     return agg;
+    //   }, []
     // )
   }
 
