@@ -109,13 +109,7 @@ test('End To End', async (t) => {
   t.equal(programs.length, 2, 'charlie has 2 programs')
 
   // removing charlie program barebones
-  await run(
-    'remove program',
-    entropy.programs.remove(
-      '0x6c8228950ca8dfb557d42ce11643c67ba5a3e5cee3ce7232808ea7477b846bcb',
-      verifyingKey
-    )
-  )
+  await run('remove program', entropy.programs.remove(newPointer, verifyingKey))
   const updatedRemovedPrograms = await run(
     'get programs',
     entropy.programs.get(verifyingKey)
