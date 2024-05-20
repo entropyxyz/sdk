@@ -105,9 +105,9 @@ export default class ProgramManager extends ExtrinsicBaseClass {
     }
 
     // @ts-ignore: next line :{
-    const isAuthorized = verifiyingKeysForAddress
-      .toJSON()
-      .includes(verifyingKey)
+    const isAuthorized = (
+      verifiyingKeysForAddress.toJSON() as string[]
+    ).includes(verifyingKey)
     if (!isAuthorized) {
       throw new Error(`Unauthorized modification attempt by ${verifyingKey}`)
     }
@@ -139,7 +139,7 @@ export default class ProgramManager extends ExtrinsicBaseClass {
 
   async remove (
     programHashToRemove: string,
-    programModKey = this.signer.pair.address,
+    // programModKey = this.signer.pair.address,
     verifyingKey = this.verifyingKey
   ): Promise<void> {
     const currentPrograms = await this.get(verifyingKey)
@@ -148,15 +148,15 @@ export default class ProgramManager extends ExtrinsicBaseClass {
       (program) => program.programPointer !== programHashToRemove
     )
 
-    await this.set(programModKey, updatedPrograms)
-    this.signer.verifyingKeys = this.signer.verifyingKeys.reduce(
-      (agg, pointer): string[] => {
-        if (pointer === programHashToRemove) return agg
-        agg.push(pointer)
-        return agg
-      },
-      []
-    )
+    await this.set(verifyingKey, updatedPrograms)
+    // this.signer.verifyingKeys = this.signer.verifyingKeys.reduce(
+    //   (agg, pointer): string[] => {
+    //     if (pointer === programHashToRemove) return agg
+    //     agg.push(pointer)
+    //     return agg
+    //   },
+    //   []
+    // )
   }
 
   /**
