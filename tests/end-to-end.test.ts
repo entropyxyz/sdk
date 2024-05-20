@@ -1,6 +1,5 @@
 import test from 'tape'
 import { readFileSync } from 'fs'
-import * as util from '@polkadot/util'
 import Entropy, { wasmGlobalsReady } from '../src'
 import Keyring from '../src/keys'
 
@@ -63,8 +62,6 @@ test('End To End', async (t) => {
   )
   t.equal(typeof pointer, 'string', 'valid pointer')
 
-  console.log('POINTRE', pointer)
-
   // register
   const verifyingKeyFromRegistration = await run('register', entropy.register())
   t.equal(
@@ -124,18 +121,18 @@ test('End To End', async (t) => {
     data: '0x' + Buffer.from('Created On Entropy').toString('hex'),
   }
 
-  const signature = await entropy.sign({
-    sigRequestHash: '0x00',
-    hash: 'keccak',
-  })
+  // const signature = await entropy.sign({
+  //   sigRequestHash: '0x00',
+  //   hash: 'keccak',
+  // })
 
-  // const signature = await run(
-  //   'signWithAdapter',
-  //   entropy.signWithAdapter({
-  //     msg: basicTx,
-  //     type: 'device-key-proxy',
-  //   })
-  // )
+  const signature = await run(
+    'signWithAdapter',
+    entropy.signWithAdapter({
+      msg: basicTx,
+      type: 'device-key-proxy',
+    })
+  )
 
   t.equal(signature.length, 228, 'got a good sig')
 
