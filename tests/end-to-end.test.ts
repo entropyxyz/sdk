@@ -50,22 +50,21 @@ test('End To End', async (t) => {
   await run('entropy ready', entropy.ready)
 
   /* deploy */
-  const basicTxProgram: any = readFileSync(
+  const bareBones: any = readFileSync(
     './tests/testing-utils/template_barebones.wasm'
   )
-  t.equal(typeof basicTxProgram.toString(), 'string', 'got basic program')
+  t.equal(typeof bareBones.toString(), 'string', 'got basic program')
 
   // QUESTION: how to launch substrate node with a particular address pre-funded
 
   const pointer = await run(
     'deploy program',
-    entropy.programs.dev.deploy(basicTxProgram)
+    entropy.programs.dev.deploy(bareBones)
   )
   t.equal(typeof pointer, 'string', 'valid pointer')
 
   // register
   const verifyingKeyFromRegistration = await run('register', entropy.register())
-  console.log(entropy.keyring.accounts.registration)
   t.equal(
     verifyingKeyFromRegistration,
     entropy.keyring.accounts.registration.verifyingKeys[0],
@@ -89,38 +88,29 @@ test('End To End', async (t) => {
   const verifyingKey = entropy.programs.verifyingKey
   t.ok(verifyingKey, 'verifyingKey exists')
 
-
   //  loading second program
-  const dummyProgram: any = readFileSync(
-    './tests/testing-utils/template_barebones.wasm'
+  const noopProgram: any = readFileSync(
+    './tests/testing-utils/program_noop.wasm'
   )
   const newPointer = await run(
     'deploy',
-    entropy.programs.dev.deploy(dummyProgram)
+    entropy.programs.dev.deploy(noopProgram)
   )
   const secondProgramData: ProgramInstance = {
     programPointer: newPointer,
     programConfig: '',
   }
-  await run(
-    'add program',
-    entropy.programs.add(secondProgramData, charlieStashAddress)
-  )
+  console.debug('verifyingKey', verifyingKey)
+  await run('add program', entropy.programs.add(secondProgramData))
   // getting charlie programs
-  const programs = await run(
-    'get programs',
-    entropy.programs.get(charlieStashAddress)
-  )
+  const programs = await run('get programs', entropy.programs.get(verifyingKey))
   t.equal(programs.length, 2, 'charlie has 2 programs')
 
   // removing charlie program barebones
-  await run(
-    'remove program',
-    entropy.programs.remove(newPointer, charlieStashAddress, verifyingKey)
-  )
+  await run('remove program', entropy.programs.remove(pointer, verifyingKey))
   const updatedRemovedPrograms = await run(
     'get programs',
-    entropy.programs.get(charlieStashAddress)
+    entropy.programs.get(verifyingKey)
   )
   t.equal(updatedRemovedPrograms.length, 1, 'charlie has 1 program')
 
@@ -132,13 +122,18 @@ test('End To End', async (t) => {
     data: '0x' + Buffer.from('Created On Entropy').toString('hex'),
   }
 
-  const signature = await run(
-    'signWithAdapter',
-    entropy.signWithAdapter({
-      msg: basicTx,
-      type: 'device-key-proxy',
-    })
-  )
+  const signature = await entropy.sign({
+    sigRequestHash: '0x00',
+    hash: 'keccak',
+  })
+
+  // const signature = await run(
+  //   'signWithAdapter',
+  //   entropy.signWithAdapter({
+  //     msg: basicTx,
+  //     type: 'device-key-proxy',
+  //   })
+  // )
 
   t.equal(signature.length, 228, 'got a good sig')
 
