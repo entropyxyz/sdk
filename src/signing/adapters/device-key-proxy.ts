@@ -39,6 +39,7 @@ export const DEVICE_KEY_PROXY_PROGRAM_INTERFACE = {
       publicKeyType: '',
       publicKey: '',
       signature: '',
+      context: 'substrate',
     },
   ],
 }
