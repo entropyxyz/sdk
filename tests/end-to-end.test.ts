@@ -1,5 +1,5 @@
 import test from 'tape'
-import { readFileSync } from 'fs'
+import { read, readFileSync } from 'fs'
 import Entropy, { wasmGlobalsReady } from '../src'
 import Keyring from '../src/keys'
 
@@ -98,19 +98,37 @@ test('End To End', async (t) => {
   const noopProgram: any = readFileSync(
     './tests/testing-utils/program_noop.wasm'
   )
+
+  const templateBasicProgram: any = readFileSync(
+    './tests/testing-utils/template_basic_transaction.wasm'
+  )
+
   const newPointer = await run(
     'deploy',
     entropy.programs.dev.deploy(noopProgram)
   )
+
+  const thirdPointer = await run(
+    'second deploy',
+    entropy.programs.dev.deploy(templateBasicProgram)
+  )
+
   const secondProgramData: ProgramInstance = {
     programPointer: newPointer,
     programConfig: '',
   }
+
+  const thirdProgramData: ProgramInstance = {
+    programPointer: thirdPointer,
+    programConfig: '',
+  }
+
   console.debug('verifyingKey', verifyingKey)
   await run('add program', entropy.programs.add(secondProgramData))
+  await run('add program', entropy.programs.add(thirdProgramData))
   // getting charlie programs
   const programs = await run('get programs', entropy.programs.get(verifyingKey))
-  t.equal(programs.length, 2, 'charlie has 2 programs')
+  t.equal(programs.length, 3, 'charlie has 3 programs')
 
   // removing charlie program barebones
   await run('remove program', entropy.programs.remove(newPointer, verifyingKey))
@@ -118,7 +136,7 @@ test('End To End', async (t) => {
     'get programs',
     entropy.programs.get(verifyingKey)
   )
-  t.equal(updatedRemovedPrograms.length, 1, 'charlie has 1 program')
+  t.equal(updatedRemovedPrograms.length, 2, 'charlie has 2 program')
 
   const basicTx = {
     to: '0x772b9a9e8aa1c9db861c6611a82d251db4fac990',

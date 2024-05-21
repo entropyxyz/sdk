@@ -39,7 +39,7 @@ export interface UserSignatureRequest {
   validatorsInfo: ValidatorInfo[]
   timestamp: { secs_since_epoch: number; nanos_since_epoch: number }
   hash: string
-  signature_verifying_key: any
+  signature_verifying_key: number[]
 }
 
 /**
@@ -209,14 +209,16 @@ export default class SignatureRequestManager {
       validatorsInfo.map(async (validator: ValidatorInfo): Promise<EncMsg> => {
         // TODO: auxilaryData full implementation
 
-        const hexSig = stripHexPrefix(signatureVerifyingKey)
+        const strippedHexVerifyingKey = stripHexPrefix(signatureVerifyingKey)
         const txRequestData: UserSignatureRequest = {
           message: stripHexPrefix(strippedsigRequestHash),
           auxiliaryData,
           validatorsInfo: validatorsInfo,
           timestamp: this.getTimeStamp(),
           hash,
-          signature_verifying_key: Array.from(Buffer.from(hexSig, 'hex')),
+          signature_verifying_key: Array.from(
+            Buffer.from(strippedHexVerifyingKey, 'hex')
+          ),
         }
         if (auxiliaryData)
           txRequestData.auxiliaryData = auxiliaryData.map((i) =>
