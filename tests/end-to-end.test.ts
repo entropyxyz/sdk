@@ -1,7 +1,8 @@
 import test from 'tape'
-import { read, readFileSync } from 'fs'
+import { readFileSync } from 'fs'
 import Entropy, { wasmGlobalsReady } from '../src'
 import Keyring from '../src/keys'
+import * as util from '@polkadot/util'
 
 import {
   sleep,
@@ -130,13 +131,24 @@ test('End To End', async (t) => {
   const programs = await run('get programs', entropy.programs.get(verifyingKey))
   t.equal(programs.length, 3, 'charlie has 3 programs')
 
-  // removing charlie program barebones
-  await run('remove program', entropy.programs.remove(newPointer, verifyingKey))
+  // removing deviceKey
+  const deviceKeyProxyPointer =
+    '0x0000000000000000000000000000000000000000000000000000000000000000'
+  await run(
+    'remove DeviceKeyProxy program',
+    entropy.programs.remove(deviceKeyProxyPointer, verifyingKey)
+  )
+  // removing charlie program basic tx template
+  await run(
+    'remove Basic Tx program',
+    entropy.programs.remove(thirdPointer, verifyingKey)
+  )
+
   const updatedRemovedPrograms = await run(
     'get programs',
     entropy.programs.get(verifyingKey)
   )
-  t.equal(updatedRemovedPrograms.length, 2, 'charlie has 2 program')
+  t.equal(updatedRemovedPrograms.length, 1, 'charlie has 1 program')
 
   const basicTx = {
     to: '0x772b9a9e8aa1c9db861c6611a82d251db4fac990',
@@ -146,11 +158,6 @@ test('End To End', async (t) => {
     data: '0x' + Buffer.from('Created On Entropy').toString('hex'),
   }
 
-  // const signature = await entropy.sign({
-  //   sigRequestHash: '0x00',
-  //   hash: 'keccak',
-  // })
-
   const signature = await run(
     'signWithAdapter',
     entropy.signWithAdapter({
@@ -158,8 +165,7 @@ test('End To End', async (t) => {
       type: 'deviceKeyProxy',
     })
   )
-
-  t.equal(signature.length, 228, 'got a good sig')
-
+  console.log('sig', util.u8aToHex(signature))
+  t.equal(util.u8aToHex(signature).length, 132, 'got a good sig')
   t.end()
 })
