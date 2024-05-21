@@ -7,6 +7,7 @@ import {
 import * as polkadotCryptoUtil from '@polkadot/util-crypto'
 import { CryptoLib, ResObjectType } from './types'
 import { u8aToHex } from '@polkadot/util'
+export { u8aToHex } from '@polkadot/util'
 
 let isImported = false
 let cryptoLib
