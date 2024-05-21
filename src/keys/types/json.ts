@@ -123,7 +123,7 @@ export interface PairMaterial {
   // List of verifying keys associated with the key pair.
   verifyingKeys?: VerifyingKey[]
   // Type of the key, corresponding to a child key.
-  type: ChildKey
+  type: EntropyAccountContextType
   // a key type concept
   userContext?: EntropyAccountContextType
 }
