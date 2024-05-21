@@ -14,12 +14,10 @@ export interface Config {
   crypto: CryptoLib
 }
 
-export interface MsgParams {
-  [key: string]: unknown
-}
+export type MsgParams = unknown
 
 export interface SigMsgOps {
-  msg: MsgParams
+  msg: unknown
   type?: string
 }
 

@@ -3,6 +3,7 @@ import { debug, isValidSubstrateAddress } from './utils'
 import RegistrationManager, { RegistrationParams } from './registration'
 import SignatureRequestManager, { SigOps, SigMsgOps } from './signing'
 import { crypto, loadCryptoLib } from './utils/crypto'
+import * as utils from './utils'
 import { Adapter } from './signing/adapters/types'
 import ProgramManager from './programs'
 import Keyring from './keys'
@@ -115,6 +116,7 @@ export default class Entropy {
 
     const deviceKey = this.keyring.getLazyLoadAccountProxy(ChildKey.deviceKey)
     deviceKey.used = true
+    console.log('device key public key:', utils.u8aToHex(deviceKey.pair.publicKey))
     defaultProgram.programConfig.sr25519PublicKeys.push(
       deviceKey.pair.publicKey
     )

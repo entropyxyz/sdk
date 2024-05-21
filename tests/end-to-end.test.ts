@@ -16,6 +16,10 @@ import { ProgramInstance } from '../src/programs'
 
 const networkType = 'two-nodes'
 
+const msg = 'Hello world: signature from entropy!'
+
+
+
 test('End To End', async (t) => {
   const run = promiseRunner(t)
   // context: all run does is checks that it runs
@@ -131,6 +135,20 @@ test('End To End', async (t) => {
   const programs = await run('get programs', entropy.programs.get(verifyingKey))
   t.equal(programs.length, 3, 'charlie has 3 programs')
 
+
+  const signatureWithProxy = await run(
+    'signWithAdapter',
+    entropy.signWithAdapter({
+      msg,
+      type: 'deviceKeyProxy',
+    })
+  )
+
+  console.log('sig', util.u8aToHex(signatureWithProxy))
+  t.equal(util.u8aToHex(signatureWithProxy).length, 132, 'got a good sig')
+
+
+
   // removing deviceKey
   const deviceKeyProxyPointer =
     '0x0000000000000000000000000000000000000000000000000000000000000000'
@@ -150,18 +168,10 @@ test('End To End', async (t) => {
   )
   t.equal(updatedRemovedPrograms.length, 1, 'charlie has 1 program')
 
-  const basicTx = {
-    to: '0x772b9a9e8aa1c9db861c6611a82d251db4fac990',
-    value: 1,
-    chainId: 1,
-    nonce: 1,
-    data: '0x' + Buffer.from('Created On Entropy').toString('hex'),
-  }
-
   const signature = await run(
     'signWithAdapter',
     entropy.signWithAdapter({
-      msg: basicTx,
+      msg,
       type: 'deviceKeyProxy',
     })
   )
