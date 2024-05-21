@@ -11,6 +11,9 @@ import { crypto } from '../utils/crypto'
 import { Pair } from './types/internal'
 import { ChildKeyBasePaths } from './types/constants'
 
+console.log('crypto', crypto)
+console.log('crypto.get', crypto.polkadotCryptoUtil)
+
 const {
   // sr25519PairFromSeed,
   mnemonicToMiniSecret,

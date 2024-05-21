@@ -9,7 +9,10 @@ import {
 import { Signer } from './types/internal'
 import { AccountsEmitter } from './types'
 
-const ACCOUNTS = Object.keys(ChildKey).map((name) => ChildKey[name])
+// Whats the point of remapping here?
+// .map of object.keys is same as object.values, and either way the
+// result is the same considering the enum keys are the values as well
+const ACCOUNTS = Object.keys(ChildKey)
 
 /**
  * A utility class to allow consumers of the SDK to subscribe to key creations and "account" updates.
@@ -30,6 +33,7 @@ export default class Keyring {
    */
 
   constructor (account: KeyMaterial) {
+    console.log('Keyring Init')
     this.#used = []
     Object.keys(account).forEach((key) => {
       if (typeof account[key] === 'object' && account[key].userContext) {
@@ -44,6 +48,7 @@ export default class Keyring {
     } else {
       this.#seed = seed
     }
+    console.log('account', account)
     const accountsJson = this.#formatAccounts(account)
     this.accounts = this.#createFunctionalAccounts(accountsJson)
   }
@@ -96,7 +101,10 @@ export default class Keyring {
    * @param account - The pair material for the account.
    */
 
-  #jsonAccountCreator (pairMaterial: PairMaterial, debug): PairMaterial {
+  #jsonAccountCreator (
+    pairMaterial: PairMaterial,
+    debug: boolean
+  ): PairMaterial {
     if (!pairMaterial) throw new TypeError('nothing to format please try again')
     const {
       seed,
@@ -121,12 +129,18 @@ export default class Keyring {
   }
 
   #formatAccounts (accounts: EntropyAccount): EntropyAccount {
+    console.log('FORMATTING ACCOUNT=====')
+
     const { seed, mnemonic, debug, type } = accounts
+    console.log('found in account', seed, mnemonic, debug, type)
+
     const entropyAccountsJson = {
       debug,
       seed: seed ? seed : utils.seedFromMnemonic(mnemonic),
       type,
     }
+    console.log('entropy json', entropyAccountsJson)
+
     Object.keys(accounts)
       .concat(ACCOUNTS)
       .forEach((key) => {
@@ -137,6 +151,8 @@ export default class Keyring {
         if (!account) return
         entropyAccountsJson[key] = this.#jsonAccountCreator(account, debug)
       })
+    console.log('account after format', entropyAccountsJson)
+
     return entropyAccountsJson as EntropyAccount
   }
 
