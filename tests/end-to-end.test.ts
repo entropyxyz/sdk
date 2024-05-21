@@ -87,6 +87,13 @@ test('End To End', async (t) => {
   const verifyingKey = entropy.programs.verifyingKey
   t.ok(verifyingKey, 'verifyingKey exists')
 
+  const registrationStatus = await run(
+    'check registration',
+    entropy.substrate.query.registry.registered(verifyingKey)
+  )
+
+  t.ok(registrationStatus, 'Verifying key is registered')
+
   //  loading second program
   const noopProgram: any = readFileSync(
     './tests/testing-utils/program_noop.wasm'

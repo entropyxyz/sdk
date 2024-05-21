@@ -39,7 +39,7 @@ export interface UserSignatureRequest {
   validatorsInfo: ValidatorInfo[]
   timestamp: { secs_since_epoch: number; nanos_since_epoch: number }
   hash: string
-  signature_verifying_key: string
+  signature_verifying_key: any
 }
 
 /**
@@ -146,6 +146,7 @@ export default class SignatureRequestManager {
     // which means you need a new key ie device key here
 
     const signatureVerifyingKey = this.verifyingKey
+    console.log({ signatureVerifyingKey })
 
     const txRequests: Array<EncMsg> = await this.formatTxRequests({
       strippedsigRequestHash,
@@ -207,13 +208,15 @@ export default class SignatureRequestManager {
     return await Promise.all(
       validatorsInfo.map(async (validator: ValidatorInfo): Promise<EncMsg> => {
         // TODO: auxilaryData full implementation
+
+        const hexSig = stripHexPrefix(signatureVerifyingKey)
         const txRequestData: UserSignatureRequest = {
           message: stripHexPrefix(strippedsigRequestHash),
           auxiliaryData,
           validatorsInfo: validatorsInfo,
           timestamp: this.getTimeStamp(),
           hash,
-          signature_verifying_key: signatureVerifyingKey,
+          signature_verifying_key: Array.from(Buffer.from(hexSig, 'hex')),
         }
         if (auxiliaryData)
           txRequestData.auxiliaryData = auxiliaryData.map((i) =>
