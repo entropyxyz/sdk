@@ -21,6 +21,11 @@
       "require": "./dist/keys/index.cjs",
       "default": "./dist/keys/index.js"
     },
+    "./keys/utils": {
+      "module": "./dist/keys/utils.js",
+      "require": "./dist/keys/utils.cjs",
+      "default": "./dist/keys/index.js"
+    },
     "./crypto-utils": {
       "module": "./dist/utils/crypto.js",
       "require": "./dist/utils/crypto.cjs",
