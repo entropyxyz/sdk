@@ -7,6 +7,7 @@ import { stripHexPrefix, sendHttpPost } from '../utils'
 import { crypto } from '../utils/crypto'
 import { AuxData } from './adapters/device-key-proxy'
 import { CryptoLib } from '../utils/crypto/types'
+import { hexToU8a } from '@polkadot/util'
 
 export interface Config {
   signer: Signer
@@ -40,7 +41,7 @@ export interface UserSignatureRequest {
   validatorsInfo: ValidatorInfo[]
   timestamp: { secs_since_epoch: number; nanos_since_epoch: number }
   hash: string
-  signature_verifying_key: string
+  signature_verifying_key: Uint8Array
 }
 
 /**
@@ -189,11 +190,13 @@ export default class SignatureRequestManager {
    * @returns {Promise<EncMsg[]>} A promise that resolves to the formatted transaction requests.
    */
 
+  // helper
+
   async formatTxRequests ({
     strippedsigRequestHash,
     auxiliaryData,
     validatorsInfo,
-    hash,
+    // hash,
     signatureVerifyingKey,
   }: {
     strippedsigRequestHash: string
@@ -210,8 +213,8 @@ export default class SignatureRequestManager {
           auxiliaryData,
           validatorsInfo: validatorsInfo,
           timestamp: this.getTimeStamp(),
-          hash,
-          signature_verifying_key: signatureVerifyingKey,
+          hash: 'keccak',
+          signature_verifying_key: hexToU8a(signatureVerifyingKey),
         }
         if (auxiliaryData)
           txRequestData.auxiliaryData = auxiliaryData.map((i) =>
