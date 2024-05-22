@@ -16,7 +16,7 @@ import { ProgramInstance } from '../src/programs'
 
 const networkType = 'two-nodes'
 
-const msg = 'Hello world: signature from entropy!'
+const msg = Buffer.from('Hello world: signature from entropy!').toString('hex')
 
 
 

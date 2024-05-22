@@ -112,13 +112,12 @@ export default class Entropy {
     }
 
     await Promise.all([this.ready, this.substrate.isReady])
-    debug('READY')
 
     const deviceKey = this.keyring.getLazyLoadAccountProxy(ChildKey.deviceKey)
     deviceKey.used = true
-    console.log('device key public key:', u8aToHex(deviceKey.pair.publicKey))
+    console.log('device key public key as base 64:',  Buffer.from(deviceKey.pair.publicKey).toString('base64'))
     defaultProgram.programConfig.sr25519PublicKeys.push(
-      stripHexPrefix(u8aToHex(deviceKey.pair.publicKey))
+      Buffer.from(deviceKey.pair.publicKey).toString('base64')
     )
 
     if (

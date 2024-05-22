@@ -63,11 +63,11 @@ export async function preSign (
 
   const auxilary_data: [AuxData] = [
     {
-      public_key_type: Buffer.from('sr25519').toString('base64'),
+      public_key_type: 'sr25519',
       public_key: publicKey,
       signature: sigRequestHash,
       // this needs to change before main net and needs to match core ideally it is `'entropy'`
-      context: Buffer.from('substrate').toString('base64'),
+      context: 'substrate',
     },
   ]
 
@@ -76,4 +76,4 @@ export async function preSign (
 
 export const type = 'deviceKeyProxy'
 // THIS IS THE RETURNED SIG HASH -- PLS look into ED25519 ASK JESSE IF SUPPORTED
-export const hash = 'keccak'
+export const hash = 'sha3'
