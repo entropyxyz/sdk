@@ -3,7 +3,7 @@ import { Signer } from '../keys/types/internal'
 import { defaultAdapters } from './adapters/default'
 import { Adapter } from './adapters/types'
 import { EncMsg, ValidatorInfo } from '../types/internal'
-import { stripHexPrefix, sendHttpPost, buf2hex } from '../utils'
+import { stripHexPrefix, sendHttpPost } from '../utils'
 import { crypto } from '../utils/crypto'
 import { AuxData } from './adapters/device-key-proxy'
 import { CryptoLib } from '../utils/crypto/types'
@@ -256,11 +256,9 @@ export default class SignatureRequestManager {
         //   ),
         // }
 
-        console.log("fd", JSON.stringify(Array.from(new Uint8Array(Buffer.from(auxilaryDataString)))))
-
         const txRequestData: UserSignatureRequest = {
           message: stripHexPrefix(strippedsigRequestHash),
-          auxilary_data:  JSON.stringify(Array.from(new Uint8Array(Buffer.from(auxilaryDataString)))),
+          auxilary_data:  auxilaryDataString,
           validatorsInfo: validatorsInfo,
           timestamp: this.getTimeStamp(),
           hash,
@@ -268,6 +266,9 @@ export default class SignatureRequestManager {
             Buffer.from(strippedHexVerifyingKey, 'hex')
           ),
         }
+
+        console.log({to: JSON.stringify(auxilaryDataString)})
+        console.log({auxilaryDataString})
 
         const serverDHKey = await crypto.fromHex(validator.x25519_public_key)
 
