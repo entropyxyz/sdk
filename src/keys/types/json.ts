@@ -107,6 +107,7 @@ export interface EntropyAccount {
   verifyingKeys?: string[]
   type?: EntropyAccountType
   debug?: boolean
+  admin?: PairMaterial
   [key: string]: PairMaterial | any
 }
 
