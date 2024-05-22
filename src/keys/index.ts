@@ -33,7 +33,7 @@ export default class Keyring {
    */
 
   constructor (account: KeyMaterial) {
-    this.#used = ['admin']
+    this.#used = ['admin', ChildKey.registration]
     Object.keys(account).forEach((key) => {
       if (typeof account[key] === 'object' && account[key].userContext) {
         this.#used.push(key)
