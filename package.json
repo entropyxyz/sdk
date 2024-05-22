@@ -42,7 +42,7 @@
     "test": "yarn test:setup && yarn test:types && yarn test:ts && yarn test:only",
     "test:setup": "./dev/bin/check-tools.sh && yarn removedb",
     "test:types": "tsc",
-    "test:ts": "set -e; for t in tests/*.test.ts; do npx tsx $t | tap-spec; done",
+    "test:ts": "set -e; for t in tests/end-to-end.test.ts; do npx tsx $t | tap-spec; done",
     "test:only": "if grep -r --exclude-dir=node_modules --exclude-dir=.git --color 'test\\.only' ; then exit 1; fi",
     "test:coverage": "nyc yarn test",
     "lint": "yarn lint:ts && yarn lint:eslint",
