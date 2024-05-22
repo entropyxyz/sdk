@@ -34,9 +34,11 @@ export default class Keyring {
 
   constructor (account: KeyMaterial) {
     console.log('Keyring Init')
-    this.#used = []
+    this.#used = ['admin']
     Object.keys(account).forEach((key) => {
       if (typeof account[key] === 'object' && account[key].userContext) {
+        this.#used.push(key)
+      } else if ((account as EntropyAccount).debug) {
         this.#used.push(key)
       }
     })
@@ -64,10 +66,11 @@ export default class Keyring {
 
   getAccount (): EntropyAccount {
     const { debug, seed, type, verifyingKeys } = this.accounts.masterAccountView
-    const entropyAccount = { debug, seed, type, verifyingKeys }
+    const entropyAccount: EntropyAccount = { debug, seed, type, verifyingKeys }
     this.#used.forEach((accountName) => {
       entropyAccount[accountName] = this.accounts.masterAccountView[accountName]
     })
+    entropyAccount.admin = this.accounts.registration
     return entropyAccount
   }
 
@@ -178,13 +181,10 @@ export default class Keyring {
     // }
     return new Proxy(this.accounts[childKey], {
       set: (account, k: string, v) => {
-        if (k === 'used') {
+        if (k === 'used' && !this.accounts[childKey].used) {
           this.#used.push(childKey)
-          if (this.accounts[childKey].used)
-            this.accounts.emit(`${childKey}#new`, this.getAccount())
-        } else {
-          this.accounts.emit(`${childKey}#account-update`, this.getAccount())
         }
+        this.accounts.emit(`#account-update`, this.getAccount())
         this.accounts.masterAccountView[childKey][k] = v
         return (this.accounts[childKey][k] = v)
       },
