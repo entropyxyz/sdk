@@ -129,6 +129,9 @@ test('End To End', async (t) => {
   // }
 
   console.debug('verifyingKey', verifyingKey)
+  const programs = await run('get programs', entropy.programs.get(verifyingKey))
+  console.log({programs: programs.length})
+
 
   const signatureWithProxy = await run(
     'signWithAdapter',
@@ -144,7 +147,7 @@ test('End To End', async (t) => {
   // await run('add program', entropy.programs.add(secondProgramData))
   // await run('add program', entropy.programs.add(thirdProgramData))
   // getting charlie programs
-  const programs = await run('get programs', entropy.programs.get(verifyingKey))
+  // const programs = await run('get programs', entropy.programs.get(verifyingKey))
   
   t.equal(programs.length, 3, 'charlie has 3 programs')
 

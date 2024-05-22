@@ -3,7 +3,7 @@ import { Signer } from '../keys/types/internal'
 import { defaultAdapters } from './adapters/default'
 import { Adapter } from './adapters/types'
 import { EncMsg, ValidatorInfo } from '../types/internal'
-import { stripHexPrefix, sendHttpPost } from '../utils'
+import { stripHexPrefix, sendHttpPost, buf2hex } from '../utils'
 import { crypto } from '../utils/crypto'
 import { AuxData } from './adapters/device-key-proxy'
 import { CryptoLib } from '../utils/crypto/types'
@@ -33,7 +33,7 @@ export interface SigOps {
  */
 export interface UserSignatureRequest {
   message: string
-  auxilary_data?: unknown[]
+  auxilary_data?: unknown
   validatorsInfo: ValidatorInfo[]
   timestamp: { secs_since_epoch: number; nanos_since_epoch: number }
   hash: string
@@ -210,9 +210,57 @@ export default class SignatureRequestManager {
         // TODO: auxilaryData full implementation
 
         const strippedHexVerifyingKey = stripHexPrefix(signatureVerifyingKey)
+
+        const auxilaryDataString = auxilary_data && auxilary_data.length > 0 
+          ? JSON.stringify(auxilary_data.map((i: any) => {
+            if (typeof i === 'object') {
+              const encodedPublicKey = Buffer.from(i.public_key.replace(/^0x/, ''), 'hex').toString('base64')
+              const encodedSignature = Buffer.from(i.signature.replace(/^0x/, ''), 'hex').toString('base64')
+              return {
+                ...i,
+                public_key: encodedPublicKey,
+                signature: encodedSignature,
+              };
+            }
+            return i
+          }))
+          : '[]'
+
+
+        // GIVES ME node:events:492 throw er; // Unhandled 'error' event
+        // const auxilaryDataUint8Array = new TextEncoder().encode(auxilaryDataString)
+        // console.log({uint: auxilaryDataUint8Array})
+
+        // const txRequestData: UserSignatureRequest = {
+        //   message: stripHexPrefix(strippedsigRequestHash),
+        //   auxilary_data: auxilaryDataUint8Array,
+        //   validatorsInfo: validatorsInfo,
+        //   timestamp: this.getTimeStamp(),
+        //   hash,
+        //   signature_verifying_key: Array.from(
+        //     Buffer.from(strippedHexVerifyingKey, 'hex')
+        //   ),
+        // }
+
+        /// GIVES ME ✖ Error: request failed 500, Internal Server Error fetch: http://alice-tss-server:3001/user/sign_tx FULLRESPONSE: Serde Json error: invalid type: string "\"[{\\\"public_key_type\\\":\\\"sr25519\\\",\\\"public_key\\\":\\\"Hgc3lAf+zEuJ6329KHwseBz7GQepaUej6xjk+OcZhiU=\\\",\\\"signature\\\":\\\"TI77XtW253irMvmvVNb+AIeJ3ag/5wtKZUxELY6LfyVDyAb8vJhxQZTG77gBM1QSxTc0hAD/9hCDmmv6E+uMiQ==\\\",\\\"context\\\":\\\"substrate\\\"}]\"", expected a sequence at line 1 column 428
+        // console.log({yo: JSON.stringify(auxilaryDataString)})
+
+        // const txRequestData: UserSignatureRequest = {
+        //   message: stripHexPrefix(strippedsigRequestHash),
+        //   auxilary_data: JSON.stringify(auxilaryDataString),
+        //   validatorsInfo: validatorsInfo,
+        //   timestamp: this.getTimeStamp(),
+        //   hash,
+        //   signature_verifying_key: Array.from(
+        //     Buffer.from(strippedHexVerifyingKey, 'hex')
+        //   ),
+        // }
+
+        console.log("fd", JSON.stringify(Array.from(new Uint8Array(Buffer.from(auxilaryDataString)))))
+
         const txRequestData: UserSignatureRequest = {
           message: stripHexPrefix(strippedsigRequestHash),
-          auxilary_data,
+          auxilary_data:  JSON.stringify(Array.from(new Uint8Array(Buffer.from(auxilaryDataString)))),
           validatorsInfo: validatorsInfo,
           timestamp: this.getTimeStamp(),
           hash,
@@ -220,41 +268,7 @@ export default class SignatureRequestManager {
             Buffer.from(strippedHexVerifyingKey, 'hex')
           ),
         }
-        // if (auxilary_data)
-        //   txRequestData.auxilary_data = auxilary_data.map((i: any) =>
-        //   { 
-        //     console.log({pubby: i.public_key})
-        //     i.public_key = `0x${Buffer.from(i.public_key).toString('base64')}`
-        //     console.log({pub: i.public_key})
-        //     return Buffer.from(JSON.stringify(i)).toString('hex')
-        //   }
-        //     // Buffer.from(JSON.stringify(i)).toString('hex')
-        //   )
 
-        // if (auxilary_data && auxilary_data.length > 0) {
-        //   txRequestData.auxilary_data = auxilary_data.map((i: any) => 
-        //     typeof i === 'object' ? Buffer.from(JSON.stringify(i)).toString('hex') : i
-        //   )
-        // }
-
-
-        if (auxilary_data && auxilary_data.length > 0) {
-          txRequestData.auxilary_data = auxilary_data.map((i: any) => {
-            if (typeof i === 'object') {
-              const encodedPublicKey = Buffer.from(i.public_key.replace(/^0x/, ''), 'hex').toString('base64')
-              const encodedSignature = Buffer.from(i.signature.replace(/^0x/, ''), 'hex').toString('base64')
-              return {
-                ...i,
-                public_key: encodedPublicKey,
-                signature: encodedSignature
-              }
-            }
-            return i
-          })
-        }
-
-
-        console.log({info: txRequestData.auxilary_data[0]})
         const serverDHKey = await crypto.fromHex(validator.x25519_public_key)
 
         const formattedValidators = await Promise.all(
