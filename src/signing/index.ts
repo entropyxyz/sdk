@@ -40,7 +40,7 @@ export interface UserSignatureRequest {
   validatorsInfo: ValidatorInfo[]
   timestamp: { secs_since_epoch: number; nanos_since_epoch: number }
   hash: string
-  signature_verifying_key: string
+  signature_verifying_key: number[]
 }
 
 /**
@@ -89,39 +89,44 @@ export default class SignatureRequestManager {
     return this.signer.verifyingKeys ? this.signer.verifyingKeys[0] : undefined
   }
 
-  /**
-   * Signs a message using the appropriate adapter.
-   *
-   * @param {SigMsgOps} params - The message and type for signing.
-   * @param {TxParams} SigMsgOps.txParams - The parameters of the transaction to be signed.
-   * @param {string} [sigTxOps.type] - The type of transaction.
-   * @returns {Promise<unknown>} A promise resolving with the signed transaction.
-   * @throws {Error} If no adapter or preSign function is found for the given type.
+  /*
+
+
+
+            DO NOT DELET THIS CODE BLOCK!
+
+    Signs a message using the appropriate adapter.
+
+    @param {SigMsgOps} params - The message and type for signing.
+    @param {TxParams} SigMsgOps.txParams - The parameters of the transaction to be signed.
+    @param {string} [sigTxOps.type] - The type of transaction.
+    @returns {Promise<unknown>} A promise resolving with the signed transaction.
+    @throws {Error} If no adapter or preSign function is found for the given type.
    */
 
-  async signWithAdapter ({ msg, type }: SigMsgOps): Promise<unknown> {
-    if (!this.adapters[type])
-      throw new Error(`No transaction adapter for type: ${type} submit as hash`)
-    if (!this.adapters[type].preSign)
-      throw new Error(
-        `Adapter for type: ${type} has no preSign function. Adapters must have a preSign function`
-      )
+  // async signWithAdapter ({ msg, type }: SigMsgOps): Promise<unknown> {
+  //   if (!this.adapters[type])
+  //     throw new Error(`No transaction adapter for type: ${type} submit as hash`)
+  //   if (!this.adapters[type].preSign)
+  //     throw new Error(
+  //       `Adapter for type: ${type} has no preSign function. Adapters must have a preSign function`
+  //     )
 
-    const { sigRequestHash, auxiliaryData } = await this.adapters[type].preSign(
-      this.signer,
-      msg
-    )
+  //   const { sigRequestHash, auxiliaryData } = await this.adapters[type].preSign(
+  //     this.signer,
+  //     msg
+  //   )
 
-    const signature = await this.sign({
-      sigRequestHash,
-      hash: this.adapters[type].hash,
-      auxiliaryData: auxiliaryData as AuxData[],
-    })
-    if (this.adapters[type].postSign) {
-      return await this.adapters[type].postSign(signature, msg)
-    }
-    return signature
-  }
+  //   const signature = await this.sign({
+  //     sigRequestHash,
+  //     hash: this.adapters[type].hash,
+  //     auxiliaryData: auxiliaryData as AuxData[],
+  //   })
+  //   if (this.adapters[type].postSign) {
+  //     return await this.adapters[type].postSign(signature, msg)
+  //   }
+  //   return signature
+  // }
 
   /**
    * Signs a given signature request hash.
@@ -211,7 +216,9 @@ export default class SignatureRequestManager {
           validatorsInfo: validatorsInfo,
           timestamp: this.getTimeStamp(),
           hash,
-          signature_verifying_key: signatureVerifyingKey,
+          signature_verifying_key: Array.from(
+            Buffer.from(stripHexPrefix(signatureVerifyingKey), 'hex')
+          ),
         }
         if (auxiliaryData)
           txRequestData.auxiliaryData = auxiliaryData.map((i) =>
@@ -248,7 +255,7 @@ export default class SignatureRequestManager {
           msg: encryptedMessage,
           url: validator.ip_address,
           tss_account: validator.tss_account,
-          signature_verifying_key: signatureVerifyingKey,
+          // signature_verifying_key: signatureVerifyingKey,
         }
       })
     )

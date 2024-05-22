@@ -18,8 +18,6 @@ const networkType = 'two-nodes'
 
 const msg = Buffer.from('Hello world: signature from entropy!').toString('hex')
 
-
-
 test('End To End', async (t) => {
   const run = promiseRunner(t)
   // context: all run does is checks that it runs
@@ -104,30 +102,36 @@ test('End To End', async (t) => {
     './tests/testing-utils/program_noop.wasm'
   )
 
-
   const newPointer = await run(
     'deploy',
     entropy.programs.dev.deploy(noopProgram)
   )
-
 
   const noopProgramInstance: ProgramInstance = {
     programPointer: newPointer,
     programConfig: '',
   }
 
-
   console.debug('verifyingKey', verifyingKey)
-  const programsBeforeAdd = await run('get programs', entropy.programs.get(verifyingKey))
+  const programsBeforeAdd = await run(
+    'get programs',
+    entropy.programs.get(verifyingKey)
+  )
 
   t.equal(programsBeforeAdd.length, 1, 'charlie has 1 programs')
 
-
-  await run('add program', entropy.programs.add(noopProgram))
+  await run('add program', entropy.programs.add(noopProgramInstance))
   // getting charlie programs
-  const programsAfterAdd = await run('get programs', entropy.programs.get(verifyingKey))
-  
-  t.equal(programsAfterAdd.length, 2, 'charlie has 2 programs')
+  const programsAfterAdd = await run(
+    'get programs',
+    entropy.programs.get(verifyingKey)
+  )
+
+  t.equal(
+    programsAfterAdd.length,
+    2,
+    'charlie has 2 programs' + JSON.stringify(programsAfterAdd)
+  )
 
   // removing deviceKey
   const deviceKeyProxyPointer =
@@ -137,17 +141,21 @@ test('End To End', async (t) => {
     entropy.programs.remove(deviceKeyProxyPointer, verifyingKey)
   )
 
-  const updatedRemovedPrograms = await run(
+  const programsAftreRemoveDefault = await run(
     'get programs',
     entropy.programs.get(verifyingKey)
   )
-  t.equal(updatedRemovedPrograms.length, 1, 'charlie has 1 program')
+  t.equal(
+    programsAftreRemoveDefault.length,
+    1,
+    'charlie has 1 program' + JSON.stringify(programsAftreRemoveDefault)
+  )
 
   const signature = await run(
     'sign',
     entropy.sign({
-      msg,
-      hash: 'sha3'
+      sigRequestHash: msg,
+      hash: 'sha3',
     })
   )
   t.equal(util.u8aToHex(signature).length, 132, 'got a good sig')

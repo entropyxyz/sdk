@@ -1,9 +1,8 @@
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import { debug, isValidSubstrateAddress } from './utils'
 import RegistrationManager, { RegistrationParams } from './registration'
-import SignatureRequestManager, { SigOps, SigMsgOps } from './signing'
-import { crypto, loadCryptoLib, u8aToHex } from './utils/crypto'
-import { stripHexPrefix } from './utils'
+import SignatureRequestManager, { SigOps } from './signing'
+import { crypto, loadCryptoLib } from './utils/crypto'
 import { Adapter } from './signing/adapters/types'
 import ProgramManager from './programs'
 import Keyring from './keys'
@@ -51,6 +50,7 @@ export default class Entropy {
     this.ready = new Promise((resolve, reject) => {
       this.#ready = resolve
       this.#fail = reject
+      debug('READY')
     })
     this.#init(opts).catch((error) => {
       this.#fail(error)
@@ -115,7 +115,10 @@ export default class Entropy {
 
     const deviceKey = this.keyring.getLazyLoadAccountProxy(ChildKey.deviceKey)
     deviceKey.used = true
-    console.log('device key public key as base 64:',  Buffer.from(deviceKey.pair.publicKey).toString('base64'))
+    console.log(
+      'device key public key as base 64:',
+      Buffer.from(deviceKey.pair.publicKey).toString('base64')
+    )
     defaultProgram.programConfig.sr25519PublicKeys.push(
       Buffer.from(deviceKey.pair.publicKey).toString('base64')
     )
@@ -141,27 +144,31 @@ export default class Entropy {
     return verifyingKey
   }
 
-  /**
-   * Signs a given transaction based on the provided parameters.
-   *
-   * The `signTransaction` method invokes the appropriate adapter (chain based configuration)
-   * based on the type specified in the `params`. This modular approach ensures that various
-   * transaction types can be supported. The method performs a series of operations, starting
-   * with the `preSign` function of the selected adapter, followed by the actual signing of the
-   * transaction request hash, and if necessary, the `postSign` function of the adapter.
-   *
-   * @param {SigMsgOps} params - The parameters for signing the transaction.
-   * @returns {Promise<unknown>} - A promise resolving to the transaction signature.
-   * @throws {Error} - If no adapter is found for the specified transaction type.
-   * @returns A promise that returns the transaction signature. Note that the structure
-   *          and format of this signature may differ based on the adapter.
-   * @throws {Error} Will throw an error if the transaction type does not have a corresponding adapter.
+  /*
+
+
+    DO NOT DELETE THIS CODE BLOCK
+
+    Signs a given transaction based on the provided parameters.
+
+    The `signTransaction` method invokes the appropriate adapter (chain based configuration)
+    based on the type specified in the `params`. This modular approach ensures that various
+    transaction types can be supported. The method performs a series of operations, starting
+    with the `preSign` function of the selected adapter, followed by the actual signing of the
+    transaction request hash, and if necessary, the `postSign` function of the adapter.
+
+    @param {SigMsgOps} params - The parameters for signing the transaction.
+    @returns {Promise<unknown>} - A promise resolving to the transaction signature.
+    @throws {Error} - If no adapter is found for the specified transaction type.
+    @returns A promise that returns the transaction signature. Note that the structure
+             and format of this signature may differ based on the adapter.
+    @throws {Error} Will throw an error if the transaction type does not have a corresponding adapter.
    */
 
-  async signWithAdapter (params: SigMsgOps): Promise<unknown> {
-    (await this.ready) && this.substrate.isReady
-    return this.signingManager.signWithAdapter(params)
-  }
+  // async signWithAdapter (params: SigMsgOps): Promise<unknown> {
+  //   (await this.ready) && this.substrate.isReady
+  //   return this.signingManager.signWithAdapter(params)
+  // }
 
   /**
    * Signs a signature request hash. This method involves various steps including validator

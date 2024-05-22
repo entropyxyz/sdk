@@ -94,20 +94,17 @@ export default class ProgramManager extends ExtrinsicBaseClass {
     verifyingKey: string = this.verifyingKey,
     newList: ProgramInstance[]
   ): Promise<void> {
-    const verifiyingKeysForAddress =
-      await this.substrate.query.registry.modifiableKeys(
-        this.signer.pair.address
-      )
+    const vkForAddress = await this.substrate.query.registry.modifiableKeys(
+      this.signer.pair.address
+    )
 
     // @ts-ignore: next-line ... polkadot js anyjson type but his hould always be an array or what ever
-    if (!verifiyingKeysForAddress.toJSON().length) {
+    if (!vkForAddress.toJSON().length) {
       throw new Error(`Account not registered for: ${verifyingKey}`)
     }
 
     // @ts-ignore: next line :{
-    const isAuthorized = verifiyingKeysForAddress
-      .toJSON()
-      .includes(verifyingKey)
+    const isAuthorized = vkForAddress.toJSON().includes(verifyingKey)
     if (!isAuthorized) {
       throw new Error(`Unauthorized modification attempt by ${verifyingKey}`)
     }
