@@ -33,7 +33,6 @@ export default class Keyring {
    */
 
   constructor (account: KeyMaterial) {
-    console.log('Keyring Init')
     this.#used = ['admin']
     Object.keys(account).forEach((key) => {
       if (typeof account[key] === 'object' && account[key].userContext) {
@@ -50,7 +49,6 @@ export default class Keyring {
     } else {
       this.#seed = seed
     }
-    console.log('account', account)
     const accountsJson = this.#formatAccounts(account)
     this.accounts = this.#createFunctionalAccounts(accountsJson)
   }
@@ -132,17 +130,13 @@ export default class Keyring {
   }
 
   #formatAccounts (accounts: EntropyAccount): EntropyAccount {
-    console.log('FORMATTING ACCOUNT=====')
-
     const { seed, mnemonic, debug, type } = accounts
-    console.log('found in account', seed, mnemonic, debug, type)
 
     const entropyAccountsJson = {
       debug,
       seed: seed ? seed : utils.seedFromMnemonic(mnemonic),
       type,
     }
-    console.log('entropy json', entropyAccountsJson)
 
     Object.keys(accounts)
       .concat(ACCOUNTS)
@@ -154,7 +148,6 @@ export default class Keyring {
         if (!account) return
         entropyAccountsJson[key] = this.#jsonAccountCreator(account, debug)
       })
-    console.log('account after format', entropyAccountsJson)
 
     return entropyAccountsJson as EntropyAccount
   }

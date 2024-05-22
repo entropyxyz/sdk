@@ -142,14 +142,12 @@ export default class ProgramManager extends ExtrinsicBaseClass {
     verifyingKey = this.verifyingKey
   ): Promise<void> {
     const currentPrograms = await this.get(verifyingKey)
-    console.log('Current programs before removal:', currentPrograms)
 
     if (
       !currentPrograms.some(
         (program) => program.programPointer === programHashToRemove
       )
     ) {
-      console.error('Program to remove not found:', programHashToRemove)
       throw new Error('Program to remove not found')
     }
 
@@ -157,7 +155,6 @@ export default class ProgramManager extends ExtrinsicBaseClass {
       (program) => program.programPointer !== programHashToRemove
     )
 
-    console.log('Updated programs after removal attempt:', updatedPrograms)
     await this.set(verifyingKey, updatedPrograms)
   }
 

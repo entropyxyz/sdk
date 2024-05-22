@@ -63,11 +63,11 @@ export async function preSign (
 
   const auxilary_data: [AuxData] = [
     {
-      public_key_type: 'sr25519',
+      public_key_type: Buffer.from('sr25519').toString('base64'),
       public_key: publicKey,
       signature: sigRequestHash,
       // this needs to change before main net and needs to match core ideally it is `'entropy'`
-      context: 'substrate',
+      context: Buffer.from('substrate').toString('base64'),
     },
   ]
 

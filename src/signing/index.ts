@@ -109,8 +109,6 @@ export default class SignatureRequestManager {
       msg
     )
 
-    console.log({auxilary_data})
-
     const signature = await this.sign({
       sigRequestHash,
       hash: this.adapters[type].hash,
@@ -146,7 +144,6 @@ export default class SignatureRequestManager {
     // which means you need a new key ie device key here
 
     const signatureVerifyingKey = this.verifyingKey
-    console.log({ signatureVerifyingKey })
 
     const txRequests: Array<EncMsg> = await this.formatTxRequests({
       strippedsigRequestHash,
@@ -211,54 +208,31 @@ export default class SignatureRequestManager {
 
         const strippedHexVerifyingKey = stripHexPrefix(signatureVerifyingKey)
 
-        const auxilaryDataString = auxilary_data && auxilary_data.length > 0 
-          ? JSON.stringify(auxilary_data.map((i: any) => {
-            if (typeof i === 'object') {
-              const encodedPublicKey = Buffer.from(i.public_key.replace(/^0x/, ''), 'hex').toString('base64')
-              const encodedSignature = Buffer.from(i.signature.replace(/^0x/, ''), 'hex').toString('base64')
-              return {
-                ...i,
-                public_key: encodedPublicKey,
-                signature: encodedSignature,
-              };
-            }
-            return i
-          }))
-          : '[]'
-
-
-        // GIVES ME node:events:492 throw er; // Unhandled 'error' event
-        // const auxilaryDataUint8Array = new TextEncoder().encode(auxilaryDataString)
-        // console.log({uint: auxilaryDataUint8Array})
-
-        // const txRequestData: UserSignatureRequest = {
-        //   message: stripHexPrefix(strippedsigRequestHash),
-        //   auxilary_data: auxilaryDataUint8Array,
-        //   validatorsInfo: validatorsInfo,
-        //   timestamp: this.getTimeStamp(),
-        //   hash,
-        //   signature_verifying_key: Array.from(
-        //     Buffer.from(strippedHexVerifyingKey, 'hex')
-        //   ),
-        // }
-
-        /// GIVES ME ✖ Error: request failed 500, Internal Server Error fetch: http://alice-tss-server:3001/user/sign_tx FULLRESPONSE: Serde Json error: invalid type: string "\"[{\\\"public_key_type\\\":\\\"sr25519\\\",\\\"public_key\\\":\\\"Hgc3lAf+zEuJ6329KHwseBz7GQepaUej6xjk+OcZhiU=\\\",\\\"signature\\\":\\\"TI77XtW253irMvmvVNb+AIeJ3ag/5wtKZUxELY6LfyVDyAb8vJhxQZTG77gBM1QSxTc0hAD/9hCDmmv6E+uMiQ==\\\",\\\"context\\\":\\\"substrate\\\"}]\"", expected a sequence at line 1 column 428
-        // console.log({yo: JSON.stringify(auxilaryDataString)})
-
-        // const txRequestData: UserSignatureRequest = {
-        //   message: stripHexPrefix(strippedsigRequestHash),
-        //   auxilary_data: JSON.stringify(auxilaryDataString),
-        //   validatorsInfo: validatorsInfo,
-        //   timestamp: this.getTimeStamp(),
-        //   hash,
-        //   signature_verifying_key: Array.from(
-        //     Buffer.from(strippedHexVerifyingKey, 'hex')
-        //   ),
-        // }
+        const auxilaryDataString =
+          auxilary_data && auxilary_data.length > 0
+            ? auxilary_data.map((i: any) => {
+              if (typeof i === 'object') {
+                const encodedPublicKey = Buffer.from(
+                  i.public_key.replace(/^0x/, ''),
+                  'hex'
+                ).toString('base64')
+                const encodedSignature = Buffer.from(
+                  i.signature.replace(/^0x/, ''),
+                  'hex'
+                ).toString('base64')
+                return JSON.stringify({
+                  ...i,
+                  public_key: encodedPublicKey,
+                  signature: encodedSignature,
+                })
+              }
+              return JSON.stringify(i)
+            })
+            : []
 
         const txRequestData: UserSignatureRequest = {
           message: stripHexPrefix(strippedsigRequestHash),
-          auxilary_data:  auxilaryDataString,
+          auxilary_data: auxilaryDataString,
           validatorsInfo: validatorsInfo,
           timestamp: this.getTimeStamp(),
           hash,
@@ -266,9 +240,6 @@ export default class SignatureRequestManager {
             Buffer.from(strippedHexVerifyingKey, 'hex')
           ),
         }
-
-        console.log({to: JSON.stringify(auxilaryDataString)})
-        console.log({auxilaryDataString})
 
         const serverDHKey = await crypto.fromHex(validator.x25519_public_key)
 
@@ -290,7 +261,7 @@ export default class SignatureRequestManager {
           }),
           (x) => x.charCodeAt(0)
         )
-
+        console.log('txRequestData:', txRequestData)
         const encryptedMessage = await crypto.encryptAndSign(
           this.signer.pair.secretKey,
           encoded,
