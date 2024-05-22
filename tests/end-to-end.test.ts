@@ -104,52 +104,30 @@ test('End To End', async (t) => {
     './tests/testing-utils/program_noop.wasm'
   )
 
-  const templateBasicProgram: any = readFileSync(
-    './tests/testing-utils/template_basic_transaction.wasm'
+
+  const newPointer = await run(
+    'deploy',
+    entropy.programs.dev.deploy(noopProgram)
   )
 
-  // const newPointer = await run(
-  //   'deploy',
-  //   entropy.programs.dev.deploy(noopProgram)
-  // )
 
-  // const thirdPointer = await run(
-  //   'second deploy',
-  //   entropy.programs.dev.deploy(templateBasicProgram)
-  // )
+  const noopProgramInstance: ProgramInstance = {
+    programPointer: newPointer,
+    programConfig: '',
+  }
 
-  // const secondProgramData: ProgramInstance = {
-  //   programPointer: newPointer,
-  //   programConfig: '',
-  // }
-
-  // const thirdProgramData: ProgramInstance = {
-  //   programPointer: thirdPointer,
-  //   programConfig: '',
-  // }
 
   console.debug('verifyingKey', verifyingKey)
-  const programs = await run('get programs', entropy.programs.get(verifyingKey))
-  console.log({programs: programs.length})
+  const programsBeforeAdd = await run('get programs', entropy.programs.get(verifyingKey))
+
+  t.equal(programsBeforeAdd.length, 1, 'charlie has 1 programs')
 
 
-  const signatureWithProxy = await run(
-    'signWithAdapter',
-    entropy.signWithAdapter({
-      msg,
-      type: 'deviceKeyProxy',
-    })
-  )
-
-  console.log('sig', util.u8aToHex(signatureWithProxy))
-  t.equal(util.u8aToHex(signatureWithProxy).length, 132, 'got a good sig')
-
-  // await run('add program', entropy.programs.add(secondProgramData))
-  // await run('add program', entropy.programs.add(thirdProgramData))
+  await run('add program', entropy.programs.add(noopProgram))
   // getting charlie programs
-  // const programs = await run('get programs', entropy.programs.get(verifyingKey))
+  const programsAfterAdd = await run('get programs', entropy.programs.get(verifyingKey))
   
-  t.equal(programs.length, 3, 'charlie has 3 programs')
+  t.equal(programsAfterAdd.length, 2, 'charlie has 2 programs')
 
   // removing deviceKey
   const deviceKeyProxyPointer =
@@ -158,11 +136,6 @@ test('End To End', async (t) => {
     'remove DeviceKeyProxy program',
     entropy.programs.remove(deviceKeyProxyPointer, verifyingKey)
   )
-  // removing charlie program basic tx template
-  // await run(
-  //   'remove Basic Tx program',
-  //   entropy.programs.remove(thirdPointer, verifyingKey)
-  // )
 
   const updatedRemovedPrograms = await run(
     'get programs',
@@ -171,13 +144,12 @@ test('End To End', async (t) => {
   t.equal(updatedRemovedPrograms.length, 1, 'charlie has 1 program')
 
   const signature = await run(
-    'signWithAdapter',
-    entropy.signWithAdapter({
+    'sign',
+    entropy.sign({
       msg,
-      type: 'deviceKeyProxy',
+      hash: 'sha3'
     })
   )
-  console.log('sig', util.u8aToHex(signature))
   t.equal(util.u8aToHex(signature).length, 132, 'got a good sig')
   t.end()
 })
