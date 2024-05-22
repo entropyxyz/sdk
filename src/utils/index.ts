@@ -124,6 +124,15 @@ export function buf2hex (buffer: ArrayBuffer): string {
     .join('')
 }
 
+export function toHex (str: any) {
+  let result = '';
+  for (let i=0; i < str.length; i++) {
+    result += str.charCodeAt(i).toString(16);
+  } 
+  return result;
+}
+
+
 /**
  * Converts a hexadecimal string to an ArrayBuffer.
  *

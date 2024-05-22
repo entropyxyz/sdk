@@ -3,9 +3,9 @@ import { Signer } from '../../keys/types/internal'
 import { u8aToHex } from '@polkadot/util'
 import { AUX_DATA, PRESIGN_RESULT } from './types'
 export interface UserConfig {
-  ecdsaPublicKeys: HexString[]
-  sr25519PublicKeys: HexString[]
-  ed25519PublicKeys: HexString[]
+  ecdsaPublicKeys?: HexString[]
+  sr25519PublicKeys?: HexString[]
+  ed25519PublicKeys?: HexString[]
 }
 
 export interface DeviceKeyProxyProgramInterface {
@@ -16,9 +16,9 @@ export interface DeviceKeyProxyProgramInterface {
 
 export interface AuxData extends AUX_DATA {
   /// "ecdsa", "ed25519", "sr25519"
-  publicKeyType: HexString
+  public_key_type: HexString
   /// base64-encoded public key
-  publicKey: HexString
+  public_key: HexString
   /// base64-encoded signature
   signature: HexString
   /// The context for the signature only needed in sr25519 signature type FRANKIE LOOK THIS UP
@@ -48,7 +48,7 @@ export const ADAPTER_PROGRAMS = [DEVICE_KEY_PROXY_PROGRAM_INTERFACE]
 
 export interface PreSignResult extends PRESIGN_RESULT {
   sigRequestHash: HexString
-  auxiliaryData: [AuxData]
+  auxilary_data: [AuxData]
 }
 
 export async function preSign (
@@ -61,17 +61,17 @@ export async function preSign (
   const sigRequestHash = u8aToHex(signedMessage)
   const publicKey = u8aToHex(deviceKey.pair.publicKey)
 
-  const auxiliaryData: [AuxData] = [
+  const auxilary_data: [AuxData] = [
     {
-      publicKeyType: 'sr25519',
-      publicKey: publicKey,
+      public_key_type: 'sr25519',
+      public_key: publicKey,
       signature: sigRequestHash,
       // this needs to change before main net and needs to match core ideally it is `'entropy'`
       context: 'substrate',
     },
   ]
 
-  return { sigRequestHash, auxiliaryData }
+  return { sigRequestHash, auxilary_data }
 }
 
 export const type = 'deviceKeyProxy'

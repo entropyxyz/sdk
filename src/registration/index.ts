@@ -85,7 +85,7 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
       programData.map((programInfo) => {
         return {
           programPointer: programInfo.programPointer,
-          programConfig: programInfo.programConfig,
+          programConfig: Array.from(Buffer.from(JSON.stringify(programInfo.programConfig))),
         }
       })
     )

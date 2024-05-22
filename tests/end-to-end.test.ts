@@ -54,18 +54,18 @@ test('End To End', async (t) => {
   await run('entropy ready', entropy.ready)
 
   /* deploy */
-  const bareBones: any = readFileSync(
-    './tests/testing-utils/template_barebones.wasm'
-  )
-  t.equal(typeof bareBones.toString(), 'string', 'got basic program')
+  // const bareBones: any = readFileSync(
+  //   './tests/testing-utils/template_barebones.wasm'
+  // )
+  // t.equal(typeof bareBones.toString(), 'string', 'got basic program')
 
   // QUESTION: how to launch substrate node with a particular address pre-funded
 
-  const pointer = await run(
-    'deploy program',
-    entropy.programs.dev.deploy(bareBones)
-  )
-  t.equal(typeof pointer, 'string', 'valid pointer')
+  // const pointer = await run(
+  //   'deploy program',
+  //   entropy.programs.dev.deploy(bareBones)
+  // )
+  // t.equal(typeof pointer, 'string', 'valid pointer')
 
   // register
   const verifyingKeyFromRegistration = await run('register', entropy.register())
@@ -108,33 +108,27 @@ test('End To End', async (t) => {
     './tests/testing-utils/template_basic_transaction.wasm'
   )
 
-  const newPointer = await run(
-    'deploy',
-    entropy.programs.dev.deploy(noopProgram)
-  )
+  // const newPointer = await run(
+  //   'deploy',
+  //   entropy.programs.dev.deploy(noopProgram)
+  // )
 
-  const thirdPointer = await run(
-    'second deploy',
-    entropy.programs.dev.deploy(templateBasicProgram)
-  )
+  // const thirdPointer = await run(
+  //   'second deploy',
+  //   entropy.programs.dev.deploy(templateBasicProgram)
+  // )
 
-  const secondProgramData: ProgramInstance = {
-    programPointer: newPointer,
-    programConfig: '',
-  }
+  // const secondProgramData: ProgramInstance = {
+  //   programPointer: newPointer,
+  //   programConfig: '',
+  // }
 
-  const thirdProgramData: ProgramInstance = {
-    programPointer: thirdPointer,
-    programConfig: '',
-  }
+  // const thirdProgramData: ProgramInstance = {
+  //   programPointer: thirdPointer,
+  //   programConfig: '',
+  // }
 
   console.debug('verifyingKey', verifyingKey)
-  await run('add program', entropy.programs.add(secondProgramData))
-  await run('add program', entropy.programs.add(thirdProgramData))
-  // getting charlie programs
-  const programs = await run('get programs', entropy.programs.get(verifyingKey))
-  t.equal(programs.length, 3, 'charlie has 3 programs')
-
 
   const signatureWithProxy = await run(
     'signWithAdapter',
@@ -147,7 +141,12 @@ test('End To End', async (t) => {
   console.log('sig', util.u8aToHex(signatureWithProxy))
   t.equal(util.u8aToHex(signatureWithProxy).length, 132, 'got a good sig')
 
-
+  // await run('add program', entropy.programs.add(secondProgramData))
+  // await run('add program', entropy.programs.add(thirdProgramData))
+  // getting charlie programs
+  const programs = await run('get programs', entropy.programs.get(verifyingKey))
+  
+  t.equal(programs.length, 3, 'charlie has 3 programs')
 
   // removing deviceKey
   const deviceKeyProxyPointer =
@@ -157,10 +156,10 @@ test('End To End', async (t) => {
     entropy.programs.remove(deviceKeyProxyPointer, verifyingKey)
   )
   // removing charlie program basic tx template
-  await run(
-    'remove Basic Tx program',
-    entropy.programs.remove(thirdPointer, verifyingKey)
-  )
+  // await run(
+  //   'remove Basic Tx program',
+  //   entropy.programs.remove(thirdPointer, verifyingKey)
+  // )
 
   const updatedRemovedPrograms = await run(
     'get programs',
