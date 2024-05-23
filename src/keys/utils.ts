@@ -1,23 +1,27 @@
 import { Keypair } from '@polkadot/util-crypto/types'
 import { Keyring as PolkadotKeyring } from '@polkadot/keyring'
 import {
-  sr25519PairFromSeed,
   keyExtractPath,
   keyFromPath,
+  mnemonicGenerate,
+  mnemonicToMiniSecret,
   randomAsHex,
+  sr25519PairFromSeed,
 } from '@polkadot/util-crypto'
 import { debug } from '../utils'
-import { crypto } from '../utils/crypto'
+// import { crypto } from '../utils/crypto'
 import { Pair } from './types/internal'
 import { ChildKeyBasePaths } from './types/constants'
 
-const {
-  // sr25519PairFromSeed,
-  mnemonicToMiniSecret,
-  mnemonicGenerate,
-  // keyFromPath,
-  // keyExtractPath,
-} = crypto.polkadotCryptoUtil
+// const {
+//   sr25519PairFromSeed,
+//   mnemonicToMiniSecret,
+//   mnemonicGenerate,
+//   keyFromPath,
+//   keyExtractPath,
+// } = crypto.polkadotCryptoUtil
+// WARNING: this crypto.polkadotCryptoUtil is an async function
+// because of the Proxy over this, a function not a getter
 
 /**
  * Converts a mnemonic phrase to a mini secret seed.
@@ -64,12 +68,12 @@ export function generateMnemonic () {
  * @returns {string} The generated seed.
  */
 
-export function generateSeed (): string {
-  const mnemonic = mnemonicGenerate()
-  const mnemonicMini = mnemonicToMiniSecret(mnemonic)
+// export function generateSeed (): string {
+//   const mnemonic = mnemonicGenerate()
+//   const mnemonicMini = mnemonicToMiniSecret(mnemonic)
 
-  return mnemonicMini
-}
+//   return mnemonicMini.toString()
+// }
 
 /**
  * Generates a key pair from a seed and optional derivation path.

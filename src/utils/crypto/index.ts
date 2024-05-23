@@ -8,7 +8,6 @@ import * as polkadotCryptoUtil from '@polkadot/util-crypto'
 import { CryptoLib, ResObjectType } from './types'
 import { u8aToHex } from '@polkadot/util'
 
-let isImported = false
 let cryptoLib
 const res: ResObjectType = {
   resolve: () => {
@@ -16,17 +15,37 @@ const res: ResObjectType = {
   },
 }
 
-loadCryptoLib()
-
 /**
  * Interface for the cryptographic library, detailing core functionality: encryption, decryption, and key management.
  *
  * @see {@link https://www.npmjs.com/package/@entropyxyz/entropy-protocol-nodejs}
  */
 
+let isImported = false
 export const cryptoIsLoaded: Promise<void> = new Promise((resolve) => {
   res.resolve = resolve
 })
+
+/**
+ * Dynamically loads the appropriate cryptographic library based on the runtime environment (Node.js or browser).
+ *
+ * @returns The imported crypto library.
+ */
+
+export async function loadCryptoLib () {
+  if (isImported) return cryptoLib
+
+  if (!globalThis.window) {
+    cryptoLib = await import('@entropyxyz/entropy-protocol-nodejs')
+  } else {
+    cryptoLib = await import('@entropyxyz/entropy-protocol-web')
+  }
+  await cryptoWaitReady()
+  isImported = true
+  res.resolve()
+  return cryptoLib
+}
+loadCryptoLib()
 
 export const crypto: CryptoLib = new Proxy({} as CryptoLib, {
   get: (_, key) => {
@@ -77,24 +96,4 @@ async function verifySignature (
   const hexPublicKey = u8aToHex(publicKey)
 
   return signatureVerify(message, signature, hexPublicKey).isValid
-}
-
-/**
- * Dynamically loads the appropriate cryptographic library based on the runtime environment (Node.js or browser).
- *
- * @returns The imported crypto library.
- */
-
-export async function loadCryptoLib () {
-  if (isImported) return cryptoLib
-
-  if (!globalThis.window) {
-    cryptoLib = await import('@entropyxyz/entropy-protocol-nodejs')
-  } else {
-    cryptoLib = await import('@entropyxyz/entropy-protocol-web')
-  }
-  await cryptoWaitReady()
-  isImported = true
-  res.resolve()
-  return cryptoLib
 }
