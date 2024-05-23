@@ -24,6 +24,10 @@ export interface SigMsgOps {
   type?: string
 }
 
+export interface SigWithAdapptersOps extends SigMsgOps {
+  order: string[]
+}
+
 export interface SigOps {
   sigRequestHash: string
   hash: string
@@ -105,27 +109,48 @@ export default class SignatureRequestManager {
     @throws {Error} If no adapter or preSign function is found for the given type.
    */
 
-  async signWithAdapter ({ msg, type }: SigMsgOps): Promise<unknown> {
-    if (!this.adapters[type])
-      throw new Error(`No transaction adapter for type: ${type} submit as hash`)
-    if (!this.adapters[type].preSign)
+  async signWithAdaptersInOrder ({
+    msg,
+    order,
+  }: SigWithAdapptersOps): Promise<unknown> {
+    if (!order) {
       throw new Error(
-        `Adapter for type: ${type} has no preSign function. Adapters must have a preSign function`
+        `must provide order: expecting a string[] of adapter types got: ${order}`
       )
+    }
 
-    const { sigRequestHash, auxilary_data } = await this.adapters[type].preSign(
-      this.signer,
-      msg
+    const adaptersToRun = order.reduce((agg, name) => {
+      const adapter = this.adapters[name]
+      if (!adapter) {
+        throw new Error(`no adapter for type: ${name} in your order: ${order}`)
+      } else if (!adapter.preSign) {
+        throw new Error(
+          `Adapter for type: ${name} has no preSign function. Adapters must have a preSign function`
+        )
+      } else {
+        agg.push(adapter)
+      }
+      return agg
+    }, [])
+    // const { sigRequestHash, auxilary_data } = await
+    const results = await Promise.all(
+      adaptersToRun.map((adapter) => {
+        return adapter.preSign(this.signer, msg)
+      })
     )
-
+    // [AuxData[], ...]
+    const auxiliaryDataCollection = results.map(({ auxilary_data }) => {
+      return auxilary_data
+    })
+    // flatten
+    const auxiliaryData = [].concat(...auxiliaryDataCollection)
+    // grab the first sigRequestHash
+    const { sigRequestHash } = results[0]
     const signature = await this.sign({
       sigRequestHash,
-      hash: this.adapters[type].hash,
-      auxiliaryData: auxilary_data as AuxData[],
+      hash: adaptersToRun[0].hash,
+      auxiliaryData,
     })
-    if (this.adapters[type].postSign) {
-      return await this.adapters[type].postSign(signature, msg)
-    }
     return signature
   }
 
@@ -210,7 +235,6 @@ export default class SignatureRequestManager {
   }): Promise<EncMsg[]> {
     return await Promise.all(
       validatorsInfo.map(async (validator: ValidatorInfo): Promise<EncMsg> => {
-        // TODO: auxilaryData full implementation
         const txRequestData: UserSignatureRequest = {
           message: stripHexPrefix(strippedsigRequestHash),
           auxilary_data: auxiliaryData,
@@ -221,11 +245,15 @@ export default class SignatureRequestManager {
             Buffer.from(stripHexPrefix(signatureVerifyingKey), 'hex')
           ),
         }
-        if (auxiliaryData) console.log('hree')
-        // TODO handle array here
-        txRequestData.auxilary_data = [toHex(JSON.stringify(auxiliaryData[0]))]
 
-        console.log({ test: txRequestData })
+        // TODO: auxilaryData full implementation
+        if (auxiliaryData) {
+          txRequestData.auxilary_data = auxiliaryData.map((signleAuxData) =>
+            toHex(JSON.stringify(signleAuxData))
+          )
+        }
+        // TODO handle array here
+
         const serverDHKey = await crypto.fromHex(validator.x25519_public_key)
 
         const formattedValidators = await Promise.all(

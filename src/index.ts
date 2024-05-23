@@ -1,7 +1,7 @@
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import { debug, isValidSubstrateAddress } from './utils'
 import RegistrationManager, { RegistrationParams } from './registration'
-import SignatureRequestManager, { SigMsgOps, SigOps } from './signing'
+import SignatureRequestManager, { SigOps, SigWithAdapptersOps } from './signing'
 import { crypto, loadCryptoLib } from './utils/crypto'
 import { Adapter } from './signing/adapters/types'
 import ProgramManager from './programs'
@@ -164,9 +164,9 @@ export default class Entropy {
     @throws {Error} Will throw an error if the transaction type does not have a corresponding adapter.
    */
 
-  async signWithAdapter (params: SigMsgOps): Promise<unknown> {
+  async signWithAdaptersInOrder (params: SigWithAdapptersOps): Promise<unknown> {
     (await this.ready) && this.substrate.isReady
-    return this.signingManager.signWithAdapter(params)
+    return await this.signingManager.signWithAdaptersInOrder(params)
   }
 
   /**
