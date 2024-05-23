@@ -11,7 +11,7 @@ export interface UserConfig {
 export interface DeviceKeyProxyProgramInterface {
   pointer: HexString
   userConfig: UserConfig
-  auxiliary_data: AuxData
+  auxilary_data: AuxData
 }
 
 export interface AuxData extends AUX_DATA {
@@ -34,7 +34,7 @@ export const DEVICE_KEY_PROXY_PROGRAM_INTERFACE = {
     sr25519_public_keys: [],
     ed25519_public_keys: [],
   },
-  auxiliary_data: [
+  auxilary_data: [
     {
       publicKeyType: '',
       publicKey: '',
@@ -48,7 +48,7 @@ export const ADAPTER_PROGRAMS = [DEVICE_KEY_PROXY_PROGRAM_INTERFACE]
 
 export interface PreSignResult extends PRESIGN_RESULT {
   sigRequestHash: HexString
-  auxiliary_data: [AuxData]
+  auxilary_data: [AuxData]
 }
 
 export async function preSign (
@@ -65,7 +65,7 @@ export async function preSign (
     String.fromCharCode.apply(null, deviceKey.pair.publicKey)
   )
 
-  const auxiliary_data: [AuxData] = [
+  const auxilary_data: [AuxData] = [
     {
       public_key_type: 'sr25519',
       public_key: publicKey,
@@ -75,7 +75,7 @@ export async function preSign (
     },
   ]
 
-  return { sigRequestHash, auxiliary_data }
+  return { sigRequestHash, auxilary_data }
 }
 
 export const type = 'deviceKeyProxy'
