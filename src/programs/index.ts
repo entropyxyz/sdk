@@ -74,9 +74,9 @@ export default class ProgramManager extends ExtrinsicBaseClass {
     // @ts-ignore: next line :{
     return (registeredInfo.programsData || []).map((program) => ({
       // pointer: program.pointer.toString(),
-      program_pointer: program.program_pointer,
+      program_pointer: program.programPointer,
       // double check on how we're passing config
-      program_config: program.program_config,
+      program_config: program.programConfig,
     }))
   }
 
