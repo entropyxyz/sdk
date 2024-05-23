@@ -1398,7 +1398,7 @@ declare module '@polkadot/api-base/types/storage' {
         QueryableStorageEntry<ApiType, [AccountId32]>
       /**
        * Stores the program info for a given program hash.
-       * A program hash is a combination of the bytecode and configuration_schema and auxiliary_data_schema
+       * A program hash is a combination of the bytecode and configuration_schema and auxilary_data_schema
        **/
       programs: AugmentedQuery<
         ApiType,

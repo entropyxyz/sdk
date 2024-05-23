@@ -1,7 +1,7 @@
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import { debug, isValidSubstrateAddress } from './utils'
 import RegistrationManager, { RegistrationParams } from './registration'
-import SignatureRequestManager, { SigOps } from './signing'
+import SignatureRequestManager, { SigOps, SigWithAdapptersOps } from './signing'
 import { crypto, loadCryptoLib } from './utils/crypto'
 import { Adapter } from './signing/adapters/types'
 import ProgramManager from './programs'
@@ -114,11 +114,7 @@ export default class Entropy {
 
     const deviceKey = this.keyring.getLazyLoadAccountProxy(ChildKey.deviceKey)
     deviceKey.used = true
-    console.log(
-      'device key public key as base 64:',
-      Buffer.from(deviceKey.pair.publicKey).toString('base64')
-    )
-    defaultProgram.programConfig.sr25519PublicKeys.push(
+    defaultProgram.program_config.sr25519_public_keys.push(
       Buffer.from(deviceKey.pair.publicKey).toString('base64')
     )
 
@@ -164,10 +160,10 @@ export default class Entropy {
     @throws {Error} Will throw an error if the transaction type does not have a corresponding adapter.
    */
 
-  // async signWithAdapter (params: SigMsgOps): Promise<unknown> {
-  //   (await this.ready) && this.substrate.isReady
-  //   return this.signingManager.signWithAdapter(params)
-  // }
+  async signWithAdaptersInOrder (params: SigWithAdapptersOps): Promise<unknown> {
+    (await this.ready) && this.substrate.isReady
+    return await this.signingManager.signWithAdaptersInOrder(params)
+  }
 
   /**
    * Signs a signature request hash. This method involves various steps including validator

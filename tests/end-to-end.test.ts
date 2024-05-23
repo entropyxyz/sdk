@@ -13,6 +13,7 @@ import {
   spinNetworkDown,
 } from './testing-utils'
 import { ProgramInstance } from '../src/programs'
+import { MsgParams } from '../src/signing'
 
 const networkType = 'two-nodes'
 
@@ -110,8 +111,8 @@ test('End To End', async (t) => {
   )
 
   const noopProgramInstance: ProgramInstance = {
-    programPointer: newPointer,
-    programConfig: '',
+    program_pointer: newPointer,
+    program_config: '',
   }
 
   console.debug('verifyingKey', verifyingKey)
@@ -120,7 +121,11 @@ test('End To End', async (t) => {
     entropy.programs.get(verifyingKey)
   )
 
-  t.equal(programsBeforeAdd.length, 1, 'charlie has 1 programs')
+  t.equal(
+    programsBeforeAdd.length,
+    1,
+    'charlie has 1 programs' + JSON.stringify(programsBeforeAdd)
+  )
 
   await run('add program', entropy.programs.add(noopProgramInstance))
   // getting charlie programs
@@ -131,7 +136,21 @@ test('End To End', async (t) => {
 
   t.equal(programsAfterAdd.length, 2, 'charlie has 2 programs')
 
-  console.log(JSON.stringify(programsAfterAdd, null, 2))
+  const msgParam: MsgParams = { msg }
+
+  const signatureFromAdapter = await run(
+    'signWithAdaptersInOrder',
+    entropy.signWithAdaptersInOrder({
+      msg: msgParam,
+      order: ['deviceKeyProxy', 'noop'],
+    })
+  )
+
+  t.equal(
+    util.u8aToHex(signatureFromAdapter).length,
+    132,
+    'got a good sig from adapter'
+  )
 
   // removing deviceKey
   const deviceKeyProxyPointer =
@@ -146,8 +165,6 @@ test('End To End', async (t) => {
     entropy.programs.get(verifyingKey)
   )
   t.equal(programsAftreRemoveDefault.length, 1, 'charlie has 1 program')
-  console.log(JSON.stringify(programsAftreRemoveDefault, null, 2))
-
   const signature = await run(
     'sign',
     entropy.sign({

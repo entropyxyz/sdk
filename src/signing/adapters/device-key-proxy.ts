@@ -1,7 +1,7 @@
 import { HexString } from '../../keys/types/json'
 import { Signer } from '../../keys/types/internal'
-import { u8aToHex } from '@polkadot/util'
 import { AUX_DATA, PRESIGN_RESULT } from './types'
+import { toHex } from '../../utils'
 export interface UserConfig {
   ecdsaPublicKeys?: HexString[]
   sr25519PublicKeys?: HexString[]
@@ -27,12 +27,12 @@ export interface AuxData extends AUX_DATA {
 }
 
 export const DEVICE_KEY_PROXY_PROGRAM_INTERFACE = {
-  programPointer:
+  program_pointer:
     '0x0000000000000000000000000000000000000000000000000000000000000000',
-  programConfig: {
-    ecdsaPublicKeys: [],
-    sr25519PublicKeys: [],
-    ed25519PublicKeys: [],
+  program_config: {
+    ecdsa_public_keys: [],
+    sr25519_public_keys: [],
+    ed25519_public_keys: [],
   },
   auxilary_data: [
     {
@@ -57,15 +57,19 @@ export async function preSign (
 ): Promise<PreSignResult> {
   const stringMessage = JSON.stringify(message)
   const signedMessage = deviceKey.pair.sign(stringMessage)
+  const sigRequestHash = toHex(stringMessage)
 
-  const sigRequestHash = u8aToHex(signedMessage)
-  const publicKey = u8aToHex(deviceKey.pair.publicKey)
+  const convertedSig = btoa(String.fromCharCode.apply(null, signedMessage))
+  // Base64 encoded string
+  const publicKey = btoa(
+    String.fromCharCode.apply(null, deviceKey.pair.publicKey)
+  )
 
   const auxilary_data: [AuxData] = [
     {
       public_key_type: 'sr25519',
       public_key: publicKey,
-      signature: sigRequestHash,
+      signature: convertedSig,
       // this needs to change before main net and needs to match core ideally it is `'entropy'`
       context: 'substrate',
     },
