@@ -1,6 +1,6 @@
 import { HexString } from '../../keys/types/json'
 import { Signer } from '../../keys/types/internal'
-import { AUX_DATA } from './types'
+import { AUX_DATA, PRESIGN_RESULT } from './types'
 import { toHex } from '../../utils'
 export interface UserConfig {
   ecdsaPublicKeys?: HexString[]
@@ -11,7 +11,7 @@ export interface UserConfig {
 export interface DeviceKeyProxyProgramInterface {
   pointer: HexString
   userConfig: UserConfig
-  auxilary_data: AuxData
+  auxiliary_data: AuxData
 }
 
 export interface AuxData extends AUX_DATA {
@@ -27,14 +27,14 @@ export interface AuxData extends AUX_DATA {
 }
 
 export const DEVICE_KEY_PROXY_PROGRAM_INTERFACE = {
-  programPointer:
+  program_pointer:
     '0x0000000000000000000000000000000000000000000000000000000000000000',
-  programConfig: {
-    ecdsaPublicKeys: [],
-    sr25519PublicKeys: [],
-    ed25519PublicKeys: [],
+  program_config: {
+    ecdsa_public_keys: [],
+    sr25519_public_keys: [],
+    ed25519_public_keys: [],
   },
-  auxilary_data: [
+  auxiliary_data: [
     {
       publicKeyType: '',
       publicKey: '',
@@ -46,9 +46,9 @@ export const DEVICE_KEY_PROXY_PROGRAM_INTERFACE = {
 
 export const ADAPTER_PROGRAMS = [DEVICE_KEY_PROXY_PROGRAM_INTERFACE]
 
-export interface PreSignResult {
+export interface PreSignResult extends PRESIGN_RESULT {
   sigRequestHash: HexString
-  auxiliaryData: AuxData[]
+  auxiliary_data: [AuxData]
 }
 
 export async function preSign (
@@ -65,7 +65,7 @@ export async function preSign (
     String.fromCharCode.apply(null, deviceKey.pair.publicKey)
   )
 
-  const auxiliaryData: [AuxData] = [
+  const auxiliary_data: [AuxData] = [
     {
       public_key_type: 'sr25519',
       public_key: publicKey,
@@ -75,7 +75,7 @@ export async function preSign (
     },
   ]
 
-  return { sigRequestHash, auxiliaryData }
+  return { sigRequestHash, auxiliary_data }
 }
 
 export const type = 'deviceKeyProxy'

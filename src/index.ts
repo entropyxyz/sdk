@@ -118,7 +118,7 @@ export default class Entropy {
       'device key public key as base 64:',
       Buffer.from(deviceKey.pair.publicKey).toString('base64')
     )
-    defaultProgram.programConfig.sr25519PublicKeys.push(
+    defaultProgram.program_config.sr25519_public_keys.push(
       Buffer.from(deviceKey.pair.publicKey).toString('base64')
     )
 

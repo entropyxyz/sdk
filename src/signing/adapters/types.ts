@@ -16,7 +16,7 @@ export interface AUX_DATA {
  */
 export interface PRESIGN_RESULT {
   sigRequestHash: HexString
-  auxiliaryData: AUX_DATA[]
+  auxiliary_data: AUX_DATA[]
 }
 
 /**

@@ -37,7 +37,7 @@ export interface SigOps {
 export interface UserSignatureRequest {
   message: string
   // Any type for now i assume?
-  auxiliaryData?: any
+  auxiliary_data?: any
   validatorsInfo: ValidatorInfo[]
   timestamp: { secs_since_epoch: number; nanos_since_epoch: number }
   hash: string
@@ -113,15 +113,14 @@ export default class SignatureRequestManager {
         `Adapter for type: ${type} has no preSign function. Adapters must have a preSign function`
       )
 
-    const { sigRequestHash, auxiliaryData } = await this.adapters[type].preSign(
-      this.signer,
-      msg
-    )
+    const { sigRequestHash, auxiliary_data } = await this.adapters[
+      type
+    ].preSign(this.signer, msg)
 
     const signature = await this.sign({
       sigRequestHash,
       hash: this.adapters[type].hash,
-      auxiliaryData: auxiliaryData as AuxData[],
+      auxiliaryData: auxiliary_data as AuxData[],
     })
     if (this.adapters[type].postSign) {
       return await this.adapters[type].postSign(signature, msg)
@@ -213,7 +212,7 @@ export default class SignatureRequestManager {
         // TODO: auxilaryData full implementation
         const txRequestData: UserSignatureRequest = {
           message: stripHexPrefix(strippedsigRequestHash),
-          auxiliaryData,
+          auxiliary_data: auxiliaryData,
           validatorsInfo: validatorsInfo,
           timestamp: this.getTimeStamp(),
           hash,
@@ -223,7 +222,7 @@ export default class SignatureRequestManager {
         }
         if (auxiliaryData) console.log('hree')
         // TODO handle array here
-        txRequestData.auxiliaryData = [toHex(JSON.stringify(auxiliaryData[0]))]
+        txRequestData.auxiliary_data = [toHex(JSON.stringify(auxiliaryData[0]))]
 
         console.log({ test: txRequestData })
         const serverDHKey = await crypto.fromHex(validator.x25519_public_key)

@@ -111,8 +111,8 @@ test('End To End', async (t) => {
   )
 
   const noopProgramInstance: ProgramInstance = {
-    programPointer: newPointer,
-    programConfig: '',
+    program_pointer: newPointer,
+    program_config: '',
   }
 
   console.debug('verifyingKey', verifyingKey)
