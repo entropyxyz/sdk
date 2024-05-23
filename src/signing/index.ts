@@ -5,7 +5,6 @@ import { Adapter } from './adapters/types'
 import { EncMsg, ValidatorInfo } from '../types/internal'
 import { stripHexPrefix, sendHttpPost, toHex } from '../utils'
 import { crypto } from '../utils/crypto'
-import { AuxData } from './adapters/device-key-proxy'
 import { CryptoLib } from '../utils/crypto/types'
 
 export interface Config {
@@ -32,7 +31,7 @@ export interface SigOps {
   sigRequestHash: string
   hash: string
   type?: string
-  auxiliaryData?: AuxData[]
+  auxiliaryData?: unknown[]
 }
 
 /**
