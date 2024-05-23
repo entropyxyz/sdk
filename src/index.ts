@@ -32,7 +32,6 @@ export default class Entropy {
   /** A promise that resolves once the cryptographic library has been loaded. */
   ready: Promise<boolean>
   registrationManager: RegistrationManager
-  isRegistered: (verifyingKey: HexString) => Promise<boolean>
   programs: ProgramManager
   signingManager: SignatureRequestManager
   keyring: Keyring
