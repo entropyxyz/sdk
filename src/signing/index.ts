@@ -7,7 +7,7 @@ import { stripHexPrefix, sendHttpPost } from '../utils'
 import { crypto } from '../utils/crypto'
 import { AuxData } from './adapters/device-key-proxy'
 import { CryptoLib } from '../utils/crypto/types'
-import { formatAuxData, toHex } from '../utils/index'
+import { toHex } from '../utils/index'
 export interface Config {
   signer: Signer
   substrate: ApiPromise
@@ -36,7 +36,7 @@ export interface SigOps {
  */
 export interface UserSignatureRequest {
   message: string
-  auxilary_data?: unknown[]
+  auxilary_data?: any
   validatorsInfo: ValidatorInfo[]
   timestamp: { secs_since_epoch: number; nanos_since_epoch: number }
   hash: string
@@ -221,10 +221,8 @@ export default class SignatureRequestManager {
           ),
         }
         if (auxilaryData) console.log('hree')
-        txRequestData.auxilary_data = auxilaryData.map((i) => {
-          i = JSON.stringify(formatAuxData(i))
-          return toHex(i)
-        })
+        // TODO handle array here
+        txRequestData.auxilary_data = [toHex(JSON.stringify(auxilaryData[0]))]
 
         console.log({ test: txRequestData })
         const serverDHKey = await crypto.fromHex(validator.x25519_public_key)

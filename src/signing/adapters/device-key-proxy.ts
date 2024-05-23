@@ -57,15 +57,20 @@ export async function preSign (
 ): Promise<PreSignResult> {
   const stringMessage = JSON.stringify(message)
   const signedMessage = deviceKey.pair.sign(stringMessage)
-
+  // TODO this is a problem
   const sigRequestHash = u8aToHex(signedMessage)
-  const publicKey = u8aToHex(deviceKey.pair.publicKey)
+
+  const convertedSig = btoa(String.fromCharCode.apply(null, signedMessage))
+  const b64encoded = btoa(
+    String.fromCharCode.apply(null, deviceKey.pair.publicKey)
+  )
+  const publicKey = b64encoded
 
   const auxilary_data: [AuxData] = [
     {
       public_key_type: 'sr25519',
       public_key: publicKey,
-      signature: sigRequestHash,
+      signature: convertedSig,
       // this needs to change before main net and needs to match core ideally it is `'entropy'`
       context: 'substrate',
     },

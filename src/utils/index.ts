@@ -163,9 +163,3 @@ export function hexStringToUint8Array (hex: string): Uint8Array {
 
   return byteArray
 }
-
-export function formatAuxData (auxData: any): any {
-  auxData.public_key = Buffer.from(auxData.public_key).toString('base64')
-  auxData.signature = Buffer.from(auxData.signature).toString('base64')
-  return auxData
-}
