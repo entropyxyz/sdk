@@ -13,7 +13,6 @@ export async function createTestAccount(
   entropy: Entropy,
   seed = charlieStashSeed
 ) {
-
   await wasmGlobalsReady()
 
   const keyring = new Keyring({ seed } as KeyMaterial)

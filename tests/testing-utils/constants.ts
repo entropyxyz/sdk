@@ -10,7 +10,6 @@ export const charlieStashAddress =
 export const whitelisted_test_evm_address =
   '0x772b9a9e8aa1c9db861c6611a82d251db4fac990'
 
-
 /// A transaction request that satisfies the test whitelisted constraints
 // export const whitelisted_test_tx_req = {
 //   to: whitelisted_test_evm_address,

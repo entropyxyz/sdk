@@ -2,6 +2,7 @@ How "Key mangment should be done in the sdk"
 
 the user hold onto the seed every class will create their own key via a set derivation path except for the device key. the derivation path for the device key should be by
 Derivation Path
+
 ```ts
 //store that private key
 
@@ -74,7 +75,6 @@ a program dev account does not need to be registered. Its main function is to de
 
 can have all or any keys be
 
-
 A note about verifying keys:
 
 verifying keys are what is returned when a user registers an entropy account on chain this verifying key is what a signatures public key will be verified against. It is possible for a single entropy account to have many verifying keys so it is recommend that after registering an entropy account to store meta information about a particular configuration for example:
@@ -106,7 +106,6 @@ A seed is what we use to generate keys and a mnemonic is what a end user sees
 
 generateMnemonic
 
-
 generateSeed
 
 mnemonicToSeed
@@ -114,25 +113,20 @@ mnemonicToSeed
 seedToMnemonic
 to present to end users a phrase
 
-
 end user facing:
 
 createEntropyAccount({seed, type: EntropyAccountType })
 
-
-
 entropyAccountToSigner
 
-
 ```ts
-
 /*this is pseudo code will not run if you try it*/
 
 const storedAccount: EntropyAccountInfo = loadFromStorage()
 
-const account: EntropyAccount = /*create a new account*/ createEntropyAccount(storedAccount)// or loads an account from storage
+const account: EntropyAccount =
+  /*create a new account*/ createEntropyAccount(storedAccount) // or loads an account from storage
 account.on('update', (fullAccountInfo) => persist(fullAccountInfo))
 
 const entropy = new Entropy({ account })
-
 ```
