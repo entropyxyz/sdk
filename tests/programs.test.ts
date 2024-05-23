@@ -49,6 +49,8 @@ test('Programs', async (t) => {
     buf2hex(dummyProgram),
     'everything looks GREAT'
   )
+
+  await entropy.close()
   */
 
   t.end()

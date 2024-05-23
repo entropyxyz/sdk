@@ -67,6 +67,7 @@ test('Register', async (t) => {
     .then(() => t.fail('throws error on duplicate registrations'))
     .catch((err) => t.match(err.message, /already registered/))
 
+  await entropy.close()
   */
 
   t.end()

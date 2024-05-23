@@ -22,7 +22,9 @@ test('End To End', async (t) => {
   const run = promiseRunner(t)
   // context: all run does is checks that it runs
   await run('network up', spinNetworkUp(networkType))
-  await sleep(5_000)
+
+  await sleep(process.env.GITHUB_WORKSPACE ? 30_000 : 5_000)
+
   // this gets called after all tests are run
   t.teardown(async () => {
     await spinNetworkDown(networkType, entropy).catch((error) =>
@@ -154,5 +156,7 @@ test('End To End', async (t) => {
     })
   )
   t.equal(util.u8aToHex(signature).length, 132, 'got a good sig')
+
+  await entropy.close()
   t.end()
 })

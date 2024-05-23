@@ -183,4 +183,8 @@ export default class Entropy {
     await this.ready
     return this.signingManager.sign(params)
   }
+
+  async close () {
+    return this.substrate.disconnect()
+  }
 }
