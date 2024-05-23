@@ -114,10 +114,6 @@ export default class Entropy {
 
     const deviceKey = this.keyring.getLazyLoadAccountProxy(ChildKey.deviceKey)
     deviceKey.used = true
-    console.log(
-      'device key public key as base 64:',
-      Buffer.from(deviceKey.pair.publicKey).toString('base64')
-    )
     defaultProgram.program_config.sr25519_public_keys.push(
       Buffer.from(deviceKey.pair.publicKey).toString('base64')
     )

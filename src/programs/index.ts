@@ -70,7 +70,6 @@ export default class ProgramManager extends ExtrinsicBaseClass {
     }
 
     const registeredInfo = registeredOption.toJSON()
-    console.log('registeredInfo:', registeredInfo)
     // @ts-ignore: next line :{
     return (registeredInfo.programsData || []).map((program) => ({
       // pointer: program.pointer.toString(),
