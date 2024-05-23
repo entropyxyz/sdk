@@ -127,11 +127,9 @@ test('End To End', async (t) => {
     entropy.programs.get(verifyingKey)
   )
 
-  t.equal(
-    programsAfterAdd.length,
-    2,
-    'charlie has 2 programs' + JSON.stringify(programsAfterAdd)
-  )
+  t.equal(programsAfterAdd.length, 2, 'charlie has 2 programs')
+
+  console.log(JSON.stringify(programsAfterAdd, null, 2))
 
   // removing deviceKey
   const deviceKeyProxyPointer =
@@ -145,11 +143,8 @@ test('End To End', async (t) => {
     'get programs',
     entropy.programs.get(verifyingKey)
   )
-  t.equal(
-    programsAftreRemoveDefault.length,
-    1,
-    'charlie has 1 program' + JSON.stringify(programsAftreRemoveDefault)
-  )
+  t.equal(programsAftreRemoveDefault.length, 1, 'charlie has 1 program')
+  console.log(JSON.stringify(programsAftreRemoveDefault, null, 2))
 
   const signature = await run(
     'sign',
