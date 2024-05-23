@@ -57,7 +57,6 @@ export async function preSign (
 ): Promise<PreSignResult> {
   const stringMessage = JSON.stringify(message)
   const signedMessage = deviceKey.pair.sign(stringMessage)
-  // TODO this is a problem
   const sigRequestHash = toHex(stringMessage)
 
   const convertedSig = btoa(String.fromCharCode.apply(null, signedMessage))
