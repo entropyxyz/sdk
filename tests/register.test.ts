@@ -57,7 +57,7 @@ test('Register: handle user registration', async (t) => {
 
   await entropy.registrationManager.register({
     programDeployer: charlieStashAddress,
-    programData: [{ programPointer: pointer, programConfig: '0x' }],
+    programData: [{ program_pointer: pointer, program_config: '0x' }],
   })
 
   const isRegisteredAfter = await entropy.isRegistered(charlieStashAddress)
@@ -75,14 +75,14 @@ test('Register: not allow re-registration', async (t) => {
     'register',
     entropy.registrationManager.register({
       programDeployer: entropy.keyring.accounts.registration.address,
-      programData: [{ programPointer: pointer, programConfig: '0x' }],
+      programData: [{ program_pointer: pointer, program_config: '0x' }],
     })
   )
 
   await entropy.registrationManager
     .register({
       programDeployer: charlieStashAddress,
-      programData: [{ programPointer: pointer, programConfig: '0x' }],
+      programData: [{ program_pointer: pointer, program_config: '0x' }],
     })
     .then(() => t.fail('throws error on duplicate registrations'))
     .catch((err) => t.match(err.message, /already registered/))

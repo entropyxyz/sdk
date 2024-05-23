@@ -1,7 +1,7 @@
 import { HexString } from '../../keys/types/json'
 import { Signer } from '../../keys/types/internal'
-import { u8aToHex } from '@polkadot/util'
 import { AUX_DATA, PRESIGN_RESULT } from './types'
+import { toHex } from '../../utils/index'
 export interface UserConfig {
   ecdsaPublicKeys?: HexString[]
   sr25519PublicKeys?: HexString[]
@@ -27,12 +27,12 @@ export interface AuxData extends AUX_DATA {
 }
 
 export const DEVICE_KEY_PROXY_PROGRAM_INTERFACE = {
-  programPointer:
+  program_pointer:
     '0x0000000000000000000000000000000000000000000000000000000000000000',
-  programConfig: {
-    ecdsaPublicKeys: [],
-    sr25519PublicKeys: [],
-    ed25519PublicKeys: [],
+  program_config: {
+    ecdsa_public_keys: [],
+    sr25519_public_keys: [],
+    ed25519_public_keys: [],
   },
   auxilary_data: [
     {
@@ -58,7 +58,7 @@ export async function preSign (
   const stringMessage = JSON.stringify(message)
   const signedMessage = deviceKey.pair.sign(stringMessage)
   // TODO this is a problem
-  const sigRequestHash = u8aToHex(signedMessage)
+  const sigRequestHash = toHex(stringMessage)
 
   const convertedSig = btoa(String.fromCharCode.apply(null, signedMessage))
   const b64encoded = btoa(

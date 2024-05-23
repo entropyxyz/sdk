@@ -108,11 +108,6 @@ test('End To End', async (t) => {
     entropy.programs.dev.deploy(noopProgram)
   )
 
-  const noopProgramInstance: ProgramInstance = {
-    programPointer: newPointer,
-    programConfig: '',
-  }
-
   console.debug('verifyingKey', verifyingKey)
   const programsBeforeAdd = await run(
     'get programs',

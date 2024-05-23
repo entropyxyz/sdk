@@ -62,7 +62,7 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
   /**
    * Registers a user with the given parameters.
    *
-   * @param programPointer - Optional. Initial program associated with the user.
+   * @param program_pointer - Optional. Initial program associated with the user.
    * @param keyVisibility - Key visibility level ('Public', 'Private'). Defaults to 'Public'.
    * @param programDeployer - Account authorized to modify programs on behalf of the user.
    *
@@ -84,8 +84,10 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
       keyVisibility,
       programData.map((programInfo) => {
         return {
-          programPointer: programInfo.programPointer,
-          programConfig: Array.from(Buffer.from(JSON.stringify(programInfo.programConfig))),
+          program_pointer: programInfo.program_pointer,
+          program_config: Array.from(
+            Buffer.from(JSON.stringify(programInfo.program_config))
+          ),
         }
       })
     )
@@ -114,7 +116,6 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
     const verifyingKey = await dataFromEvents
     return verifyingKey
   }
-
   #getVerifiyingKeyFromRegisterEvent (address: SS58Address): Promise<string> {
     const wantedMethods = ['FailedRegistration', 'AccountRegistered']
     let unsub
