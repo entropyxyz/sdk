@@ -136,8 +136,6 @@ test('End To End', async (t) => {
 
   t.equal(programsAfterAdd.length, 2, 'charlie has 2 programs')
 
-  console.log(JSON.stringify(programsAfterAdd, null, 2))
-
   const msgParam: MsgParams = { msg }
 
   const signatureFromAdapter = await run(
@@ -167,8 +165,6 @@ test('End To End', async (t) => {
     entropy.programs.get(verifyingKey)
   )
   t.equal(programsAftreRemoveDefault.length, 1, 'charlie has 1 program')
-  console.log(JSON.stringify(programsAftreRemoveDefault, null, 2))
-
   const signature = await run(
     'sign',
     entropy.sign({

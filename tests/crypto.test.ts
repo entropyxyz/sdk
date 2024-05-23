@@ -47,9 +47,6 @@ test('Crypto', async (t) => {
     const charliePublicKey = charliePublicKeyPair.publicKey()
     const charlieSecretKey = charliePublicKeyPair.secretKey()
 
-    console.log(' charlier  public ', charliePublicKey)
-    console.log(' Charlie secret', charlieSecretKey)
-
     const serverDHKey = await run(
       'fromHex works',
       crypto.fromHex(mockData.x25519_public_key)
