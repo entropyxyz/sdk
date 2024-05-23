@@ -171,13 +171,15 @@ export default class Keyring {
     //   this.accounts[childKey] = {}
     // }
     return new Proxy(this.accounts[childKey], {
-      set: (account, k: string, v) => {
+      get: (_, key: string) => this.accounts[childKey][key],
+      set: (_, k: string, v) => {
         if (k === 'used' && !this.accounts[childKey].used) {
           this.#used.push(childKey)
         }
+        this.accounts[childKey][k] = v
         this.accounts.emit(`#account-update`, this.getAccount())
         this.accounts.masterAccountView[childKey][k] = v
-        return (this.accounts[childKey][k] = v)
+        return v
       },
     })
   }
