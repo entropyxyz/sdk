@@ -130,12 +130,13 @@ export default class Keyring {
   }
 
   #formatAccounts (accounts: EntropyAccount): EntropyAccount {
-    const { seed, mnemonic, debug, type } = accounts
+    const { seed, mnemonic, debug, type, admin } = accounts
 
     const entropyAccountsJson = {
       debug,
       seed: seed ? seed : utils.seedFromMnemonic(mnemonic),
       type,
+      admin,
     }
 
     Object.keys(accounts)
@@ -143,6 +144,11 @@ export default class Keyring {
       .forEach((key) => {
         let account: PairMaterial
         if (entropyAccountsJson[key]) return
+        if (key === ChildKey.registration && admin?.seed) {
+          account = admin
+          entropyAccountsJson[key] = this.#jsonAccountCreator(account, debug)
+          return
+        }
         if (accounts[key] && accounts[key].userContext) account = accounts[key]
         else if (ChildKey[key]) account = { type: ChildKey[key], seed }
         if (!account) return
@@ -151,14 +157,6 @@ export default class Keyring {
 
     return entropyAccountsJson as EntropyAccount
   }
-
-  // #createSingleEntropyAccount (key: ChildKey | string): PairMaterial {
-  // entropyAccountsJson[key] = this.#jsonAccountCreator({seed: entropyAccountsJson.seed, key}, debug)
-  // if (account && account.verifyingKeys ) entropyAccountsJson[key].verifyingKeys = accounts.verifyingKeys
-  // else entropyAccountsJson[key].verifyingKeys = []
-  // entropyAccountsJson[key].type = key
-  // entropyAccountsJson[key].userContext = EntropyAccountContextType[key]
-  // }
 
   /**
    * Lazily loads a key proxy for a given type.
