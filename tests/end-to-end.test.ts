@@ -13,6 +13,7 @@ import {
   spinNetworkDown,
 } from './testing-utils'
 import { ProgramInstance } from '../src/programs'
+import { MsgParams } from '../src/signing'
 
 const networkType = 'two-nodes'
 
@@ -132,6 +133,22 @@ test('End To End', async (t) => {
   t.equal(programsAfterAdd.length, 2, 'charlie has 2 programs')
 
   console.log(JSON.stringify(programsAfterAdd, null, 2))
+
+  const msgParam: MsgParams = { msg }
+
+  const signatureFromAdapter = await run(
+    'signWithAdapter',
+    entropy.signWithAdapter({
+      msg: msgParam,
+      type: 'deviceKeyProxy',
+    })
+  )
+
+  t.equal(
+    util.u8aToHex(signatureFromAdapter).length,
+    132,
+    'got a good sig from adapter'
+  )
 
   // removing deviceKey
   const deviceKeyProxyPointer =
