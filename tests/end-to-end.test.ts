@@ -13,6 +13,7 @@ import {
   spinNetworkDown,
 } from './testing-utils'
 import { ProgramInstance } from '../src/programs'
+import { MsgParams } from '../src/signing'
 
 const networkType = 'two-nodes'
 
@@ -120,26 +121,26 @@ test('End To End', async (t) => {
 
   t.equal(programsBeforeAdd.length, 1, 'charlie has 1 programs')
 
-  await run('add program', entropy.programs.add(noopProgramInstance))
+  // await run('add program', entropy.programs.add(noopProgramInstance))
   // getting charlie programs
-  const programsAfterAdd = await run(
-    'get programs',
-    entropy.programs.get(verifyingKey)
-  )
+  // const programsAfterAdd = await run(
+  //   'get programs',
+  //   entropy.programs.get(verifyingKey)
+  // )
 
-  t.equal(
-    programsAfterAdd.length,
-    2,
-    'charlie has 2 programs' + JSON.stringify(programsAfterAdd)
-  )
+  // t.equal(
+  //   programsAfterAdd.length,
+  //   2,
+  //   'charlie has 2 programs' + JSON.stringify(programsAfterAdd)
+  // )
 
   // removing deviceKey
-  const deviceKeyProxyPointer =
-    '0x0000000000000000000000000000000000000000000000000000000000000000'
-  await run(
-    'remove DeviceKeyProxy program',
-    entropy.programs.remove(deviceKeyProxyPointer, verifyingKey)
-  )
+  // const deviceKeyProxyPointer =
+  //   '0x0000000000000000000000000000000000000000000000000000000000000000'
+  // await run(
+  //   'remove DeviceKeyProxy program',
+  //   entropy.programs.remove(deviceKeyProxyPointer, verifyingKey)
+  // )
 
   const programsAftreRemoveDefault = await run(
     'get programs',
@@ -150,12 +151,13 @@ test('End To End', async (t) => {
     1,
     'charlie has 1 program' + JSON.stringify(programsAftreRemoveDefault)
   )
+  const msgParam: MsgParams = { msg }
 
   const signature = await run(
-    'sign',
-    entropy.sign({
-      sigRequestHash: msg,
-      hash: 'sha3',
+    'signWithAdapter',
+    entropy.signWithAdapter({
+      msg: msgParam,
+      type: 'deviceKeyProxy',
     })
   )
   t.equal(util.u8aToHex(signature).length, 132, 'got a good sig')

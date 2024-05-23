@@ -70,7 +70,6 @@ export async function preSign (
       context: 'substrate',
     },
   ]
-
   return { sigRequestHash, auxilary_data }
 }
 

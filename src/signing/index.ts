@@ -7,7 +7,7 @@ import { stripHexPrefix, sendHttpPost } from '../utils'
 import { crypto } from '../utils/crypto'
 import { AuxData } from './adapters/device-key-proxy'
 import { CryptoLib } from '../utils/crypto/types'
-
+import { formatAuxData, toHex } from '../utils/index'
 export interface Config {
   signer: Signer
   substrate: ApiPromise
@@ -28,7 +28,7 @@ export interface SigOps {
   sigRequestHash: string
   hash: string
   type?: string
-  auxiliaryData?: AuxData[]
+  auxilaryData?: AuxData[]
 }
 
 /**
@@ -36,7 +36,7 @@ export interface SigOps {
  */
 export interface UserSignatureRequest {
   message: string
-  auxiliaryData?: unknown[]
+  auxilary_data?: unknown[]
   validatorsInfo: ValidatorInfo[]
   timestamp: { secs_since_epoch: number; nanos_since_epoch: number }
   hash: string
@@ -104,29 +104,29 @@ export default class SignatureRequestManager {
     @throws {Error} If no adapter or preSign function is found for the given type.
    */
 
-  // async signWithAdapter ({ msg, type }: SigMsgOps): Promise<unknown> {
-  //   if (!this.adapters[type])
-  //     throw new Error(`No transaction adapter for type: ${type} submit as hash`)
-  //   if (!this.adapters[type].preSign)
-  //     throw new Error(
-  //       `Adapter for type: ${type} has no preSign function. Adapters must have a preSign function`
-  //     )
+  async signWithAdapter ({ msg, type }: SigMsgOps): Promise<unknown> {
+    if (!this.adapters[type])
+      throw new Error(`No transaction adapter for type: ${type} submit as hash`)
+    if (!this.adapters[type].preSign)
+      throw new Error(
+        `Adapter for type: ${type} has no preSign function. Adapters must have a preSign function`
+      )
 
-  //   const { sigRequestHash, auxiliaryData } = await this.adapters[type].preSign(
-  //     this.signer,
-  //     msg
-  //   )
+    const { sigRequestHash, auxilary_data } = await this.adapters[type].preSign(
+      this.signer,
+      msg
+    )
 
-  //   const signature = await this.sign({
-  //     sigRequestHash,
-  //     hash: this.adapters[type].hash,
-  //     auxiliaryData: auxiliaryData as AuxData[],
-  //   })
-  //   if (this.adapters[type].postSign) {
-  //     return await this.adapters[type].postSign(signature, msg)
-  //   }
-  //   return signature
-  // }
+    const signature = await this.sign({
+      sigRequestHash,
+      hash: this.adapters[type].hash,
+      auxilaryData: auxilary_data as AuxData[],
+    })
+    if (this.adapters[type].postSign) {
+      return await this.adapters[type].postSign(signature, msg)
+    }
+    return signature
+  }
 
   /**
    * Signs a given signature request hash.
@@ -142,7 +142,7 @@ export default class SignatureRequestManager {
   async sign ({
     sigRequestHash,
     hash,
-    auxiliaryData,
+    auxilaryData,
   }: SigOps): Promise<Uint8Array> {
     const strippedsigRequestHash = stripHexPrefix(sigRequestHash)
     const validatorsInfo: Array<ValidatorInfo> = await this.pickValidators(
@@ -152,10 +152,10 @@ export default class SignatureRequestManager {
     // which means you need a new key ie device key here
 
     const signatureVerifyingKey = this.verifyingKey
-
+    console.log({ auxilaryData })
     const txRequests: Array<EncMsg> = await this.formatTxRequests({
       strippedsigRequestHash,
-      auxiliaryData,
+      auxilaryData,
       validatorsInfo: validatorsInfo,
       hash,
       signatureVerifyingKey,
@@ -187,7 +187,7 @@ export default class SignatureRequestManager {
    *
    * @param {object} params - Parameters for generating the transaction request.
    * @param {string} params.strippedsigRequestHash - Stripped signature request hash.
-   * @param {unknown[]} [params.auxiliaryData] - Additional data for the transaction request.
+   * @param {unknown[]} [params.auxilaryData] - Additional data for the transaction request.
    * @param {ValidatorInfo[]} params.validatorsInfo - Information about the validators.
    * @param {string} [params.hash] - The hash type.
    * @param {signatureVerifyingKey[]} params.signatureVerifyingKey - The verifying key for the signature requested
@@ -196,13 +196,13 @@ export default class SignatureRequestManager {
 
   async formatTxRequests ({
     strippedsigRequestHash,
-    auxiliaryData,
+    auxilaryData,
     validatorsInfo,
     hash,
     signatureVerifyingKey,
   }: {
     strippedsigRequestHash: string
-    auxiliaryData?: unknown[]
+    auxilaryData?: unknown[]
     validatorsInfo: Array<ValidatorInfo>
     hash?: string
     signatureVerifyingKey: string
@@ -212,7 +212,7 @@ export default class SignatureRequestManager {
         // TODO: auxilaryData full implementation
         const txRequestData: UserSignatureRequest = {
           message: stripHexPrefix(strippedsigRequestHash),
-          auxiliaryData,
+          auxilary_data: auxilaryData,
           validatorsInfo: validatorsInfo,
           timestamp: this.getTimeStamp(),
           hash,
@@ -220,10 +220,13 @@ export default class SignatureRequestManager {
             Buffer.from(stripHexPrefix(signatureVerifyingKey), 'hex')
           ),
         }
-        if (auxiliaryData)
-          txRequestData.auxiliaryData = auxiliaryData.map((i) =>
-            JSON.stringify(i)
-          )
+        if (auxilaryData) console.log('hree')
+        txRequestData.auxilary_data = auxilaryData.map((i) => {
+          i = JSON.stringify(formatAuxData(i))
+          return toHex(i)
+        })
+
+        console.log({ test: txRequestData })
         const serverDHKey = await crypto.fromHex(validator.x25519_public_key)
 
         const formattedValidators = await Promise.all(
