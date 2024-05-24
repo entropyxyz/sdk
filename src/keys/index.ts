@@ -80,10 +80,11 @@ export default class Keyring {
     Object.keys(masterAccountView).forEach((name) => {
       if (name) {
         if (typeof masterAccountView[name] !== 'object') return
-        const { seed, path } = masterAccountView[name]
+        const { seed, path, ...accountData } = masterAccountView[name]
         if (!seed) return
         const { pair, address } = utils.generateKeyPairFromSeed(seed, path)
         const functionalAccount = {
+          ...accountData,
           seed,
           path,
           address,
@@ -146,7 +147,12 @@ export default class Keyring {
         let account: PairMaterial
         if (entropyAccountsJson[key]) return
         if (key === ChildKey.registration && admin?.seed) {
-          account = admin
+          if (accounts[key]) {
+            account = { ...admin, ...accounts[key] }
+          } else {
+            account = admin
+          }
+
           entropyAccountsJson[key] = this.#jsonAccountCreator(account, debug)
           return
         }
