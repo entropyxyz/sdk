@@ -7,11 +7,14 @@ import {
   mnemonicToMiniSecret,
   randomAsHex,
   sr25519PairFromSeed,
+  cryptoWaitReady,
 } from '@polkadot/util-crypto'
 import { debug } from '../utils'
 // import { crypto } from '../utils/crypto'
 import { Pair } from './types/internal'
 import { ChildKeyBasePaths } from './types/constants'
+
+export const keysCryptoWaitReady = cryptoWaitReady
 
 // const {
 //   sr25519PairFromSeed,
