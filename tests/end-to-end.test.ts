@@ -1,156 +1,179 @@
 import test from 'tape'
 import { readFileSync } from 'fs'
+import Entropy, { wasmGlobalsReady } from '../src'
+import Keyring from '../src/keys'
 import * as util from '@polkadot/util'
-import Entropy from '../src'
-import { ProgramData } from '../src/programs'
 
 import {
+  sleep,
   promiseRunner,
   spinNetworkUp,
-  createTestAccount,
+  charlieStashSeed,
   charlieStashAddress,
   spinNetworkDown,
 } from './testing-utils'
+import { ProgramInstance } from '../src/programs'
+import { MsgParams } from '../src/signing'
 
 const networkType = 'two-nodes'
-let entropy: Entropy
+
+const msg = Buffer.from('Hello world: signature from entropy!').toString('hex')
 
 test('End To End', async (t) => {
   const run = promiseRunner(t)
-
+  // context: all run does is checks that it runs
   await run('network up', spinNetworkUp(networkType))
-  entropy = await run('account', createTestAccount(entropy))
 
+  await sleep(process.env.GITHUB_WORKSPACE ? 30_000 : 5_000)
+
+  // this gets called after all tests are run
   t.teardown(async () => {
     await spinNetworkDown(networkType, entropy).catch((error) =>
       console.error('Error while spinning network down', error.message)
     )
   })
 
-  const basicTxProgram: any = readFileSync(
-    './tests/testing-utils/template_basic_transaction.wasm'
-  )
-  t.equal(typeof basicTxProgram.toString(), 'string', 'got basic program')
+  await run('wasm', wasmGlobalsReady())
 
-  const pointer = await run(
-    'deploy program',
-    entropy.programs.dev.deploy(basicTxProgram)
-  )
-  t.equal(typeof pointer, 'string', 'valid pointer')
+  let store = {}
+  const keyring = new Keyring({ seed: charlieStashSeed, debug: true })
+  keyring.accounts.on('account-update', (fullAccount) => {
+    store = fullAccount
+  })
 
-  const config = `
-    {
-      "allowlisted_addresses": [
-        "772b9a9e8aa1c9db861c6611a82d251db4fac990"
-      ]
-    }
-  `
-  // convert to bytes
-  const encoder = new TextEncoder()
-  const byteArray = encoder.encode(config)
-
-  // convert u8a to hex
-  const programConfig = util.u8aToHex(new Uint8Array(byteArray))
-
-  const programData: ProgramData = {
-    programPointer: pointer,
-    programConfig: programConfig,
-  }
-
-  // Pre-registration check
-  const preRegistrationStatus = await run(
-    'isRegistered',
-    entropy.isRegistered(charlieStashAddress)
-  )
   t.equal(
-    JSON.stringify(preRegistrationStatus),
-    'false',
-    'charlie not yet registered'
-  )
-
-  await run(
-    'register',
-    entropy.register({
-      keyVisibility: 'Permissioned',
-      freeTx: false,
-      // initialPrograms: [{ pointer: programData.pointer, config: programData.config }],
-      initialPrograms: [programData],
-      programModAccount: charlieStashAddress,
-    })
-  )
-  t.equal(
-    entropy.account.sigRequestKey.wallet.address,
+    keyring.accounts.registration.address,
     charlieStashAddress,
     'got right address'
   )
-  const preRegistrationStatusCheck = await run(
-    'checkRegistrationStatus',
-    entropy.registrationManager.checkRegistrationStatus(charlieStashAddress)
-  )
-  t.ok(preRegistrationStatusCheck, 'preRegistrationStatusCheck ...') // TODO: better check
 
-  // Post-registration check
-  const postRegistrationStatus = await run(
-    'isRegistered',
-    entropy.isRegistered(charlieStashAddress)
-  )
+  const entropy = new Entropy({
+    keyring,
+    endpoint: 'ws://127.0.0.1:9944',
+  })
+
+  await run('entropy ready', entropy.ready)
+
+  /* deploy */
+  // const bareBones: any = readFileSync(
+  //   './tests/testing-utils/template_barebones.wasm'
+  // )
+  // t.equal(typeof bareBones.toString(), 'string', 'got basic program')
+
+  // QUESTION: how to launch substrate node with a particular address pre-funded
+
+  // const pointer = await run(
+  //   'deploy program',
+  //   entropy.programs.dev.deploy(bareBones)
+  // )
+  // t.equal(typeof pointer, 'string', 'valid pointer')
+
+  // register
+  const verifyingKeyFromRegistration = await run('register', entropy.register())
   t.equal(
-    JSON.stringify(postRegistrationStatus),
-    'true',
-    'isRegerstered = true'
+    verifyingKeyFromRegistration,
+    entropy.keyring.accounts.registration.verifyingKeys[0],
+    'verifyingKeys match after registration'
   )
+
+  //
+  // sign some data
+  //
+
+  // NEED PRE-REGISTRATION TEST
+  // const preRegistrationStatusCheck = await run(
+  //   'checkRegistrationStatus',
+  //   entropy.substrate.query.registry.registered(verifyingKey)
+  //   // entropy.registrationManager.checkRegistrationStatus(charlieStashAddress)
+  // )
+  // t.ok(preRegistrationStatusCheck, 'preRegistrationStatusCheck ...') // TODO: better check
+
+  // Use the verifyingKey from ProgramManager
+
+  const verifyingKey = entropy.programs.verifyingKey
+  t.ok(verifyingKey, 'verifyingKey exists')
+
+  const registrationStatus = await run(
+    'check registration',
+    entropy.substrate.query.registry.registered(verifyingKey)
+  )
+
+  t.ok(registrationStatus, 'Verifying key is registered')
 
   //  loading second program
-  const dummyProgram: any = readFileSync(
-    './tests/testing-utils/template_barebones.wasm'
+  const noopProgram: any = readFileSync(
+    './tests/testing-utils/program_noop.wasm'
   )
+
   const newPointer = await run(
     'deploy',
-    entropy.programs.dev.deploy(dummyProgram)
+    entropy.programs.dev.deploy(noopProgram)
   )
-  const secondProgramData: ProgramData = {
-    programPointer: newPointer,
-    programConfig: '',
+
+  const noopProgramInstance: ProgramInstance = {
+    program_pointer: newPointer,
+    program_config: '',
   }
-  await run(
-    'add program',
-    entropy.programs.add(secondProgramData, charlieStashAddress)
+
+  console.debug('verifyingKey', verifyingKey)
+  const programsBeforeAdd = await run(
+    'get programs',
+    entropy.programs.get(verifyingKey)
   )
+
+  t.equal(
+    programsBeforeAdd.length,
+    1,
+    'charlie has 1 programs' + JSON.stringify(programsBeforeAdd)
+  )
+
+  await run('add program', entropy.programs.add(noopProgramInstance))
   // getting charlie programs
-  const programs = await run(
+  const programsAfterAdd = await run(
     'get programs',
-    entropy.programs.get(charlieStashAddress)
+    entropy.programs.get(verifyingKey)
   )
-  t.equal(programs.length, 2, 'charlie has 2 programs')
 
-  // removing charlie program barebones
-  await run(
-    'remove program',
-    entropy.programs.remove(newPointer, charlieStashAddress)
-  )
-  const updatedRemovedPrograms = await run(
-    'get programs',
-    entropy.programs.get(charlieStashAddress)
-  )
-  t.equal(updatedRemovedPrograms.length, 1, 'charlie has 1 program')
+  t.equal(programsAfterAdd.length, 2, 'charlie has 2 programs')
 
-  const basicTx = {
-    to: '0x772b9a9e8aa1c9db861c6611a82d251db4fac990',
-    value: 1,
-    chainId: 1,
-    nonce: 1,
-    data: '0x' + Buffer.from('Created On Entropy').toString('hex'),
-  }
+  const msgParam: MsgParams = { msg }
 
-  const signature = await run(
-    'signTransaction',
-    entropy.signTransaction({
-      txParams: basicTx,
-      type: 'eth',
+  const signatureFromAdapter = await run(
+    'signWithAdaptersInOrder',
+    entropy.signWithAdaptersInOrder({
+      msg: msgParam,
+      order: ['deviceKeyProxy', 'noop'],
     })
   )
 
-  t.equal(signature.length, 228, 'got a good sig')
+  t.equal(
+    util.u8aToHex(signatureFromAdapter).length,
+    132,
+    'got a good sig from adapter'
+  )
 
+  // removing deviceKey
+  const deviceKeyProxyPointer =
+    '0x0000000000000000000000000000000000000000000000000000000000000000'
+  await run(
+    'remove DeviceKeyProxy program',
+    entropy.programs.remove(deviceKeyProxyPointer, verifyingKey)
+  )
+
+  const programsAftreRemoveDefault = await run(
+    'get programs',
+    entropy.programs.get(verifyingKey)
+  )
+  t.equal(programsAftreRemoveDefault.length, 1, 'charlie has 1 program')
+  const signature = await run(
+    'sign',
+    entropy.sign({
+      sigRequestHash: msg,
+      hash: 'sha3',
+    })
+  )
+  t.equal(util.u8aToHex(signature).length, 132, 'got a good sig')
+
+  await entropy.close()
   t.end()
 })

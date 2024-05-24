@@ -6,10 +6,11 @@ module.exports = {
   root: true,
   rules: {
     indent: ['error', 2],
-    'space-before-function-paren': 'off',
+    'space-before-function-paren': 2,
     '@typescript-eslint/no-var-requires': 'off',
     '@typescript-eslint/no-unused-vars': 'error',
     '@typescript-eslint/ban-ts-comment': 1,
+    'no-async-promise-executor': 'off',
   },
   ignorePatterns: ['node_modules/', 'dist/', 'examples/', '.yarnrc.yml'],
 }

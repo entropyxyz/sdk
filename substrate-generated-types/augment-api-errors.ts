@@ -10,7 +10,7 @@ import type { ApiTypes, AugmentedError } from '@polkadot/api-base/types'
 export type __AugmentedError<ApiType extends ApiTypes> = AugmentedError<ApiType>
 
 declare module '@polkadot/api-base/types/errors' {
-  export interface AugmentedErrors<ApiType extends ApiTypes> {
+  interface AugmentedErrors<ApiType extends ApiTypes> {
     babe: {
       /**
        * A given equivocation report is valid but already previously reported.
@@ -49,6 +49,10 @@ declare module '@polkadot/api-base/types/errors' {
        **/
       DeadAccount: AugmentedError<ApiType>
       /**
+       * The delta cannot be zero.
+       **/
+      DeltaZero: AugmentedError<ApiType>
+      /**
        * Value too low to create account due to existential deposit.
        **/
       ExistentialDeposit: AugmentedError<ApiType>
@@ -65,6 +69,10 @@ declare module '@polkadot/api-base/types/errors' {
        **/
       InsufficientBalance: AugmentedError<ApiType>
       /**
+       * The issuance cannot be modified since it is already deactivated.
+       **/
+      IssuanceDeactivated: AugmentedError<ApiType>
+      /**
        * Account liquidity restrictions prevent withdrawal.
        **/
       LiquidityRestrictions: AugmentedError<ApiType>
@@ -73,7 +81,7 @@ declare module '@polkadot/api-base/types/errors' {
        **/
       TooManyFreezes: AugmentedError<ApiType>
       /**
-       * Number of holds exceed `MaxHolds`.
+       * Number of holds exceed `VariantCountOf<T::RuntimeHoldReason>`.
        **/
       TooManyHolds: AugmentedError<ApiType>
       /**
@@ -319,6 +327,10 @@ declare module '@polkadot/api-base/types/errors' {
        **/
       OcwCallWrongEra: AugmentedError<ApiType>
       /**
+       * Sumission was prepared for a different round.
+       **/
+      PreDispatchDifferentRound: AugmentedError<ApiType>
+      /**
        * Submission was too early.
        **/
       PreDispatchEarlySubmission: AugmentedError<ApiType>
@@ -429,25 +441,6 @@ declare module '@polkadot/api-base/types/errors' {
        **/
       [key: string]: AugmentedError<ApiType>
     }
-    freeTx: {
-      /**
-       * Account has hit max number of cells that can be used this era
-       **/
-      ElectricityEraLimitReached: AugmentedError<ApiType>
-      /**
-       * Cell usage has been disabled
-       **/
-      ElectricityIsDisabled: AugmentedError<ApiType>
-      /**
-       * Account has no cells left. Call the extrinsic directly or use
-       * `call_using_electricity()`
-       **/
-      NoCellsAvailable: AugmentedError<ApiType>
-      /**
-       * Generic error
-       **/
-      [key: string]: AugmentedError<ApiType>
-    }
     grandpa: {
       /**
        * Attempt to signal GRANDPA change with one already pending.
@@ -506,9 +499,21 @@ declare module '@polkadot/api-base/types/errors' {
        **/
       InvalidJudgement: AugmentedError<ApiType>
       /**
+       * The signature on a username was not valid.
+       **/
+      InvalidSignature: AugmentedError<ApiType>
+      /**
+       * The provided suffix is too long.
+       **/
+      InvalidSuffix: AugmentedError<ApiType>
+      /**
        * The target is invalid.
        **/
       InvalidTarget: AugmentedError<ApiType>
+      /**
+       * The username does not meet the requirements.
+       **/
+      InvalidUsername: AugmentedError<ApiType>
       /**
        * The provided judgement was for a different identity.
        **/
@@ -522,9 +527,17 @@ declare module '@polkadot/api-base/types/errors' {
        **/
       JudgementPaymentFailed: AugmentedError<ApiType>
       /**
+       * The authority cannot allocate any more usernames.
+       **/
+      NoAllocation: AugmentedError<ApiType>
+      /**
        * No identity found.
        **/
       NoIdentity: AugmentedError<ApiType>
+      /**
+       * The username cannot be forcefully removed because it can still be accepted.
+       **/
+      NotExpired: AugmentedError<ApiType>
       /**
        * Account isn't found.
        **/
@@ -542,13 +555,21 @@ declare module '@polkadot/api-base/types/errors' {
        **/
       NotSub: AugmentedError<ApiType>
       /**
+       * The sender does not have permission to issue a username.
+       **/
+      NotUsernameAuthority: AugmentedError<ApiType>
+      /**
+       * The requested username does not exist.
+       **/
+      NoUsername: AugmentedError<ApiType>
+      /**
+       * Setting this username requires a signature, but none was provided.
+       **/
+      RequiresSignature: AugmentedError<ApiType>
+      /**
        * Sticky judgement.
        **/
       StickyJudgement: AugmentedError<ApiType>
-      /**
-       * Too many additional fields.
-       **/
-      TooManyFields: AugmentedError<ApiType>
       /**
        * Maximum amount of registrars reached. Cannot add any more.
        **/
@@ -557,6 +578,10 @@ declare module '@polkadot/api-base/types/errors' {
        * Too many subs-accounts.
        **/
       TooManySubAccounts: AugmentedError<ApiType>
+      /**
+       * The username is already taken.
+       **/
+      UsernameTaken: AugmentedError<ApiType>
       /**
        * Generic error
        **/
@@ -806,6 +831,12 @@ declare module '@polkadot/api-base/types/errors' {
        **/
       [key: string]: AugmentedError<ApiType>
     }
+    parameters: {
+      /**
+       * Generic error
+       **/
+      [key: string]: AugmentedError<ApiType>
+    }
     preimage: {
       /**
        * Preimage has already been noted on-chain.
@@ -845,6 +876,10 @@ declare module '@polkadot/api-base/types/errors' {
       [key: string]: AugmentedError<ApiType>
     }
     programs: {
+      /**
+       * Arithmetic overflow error
+       **/
+      ArithmeticError: AugmentedError<ApiType>
       /**
        * No program defined at hash.
        **/
@@ -982,12 +1017,13 @@ declare module '@polkadot/api-base/types/errors' {
        **/
       [key: string]: AugmentedError<ApiType>
     }
-    relayer: {
+    registry: {
       AlreadyConfirmed: AugmentedError<ApiType>
       AlreadySubmitted: AugmentedError<ApiType>
       InvalidSubgroup: AugmentedError<ApiType>
       IpAddressError: AugmentedError<ApiType>
       MaxProgramLengthExceeded: AugmentedError<ApiType>
+      MismatchedVerifyingKeyLength: AugmentedError<ApiType>
       NoProgramSet: AugmentedError<ApiType>
       NoSyncedValidators: AugmentedError<ApiType>
       NotAuthorized: AugmentedError<ApiType>
@@ -998,6 +1034,7 @@ declare module '@polkadot/api-base/types/errors' {
       NoVerifyingKey: AugmentedError<ApiType>
       ProgramDoesNotExist: AugmentedError<ApiType>
       SigningGroupError: AugmentedError<ApiType>
+      TooManyModifiableKeys: AugmentedError<ApiType>
       /**
        * Generic error
        **/
@@ -1085,9 +1122,17 @@ declare module '@polkadot/api-base/types/errors' {
        **/
       CannotChillOther: AugmentedError<ApiType>
       /**
+       * Cannot reset a ledger.
+       **/
+      CannotRestoreLedger: AugmentedError<ApiType>
+      /**
        * Commission is too low. Must be at least `MinCommission`.
        **/
       CommissionTooLow: AugmentedError<ApiType>
+      /**
+       * Used when attempting to use deprecated controller account logic.
+       **/
+      ControllerDeprecated: AugmentedError<ApiType>
       /**
        * Duplicate index.
        **/
@@ -1122,6 +1167,10 @@ declare module '@polkadot/api-base/types/errors' {
        * Invalid number of nominations.
        **/
       InvalidNumberOfNominations: AugmentedError<ApiType>
+      /**
+       * No nominators exist on this page.
+       **/
+      InvalidPage: AugmentedError<ApiType>
       /**
        * Slash record index out of bounds.
        **/
@@ -1172,6 +1221,7 @@ declare module '@polkadot/api-base/types/errors' {
       NotController: AugmentedError<ApiType>
       NoThresholdKey: AugmentedError<ApiType>
       SigningGroupError: AugmentedError<ApiType>
+      TssAccountAlreadyExists: AugmentedError<ApiType>
       /**
        * Generic error
        **/
@@ -1179,7 +1229,7 @@ declare module '@polkadot/api-base/types/errors' {
     }
     sudo: {
       /**
-       * Sender must be the Sudo account
+       * Sender must be the Sudo account.
        **/
       RequireSudo: AugmentedError<ApiType>
       /**
@@ -1212,10 +1262,18 @@ declare module '@polkadot/api-base/types/errors' {
        **/
       NonZeroRefCount: AugmentedError<ApiType>
       /**
+       * No upgrade authorized.
+       **/
+      NothingAuthorized: AugmentedError<ApiType>
+      /**
        * The specification version is not allowed to decrease between the current runtime
        * and the new runtime.
        **/
       SpecVersionNeedsToIncrease: AugmentedError<ApiType>
+      /**
+       * The submitted code is not authorized.
+       **/
+      Unauthorized: AugmentedError<ApiType>
       /**
        * Generic error
        **/
@@ -1350,10 +1408,6 @@ declare module '@polkadot/api-base/types/errors' {
        * Attempting to store empty transaction
        **/
       EmptyTransaction: AugmentedError<ApiType>
-      /**
-       * Insufficient account balance.
-       **/
-      InsufficientFunds: AugmentedError<ApiType>
       /**
        * Proof failed verification.
        **/

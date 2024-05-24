@@ -1,8 +1,10 @@
 import test from 'tape'
 import { crypto, cryptoIsLoaded } from '../src/utils/crypto'
 import { stripHexPrefix } from '../src/utils'
-
 import { promiseRunner, readKey } from './testing-utils'
+import { charlieStashSeed } from './testing-utils/constants'
+import { hexStringToUint8Array } from '../src/utils'
+import { generateKeyPairFromSeed } from '../src/keys/utils'
 
 test('Crypto', async (t) => {
   const run = promiseRunner(t)
@@ -32,18 +34,18 @@ test('Crypto', async (t) => {
   }
 
   /* Encrypt + sign */
-  {
-    const aliceSecretKey: Uint8Array = new Uint8Array([
-      152, 49, 157, 79, 248, 169, 80, 140, 75, 176, 207, 11, 90, 120, 215, 96,
-      160, 178, 8, 44, 2, 119, 94, 110, 130, 55, 8, 22, 254, 223, 255, 72, 146,
-      90, 34, 93, 151, 170, 0, 104, 45, 106, 89, 185, 91, 24, 120, 12, 16, 215,
-      3, 35, 54, 232, 143, 52, 66, 180, 35, 97, 244, 166, 96, 17,
-    ])
 
-    const alicePublicKey = await run(
+  {
+    const charlieSecretSeed: Uint8Array =
+      hexStringToUint8Array(charlieStashSeed)
+
+    const charlieKeyPair = generateKeyPairFromSeed(charlieStashSeed)
+    const charliePublicKeyPair = await run(
       'publicKeyFromSecret works',
-      crypto.publicKeyFromSecret(aliceSecretKey)
+      crypto.fromSecretKey(charlieSecretSeed)
     )
+    const charliePublicKey = charliePublicKeyPair.publicKey()
+    const charlieSecretKey = charliePublicKeyPair.secretKey()
 
     const serverDHKey = await run(
       'fromHex works',
@@ -57,11 +59,15 @@ test('Crypto', async (t) => {
 
     const result = await run(
       'encryptAndSign',
-      crypto.encryptAndSign(aliceSecretKey, thresholdKey, alicePublicKey)
+      crypto.encryptAndSign(
+        charlieKeyPair.pair.secretKey,
+        thresholdKey,
+        charliePublicKey
+      )
     )
     const expected = await run(
       'decryptAndVerify',
-      crypto.decryptAndVerify(aliceSecretKey, result)
+      crypto.decryptAndVerify(charlieSecretSeed, result)
     )
     t.deepEqual(expected, thresholdKey, 'decrypt works')
   }

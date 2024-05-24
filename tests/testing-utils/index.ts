@@ -1,7 +1,8 @@
 import * as readline from 'readline'
 
-import Entropy, { EntropyAccount } from '../../src'
-import { getWallet } from '../../src/keys'
+import Entropy, { wasmGlobalsReady } from '../../src'
+import Keyring from '../../src/keys'
+import { KeyMaterial } from '../../src/keys/types/json'
 import { charlieStashSeed } from './constants'
 
 export * from './constants'
@@ -12,19 +13,13 @@ export async function createTestAccount(
   entropy: Entropy,
   seed = charlieStashSeed
 ) {
-  const signer = await getWallet(seed)
+  await wasmGlobalsReady()
 
-  const entropyAccount: EntropyAccount = {
-    sigRequestKey: signer,
-    programModKey: signer,
-    programDeployKey: signer,
-  }
+  const keyring = new Keyring({ seed } as KeyMaterial)
 
-  await sleep(process.env.GITHUB_WORKSPACE ? 20_000 : 5_000)
-  // HACK: (mix) locally 5s is sufficient... github crashes out?
-  entropy = new Entropy({ account: entropyAccount })
+  entropy = new Entropy({ keyring })
   await entropy.ready.catch((err) => {
-    console.log('createTestAccount failed', err)
+    console.log('createTestAccount failed: ', err)
     throw err
   })
   return entropy
@@ -36,7 +31,7 @@ export async function createTestAccount(
  * @param {any} t - an instance to tape runner
  * @param {boolean} keepThrowing - toggle throwing
  */
-export function promiseRunner(t: any, keepThrowing = true) {
+export function promiseRunner(t: any, keepThrowing = false) {
   // NOTE: this function swallows errors
   return async function run(
     message: string,
