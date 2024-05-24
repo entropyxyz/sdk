@@ -6,12 +6,15 @@ import { crypto, loadCryptoLib } from './utils/crypto'
 import { Adapter } from './signing/adapters/types'
 import ProgramManager from './programs'
 import Keyring from './keys'
+import { keysCryptoWaitReady } from './keys/utils'
 import { ChildKey } from './keys/types/constants'
 import { DEVICE_KEY_PROXY_PROGRAM_INTERFACE } from './signing/adapters/device-key-proxy'
 import { HexString } from './keys/types/json'
 
-export const wasmGlobalsReady = loadCryptoLib
-
+export async function wasmGlobalsReady () {
+  await loadCryptoLib()
+  await keysCryptoWaitReady
+}
 export interface EntropyOpts {
   /** Keyring class instance object. */
   keyring: Keyring

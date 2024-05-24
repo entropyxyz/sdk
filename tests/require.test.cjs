@@ -8,7 +8,6 @@ test('CJS require', async t => {
 
   try {
     await wasmGlobalsReady()
-    console.log(wasmGlobalsReady)
     const keyring = new Keyring({ seed: charlieSeed })
     t.deepEqual(typeof keyring, 'object', 'keyring')
 

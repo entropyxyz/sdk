@@ -10,21 +10,10 @@ import {
   cryptoWaitReady,
 } from '@polkadot/util-crypto'
 import { debug } from '../utils'
-// import { crypto } from '../utils/crypto'
 import { Pair } from './types/internal'
 import { ChildKeyBasePaths } from './types/constants'
 
-export const keysCryptoWaitReady = cryptoWaitReady
-
-// const {
-//   sr25519PairFromSeed,
-//   mnemonicToMiniSecret,
-//   mnemonicGenerate,
-//   keyFromPath,
-//   keyExtractPath,
-// } = crypto.polkadotCryptoUtil
-// WARNING: this crypto.polkadotCryptoUtil is an async function
-// because of the Proxy over this, a function not a getter
+export const keysCryptoWaitReady = cryptoWaitReady()
 
 /**
  * Converts a mnemonic phrase to a mini secret seed.
