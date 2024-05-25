@@ -41,7 +41,6 @@ export default class ProgramManager extends ExtrinsicBaseClass {
 
   /**
    * Retrieves the verifying key of the signer.
-   *
    * @returns {string | undefined} The first verifying key if available, otherwise undefined.
    */
 
@@ -50,13 +49,13 @@ export default class ProgramManager extends ExtrinsicBaseClass {
   }
 
   /**
-   * Retrieves the program associated with a given programModKey (account)
+   * Retrieves the program associated with a given verifying key (account).
    * @param {string} verifyingKey - The account key, defaulting to the signer's wallet address if not provided.
    * @returns {Promise<ProgramInstance[]>} A promise that resolves to the list of program instances.
    * @throws {Error} If no programs are found for the account.
    * @remarks
    * This method communicates with Entropy to fetch bytecode associated with an account.
-   * The response is then processed and converted to an ArrayBuffer before being returned
+   * The response is then processed and converted to an ArrayBuffer before being returned.
    * @alpha
    */
 
@@ -125,7 +124,7 @@ export default class ProgramManager extends ExtrinsicBaseClass {
 
   /**
    * Removes a specific program from an account.
-   * @param {string | Uint8Array} programHashToRemove - The hash of the program to remove.
+   * @param {string} programHashToRemove - The hash of the program to remove.
    * @param {Signer} programModKey - The Signer instance for modifying programs.
    * @param {string} verifyingKey - The verifying key of the account.
    * @returns {Promise<void>} - A Promise resolving when the program is successfully removed.
@@ -158,7 +157,7 @@ export default class ProgramManager extends ExtrinsicBaseClass {
 
   /**
    * Adds a new program for a specific account.
-   * @param {ProgramData} newProgram - The new program data to add.
+   * @param {ProgramInstance} newProgram - The new program data to add.
    * @param {string} verifyingKey - The verifying key of the account.
    * @returns {Promise<void>} A promise that resolves when the program is added.
    * @remarks
