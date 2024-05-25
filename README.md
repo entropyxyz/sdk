@@ -4,8 +4,7 @@
 
 ` @entropyxyz/sdk` is a collection of TS packages that allow you to interact with the Entropy network. This is currently in **alpha** release.
 
-![SDK](https://github.com/entropyxyz/sdk/assets/62079777/0d7e4684-bc89-48ee-8dc3-fefb25acc708)
-
+![SDK](https://github.com/entropyxyz/sdk/assets/62079777/4e16b189-63ad-4753-9b0e-16dc85f5609f)
 
 ### Installation
 
