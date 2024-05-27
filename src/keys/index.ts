@@ -130,8 +130,9 @@ export default class Keyring {
   }
 
   #formatAccounts (accounts: EntropyAccount): EntropyAccount {
-    const { seed, mnemonic, debug, type, admin } = accounts
-
+    const { seed, mnemonic, type, admin } = accounts
+    // this is because stuff is broken outside of debug mode so making it true always
+    const debug = true
     const entropyAccountsJson = {
       debug,
       seed: seed ? seed : utils.seedFromMnemonic(mnemonic),
