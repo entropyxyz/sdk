@@ -50,7 +50,6 @@
     "lint": "yarn lint:ts && yarn lint:eslint",
     "lint:ts": "tsc",
     "lint:eslint": "eslint . --ext .ts --fix",
-    "prettier": "prettier --write .",
     "peek": "tsc --build --clean",
     "burn": "rm -Rf node_modules && yarn cache clean --all && yarn install",
     "bundle": "tsup",
@@ -88,7 +87,6 @@
     "lint-staged": ">=10",
     "nyc": "^15.1.0",
     "pinst": "^3.0.0",
-    "prettier": "2.8.8",
     "tap-spec": "^5.0.0",
     "tape": "^5.7.5",
     "ts-node": "^10.9.1",
@@ -109,8 +107,7 @@
     "uuid": "^9.0.1"
   },
   "lint-staged": {
-    "*.ts": "eslint --fix",
-    "*.{js,ts,json,md}": "prettier --write"
+    "*.ts": "eslint --fix"
   },
   "packageManager": "yarn@1.22.1"
 }
