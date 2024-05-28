@@ -78,6 +78,7 @@ export default class Entropy {
       signer: this.keyring.getLazyLoadAccountProxy(ChildKey.registration),
     })
     this.signingManager = new SignatureRequestManager({
+      keyring: this.keyring,
       signer: this.keyring.getLazyLoadAccountProxy(ChildKey.deviceKey),
       substrate: this.substrate,
       adapters: opts.adapters,

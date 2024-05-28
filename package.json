@@ -62,7 +62,8 @@
     "postinstall": "husky",
     "prepack": "pinst --disable",
     "postpack": "pinst --enable",
-    "removedb": "rm -rf .entropy && docker compose --file dev/docker-scripts/two-nodes.yaml down 2> /dev/null"
+    "removedb": "rm -rf .entropy && docker compose --file dev/docker-scripts/two-nodes.yaml down 2> /dev/null",
+    "buildLocal": "yarn bundle && yarn unlink && yarn link"
   },
   "repository": {
     "type": "git",
