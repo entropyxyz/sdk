@@ -56,14 +56,14 @@
     "build:watch": "tsup --watch",
     "build:node": "tsup --platform node ",
     "build:browser": "tsup --platform browser",
+    "build:link": "yarn bundle && yarn unlink && yarn link",
     "find-deadcode": "ts-prune",
     "generate:types": "dev/bin/generate-types.sh",
     "prepare": "husky",
     "postinstall": "husky",
     "prepack": "pinst --disable",
     "postpack": "pinst --enable",
-    "removedb": "rm -rf .entropy && docker compose --file dev/docker-scripts/two-nodes.yaml down 2> /dev/null",
-    "buildLocal": "yarn bundle && yarn unlink && yarn link"
+    "removedb": "rm -rf .entropy && docker compose --file dev/docker-scripts/two-nodes.yaml down 2> /dev/null"
   },
   "repository": {
     "type": "git",
