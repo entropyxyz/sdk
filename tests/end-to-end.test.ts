@@ -39,7 +39,6 @@ test('End To End', async (t) => {
   let store = keyring.getAccount()
   keyring.accounts.on('account-update', (fullAccount) => {
     store = fullAccount
-    console.log('emitter is called')
   })
 
   t.equal(
@@ -77,7 +76,6 @@ test('End To End', async (t) => {
       // TODO remove event listener if it hangs
       keyring.accounts.on('account-update', (fullAccountView) => {
         if (!verifyingKeyFromRegistration) return
-        console.log('emitter was called')
         if (!fullAccountView.admin) reject('no admin account')
         if (!fullAccountView.registration) reject('no registration account')
         if (!fullAccountView.deviceKey) reject('no deviceKey account')
