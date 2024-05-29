@@ -259,8 +259,8 @@ export default class SignatureRequestManager {
 
         // TODO: auxilaryData full implementation
         if (auxiliaryData) {
-          txRequestData.auxilary_data = auxiliaryData.map((signleAuxData) =>
-            toHex(JSON.stringify(signleAuxData))
+          txRequestData.auxilary_data = auxiliaryData.map((singleAuxData) =>
+            toHex(JSON.stringify(singleAuxData))
           )
         }
         // TODO handle array here

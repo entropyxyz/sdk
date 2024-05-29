@@ -54,3 +54,10 @@ test('Keys: create a keyring with a mnemonic', async (t) => {
 
   t.end()
 })
+
+test('Keys: keyring should include all data passed through the constructor', (t) => {
+  // use my config
+  // create new keyring
+  // check to see if new keyring contains the info available from config
+  t.end()
+})
