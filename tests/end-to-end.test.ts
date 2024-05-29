@@ -28,7 +28,8 @@ test('End To End', async (t) => {
 
   // this gets called after all tests are run
   t.teardown(async () => {
-    await spinNetworkDown(networkType, entropy).catch((error) =>
+    await entropy.close()
+    await spinNetworkDown(networkType).catch((error) =>
       console.error('Error while spinning network down', error.message)
     )
   })

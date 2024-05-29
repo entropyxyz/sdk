@@ -184,6 +184,8 @@ export default class Entropy {
   }
 
   async close () {
-    return this.substrate.disconnect()
+    if (this.substrate.isConnected) {
+      return this.substrate.disconnect()
+    }
   }
 }
