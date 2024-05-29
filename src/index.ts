@@ -133,6 +133,7 @@ export default class Entropy {
     // fuck frankie TODO: Make legit function
     const vk = this.keyring.accounts[ChildKey.registration].verifyingKeys || []
     this.registrationManager.signer.verifyingKeys = [...vk, verifyingKey]
+    console.log('added verifyingKeys')
     this.signingManager.signer.verifyingKeys = [verifyingKey, ...vk]
     return verifyingKey
   }

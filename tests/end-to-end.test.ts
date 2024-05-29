@@ -35,10 +35,11 @@ test('End To End', async (t) => {
 
   await run('wasm', wasmGlobalsReady())
 
-  let store = {}
   const keyring = new Keyring({ seed: charlieStashSeed, debug: true })
+  let store = keyring.getAccount()
   keyring.accounts.on('account-update', (fullAccount) => {
     store = fullAccount
+    console.log('emitter is called')
   })
 
   t.equal(
@@ -69,12 +70,43 @@ test('End To End', async (t) => {
   // t.equal(typeof pointer, 'string', 'valid pointer')
 
   // register
-  const verifyingKeyFromRegistration = await run('register', entropy.register())
+  let verifyingKeyFromRegistration
+  const emitterTest = run(
+    'keyring.accounts.once#account-update',
+    new Promise((res, reject) => {
+      // TODO remove event listener if it hangs
+      keyring.accounts.on('account-update', (fullAccountView) => {
+        if (!verifyingKeyFromRegistration) return
+        console.log('emitter was called')
+        if (!fullAccountView.admin) reject('no admin account')
+        if (!fullAccountView.registration) reject('no registration account')
+        if (!fullAccountView.deviceKey) reject('no deviceKey account')
+        if (!fullAccountView.registration.verifyingKeys)
+          reject('no registration.verifyingKeys ')
+        if (!fullAccountView.registration.verifyingKeys[0])
+          reject(
+            'no registration.verifyingKeys[0] this means their were no keys added'
+          )
+        const last = fullAccountView.registration.verifyingKeys.pop()
+        if (!last === verifyingKeyFromRegistration)
+          reject('verifyingKey returned in registration does not match')
+        if (!last === fullAccountView.deviceKey.verifyingKeys[0])
+          reject(
+            'verifyingKey on registration does not match device keys verifyingKeys[0]'
+          )
+        return res(fullAccountView)
+      })
+    })
+  )
+  verifyingKeyFromRegistration = await run('register', entropy.register())
+
   t.equal(
     verifyingKeyFromRegistration,
     entropy.keyring.accounts.registration.verifyingKeys[0],
     'verifyingKeys match after registration'
   )
+  // tests the once function
+  await emitterTest
 
   //
   // sign some data

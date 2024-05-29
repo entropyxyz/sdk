@@ -180,12 +180,17 @@ export default class Keyring {
     return new Proxy(this.accounts[childKey], {
       get: (_, key: string) => this.accounts[childKey][key],
       set: (_, k: string, v) => {
+        console.log('set: called in signer')
         if (k === 'used' && !this.accounts[childKey].used) {
           this.#used.push(childKey)
         }
         this.accounts[childKey][k] = v
-        this.accounts.emit(`#account-update`, this.getAccount())
+        console.log('what the fuck is emit:', this.accounts.emit)
         this.accounts.masterAccountView[childKey][k] = v
+        setTimeout(
+          () => this.accounts.emit(`account-update`, this.getAccount()),
+          10
+        )
         return v
       },
     })
