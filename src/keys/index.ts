@@ -65,10 +65,14 @@ export default class Keyring {
   getAccount (): EntropyAccount {
     const { debug, seed, type, verifyingKeys } = this.accounts.masterAccountView
     const entropyAccount: EntropyAccount = { debug, seed, type, verifyingKeys }
+    // deep copy hack
+    const masterAccountView = JSON.parse(
+      JSON.stringify(this.accounts.masterAccountView)
+    )
     this.#used.forEach((accountName) => {
-      entropyAccount[accountName] = this.accounts.masterAccountView[accountName]
+      entropyAccount[accountName] = masterAccountView[accountName]
     })
-    entropyAccount.admin = this.accounts.registration
+    entropyAccount.admin = masterAccountView.registration
     return entropyAccount
   }
 
@@ -180,12 +184,10 @@ export default class Keyring {
     return new Proxy(this.accounts[childKey], {
       get: (_, key: string) => this.accounts[childKey][key],
       set: (_, k: string, v) => {
-        console.log('set: called in signer')
         if (k === 'used' && !this.accounts[childKey].used) {
           this.#used.push(childKey)
         }
         this.accounts[childKey][k] = v
-        console.log('what the fuck is emit:', this.accounts.emit)
         this.accounts.masterAccountView[childKey][k] = v
         setTimeout(
           () => this.accounts.emit(`account-update`, this.getAccount()),
