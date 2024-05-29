@@ -137,8 +137,8 @@ export default class Entropy {
       verifyingKey,
     ]
     this.keyring.accounts[ChildKey.deviceKey].verifyingKeys = [
-      ...vk,
       verifyingKey,
+      ...vk,
     ]
     return verifyingKey
   }
