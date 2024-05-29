@@ -185,7 +185,12 @@ export default class Entropy {
 
   async close () {
     if (this.substrate.isConnected) {
-      return this.substrate.disconnect()
+      try {
+        await this.substrate.disconnect()
+        // console.log('Disconnected successfully.')
+      } catch (error) {
+        console.error('Error closing connection', error.message)
+      }
     }
   }
 }

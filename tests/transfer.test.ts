@@ -29,7 +29,7 @@ function createSeed() {
 // }
 /* Utils ========================================*/
 
-test.only('Transfer', async (t) => {
+test('Transfer', async (t) => {
   const run = promiseRunner(t)
   await run('network up', spinNetworkUp(networkType))
 
