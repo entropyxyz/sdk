@@ -25,7 +25,7 @@ export interface PRESIGN_RESULT {
  */
 export interface Adapter {
   type: string
-  hash: string
+  HASHING_ALGORITHM: string
   preSign?: (deviceKey: Signer, sigReq: MsgParams) => Promise<PRESIGN_RESULT>
   postSign?: (sig: Uint8Array, msgParams: MsgParams) => Promise<unknown>
   [key: string]: unknown

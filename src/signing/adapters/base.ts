@@ -59,4 +59,4 @@ export async function preSign(
 
 export const type = 'noop'
 // THIS IS THE RETURNED SIG HASH -- PLS look into ED25519 ASK JESSE IF SUPPORTED
-export const hash = 'sha3'
+export const HASHING_ALGORITHM = 'sha3'
