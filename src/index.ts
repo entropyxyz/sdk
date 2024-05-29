@@ -132,14 +132,8 @@ export default class Entropy {
     const verifyingKey = await this.registrationManager.register(params)
     // fuck frankie TODO: Make legit function
     const vk = this.keyring.accounts[ChildKey.registration].verifyingKeys || []
-    this.keyring.accounts[ChildKey.registration].verifyingKeys = [
-      ...vk,
-      verifyingKey,
-    ]
-    this.keyring.accounts[ChildKey.deviceKey].verifyingKeys = [
-      verifyingKey,
-      ...vk,
-    ]
+    this.registrationManager.signer.verifyingKeys = [...vk, verifyingKey]
+    this.signingManager.signer.verifyingKeys = [verifyingKey, ...vk]
     return verifyingKey
   }
 

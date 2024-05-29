@@ -251,7 +251,7 @@ export default class SignatureRequestManager {
           auxilary_data: auxiliaryData,
           validatorsInfo: validatorsInfo,
           timestamp: this.getTimeStamp(),
-          hash: stripHexPrefix(hash),
+          hash,
           signature_verifying_key: Array.from(
             Buffer.from(stripHexPrefix(signatureVerifyingKey), 'hex')
           ),
