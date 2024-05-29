@@ -56,7 +56,7 @@
     "build:watch": "tsup --watch",
     "build:node": "tsup --platform node ",
     "build:browser": "tsup --platform browser",
-    "build:link": "yarn bundle && yarn unlink && yarn link",
+    "build:link": "yarn build && yarn unlink && yarn link",
     "find-deadcode": "ts-prune",
     "generate:types": "dev/bin/generate-types.sh",
     "prepare": "husky",
