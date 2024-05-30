@@ -76,36 +76,34 @@ test('Transfer', async (t) => {
 
   const amount = BigInt(123_456 * 10 ** SUBSTRATE_DECIMALS)
   // WARNING: this fails if amount sent is too small
+  const sender = charlie.keyring.accounts.registration.pair
   await run(
     'transfer funds',
     new Promise(async (resolve, reject) => {
-      const tx = await charlie.substrate.tx.balances.transferAllowDeath(
-        recipientAddress,
-        amount
-      )
-      // WARN: signAndSend returns a Promise, but unclear when it resolves,
-      // and what the function it resolves with is :melt:
-      const sender = charlie.keyring.accounts.registration.pair
-      tx.signAndSend(sender, ({ status, events, dispatchError }) => {
-        if (dispatchError) {
-          let msg: string
-          if (dispatchError.isModule) {
-            // for module errors, we have the section indexed, lookup
-            const decoded = charlie.substrate.registry.findMetaError(
-              dispatchError.asModule
-            )
-            const { docs, name, section } = decoded
+      // WARN: await signAndSend is dangerous as it does not resolve
+      // after transaction is complete :melt:
+      charlie.substrate.tx.balances
+        .transferAllowDeath(recipientAddress, amount)
+        .signAndSend(sender, ({ status, events, dispatchError }) => {
+          if (dispatchError) {
+            let msg: string
+            if (dispatchError.isModule) {
+              // for module errors, we have the section indexed, lookup
+              const decoded = charlie.substrate.registry.findMetaError(
+                dispatchError.asModule
+              )
+              const { docs, name, section } = decoded
 
-            msg = `${section}.${name}: ${docs.join(' ')}`
-          } else {
-            // Other, CannotLookup, BadOrigin, no extra info
-            msg = dispatchError.toString()
+              msg = `${section}.${name}: ${docs.join(' ')}`
+            } else {
+              // Other, CannotLookup, BadOrigin, no extra info
+              msg = dispatchError.toString()
+            }
+            return reject(Error(msg))
           }
-          return reject(Error(msg))
-        }
 
-        if (status.isFinalized) resolve(status)
-      })
+          if (status.isFinalized) resolve(status)
+        })
     })
   )
 
