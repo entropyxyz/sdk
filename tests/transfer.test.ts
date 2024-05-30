@@ -11,34 +11,25 @@ import {
   charlieStashSeed,
 } from './testing-utils'
 
-const networkType = 'two-nodes'
+const NETWORK_TYPE = 'two-nodes'
+const SUBSTRATE_DECIMALS = 10
 
-/* Utils ========================================*/
+/* utils ========================================*/
 function createSeed() {
   return '0x' + randomBytes(32).toString('hex')
 }
-
-// WARNING: formatAmountAsHex is in CLI ... what the heck is going on with this?
-// BigInt(fromAmountAsHex(1000)) ... number => huge_number => hex => BigInt
-// ... why?
-//
-// const DECIMALS = 10
-// const PREFIX = '0x'
-// export const formatAmountAsHex = (amount: number) => {
-//   return `${PREFIX}${(amount * (1 * (10 ** DECIMALS))).toString(16)}`;
-// }
-/* Utils ========================================*/
+/* utils ========================================*/
 
 test('Transfer', async (t) => {
   const run = promiseRunner(t)
-  await run('network up', spinNetworkUp(networkType))
+  await run('network up', spinNetworkUp(NETWORK_TYPE))
 
   await sleep(process.env.GITHUB_WORKSPACE ? 30_000 : 5_000)
 
   // this gets called after all tests are run
   t.teardown(async () => {
     await Promise.all([charlie.close(), naynay.close()])
-    await spinNetworkDown(networkType).catch((error) =>
+    await spinNetworkDown(NETWORK_TYPE).catch((error) =>
       console.error('Error while spinning network down', error.message)
     )
   })
@@ -83,7 +74,7 @@ test('Transfer', async (t) => {
     )
   }
 
-  const amount = BigInt(123_456 * 1e10)
+  const amount = BigInt(123_456 * 10 ** SUBSTRATE_DECIMALS)
   await run(
     'transfer funds',
     new Promise(async (resolve, reject) => {
@@ -91,9 +82,9 @@ test('Transfer', async (t) => {
         recipientAddress,
         amount
       )
-      // WARN: signAndSend returns a Promise, but unclear when it resolves, and what the function it resolves with is :melt:
+      // WARN: signAndSend returns a Promise, but unclear when it resolves,
+      // and what the function it resolves with is :melt:
       const sender = charlie.keyring.accounts.registration.pair
-      // const sender = charlie.registrationManager.signer.pair // this is used in CLI
       tx.signAndSend(sender, ({ status, events, dispatchError }) => {
         if (dispatchError) {
           let msg: string
@@ -129,11 +120,10 @@ test('Transfer', async (t) => {
     const accountInfo = (await charlie.substrate.query.system.account(
       account
     )) as any
-    // t.equal(BigInt(accountInfo.data.free), BigInt(10 ** 21) - amount, 'initially charlie is less rich!')
-    // actual:   999998765439681671852n  - is there a tx fee taken?
-    // expected: 999998765440000000000n
     t.true(
-      BigInt(accountInfo.data.free) < BigInt(10 ** 21) - amount,
+      BigInt(accountInfo.data.free) < BigInt(1e21) - amount,
+      // NOTE: actual amount charlie has is less a txn fee, but that fee is variable
+      // It's on the order of BigInt(318373888)
       'initially charlie is less rich!'
     )
   }
