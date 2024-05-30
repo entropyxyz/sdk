@@ -23,6 +23,8 @@ export const keysCryptoWaitReady = cryptoWaitReady()
  */
 
 export function seedFromMnemonic (m) {
+  // If this is returned as a Uint8Array would it be beneficial to convert back to a string and just use strings everywhere?
+  // it will reduce the use of force casting to a specific type
   return mnemonicToMiniSecret(m)
 }
 

@@ -33,6 +33,7 @@ export default class Keyring {
    */
 
   constructor (account: KeyMaterial) {
+    
     this.#used = ['admin', ChildKey.registration]
     Object.keys(account).forEach((key) => {
       if (typeof account[key] === 'object' && account[key].userContext) {
@@ -53,52 +54,43 @@ export default class Keyring {
     this.accounts = this.#createFunctionalAccounts(accountsJson)
   }
 
-  /**
-   * Retrieves the current account information.
-   *
-   * @returns An object containing the Entropy account details.
-   */
+  #formatAccounts (accounts: EntropyAccount): EntropyAccount {
+    
+    const { seed, debug, type, admin } = accounts
 
-  // IMPORTANT!! WE SHOULD DECIDE IF WE WILL ALWAYS BE GENERATING UUID FOR ACCOUNTS OR IF WE
-  // WILL ALLOW USERS TO PASS THEIR OWN STRINGS
+    const entropyAccountsJson = {
+      debug,
+      // previously was seed ? seed : utils.seedFromMnemonic(mnemonic) but this has already been derived in the constructor
+      // @frankie correct if im wrong here
+      seed: this.#seed,
+      type,
+      admin,
+    }
 
-  getAccount (): EntropyAccount {
-    const { debug, seed, type, verifyingKeys } = this.accounts.masterAccountView
-    const entropyAccount: EntropyAccount = { debug, seed, type, verifyingKeys }
-    // deep copy hack
-    const masterAccountView = JSON.parse(
-      JSON.stringify(this.accounts.masterAccountView)
-    )
-    this.#used.forEach((accountName) => {
-      entropyAccount[accountName] = masterAccountView[accountName]
-    })
-    entropyAccount.admin = masterAccountView.registration
-    return entropyAccount
-  }
+  
+    Object.keys(accounts)
+      .concat(ACCOUNTS)
+      .forEach((key) => {
+        
+        let account: PairMaterial
+        if (entropyAccountsJson[key]) return
+        if (key === ChildKey.registration && admin?.seed) {
+          if (accounts[key]) {
+            account = { ...admin, ...accounts[key] }
+          } else {
+            account = admin
+          }
 
-  #createFunctionalAccounts (
-    masterAccountView: EntropyAccount
-  ): AccountsEmitter {
-    const accounts = new EventEmitter() as AccountsEmitter
-    accounts.type = accounts.type || EntropyAccountType.MIXED_ACCOUNT
-    Object.keys(masterAccountView).forEach((name) => {
-      if (name) {
-        if (typeof masterAccountView[name] !== 'object') return
-        const { seed, path, ...accountData } = masterAccountView[name]
-        if (!seed) return
-        const { pair, address } = utils.generateKeyPairFromSeed(seed, path)
-        const functionalAccount = {
-          ...accountData,
-          seed,
-          path,
-          address,
-          pair,
+          entropyAccountsJson[key] = this.#jsonAccountCreator(account, debug)
+          return
         }
-        accounts[name] = functionalAccount
-      }
-    })
-    accounts.masterAccountView = masterAccountView
-    return accounts
+        if (accounts[key] && accounts[key].userContext) account = accounts[key]
+        else if (ChildKey[key]) account = { type: ChildKey[key], seed }
+        if (!account) return
+        entropyAccountsJson[key] = this.#jsonAccountCreator(account, debug)
+      })
+
+    return entropyAccountsJson as EntropyAccount
   }
 
   /**
@@ -134,39 +126,53 @@ export default class Keyring {
     return jsonAccount
   }
 
-  #formatAccounts (accounts: EntropyAccount): EntropyAccount {
-    const { seed, mnemonic, type, admin } = accounts
-    // this is because stuff is broken outside of debug mode so making it true always
-    const debug = true
-    const entropyAccountsJson = {
-      debug,
-      seed: seed ? seed : utils.seedFromMnemonic(mnemonic),
-      type,
-      admin,
-    }
-
-    Object.keys(accounts)
-      .concat(ACCOUNTS)
-      .forEach((key) => {
-        let account: PairMaterial
-        if (entropyAccountsJson[key]) return
-        if (key === ChildKey.registration && admin?.seed) {
-          if (accounts[key]) {
-            account = { ...admin, ...accounts[key] }
-          } else {
-            account = admin
-          }
-
-          entropyAccountsJson[key] = this.#jsonAccountCreator(account, debug)
-          return
+  #createFunctionalAccounts (
+    masterAccountView: EntropyAccount
+  ): AccountsEmitter {
+    
+    const accounts = new EventEmitter() as AccountsEmitter
+    accounts.type = accounts.type || EntropyAccountType.MIXED_ACCOUNT
+    Object.keys(masterAccountView).forEach((name) => {
+      if (name) {
+        if (typeof masterAccountView[name] !== 'object') return
+        const { seed, path, ...accountData } = masterAccountView[name]
+        if (!seed) return
+        const { pair, address } = utils.generateKeyPairFromSeed(seed, path)
+        const functionalAccount = {
+          ...accountData,
+          seed,
+          path,
+          address,
+          pair,
         }
-        if (accounts[key] && accounts[key].userContext) account = accounts[key]
-        else if (ChildKey[key]) account = { type: ChildKey[key], seed }
-        if (!account) return
-        entropyAccountsJson[key] = this.#jsonAccountCreator(account, debug)
-      })
+        accounts[name] = functionalAccount
+      }
+    })
+    accounts.masterAccountView = masterAccountView
+    return accounts
+  }
 
-    return entropyAccountsJson as EntropyAccount
+  /**
+   * Retrieves the current account information.
+   *
+   * @returns An object containing the Entropy account details.
+   */
+
+  // IMPORTANT!! WE SHOULD DECIDE IF WE WILL ALWAYS BE GENERATING UUID FOR ACCOUNTS OR IF WE
+  // WILL ALLOW USERS TO PASS THEIR OWN STRINGS
+
+  getAccount (): EntropyAccount {
+    const { debug, seed, type, verifyingKeys } = this.accounts.masterAccountView
+    const entropyAccount: EntropyAccount = { debug, seed, type, verifyingKeys }
+    // deep copy hack
+    const masterAccountView = JSON.parse(
+      JSON.stringify(this.accounts.masterAccountView)
+    )
+    this.#used.forEach((accountName) => {
+      entropyAccount[accountName] = masterAccountView[accountName]
+    })
+    entropyAccount.admin = masterAccountView.registration
+    return entropyAccount
   }
 
   /**
