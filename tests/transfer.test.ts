@@ -75,6 +75,7 @@ test('Transfer', async (t) => {
   }
 
   const amount = BigInt(123_456 * 10 ** SUBSTRATE_DECIMALS)
+  // WARNING: this fails if amount sent is too small
   await run(
     'transfer funds',
     new Promise(async (resolve, reject) => {
