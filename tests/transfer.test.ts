@@ -12,7 +12,7 @@ import {
 } from './testing-utils'
 
 const NETWORK_TYPE = 'two-nodes'
-const SUBSTRATE_DECIMALS = 10
+const DECIMAL_PLACES = 10
 
 /* utils ========================================*/
 function createSeed() {
@@ -52,6 +52,8 @@ test('Transfer', async (t) => {
   await run('naynay ready', naynay.ready)
 
   const recipientAddress = naynay.keyring.accounts.registration.address
+
+  /* Check initial balances */
   {
     const accountInfo = (await naynay.substrate.query.system.account(
       recipientAddress
@@ -74,12 +76,9 @@ test('Transfer', async (t) => {
     )
   }
 
-  const amount = BigInt(123_456 * 10 ** SUBSTRATE_DECIMALS)
-  // WARNING: this fails if amount sent is too small
   const sender = charlie.keyring.accounts.registration.pair
-  await run(
-    'transfer funds',
-    new Promise(async (resolve, reject) => {
+  function sendMoney(amount) {
+    return new Promise(async (resolve, reject) => {
       // WARN: await signAndSend is dangerous as it does not resolve
       // after transaction is complete :melt:
       charlie.substrate.tx.balances
@@ -105,15 +104,29 @@ test('Transfer', async (t) => {
           if (status.isFinalized) resolve(status)
         })
     })
-  )
+  }
 
+  /* Initial funding */
+  const subThresholdAmount = BigInt(9999 * 10 ** DECIMAL_PLACES)
+  await sendMoney(subThresholdAmount)
+    .then(() =>
+      t.fail('should fail if initial transfer to new account is too small')
+    )
+    .catch(() =>
+      t.pass('should fail if initial transfer to new account is too small')
+    )
+  // see https://support.polkadot.network/support/solutions/articles/65000168651-what-is-the-existential-deposit-
+
+  const amount = BigInt(10_000 * 10 ** DECIMAL_PLACES) // min initial txn amount
+  await run('transfer funds', sendMoney(amount))
+
+  /* Check balances after */
   {
     const accountInfo = (await naynay.substrate.query.system.account(
       recipientAddress
     )) as any
     t.equal(BigInt(accountInfo.data.free), amount, 'naynay is rollin')
   }
-
   {
     const account = charlie.keyring.accounts.registration.address
     const accountInfo = (await charlie.substrate.query.system.account(
@@ -123,8 +136,23 @@ test('Transfer', async (t) => {
       BigInt(accountInfo.data.free) < BigInt(1e21) - amount,
       // NOTE: actual amount charlie has is less a txn fee, but that fee is variable
       // It's on the order of BigInt(318373888)
-      'initially charlie is less rich!'
+      'charlie is now less rich!'
     )
+
+    const txnFee = BigInt(1e21) - amount - BigInt(accountInfo.data.free)
+    const txnBound = 0.1
+    t.true(
+      txnFee < BigInt(txnBound * 10 ** DECIMAL_PLACES),
+      `txn fee < ${txnBound} (actual: ${txnFee / BigInt(10 ** DECIMAL_PLACES)})`
+    )
+  }
+
+  /* Test small top-up */
+  {
+    const amount = BigInt(10 * 10 ** DECIMAL_PLACES)
+    // NOTE: once an account is funded, we can send small amounts!
+    const sender = charlie.keyring.accounts.registration.pair
+    await run('transfer funds (small top-up)', sendMoney(amount))
   }
 
   t.end()
