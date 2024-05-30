@@ -37,7 +37,7 @@ test('End To End', async (t) => {
 
   const keyring = new Keyring({ seed: charlieStashSeed, debug: true })
   let store = keyring.getAccount()
-  t.equal(store.admin.address, keyring.accounts.registration.pair.address)
+  t.equal(store.admin.address, keyring.accounts.registration.pair.address, 'admin account should have an address and for now it should match registrations address')
   keyring.accounts.on('account-update', (fullAccount) => {
     store = fullAccount
   })

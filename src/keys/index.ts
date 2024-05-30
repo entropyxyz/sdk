@@ -53,10 +53,11 @@ export default class Keyring {
     }
     const accountsJson = this.#formatAccounts(account)
     this.accounts = this.#createFunctionalAccounts(accountsJson)
+    this.accounts.masterAccountView = accountsJson
   }
 
   #formatAccounts (accounts: EntropyAccount): EntropyAccount {
-    
+
     const { seed, type, admin } = accounts
     const debug = true
     const entropyAccountsJson = {
@@ -68,11 +69,11 @@ export default class Keyring {
       admin,
     }
 
-  
+
     Object.keys(accounts)
       .concat(ACCOUNTS)
       .forEach((key) => {
-        
+
         let account: PairMaterial
         if (entropyAccountsJson[key]) return
         if (key === ChildKey.registration && admin?.seed) {
@@ -87,10 +88,10 @@ export default class Keyring {
         }
         if (accounts[key] && accounts[key].userContext) account = accounts[key]
         else if (ChildKey[key]) account = { type: ChildKey[key], seed }
-        if (key === 'admin' && !admin) entropyAccount.admin = entropyAccount[]
         if (!account) return
         entropyAccountsJson[key] = this.#jsonAccountCreator(account, debug)
       })
+    if (!admin) entropyAccountsJson.admin = entropyAccountsJson[ChildKey.registration]
 
     return entropyAccountsJson as EntropyAccount
   }
@@ -131,7 +132,7 @@ export default class Keyring {
   #createFunctionalAccounts (
     masterAccountView: EntropyAccount
   ): AccountsEmitter {
-    
+
     const accounts = new EventEmitter() as AccountsEmitter
     accounts.type = accounts.type || EntropyAccountType.MIXED_ACCOUNT
     Object.keys(masterAccountView).forEach((name) => {
@@ -166,13 +167,11 @@ export default class Keyring {
   getAccount (): EntropyAccount {
     const { debug, seed, type, verifyingKeys } = this.accounts.masterAccountView
     const entropyAccount: EntropyAccount = { debug, seed, type, verifyingKeys }
-    // deep copy hack
-    const masterAccountView = deepCopy(this.accounts.masterAccountView))
-
     this.#used.forEach((accountName) => {
-      entropyAccount[accountName] = masterAccountView[accountName]
+      if (this.accounts[accountName] === undefined) return
+      entropyAccount[accountName] = deepCopy(this.accounts[accountName] as PairMaterial)
     })
-    entropyAccount.admin = masterAccountView.registration
+    entropyAccount.admin = entropyAccount.registration
     return entropyAccount
   }
 
