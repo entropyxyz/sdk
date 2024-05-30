@@ -99,7 +99,7 @@ Always publish from `stable` branch
 git checkout stable
 yarn burn
 yarn
-yarn bundle
+yarn build
 yarn version --patch # patch|minor|major
 npm publish
 git push origin stable --tags

@@ -24,8 +24,8 @@ jobs:
         run: yarn --network-timeout 180000
       - name: Typecheck
         run: yarn run test:types
-      - name: Bundle
-        run: yarn run bundle
+      - name: Build
+        run: yarn run build
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
