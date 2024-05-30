@@ -1,4 +1,5 @@
 import EventEmitter from 'node:events'
+import { deepCopy } from '../utils/housekeeping'
 import * as utils from './utils'
 import { EntropyAccount, KeyMaterial, PairMaterial } from './types/json'
 import {
@@ -33,7 +34,7 @@ export default class Keyring {
    */
 
   constructor (account: KeyMaterial) {
-    
+    // this repersents keys that are used by the user
     this.#used = ['admin', ChildKey.registration]
     Object.keys(account).forEach((key) => {
       if (typeof account[key] === 'object' && account[key].userContext) {
@@ -86,6 +87,7 @@ export default class Keyring {
         }
         if (accounts[key] && accounts[key].userContext) account = accounts[key]
         else if (ChildKey[key]) account = { type: ChildKey[key], seed }
+        if (key === 'admin' && !admin) entropyAccount.admin = entropyAccount[]
         if (!account) return
         entropyAccountsJson[key] = this.#jsonAccountCreator(account, debug)
       })
@@ -165,9 +167,8 @@ export default class Keyring {
     const { debug, seed, type, verifyingKeys } = this.accounts.masterAccountView
     const entropyAccount: EntropyAccount = { debug, seed, type, verifyingKeys }
     // deep copy hack
-    const masterAccountView = JSON.parse(
-      JSON.stringify(this.accounts.masterAccountView)
-    )
+    const masterAccountView = deepCopy(this.accounts.masterAccountView))
+
     this.#used.forEach((accountName) => {
       entropyAccount[accountName] = masterAccountView[accountName]
     })
