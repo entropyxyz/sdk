@@ -9,5 +9,5 @@
 /**
  * returns a deep copy of the object */
 export function deepCopy (thing: any): any {
-  JSON.parse(JSON.stringify(thing))
+  return JSON.parse(JSON.stringify(thing))
 }
