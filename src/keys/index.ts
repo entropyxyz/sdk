@@ -57,8 +57,8 @@ export default class Keyring {
 
   #formatAccounts (accounts: EntropyAccount): EntropyAccount {
     
-    const { seed, debug, type, admin } = accounts
-
+    const { seed, type, admin } = accounts
+    const debug = true
     const entropyAccountsJson = {
       debug,
       // previously was seed ? seed : utils.seedFromMnemonic(mnemonic) but this has already been derived in the constructor
