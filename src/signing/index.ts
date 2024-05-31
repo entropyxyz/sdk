@@ -147,7 +147,7 @@ export default class SignatureRequestManager {
     const { sigRequestHash } = results[0]
     const signature = await this.sign({
       sigRequestHash,
-      hash: adaptersToRun[0].hash,
+      hash: adaptersToRun[0].HASHING_ALGORITHM,
       auxiliaryData,
     })
     return signature

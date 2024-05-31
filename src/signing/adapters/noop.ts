@@ -1,9 +1,7 @@
 import { HexString } from '../../keys/types/json'
 import { Signer } from '../../keys/types/internal'
-import { AUX_DATA, PRESIGN_RESULT } from './types'
+import { PRESIGN_RESULT } from './types'
 import { toHex } from '../../utils'
-
-
 
 /**
  *
@@ -13,18 +11,16 @@ import { toHex } from '../../utils'
 
 export type NoopAuxData = null
 
-
 /**
  * convenience object
  * */
 
 export const PROGRAM_INTERFACE = {
   // change this in file. this is peg's noop program. wasam path: @entropyxyz/sdk/tests/testing-utils/program_noop.wasm
-  program_pointer: '0x6c8228950ca8dfb557d42ce11643c67ba5a3e5cee3ce7232808ea7477b846bcb',
+  program_pointer:
+    '0x6c8228950ca8dfb557d42ce11643c67ba5a3e5cee3ce7232808ea7477b846bcb',
   program_config: null,
-  auxilary_data: [
-    null
-  ],
+  auxilary_data: [null],
 }
 
 export const ADAPTER_PROGRAMS = [PROGRAM_INTERFACE]
@@ -43,10 +39,9 @@ export async function preSign (
   // const signedMessage = deviceKey.pair.sign(stringMessage)
   const sigRequestHash = toHex(stringMessage)
 
-
   return { sigRequestHash, auxilary_data: PROGRAM_INTERFACE.auxilary_data }
 }
 
 export const type = 'noop'
 // THIS IS THE RETURNED SIG HASH
-export const hash = 'sha3'
+export const HASHING_ALGORITHM = 'keccak'
