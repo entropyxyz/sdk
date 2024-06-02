@@ -195,6 +195,7 @@ export default class Keyring {
         }
         this.accounts[childKey][k] = v
         this.accounts.masterAccountView[childKey][k] = v
+        // DO NOT REMOVE setTimeout UNLESS YOU SOLVED THE RACE CONDITION
         setTimeout(
           () => this.accounts.emit(`account-update`, this.getAccount()),
           10
