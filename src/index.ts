@@ -133,6 +133,7 @@ export default class Entropy {
     // fuck frankie TODO: Make legit function
     const admin = this.keyring.getLazyLoadAccountProxy(ChildKey.registration)
     const vk = admin.verifyingKeys || []
+    // HACK: these assignments trigger important `account-update` flows via the Proxy 
     admin.verifyingKeys = [...vk, verifyingKey]
     deviceKey.verifyingKeys = [verifyingKey, ...vk]
     return verifyingKey
