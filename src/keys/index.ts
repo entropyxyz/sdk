@@ -1,4 +1,5 @@
 import EventEmitter from 'node:events'
+import { deepCopy } from '../utils/housekeeping'
 import * as utils from './utils'
 import { EntropyAccount, KeyMaterial, PairMaterial } from './types/json'
 import {
@@ -33,6 +34,7 @@ export default class Keyring {
    */
 
   constructor (account: KeyMaterial) {
+    // this repersents keys that are used by the user
     this.#used = ['admin', ChildKey.registration]
     Object.keys(account).forEach((key) => {
       if (typeof account[key] === 'object' && account[key].userContext) {
@@ -51,49 +53,47 @@ export default class Keyring {
     }
     const accountsJson = this.#formatAccounts(account)
     this.accounts = this.#createFunctionalAccounts(accountsJson)
+    this.accounts.masterAccountView = accountsJson
   }
 
-  /**
-   * Retrieves the current account information.
-   *
-   * @returns An object containing the Entropy account details.
-   */
+  #formatAccounts (accounts: EntropyAccount): EntropyAccount {
 
-  // IMPORTANT!! WE SHOULD DECIDE IF WE WILL ALWAYS BE GENERATING UUID FOR ACCOUNTS OR IF WE
-  // WILL ALLOW USERS TO PASS THEIR OWN STRINGS
+    const { seed, type, admin } = accounts
+    const debug = true
+    const entropyAccountsJson = {
+      debug,
+      // previously was seed ? seed : utils.seedFromMnemonic(mnemonic) but this has already been derived in the constructor
+      // @frankie correct if im wrong here
+      seed: this.#seed,
+      type,
+      admin,
+    }
 
-  getAccount (): EntropyAccount {
-    const { debug, seed, type, verifyingKeys } = this.accounts.masterAccountView
-    const entropyAccount: EntropyAccount = { debug, seed, type, verifyingKeys }
-    this.#used.forEach((accountName) => {
-      entropyAccount[accountName] = this.accounts.masterAccountView[accountName]
-    })
-    entropyAccount.admin = this.accounts.registration
-    return entropyAccount
-  }
 
-  #createFunctionalAccounts (
-    masterAccountView: EntropyAccount
-  ): AccountsEmitter {
-    const accounts = new EventEmitter() as AccountsEmitter
-    accounts.type = accounts.type || EntropyAccountType.MIXED_ACCOUNT
-    Object.keys(masterAccountView).forEach((name) => {
-      if (name) {
-        if (typeof masterAccountView[name] !== 'object') return
-        const { seed, path } = masterAccountView[name]
-        if (!seed) return
-        const { pair, address } = utils.generateKeyPairFromSeed(seed, path)
-        const functionalAccount = {
-          seed,
-          path,
-          address,
-          pair,
+    Object.keys(accounts)
+      .concat(ACCOUNTS)
+      .forEach((key) => {
+
+        let account: PairMaterial
+        if (entropyAccountsJson[key]) return
+        if (key === ChildKey.registration && admin?.seed) {
+          if (accounts[key]) {
+            account = { ...admin, ...accounts[key] }
+          } else {
+            account = admin
+          }
+
+          entropyAccountsJson[key] = this.#jsonAccountCreator(account, debug)
+          return
         }
-        accounts[name] = functionalAccount
-      }
-    })
-    accounts.masterAccountView = masterAccountView
-    return accounts
+        if (accounts[key] && accounts[key].userContext) account = accounts[key]
+        else if (ChildKey[key]) account = { type: ChildKey[key], seed }
+        if (!account) return
+        entropyAccountsJson[key] = this.#jsonAccountCreator(account, debug)
+      })
+    if (!admin) entropyAccountsJson.admin = entropyAccountsJson[ChildKey.registration]
+
+    return entropyAccountsJson as EntropyAccount
   }
 
   /**
@@ -129,34 +129,50 @@ export default class Keyring {
     return jsonAccount
   }
 
-  #formatAccounts (accounts: EntropyAccount): EntropyAccount {
-    const { seed, mnemonic, type, admin } = accounts
-    // this is because stuff is broken outside of debug mode so making it true always
-    const debug = true
-    const entropyAccountsJson = {
-      debug,
-      seed: seed ? seed : utils.seedFromMnemonic(mnemonic),
-      type,
-      admin,
-    }
+  #createFunctionalAccounts (
+    masterAccountView: EntropyAccount
+  ): AccountsEmitter {
 
-    Object.keys(accounts)
-      .concat(ACCOUNTS)
-      .forEach((key) => {
-        let account: PairMaterial
-        if (entropyAccountsJson[key]) return
-        if (key === ChildKey.registration && admin?.seed) {
-          account = admin
-          entropyAccountsJson[key] = this.#jsonAccountCreator(account, debug)
-          return
+    const accounts = new EventEmitter() as AccountsEmitter
+    accounts.type = accounts.type || EntropyAccountType.MIXED_ACCOUNT
+    Object.keys(masterAccountView).forEach((name) => {
+      if (name) {
+        if (typeof masterAccountView[name] !== 'object') return
+        const { seed, path, ...accountData } = masterAccountView[name]
+        if (!seed) return
+        const { pair, address } = utils.generateKeyPairFromSeed(seed, path)
+        const functionalAccount = {
+          ...accountData,
+          seed,
+          path,
+          address,
+          pair,
         }
-        if (accounts[key] && accounts[key].userContext) account = accounts[key]
-        else if (ChildKey[key]) account = { type: ChildKey[key], seed }
-        if (!account) return
-        entropyAccountsJson[key] = this.#jsonAccountCreator(account, debug)
-      })
+        accounts[name] = functionalAccount
+      }
+    })
+    accounts.masterAccountView = masterAccountView
+    return accounts
+  }
 
-    return entropyAccountsJson as EntropyAccount
+  /**
+   * Retrieves the current account information.
+   *
+   * @returns An object containing the Entropy account details.
+   */
+
+  // IMPORTANT!! WE SHOULD DECIDE IF WE WILL ALWAYS BE GENERATING UUID FOR ACCOUNTS OR IF WE
+  // WILL ALLOW USERS TO PASS THEIR OWN STRINGS
+
+  getAccount (): EntropyAccount {
+    const { debug, seed, type, verifyingKeys } = this.accounts.masterAccountView
+    const entropyAccount: EntropyAccount = { debug, seed, type, verifyingKeys }
+    this.#used.forEach((accountName) => {
+      if (this.accounts[accountName] === undefined) return
+      entropyAccount[accountName] = deepCopy(this.accounts[accountName] as PairMaterial)
+    })
+    entropyAccount.admin = entropyAccount.registration
+    return entropyAccount
   }
 
   /**
@@ -178,8 +194,12 @@ export default class Keyring {
           this.#used.push(childKey)
         }
         this.accounts[childKey][k] = v
-        this.accounts.emit(`#account-update`, this.getAccount())
         this.accounts.masterAccountView[childKey][k] = v
+        // DO NOT REMOVE setTimeout UNLESS YOU SOLVED THE RACE CONDITION
+        setTimeout(
+          () => this.accounts.emit(`account-update`, this.getAccount()),
+          10
+        )
         return v
       },
     })

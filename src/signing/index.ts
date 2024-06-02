@@ -6,8 +6,10 @@ import { EncMsg, ValidatorInfo } from '../types/internal'
 import { stripHexPrefix, sendHttpPost, toHex } from '../utils'
 import { crypto } from '../utils/crypto'
 import { CryptoLib } from '../utils/crypto/types'
+import Keyring from '../keys'
 
 export interface Config {
+  keyring: Keyring
   signer: Signer
   substrate: ApiPromise
   adapters: { [key: string | number]: Adapter }
@@ -51,6 +53,7 @@ export interface UserSignatureRequest {
  * Constructs a SignatureRequestManager instance.
  *
  * @param {Config} config - The configuration for the SignatureRequestManager.
+ * @param {Keyring} config.keyring - The full keyring
  * @param {Signer} config.signer - The Signer instance.
  * @param {ApiPromise} config.substrate - The Substrate API instance.
  * @param {Adapter} config.adapters - The adapters for handling different types of transactions.
@@ -60,6 +63,7 @@ export interface UserSignatureRequest {
 export default class SignatureRequestManager {
   adapters: { [key: string | number]: Adapter }
   crypto: CryptoLib
+  keyring: Keyring
   signer: Signer
   substrate: ApiPromise
 
@@ -67,13 +71,15 @@ export default class SignatureRequestManager {
    * Initializes a new instance of `SignatureRequestManager`.
    *
    * @param {Config} config - Configuration settings for the manager.
+   * @param {Keyring} config.keyring - The full keyring
    * @param {Signer} config.signer - The signer for authorizing transactions.
    * @param {ApiPromise} config.substrate - Instance of the Polkadot/Substrate API.
    * @param {Adapter[]} config.adapters - Set of adapters for handling different types of transactions.
    * @param {CryptoLib} config.crypto - Instance of CryptoLib for cryptographic operations.
    */
 
-  constructor ({ signer, substrate, adapters, crypto }: Config) {
+  constructor ({ keyring, signer, substrate, adapters, crypto }: Config) {
+    this.keyring = keyring
     this.signer = signer
     this.substrate = substrate
     this.crypto = crypto
@@ -90,7 +96,12 @@ export default class SignatureRequestManager {
    */
 
   get verifyingKey () {
-    return this.signer.verifyingKeys ? this.signer.verifyingKeys[0] : undefined
+    let key = this.signer?.verifyingKeys?.[0]
+    // Returning verifying key from regsitration account if device key keys do not exist
+    if (!key) {
+      key = this.keyring.accounts.registration.verifyingKeys[0]
+    }
+    return key
   }
 
   /*
@@ -137,6 +148,7 @@ export default class SignatureRequestManager {
         return adapter.preSign(this.signer, msg)
       })
     )
+
     // [AuxData[], ...]
     const auxiliaryDataCollection = results.map(({ auxilary_data }) => {
       return auxilary_data
@@ -247,8 +259,8 @@ export default class SignatureRequestManager {
 
         // TODO: auxilaryData full implementation
         if (auxiliaryData) {
-          txRequestData.auxilary_data = auxiliaryData.map((signleAuxData) =>
-            toHex(JSON.stringify(signleAuxData))
+          txRequestData.auxilary_data = auxiliaryData.map((singleAuxData) =>
+            toHex(JSON.stringify(singleAuxData))
           )
         }
         // TODO handle array here
@@ -302,10 +314,12 @@ export default class SignatureRequestManager {
       txReq.map(async (message: EncMsg) => {
         // Extract the required fields from parsedMsg
         const parsedMsg = JSON.parse(message.msg)
+
         const payload = {
           ...parsedMsg,
           msg: parsedMsg.msg,
         }
+
         const sigProof = (await sendHttpPost(
           `http://${message.url}/user/sign_tx`,
           JSON.stringify(payload)

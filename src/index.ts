@@ -78,6 +78,7 @@ export default class Entropy {
       signer: this.keyring.getLazyLoadAccountProxy(ChildKey.registration),
     })
     this.signingManager = new SignatureRequestManager({
+      keyring: this.keyring,
       signer: this.keyring.getLazyLoadAccountProxy(ChildKey.deviceKey),
       substrate: this.substrate,
       adapters: opts.adapters,
@@ -130,15 +131,11 @@ export default class Entropy {
 
     const verifyingKey = await this.registrationManager.register(params)
     // fuck frankie TODO: Make legit function
-    const vk = this.keyring.accounts[ChildKey.registration].verifyingKeys || []
-    this.keyring.accounts[ChildKey.registration].verifyingKeys = [
-      ...vk,
-      verifyingKey,
-    ]
-    this.keyring.accounts[ChildKey.deviceKey].verifyingKeys = [
-      ...vk,
-      verifyingKey,
-    ]
+    const admin = this.keyring.getLazyLoadAccountProxy(ChildKey.registration)
+    const vk = admin.verifyingKeys || []
+    // HACK: these assignments trigger important `account-update` flows via the Proxy 
+    admin.verifyingKeys = [...vk, verifyingKey]
+    deviceKey.verifyingKeys = [verifyingKey, ...vk]
     return verifyingKey
   }
 

@@ -54,3 +54,43 @@ test('Keys: create a keyring with a mnemonic', async (t) => {
 
   t.end()
 })
+
+const testConfig = {
+  name: 'Charlie Stash',
+  address: '5Ck5SLSHYac6WFt5UZRSsdJjwmpSZq85fd5TRNAdZQVzEAPT',
+  data: {
+    debug: true,
+    seed: '0x66256c4e2f90e273bf387923a9a7860f2e9f47a1848d6263de512f7fb110fc08',
+    admin: {
+      seed: '0x66256c4e2f90e273bf387923a9a7860f2e9f47a1848d6263de512f7fb110fc08',
+      path: '',
+      address: '5Ck5SLSHYac6WFt5UZRSsdJjwmpSZq85fd5TRNAdZQVzEAPT',
+    },
+    registration: {
+      seed: '0x66256c4e2f90e273bf387923a9a7860f2e9f47a1848d6263de512f7fb110fc08',
+      path: '',
+      type: 'registration',
+      verifyingKeys: [
+        '0x024f45b617279b6ff477b84ed4582f0ee8905b2f617de841efae3137dff3194afd',
+        '0x02db05d9dc4483c8f0e6ee4863f3d9ada1036bbfd61638b9406e5f23c572a895ce',
+      ],
+      userContext: 'ADMIN_KEY',
+    },
+  },
+}
+
+test('Keys: keyring should persist the data passed through the constructor', async (t) => {
+  await testSetup()
+  const keyring = new Keyring(testConfig.data)
+  t.true(Object.keys(keyring).includes('accounts'), 'has wallet')
+  t.true(
+    Object.keys(keyring.accounts.registration).includes('pair'),
+    'has pair'
+  )
+  t.deepEqual(
+    keyring.accounts.registration.verifyingKeys,
+    testConfig.data.registration.verifyingKeys
+  )
+
+  t.end()
+})
