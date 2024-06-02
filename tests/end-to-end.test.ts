@@ -104,7 +104,8 @@ test('End To End', async (t) => {
     entropy.keyring.accounts.registration.verifyingKeys[0],
     'verifyingKeys match after registration'
   )
-  // tests the once function
+  // tests the once function as well as what is
+  // considered to be necessary changes to the full account after emitting
   await emitterTest
 
   //
