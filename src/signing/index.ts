@@ -99,7 +99,7 @@ export default class SignatureRequestManager {
     let key = this.signer?.verifyingKeys?.[0]
     // Returning verifying key from regsitration account if device key keys do not exist
     if (!key) {
-      key = this.keyring?.accounts?.registration?.verifyingKeys?.[0]
+      key = this.keyring.accounts.registration.verifyingKeys[0]
     }
     return key
   }
