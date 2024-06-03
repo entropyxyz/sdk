@@ -503,3 +503,7 @@ console.log(
 #### Defined in
 
 [index.ts:71](https://github.com/entropyxyz/sdk/blob/1c426d7/src/index.ts#L71)
+
+## Support
+
+Need help with something? [Head over to the Entropy Community repository for support or to raise a ticket →](https://github.com/entropyxyz/community#support)
