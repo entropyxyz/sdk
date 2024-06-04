@@ -5,8 +5,8 @@ import {
 } from '@polkadot/util-crypto'
 
 import * as polkadotCryptoUtil from '@polkadot/util-crypto'
+import * as polkadotUtil from '@polkadot/util'
 import { CryptoLib, ResObjectType } from './types'
-import { u8aToHex } from '@polkadot/util'
 
 let cryptoLib
 const res: ResObjectType = {
@@ -57,6 +57,7 @@ export const crypto: CryptoLib = new Proxy({} as CryptoLib, {
         )
       }
       if (key === 'polkadotCryptoUtil') return polkadotCryptoUtil
+      if (key === 'polkadotUtil') return polkadotUtil
       if (key === 'verifySignature') return verifySignature
       if (cryptoLib.Hpke[key]) {
         return cryptoLib.Hpke[key](...params)
@@ -92,6 +93,7 @@ async function verifySignature (
   signature: string,
   address: string
 ): Promise<boolean> {
+  const { u8aToHex } = polkadotUtil
   const publicKey = decodeAddress(address)
   const hexPublicKey = u8aToHex(publicKey)
 

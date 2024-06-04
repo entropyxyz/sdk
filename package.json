@@ -7,7 +7,8 @@
     "dist",
     "dist/keys",
     "dist/keys/utils.ts",
-    "dist/utils"
+    "dist/utils",
+    "dist/utils/crypto"
   ],
   "type": "module",
   "exports": {
@@ -27,9 +28,9 @@
       "default": "./dist/keys/index.js"
     },
     "./crypto-utils": {
-      "module": "./dist/utils/crypto.js",
-      "require": "./dist/utils/crypto.cjs",
-      "default": "./dist/utils/crypto.js"
+      "module": "./dist/utils/crypto/index.js",
+      "require": "./dist/utils/crypto/index.cjs",
+      "default": "./dist/utils/crypto/index.js"
     },
     "./gen-utils": {
       "module": "./dist/utils/index.js",
