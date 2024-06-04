@@ -7,7 +7,6 @@
 
 ONLY_FILES=`grep 'test.only' tests/*.test.ts -l`
 
-
 if [ $ONLY_FILES ]; then
   # If there are files with test.only, run only those files
   # NOTE: `yarn test:only` ensures our CI fails if those are left in
