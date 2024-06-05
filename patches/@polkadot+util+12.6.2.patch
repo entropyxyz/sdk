@@ -1,0 +1,37 @@
+diff --git a/node_modules/@polkadot/util/logger.js b/node_modules/@polkadot/util/logger.js
+index 799c484..cdd02b8 100644
+--- a/node_modules/@polkadot/util/logger.js
++++ b/node_modules/@polkadot/util/logger.js
+@@ -106,13 +106,23 @@ function parseEnv(type) {
+ export function logger(origin) {
+     const type = `${origin.toUpperCase()}:`.padStart(16);
+     const [isDebug, maxSize] = parseEnv(origin.toLowerCase());
+-    return {
+-        debug: isDebug
+-            ? (...values) => apply('debug', type, values, maxSize)
+-            : noop,
+-        error: (...values) => apply('error', type, values),
+-        log: (...values) => apply('log', type, values),
+-        noop,
+-        warn: (...values) => apply('warn', type, values)
+-    };
++
++    if (isDebug) {
++        return {
++            debug: (...values) => apply('debug', type, values, maxSize),
++            error: (...values) => apply('error', type, values),
++            log: (...values) => apply('log', type, values),
++            noop,
++            warn: (...values) => apply('warn', type, values)
++        };
++    }
++    else {
++        return {
++            debug: noop,
++            error: (...values) => apply('error', type, values),
++            log: noop,
++            noop,
++            warn: noop
++        };
++    }
+ }

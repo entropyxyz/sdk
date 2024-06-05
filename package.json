@@ -60,7 +60,7 @@
     "find-deadcode": "ts-prune",
     "generate:types": "dev/bin/generate-types.sh",
     "prepare": "husky",
-    "postinstall": "husky",
+    "postinstall": "patch-package",
     "prepack": "pinst --disable",
     "postpack": "pinst --enable",
     "removedb": "rm -rf .entropy && docker compose --file dev/docker-scripts/two-nodes.yaml down 2> /dev/null"
@@ -87,6 +87,7 @@
     "husky": "^9.0.11",
     "lint-staged": ">=10",
     "nyc": "^15.1.0",
+    "patch-package": "^8.0.0",
     "pinst": "^3.0.0",
     "tap-spec": "^5.0.0",
     "tape": "^5.7.5",
