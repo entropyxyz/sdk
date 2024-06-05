@@ -5,11 +5,12 @@ export default defineConfig((options) => {
     entry: [
       'src/index.ts',
       'src/keys/index.ts',
+      'src/keys/utils.ts',
       'src/utils/index.ts',
-      'src/utils/crypto.ts',
+      'src/utils/crypto/index.ts',
     ],
     replaceNodeEnv: true,
-    format: ['esm'],
+    format: ['esm', 'cjs'],
     dts: true,
     // todo: env var for this?
     sourcemap: false,

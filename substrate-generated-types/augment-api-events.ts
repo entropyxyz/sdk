@@ -26,36 +26,11 @@ import type {
   H256,
   Perbill,
 } from '@polkadot/types/interfaces/runtime'
-import {
-  SpRuntimeDispatchError,
-  SpNposElectionsElectionScore,
-  SpConsensusGrandpaAppPublic,
-  FrameSupportDispatchDispatchInfo,
-  FrameSupportTokensMiscBalanceStatus,
-  PalletStakingRewardDestination,
-  PalletStakingValidatorPrefs,
-  PalletStakingForcing,
-  PalletStakingExtensionServerInfo,
-  PalletRelayerProgramInstance,
-  PalletMultisigTimepoint,
-  PalletStakingExposure,
-  PalletNominationPoolsPoolState,
-  PalletNominationPoolsCommissionChangeRate,
-  PalletElectionProviderMultiPhasePhase,
-  PalletElectionProviderMultiPhaseElectionCompute,
-  PalletImOnlineSr25519AppSr25519Public,
-  PalletDemocracyMetadataOwner,
-  PalletDemocracyVoteThreshold,
-  PalletDemocracyVoteAccountVote,
-  EntropyRuntimeProxyType,
-  EntropySharedOcwMessageProactiveRefresh,
-  EntropySharedOcwMessageDkg,
-} from '@polkadot/types/lookup'
 
 export type __AugmentedEvent<ApiType extends ApiTypes> = AugmentedEvent<ApiType>
 
 declare module '@polkadot/api-base/types/events' {
-  export interface AugmentedEvents<ApiType extends ApiTypes> {
+  interface AugmentedEvents<ApiType extends ApiTypes> {
     bagsList: {
       /**
        * Moved an account from one bag to another.
@@ -210,6 +185,14 @@ declare module '@polkadot/api-base/types/events' {
         ApiType,
         [who: AccountId32, amount: u128],
         { who: AccountId32; amount: u128 }
+      >
+      /**
+       * The `TotalIssuance` was forcefully changed.
+       **/
+      TotalIssuanceForced: AugmentedEvent<
+        ApiType,
+        [old: u128, new_: u128],
+        { old: u128; new_: u128 }
       >
       /**
        * Transfer succeeded.
@@ -701,20 +684,6 @@ declare module '@polkadot/api-base/types/events' {
        **/
       [key: string]: AugmentedEvent<ApiType>
     }
-    freeTx: {
-      /**
-       * A user spent electricity to dispatch a transaction; the account did not pay any
-       * transaction fees.
-       **/
-      ElectricitySpent: AugmentedEvent<
-        ApiType,
-        [AccountId32, Result<Null, SpRuntimeDispatchError>]
-      >
-      /**
-       * Generic event
-       **/
-      [key: string]: AugmentedEvent<ApiType>
-    }
     grandpa: {
       /**
        * New authority set has been applied.
@@ -738,6 +707,31 @@ declare module '@polkadot/api-base/types/events' {
       [key: string]: AugmentedEvent<ApiType>
     }
     identity: {
+      /**
+       * A username authority was added.
+       **/
+      AuthorityAdded: AugmentedEvent<
+        ApiType,
+        [authority: AccountId32],
+        { authority: AccountId32 }
+      >
+      /**
+       * A username authority was removed.
+       **/
+      AuthorityRemoved: AugmentedEvent<
+        ApiType,
+        [authority: AccountId32],
+        { authority: AccountId32 }
+      >
+      /**
+       * A dangling username (as in, a username corresponding to an account that has removed its
+       * identity) has been removed.
+       **/
+      DanglingUsernameRemoved: AugmentedEvent<
+        ApiType,
+        [who: AccountId32, username: Bytes],
+        { who: AccountId32; username: Bytes }
+      >
       /**
        * A name was cleared, and the given balance returned.
        **/
@@ -787,6 +781,22 @@ declare module '@polkadot/api-base/types/events' {
         { who: AccountId32; registrarIndex: u32 }
       >
       /**
+       * A queued username passed its expiration without being claimed and was removed.
+       **/
+      PreapprovalExpired: AugmentedEvent<
+        ApiType,
+        [whose: AccountId32],
+        { whose: AccountId32 }
+      >
+      /**
+       * A username was set as a primary and can be looked up from `who`.
+       **/
+      PrimaryUsernameSet: AugmentedEvent<
+        ApiType,
+        [who: AccountId32, username: Bytes],
+        { who: AccountId32; username: Bytes }
+      >
+      /**
        * A registrar was added.
        **/
       RegistrarAdded: AugmentedEvent<
@@ -820,6 +830,22 @@ declare module '@polkadot/api-base/types/events' {
         { sub: AccountId32; main: AccountId32; deposit: u128 }
       >
       /**
+       * A username was queued, but `who` must accept it prior to `expiration`.
+       **/
+      UsernameQueued: AugmentedEvent<
+        ApiType,
+        [who: AccountId32, username: Bytes, expiration: u32],
+        { who: AccountId32; username: Bytes; expiration: u32 }
+      >
+      /**
+       * A username was set for `who`.
+       **/
+      UsernameSet: AugmentedEvent<
+        ApiType,
+        [who: AccountId32, username: Bytes],
+        { who: AccountId32; username: Bytes }
+      >
+      /**
        * Generic event
        **/
       [key: string]: AugmentedEvent<ApiType>
@@ -842,8 +868,8 @@ declare module '@polkadot/api-base/types/events' {
        **/
       SomeOffline: AugmentedEvent<
         ApiType,
-        [offline: Vec<ITuple<[AccountId32, PalletStakingExposure]>>],
-        { offline: Vec<ITuple<[AccountId32, PalletStakingExposure]>> }
+        [offline: Vec<ITuple<[AccountId32, SpStakingExposure]>>],
+        { offline: Vec<ITuple<[AccountId32, SpStakingExposure]>> }
       >
       /**
        * Generic event
@@ -1018,6 +1044,20 @@ declare module '@polkadot/api-base/types/events' {
         { poolId: u32; commission: u128 }
       >
       /**
+       * Pool commission claim permission has been updated.
+       **/
+      PoolCommissionClaimPermissionUpdated: AugmentedEvent<
+        ApiType,
+        [
+          poolId: u32,
+          permission: Option<PalletNominationPoolsCommissionClaimPermission>
+        ],
+        {
+          poolId: u32
+          permission: Option<PalletNominationPoolsCommissionClaimPermission>
+        }
+      >
+      /**
        * A pool's commission setting has been changed.
        **/
       PoolCommissionUpdated: AugmentedEvent<
@@ -1138,6 +1178,28 @@ declare module '@polkadot/api-base/types/events' {
        **/
       [key: string]: AugmentedEvent<ApiType>
     }
+    parameters: {
+      /**
+       * Max instructions per program changes
+       **/
+      MaxInstructionsPerProgramsChanged: AugmentedEvent<
+        ApiType,
+        [maxInstructionsPerPrograms: u64],
+        { maxInstructionsPerPrograms: u64 }
+      >
+      /**
+       * Request limit changed
+       **/
+      RequestLimitChanged: AugmentedEvent<
+        ApiType,
+        [requestLimit: u32],
+        { requestLimit: u32 }
+      >
+      /**
+       * Generic event
+       **/
+      [key: string]: AugmentedEvent<ApiType>
+    }
     preimage: {
       /**
        * A preimage has ben cleared.
@@ -1165,12 +1227,16 @@ declare module '@polkadot/api-base/types/events' {
         [
           deployer: AccountId32,
           programHash: H256,
-          configurationInterface: Bytes
+          configurationSchema: Bytes,
+          auxiliaryDataSchema: Bytes,
+          oracleDataPointer: Bytes
         ],
         {
           deployer: AccountId32
           programHash: H256
-          configurationInterface: Bytes
+          configurationSchema: Bytes
+          auxiliaryDataSchema: Bytes
+          oracleDataPointer: Bytes
         }
       >
       /**
@@ -1344,15 +1410,11 @@ declare module '@polkadot/api-base/types/events' {
        **/
       [key: string]: AugmentedEvent<ApiType>
     }
-    relayer: {
+    registry: {
       /**
-       * An account has been registered. \[who\]
+       * An account has been registered. \[who, verifying_key]
        **/
-      AccountRegistered: AugmentedEvent<ApiType, [AccountId32]>
-      /**
-       * An account has been registered. [who, signing_group]
-       **/
-      AccountRegistering: AugmentedEvent<ApiType, [AccountId32, u8]>
+      AccountRegistered: AugmentedEvent<ApiType, [AccountId32, Bytes]>
       /**
        * An account has been registered. [who, block_number, failures]
        **/
@@ -1366,8 +1428,12 @@ declare module '@polkadot/api-base/types/events' {
        **/
       ProgramInfoChanged: AugmentedEvent<
         ApiType,
-        [AccountId32, Vec<PalletRelayerProgramInstance>]
+        [AccountId32, Vec<PalletRegistryProgramInstance>]
       >
+      /**
+       * An account has been registered. [who, signing_group, verifying_key]
+       **/
+      RecievedConfirmation: AugmentedEvent<ApiType, [AccountId32, u8, Bytes]>
       /**
        * An account cancelled their registration
        **/
@@ -1460,9 +1526,13 @@ declare module '@polkadot/api-base/types/events' {
     }
     slashing: {
       /**
-       * A custom offence has been logged. [who, offenders]
+       * A report about an unstable peer has been submitted and taken note of ([who, offender]).
        **/
-      Offence: AugmentedEvent<ApiType, [AccountId32, Vec<AccountId32>]>
+      NoteReport: AugmentedEvent<ApiType, [AccountId32, AccountId32]>
+      UnresponsivenessOffence: AugmentedEvent<
+        ApiType,
+        [Vec<ITuple<[AccountId32, SpStakingExposure]>>]
+      >
       /**
        * Generic event
        **/
@@ -1487,6 +1557,14 @@ declare module '@polkadot/api-base/types/events' {
         ApiType,
         [stash: AccountId32],
         { stash: AccountId32 }
+      >
+      /**
+       * Report of a controller batch deprecation.
+       **/
+      ControllerBatchDeprecated: AugmentedEvent<
+        ApiType,
+        [failures: u32],
+        { failures: u32 }
       >
       /**
        * The era payout has been set; the first balance is the validator-payout; the second is
@@ -1641,6 +1719,13 @@ declare module '@polkadot/api-base/types/events' {
         [AccountId32, PalletStakingExtensionServerInfo]
       >
       /**
+       * Validators subgroups rotated [old, new]
+       **/
+      ValidatorSubgroupsRotated: AugmentedEvent<
+        ApiType,
+        [Vec<Vec<AccountId32>>, Vec<Vec<AccountId32>>]
+      >
+      /**
        * Validator sync status changed [who, sync_status]
        **/
       ValidatorSyncStatus: AugmentedEvent<ApiType, [AccountId32, bool]>
@@ -1655,9 +1740,13 @@ declare module '@polkadot/api-base/types/events' {
        **/
       KeyChanged: AugmentedEvent<
         ApiType,
-        [oldSudoer: Option<AccountId32>],
-        { oldSudoer: Option<AccountId32> }
+        [old: Option<AccountId32>, new_: AccountId32],
+        { old: Option<AccountId32>; new_: AccountId32 }
       >
+      /**
+       * The key was permanently removed.
+       **/
+      KeyRemoved: AugmentedEvent<ApiType, []>
       /**
        * A sudo call just took place.
        **/
@@ -1729,6 +1818,14 @@ declare module '@polkadot/api-base/types/events' {
         ApiType,
         [sender: AccountId32, hash_: H256],
         { sender: AccountId32; hash_: H256 }
+      >
+      /**
+       * An upgrade was authorized.
+       **/
+      UpgradeAuthorized: AugmentedEvent<
+        ApiType,
+        [codeHash: H256, checkVersion: bool],
+        { codeHash: H256; checkVersion: bool }
       >
       /**
        * Generic event

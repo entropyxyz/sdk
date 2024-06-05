@@ -1,5 +1,9 @@
-import * as eth from './eth'
+import * as deviceKeyProxy from './device-key-proxy'
+import * as noop from './noop'
 
 export const defaultAdapters = {
-  eth,
+  deviceKeyProxy,
+  noop,
 }
+
+export const defaultOrder = [deviceKeyProxy.type]

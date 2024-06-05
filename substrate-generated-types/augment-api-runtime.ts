@@ -10,7 +10,14 @@ import type {
   AugmentedCall,
   DecoratedCallBase,
 } from '@polkadot/api-base/types'
-import type { Bytes, Null, Option, Vec, u32 } from '@polkadot/types-codec'
+import type {
+  Bytes,
+  Null,
+  Option,
+  Result,
+  Vec,
+  u32,
+} from '@polkadot/types-codec'
 import type { AnyNumber, ITuple } from '@polkadot/types-codec/types'
 import type {
   BabeEquivocationProof,
@@ -25,6 +32,7 @@ import type {
 import type { BlockHash } from '@polkadot/types/interfaces/chain'
 import type { AuthorityId } from '@polkadot/types/interfaces/consensus'
 import type { Extrinsic } from '@polkadot/types/interfaces/extrinsics'
+import type { GenesisBuildErr } from '@polkadot/types/interfaces/genesisBuilder'
 import type {
   AuthorityList,
   GrandpaEquivocationProof,
@@ -58,7 +66,7 @@ export type __DecoratedCallBase<ApiType extends ApiTypes> =
   DecoratedCallBase<ApiType>
 
 declare module '@polkadot/api-base/types/calls' {
-  export interface AugmentedCalls<ApiType extends ApiTypes> {
+  interface AugmentedCalls<ApiType extends ApiTypes> {
     /** 0xbc9d89904f5b923f/1 */
     accountNonceApi: {
       /**
@@ -220,6 +228,26 @@ declare module '@polkadot/api-base/types/calls' {
        * Returns the version of the runtime.
        **/
       version: AugmentedCall<ApiType, () => Observable<RuntimeVersion>>
+      /**
+       * Generic call
+       **/
+      [key: string]: DecoratedCallBase<ApiType>
+    }
+    /** 0xfbc577b9d747efd6/1 */
+    genesisBuilder: {
+      /**
+       * Build `RuntimeGenesisConfig` from a JSON blob not using any defaults and store it in the storage.
+       **/
+      buildConfig: AugmentedCall<
+        ApiType,
+        (
+          json: Bytes | string | Uint8Array
+        ) => Observable<Result<ITuple<[]>, GenesisBuildErr>>
+      >
+      /**
+       * Creates the default `RuntimeGenesisConfig` and returns it as a JSON blob.
+       **/
+      createDefaultConfig: AugmentedCall<ApiType, () => Observable<Bytes>>
       /**
        * Generic call
        **/

@@ -33,6 +33,7 @@ import type {
   FrameSupportTokensMiscBalanceStatus,
   FrameSystemAccountInfo,
   FrameSystemCall,
+  FrameSystemCodeUpgradeAuthorization,
   FrameSystemError,
   FrameSystemEvent,
   FrameSystemEventRecord,
@@ -55,6 +56,7 @@ import type {
   PalletBagsListListListError,
   PalletBagsListListNode,
   PalletBalancesAccountData,
+  PalletBalancesAdjustmentDirection,
   PalletBalancesBalanceLock,
   PalletBalancesCall,
   PalletBalancesError,
@@ -102,26 +104,19 @@ import type {
   PalletElectionsPhragmenRenouncing,
   PalletElectionsPhragmenSeatHolder,
   PalletElectionsPhragmenVoter,
-  PalletFreeTxCall,
-  PalletFreeTxElectricalPanel,
-  PalletFreeTxElectricityMeter,
-  PalletFreeTxError,
-  PalletFreeTxEvent,
-  PalletFreeTxValidateElectricityPayment,
   PalletGrandpaCall,
   PalletGrandpaError,
   PalletGrandpaEvent,
   PalletGrandpaStoredPendingChange,
   PalletGrandpaStoredState,
-  PalletIdentityBitFlags,
+  PalletIdentityAuthorityProperties,
   PalletIdentityCall,
   PalletIdentityError,
   PalletIdentityEvent,
   PalletIdentityJudgement,
+  PalletIdentityLegacyIdentityInfo,
   PalletIdentityRegistrarInfo,
   PalletIdentityRegistration,
-  PalletIdentitySimpleIdentityField,
-  PalletIdentitySimpleIdentityInfo,
   PalletImOnlineCall,
   PalletImOnlineError,
   PalletImOnlineEvent,
@@ -145,6 +140,7 @@ import type {
   PalletNominationPoolsClaimPermission,
   PalletNominationPoolsCommission,
   PalletNominationPoolsCommissionChangeRate,
+  PalletNominationPoolsCommissionClaimPermission,
   PalletNominationPoolsConfigOpAccountId32,
   PalletNominationPoolsConfigOpPerbill,
   PalletNominationPoolsConfigOpU128,
@@ -160,6 +156,9 @@ import type {
   PalletNominationPoolsSubPools,
   PalletNominationPoolsUnbondPool,
   PalletOffencesEvent,
+  PalletParametersModuleCall,
+  PalletParametersModuleError,
+  PalletParametersModuleEvent,
   PalletPreimageCall,
   PalletPreimageError,
   PalletPreimageEvent,
@@ -182,13 +181,13 @@ import type {
   PalletRecoveryError,
   PalletRecoveryEvent,
   PalletRecoveryRecoveryConfig,
-  PalletRelayerCall,
-  PalletRelayerError,
-  PalletRelayerEvent,
-  PalletRelayerProgramInstance,
-  PalletRelayerRegisteredInfo,
-  PalletRelayerRegisteringDetails,
-  PalletRelayerValidateConfirmRegistered,
+  PalletRegistryCall,
+  PalletRegistryError,
+  PalletRegistryEvent,
+  PalletRegistryProgramInstance,
+  PalletRegistryRegisteredInfo,
+  PalletRegistryRegisteringDetails,
+  PalletRegistryValidateConfirmRegistered,
   PalletSchedulerCall,
   PalletSchedulerError,
   PalletSchedulerEvent,
@@ -200,14 +199,12 @@ import type {
   PalletSlashingEvent,
   PalletStakingActiveEraInfo,
   PalletStakingEraRewardPoints,
-  PalletStakingExposure,
   PalletStakingExtensionCall,
   PalletStakingExtensionError,
   PalletStakingExtensionEvent,
   PalletStakingExtensionRefreshInfo,
   PalletStakingExtensionServerInfo,
   PalletStakingForcing,
-  PalletStakingIndividualExposure,
   PalletStakingNominations,
   PalletStakingPalletCall,
   PalletStakingPalletConfigOpPerbill,
@@ -240,6 +237,7 @@ import type {
   PalletTransactionStorageCall,
   PalletTransactionStorageError,
   PalletTransactionStorageEvent,
+  PalletTransactionStorageHoldReason,
   PalletTransactionStorageTransactionInfo,
   PalletTreasuryCall,
   PalletTreasuryError,
@@ -290,7 +288,11 @@ import type {
   SpRuntimeTokenError,
   SpRuntimeTransactionalError,
   SpSessionMembershipProof,
+  SpStakingExposure,
+  SpStakingExposurePage,
+  SpStakingIndividualExposure,
   SpStakingOffenceOffenceDetails,
+  SpStakingPagedExposureMetadata,
   SpTransactionStorageProofTransactionStorageProof,
   SpVersionRuntimeVersion,
   SpWeightsRuntimeDbWeight,
@@ -298,7 +300,7 @@ import type {
 } from '@polkadot/types/lookup'
 
 declare module '@polkadot/types/types/registry' {
-  export interface InterfaceTypes {
+  interface InterfaceTypes {
     EntropyRuntimeNposCompactSolution16: EntropyRuntimeNposCompactSolution16
     EntropyRuntimeOriginCaller: EntropyRuntimeOriginCaller
     EntropyRuntimeProxyType: EntropyRuntimeProxyType
@@ -326,6 +328,7 @@ declare module '@polkadot/types/types/registry' {
     FrameSupportTokensMiscBalanceStatus: FrameSupportTokensMiscBalanceStatus
     FrameSystemAccountInfo: FrameSystemAccountInfo
     FrameSystemCall: FrameSystemCall
+    FrameSystemCodeUpgradeAuthorization: FrameSystemCodeUpgradeAuthorization
     FrameSystemError: FrameSystemError
     FrameSystemEvent: FrameSystemEvent
     FrameSystemEventRecord: FrameSystemEventRecord
@@ -348,6 +351,7 @@ declare module '@polkadot/types/types/registry' {
     PalletBagsListListListError: PalletBagsListListListError
     PalletBagsListListNode: PalletBagsListListNode
     PalletBalancesAccountData: PalletBalancesAccountData
+    PalletBalancesAdjustmentDirection: PalletBalancesAdjustmentDirection
     PalletBalancesBalanceLock: PalletBalancesBalanceLock
     PalletBalancesCall: PalletBalancesCall
     PalletBalancesError: PalletBalancesError
@@ -395,26 +399,19 @@ declare module '@polkadot/types/types/registry' {
     PalletElectionsPhragmenRenouncing: PalletElectionsPhragmenRenouncing
     PalletElectionsPhragmenSeatHolder: PalletElectionsPhragmenSeatHolder
     PalletElectionsPhragmenVoter: PalletElectionsPhragmenVoter
-    PalletFreeTxCall: PalletFreeTxCall
-    PalletFreeTxElectricalPanel: PalletFreeTxElectricalPanel
-    PalletFreeTxElectricityMeter: PalletFreeTxElectricityMeter
-    PalletFreeTxError: PalletFreeTxError
-    PalletFreeTxEvent: PalletFreeTxEvent
-    PalletFreeTxValidateElectricityPayment: PalletFreeTxValidateElectricityPayment
     PalletGrandpaCall: PalletGrandpaCall
     PalletGrandpaError: PalletGrandpaError
     PalletGrandpaEvent: PalletGrandpaEvent
     PalletGrandpaStoredPendingChange: PalletGrandpaStoredPendingChange
     PalletGrandpaStoredState: PalletGrandpaStoredState
-    PalletIdentityBitFlags: PalletIdentityBitFlags
+    PalletIdentityAuthorityProperties: PalletIdentityAuthorityProperties
     PalletIdentityCall: PalletIdentityCall
     PalletIdentityError: PalletIdentityError
     PalletIdentityEvent: PalletIdentityEvent
     PalletIdentityJudgement: PalletIdentityJudgement
+    PalletIdentityLegacyIdentityInfo: PalletIdentityLegacyIdentityInfo
     PalletIdentityRegistrarInfo: PalletIdentityRegistrarInfo
     PalletIdentityRegistration: PalletIdentityRegistration
-    PalletIdentitySimpleIdentityField: PalletIdentitySimpleIdentityField
-    PalletIdentitySimpleIdentityInfo: PalletIdentitySimpleIdentityInfo
     PalletImOnlineCall: PalletImOnlineCall
     PalletImOnlineError: PalletImOnlineError
     PalletImOnlineEvent: PalletImOnlineEvent
@@ -438,6 +435,7 @@ declare module '@polkadot/types/types/registry' {
     PalletNominationPoolsClaimPermission: PalletNominationPoolsClaimPermission
     PalletNominationPoolsCommission: PalletNominationPoolsCommission
     PalletNominationPoolsCommissionChangeRate: PalletNominationPoolsCommissionChangeRate
+    PalletNominationPoolsCommissionClaimPermission: PalletNominationPoolsCommissionClaimPermission
     PalletNominationPoolsConfigOpAccountId32: PalletNominationPoolsConfigOpAccountId32
     PalletNominationPoolsConfigOpPerbill: PalletNominationPoolsConfigOpPerbill
     PalletNominationPoolsConfigOpU128: PalletNominationPoolsConfigOpU128
@@ -453,6 +451,9 @@ declare module '@polkadot/types/types/registry' {
     PalletNominationPoolsSubPools: PalletNominationPoolsSubPools
     PalletNominationPoolsUnbondPool: PalletNominationPoolsUnbondPool
     PalletOffencesEvent: PalletOffencesEvent
+    PalletParametersModuleCall: PalletParametersModuleCall
+    PalletParametersModuleError: PalletParametersModuleError
+    PalletParametersModuleEvent: PalletParametersModuleEvent
     PalletPreimageCall: PalletPreimageCall
     PalletPreimageError: PalletPreimageError
     PalletPreimageEvent: PalletPreimageEvent
@@ -475,13 +476,13 @@ declare module '@polkadot/types/types/registry' {
     PalletRecoveryError: PalletRecoveryError
     PalletRecoveryEvent: PalletRecoveryEvent
     PalletRecoveryRecoveryConfig: PalletRecoveryRecoveryConfig
-    PalletRelayerCall: PalletRelayerCall
-    PalletRelayerError: PalletRelayerError
-    PalletRelayerEvent: PalletRelayerEvent
-    PalletRelayerProgramInstance: PalletRelayerProgramInstance
-    PalletRelayerRegisteredInfo: PalletRelayerRegisteredInfo
-    PalletRelayerRegisteringDetails: PalletRelayerRegisteringDetails
-    PalletRelayerValidateConfirmRegistered: PalletRelayerValidateConfirmRegistered
+    PalletRegistryCall: PalletRegistryCall
+    PalletRegistryError: PalletRegistryError
+    PalletRegistryEvent: PalletRegistryEvent
+    PalletRegistryProgramInstance: PalletRegistryProgramInstance
+    PalletRegistryRegisteredInfo: PalletRegistryRegisteredInfo
+    PalletRegistryRegisteringDetails: PalletRegistryRegisteringDetails
+    PalletRegistryValidateConfirmRegistered: PalletRegistryValidateConfirmRegistered
     PalletSchedulerCall: PalletSchedulerCall
     PalletSchedulerError: PalletSchedulerError
     PalletSchedulerEvent: PalletSchedulerEvent
@@ -493,14 +494,12 @@ declare module '@polkadot/types/types/registry' {
     PalletSlashingEvent: PalletSlashingEvent
     PalletStakingActiveEraInfo: PalletStakingActiveEraInfo
     PalletStakingEraRewardPoints: PalletStakingEraRewardPoints
-    PalletStakingExposure: PalletStakingExposure
     PalletStakingExtensionCall: PalletStakingExtensionCall
     PalletStakingExtensionError: PalletStakingExtensionError
     PalletStakingExtensionEvent: PalletStakingExtensionEvent
     PalletStakingExtensionRefreshInfo: PalletStakingExtensionRefreshInfo
     PalletStakingExtensionServerInfo: PalletStakingExtensionServerInfo
     PalletStakingForcing: PalletStakingForcing
-    PalletStakingIndividualExposure: PalletStakingIndividualExposure
     PalletStakingNominations: PalletStakingNominations
     PalletStakingPalletCall: PalletStakingPalletCall
     PalletStakingPalletConfigOpPerbill: PalletStakingPalletConfigOpPerbill
@@ -533,6 +532,7 @@ declare module '@polkadot/types/types/registry' {
     PalletTransactionStorageCall: PalletTransactionStorageCall
     PalletTransactionStorageError: PalletTransactionStorageError
     PalletTransactionStorageEvent: PalletTransactionStorageEvent
+    PalletTransactionStorageHoldReason: PalletTransactionStorageHoldReason
     PalletTransactionStorageTransactionInfo: PalletTransactionStorageTransactionInfo
     PalletTreasuryCall: PalletTreasuryCall
     PalletTreasuryError: PalletTreasuryError
@@ -583,7 +583,11 @@ declare module '@polkadot/types/types/registry' {
     SpRuntimeTokenError: SpRuntimeTokenError
     SpRuntimeTransactionalError: SpRuntimeTransactionalError
     SpSessionMembershipProof: SpSessionMembershipProof
+    SpStakingExposure: SpStakingExposure
+    SpStakingExposurePage: SpStakingExposurePage
+    SpStakingIndividualExposure: SpStakingIndividualExposure
     SpStakingOffenceOffenceDetails: SpStakingOffenceOffenceDetails
+    SpStakingPagedExposureMetadata: SpStakingPagedExposureMetadata
     SpTransactionStorageProofTransactionStorageProof: SpTransactionStorageProofTransactionStorageProof
     SpVersionRuntimeVersion: SpVersionRuntimeVersion
     SpWeightsRuntimeDbWeight: SpWeightsRuntimeDbWeight

@@ -1,60 +1,78 @@
+import test from 'tape'
 import { crypto, cryptoIsLoaded } from '../src/utils/crypto'
-import { readKey } from './testing-utils/readKey'
+import { stripHexPrefix } from '../src/utils'
+import { promiseRunner, readKey } from './testing-utils'
+import { charlieStashSeed } from './testing-utils/constants'
+import { hexStringToUint8Array } from '../src/utils'
+import { generateKeyPairFromSeed } from '../src/keys/utils'
 
-describe('Crypto Tests', () => {
-  beforeAll(async () => {
-    await cryptoIsLoaded
-  })
+test('Crypto', async (t) => {
+  const run = promiseRunner(t)
 
-  function stripHexPrefix(str: string): string {
-    return str.startsWith('0x') ? str.slice(2) : str
-  }
+  await run('crypto loaded', cryptoIsLoaded)
 
   const mockData = {
-    endpoint: 'ws://127.0.0.1:3001',
+    endpoint: '127.0.0.1:3001',
     tssAccount: '5H8qc7f4mXFY16NBWSB9qkc6pTks98HdVuoQTs1aova5fRtN',
     x25519_public_key: stripHexPrefix(
       '0x0ac029f0b853b23bed652d6d0de69b7cc38d94f93732eefc85b5861e90f73a22'
     ),
   }
 
-  it(`parses server threshold info`, async () => {
-    const mockReturn = [
+  /* Parse threshold info */
+  {
+    const expected = [
       10, 192, 41, 240, 184, 83, 178, 59, 237, 101, 45, 109, 13, 230, 155, 124,
       195, 141, 148, 249, 55, 50, 238, 252, 133, 181, 134, 30, 144, 247, 58, 34,
-    ]
+    ].toString()
 
-    const result = crypto.fromHex(mockData.x25519_public_key)
-    expect(result.toString()).toBe(mockReturn.toString())
-  })
-  it(`encrypts and signs`, async () => {
-    const aliceSecretKey: Uint8Array = new Uint8Array([
-      152, 49, 157, 79, 248, 169, 80, 140, 75, 176, 207, 11, 90, 120, 215, 96,
-      160, 178, 8, 44, 2, 119, 94, 110, 130, 55, 8, 22, 254, 223, 255, 72, 146,
-      90, 34, 93, 151, 170, 0, 104, 45, 106, 89, 185, 91, 24, 120, 12, 16, 215,
-      3, 35, 54, 232, 143, 52, 66, 180, 35, 97, 244, 166, 96, 17,
-    ])
+    const result = await run(
+      'fromHex',
+      crypto.fromHex(mockData.x25519_public_key)
+    )
+    t.deepEqual(result.toString(), expected, 'fromHex correct')
+  }
 
-    const alicePublicKey = await crypto.publicKeyFromSecret(aliceSecretKey)
+  /* Encrypt + sign */
 
-    const serverDHKey = crypto.fromHex(mockData.x25519_public_key)
-    expect(serverDHKey).not.toEqual(undefined)
+  {
+    const charlieSecretSeed: Uint8Array =
+      hexStringToUint8Array(charlieStashSeed)
+
+    const charlieKeyPair = generateKeyPairFromSeed(charlieStashSeed)
+    const charliePublicKeyPair = await run(
+      'publicKeyFromSecret works',
+      crypto.fromSecretKey(charlieSecretSeed)
+    )
+    const charliePublicKey = charliePublicKeyPair.publicKey()
+    const charlieSecretKey = charliePublicKeyPair.secretKey()
+
+    const serverDHKey = await run(
+      'fromHex works',
+      crypto.fromHex(mockData.x25519_public_key)
+    )
     const root = process.cwd()
 
     const thresholdKey = (await readKey(
       `${root + '/tests/testing-utils/test-keys/0'}`
     )) as Uint8Array
 
-    const result = await crypto.encryptAndSign(
-      aliceSecretKey,
-      thresholdKey,
-      alicePublicKey
+    const result = await run(
+      'encryptAndSign',
+      crypto.encryptAndSign(
+        charlieKeyPair.pair.secretKey,
+        thresholdKey,
+        charliePublicKey
+      )
     )
+    const expected = await run(
+      'decryptAndVerify',
+      crypto.decryptAndVerify(charlieSecretSeed, result)
+    )
+    t.deepEqual(expected, thresholdKey, 'decrypt works')
+  }
 
-    expect(await crypto.decryptAndVerify(aliceSecretKey, result)).toStrictEqual(
-      thresholdKey
-    )
-  })
+  t.end()
 })
 
 // not currently sure how to handle thresholdKey since i believe it should be "encoded" per encrypt_and_sign

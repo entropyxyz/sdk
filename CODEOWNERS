@@ -1,0 +1,5 @@
+# Starting with root ownership for the js-devs team
+# We can refine it as we go, and setup ownership for specific directories
+# as shown here: 
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners#example-of-a-codeowners-file
+* @frankiebee @mixmix @jawndiego @rh0delta

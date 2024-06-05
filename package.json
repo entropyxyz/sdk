@@ -1,30 +1,62 @@
 {
   "name": "@entropyxyz/sdk",
-  "version": "0.1.4",
+  "version": "0.1.5-5",
   "license": "AGPL-3.0-only",
   "description": "JS SDK for entropy blockchain ",
   "type": "module",
   "files": [
-    "dist"
+    "dist",
+    "dist/keys",
+    "dist/keys/utils.ts",
+    "dist/utils"
   ],
+  "exports": {
+    ".": {
+      "module": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "default": "./dist/index.js"
+    },
+    "./keys": {
+      "module": "./dist/keys/index.js",
+      "require": "./dist/keys/index.cjs",
+      "default": "./dist/keys/index.js"
+    },
+    "./keys/utils": {
+      "module": "./dist/keys/utils.js",
+      "require": "./dist/keys/utils.cjs",
+      "default": "./dist/keys/index.js"
+    },
+    "./crypto-utils": {
+      "module": "./dist/utils/crypto.js",
+      "require": "./dist/utils/crypto.cjs",
+      "default": "./dist/utils/crypto.js"
+    },
+    "./gen-utils": {
+      "module": "./dist/utils/index.js",
+      "require": "./dist/utils/index.cjs",
+      "default": "./dist/utils/index.js"
+    }
+  },
   "types": "dist/index.d.ts",
-  "module": "dist/index.js",
-  "browser": "dist/index.js",
   "scripts": {
-    "test": "yarn test:setup && yarn removedb && jest --runInBand --detectOpenHandles",
-    "test:setup": "docker version && [ \"$(cat .nvmrc)\" = \"$(node --version)\" ] && echo \"\\nCORRECT NODE VERSION\\n\" || { echo \"\\nINCORRECT NODE VERSION\\n\"; exit 1; }",
-    "test:log": "yarn removedb && jest --runInBand --detectOpenHandles --silent=false --verbose",
+    "test": "yarn test:setup && yarn test:types && yarn test:ts && yarn test:only && yarn test:require && yarn test:import",
+    "test:setup": "./dev/bin/check-tools.sh && yarn removedb && yarn build",
+    "test:types": "tsc",
+    "test:ts": "set -e; for t in tests/*.test.ts; do npx tsx $t | tap-spec; done",
+    "test:require": "node tests/require.test.cjs | tap-spec",
+    "test:import": "node tests/import.test.mjs | tap-spec",
+    "test:only": "if grep -r --exclude-dir=node_modules --exclude-dir=.git --color 'test\\.only' ; then exit 1; fi",
+    "test:coverage": "nyc yarn test",
     "lint": "yarn lint:ts && yarn lint:eslint",
     "lint:ts": "tsc",
     "lint:eslint": "eslint . --ext .ts --fix",
-    "prettier": "prettier --write .",
     "peek": "tsc --build --clean",
     "burn": "rm -Rf node_modules && yarn cache clean --all && yarn install",
-    "bundle": "tsup",
-    "bundle:watch": "tsup --watch",
-    "bundle:node": "tsup --platform node ",
-    "bundle:browser": "tsup --platform browser",
-    "build": "yarn bundle",
+    "build": "tsup",
+    "build:watch": "tsup --watch",
+    "build:node": "tsup --platform node ",
+    "build:browser": "tsup --platform browser",
+    "build:link": "yarn build && yarn unlink && yarn link",
     "find-deadcode": "ts-prune",
     "generate:types": "dev/bin/generate-types.sh",
     "generate:docs": "typedoc --options typedoc.config.cjs --tsconfig tsconfig.json",
@@ -32,7 +64,7 @@
     "postinstall": "husky",
     "prepack": "pinst --disable",
     "postpack": "pinst --enable",
-    "removedb": "rm -rf .entropy"
+    "removedb": "rm -rf .entropy && docker compose --file dev/docker-scripts/two-nodes.yaml down 2> /dev/null"
   },
   "repository": {
     "type": "git",
@@ -49,35 +81,37 @@
   "devDependencies": {
     "@mxssfd/typedoc-theme": "^1.1.3",
     "@polkadot/typegen": "^10.11.1",
-    "@types/jest": "^29.4.0",
+    "@types/tape": "^5",
     "@typescript-eslint/eslint-plugin": "^5.43.0",
     "@typescript-eslint/parser": "^5.43.0",
     "depcheck": "^1.4.7",
     "eslint": "^8.57.0",
     "husky": "^9.0.11",
-    "jest": "^29.4.3",
     "lint-staged": ">=10",
+    "nyc": "^15.1.0",
     "pinst": "^3.0.0",
-    "prettier": "2.8.8",
-    "ts-jest": "^29.0.5",
+    "tap-spec": "^5.0.0",
+    "tape": "^5.7.5",
     "ts-node": "^10.9.1",
     "ts-prune": "^0.10.3",
     "tsup": "^6.5.0",
+    "tsx": "^4.9.3",
     "typedoc": "^0.25.13",
     "typedoc-plugin-missing-exports": "^2.2.0",
     "typedoc-plugin-rename-defaults": "^0.7.0",
     "typescript": "^4.9.5"
   },
   "dependencies": {
-    "@entropyxyz/entropy-protocol-nodejs": "^0.1.0",
-    "@entropyxyz/entropy-protocol-web": "^0.1.0",
-    "@polkadot/api": "^10.11.1",
-    "@types/node": "^20.10.3",
-    "ethereum-cryptography": "^2.1.2",
-    "ethereumjs-tx": "^2.1.2"
+    "@entropyxyz/entropy-protocol-nodejs": "^0.2.0",
+    "@entropyxyz/entropy-protocol-web": "^0.2.0",
+    "@polkadot/api": "^10.13.1",
+    "@types/node": "^20.12.12",
+    "debug": "^4.3.4",
+    "hpke-js": "^1.2.7",
+    "uuid": "^9.0.1"
   },
   "lint-staged": {
-    "*.ts": "eslint --fix",
-    "*.{js,ts,json,md}": "prettier --write"
-  }
+    "*.ts": "eslint --fix"
+  },
+  "packageManager": "yarn@1.22.1"
 }

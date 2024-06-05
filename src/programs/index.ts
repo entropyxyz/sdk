@@ -2,143 +2,123 @@ import { ApiPromise } from '@polkadot/api'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
 import ExtrinsicBaseClass from '../extrinsic'
 import ProgramDev from './dev'
-import { Signer } from '../types'
+import { Signer } from '../keys/types/internal'
 
-export interface ProgramData {
-  programPointer: string
-  programConfig?: unknown
-}
-
-interface ProgramManagerOpts {
-  /** Substrate API object. */
-  substrate: ApiPromise
-  /** The signer object for the user interfacing with Entropy. */
-  programModKey: Signer
-  /** The signer object for the user interfacing with Entropy. */
-  programDeployKey?: Signer
-}
-
-class DummyProgramDev {
-  deploy() {
-    throw new Error('Cannot deploy, requires EntropyAccount.programDeployKey')
-  }
-
-  get() {
-    throw new Error('Cannot get, requires EntropyAccount.programDeployKey')
-  }
+export interface ProgramInstance {
+  program_pointer: string
+  program_config?: unknown
 }
 
 /**
- * The ProgramManager class provides an interface to interact with Entropy Programs.
+ * @remarks
+ * The ProgramManager class provides an interface that manages program instances, providing methods to get, set, add, and remove programs.
+ * @alpha
  */
-class ProgramManager extends ExtrinsicBaseClass {
+export default class ProgramManager extends ExtrinsicBaseClass {
   /**
    * Creates an instance of ProgramManager.
-   *
-   * @param {ProgramManagerOpts}
-   *
+   * @param {ApiPromise} substrate - Substrate API object.
+   * @param {Signer} deployer - The signer object for the user interfacing with Entropy.
+   * @param {Signer} programModKey - The Signer instance for modifying programs.
    * @remarks
    * The constructor initializes the Substrate api and the signer.
    * @alpha
    */
-  dev: ProgramDev | DummyProgramDev
-  constructor(opts: ProgramManagerOpts) {
-    super({
-      substrate: opts.substrate,
-      signer: opts.programModKey,
-    })
+  dev: ProgramDev
 
-    this.dev = opts.programDeployKey
-      ? new ProgramDev({
-        substrate: opts.substrate,
-        signer: opts.programDeployKey,
-      })
-      : new DummyProgramDev()
+  constructor ({
+    substrate,
+    deployer,
+    programModKey,
+  }: {
+    substrate: ApiPromise
+    deployer: Signer
+    programModKey: Signer
+  }) {
+    super({ substrate, signer: programModKey })
+    this.dev = new ProgramDev({ substrate, signer: deployer })
   }
 
   /**
-   * Retrieves the program associated with a given sigReqAccount (account)
+   * Retrieves the verifying key of the signer.
    *
-   * @param {string} sigReqAccount - The account key, defaulting to the signer's wallet address if not provided.
-   * @returns {Promise<ArrayBuffer>} - The program as an ArrayBuffer.
-   * @throws {Error} If no program is defined for the given account.
-   *
+   * @returns {string | undefined} The first verifying key if available, otherwise undefined.
+   */
+
+  get verifyingKey () {
+    return this.signer.verifyingKeys ? this.signer.verifyingKeys[0] : undefined
+  }
+
+  /**
+   * Retrieves the program associated with a given programModKey (account)
+   * @param {string} verifyingKey - The account key, defaulting to the signer's wallet address if not provided.
+   * @returns {Promise<ProgramInstance[]>} A promise that resolves to the list of program instances.
+   * @throws {Error} If no programs are found for the account.
    * @remarks
-   * This method communicates with Substrate to fetch bytecode associated with an account.
-   * The response is then processed and converted to an ArrayBuffer before being returned.
+   * This method communicates with Entropy to fetch bytecode associated with an account.
+   * The response is then processed and converted to an ArrayBuffer before being returned
    * @alpha
    */
 
-  async get(sigReqAccount: string): Promise<ProgramData[]> {
-    const registeredOption = await this.substrate.query.relayer.registered(
-      sigReqAccount
+  async get (verifyingKey: string): Promise<ProgramInstance[]> {
+    const registeredOption = await this.substrate.query.registry.registered(
+      verifyingKey
     )
 
     if (registeredOption.isEmpty) {
-      throw new Error(`No programs found for account: ${sigReqAccount}`)
+      throw new Error(`No programs found for account: ${verifyingKey}`)
     }
 
     const registeredInfo = registeredOption.toJSON()
     // @ts-ignore: next line :{
     return (registeredInfo.programsData || []).map((program) => ({
       // pointer: program.pointer.toString(),
-      programPointer: program.programPointer,
+      program_pointer: program.programPointer,
       // double check on how we're passing config
-      programConfig: program.programConfig,
+      program_config: program.programConfig,
     }))
   }
 
   /**
-   * Updates the programs of a specified account.
-   *
-   * @param {ProgramData[]} newList - Array of new program data to set.
-   * @param {string} [sigReqAccount=this.signer.wallet.address] - The account for which the programs will be updated. Defaults to the signer's account.
-   * @param {string} [programModKey] - Optional. An authorized account to modify the programs, if different from the signer's account.
+   * Sets the list of program instances for a verifying key.
+   * @param {string} verifyingKey - The verifying key of the account.
+   * @param {ProgramInstance[]} newList - The new list of program instances.
    * @returns {Promise<void>} - A Promise that resolves when the programs are successfully updated.
-   * @throws {Error} - If the account is unauthorized or there's a problem updating the programs.
-   *
+   * @throws {Error} If the account is not registered or the modification is unauthorized.
    * @remarks
    * This method replaces the existing programs of an account with a new set. It checks for authorization and sends a transaction to update the state.
    * @alpha
    */
 
-  async set(
-    newList: ProgramData[],
-    sigReqAccount = this.signer.wallet.address,
-    programModKey?: string
+  async set (
+    verifyingKey: string = this.verifyingKey,
+    newList: ProgramInstance[]
   ): Promise<void> {
-    programModKey = programModKey || sigReqAccount
-
-    const registeredInfoOption = await this.substrate.query.relayer.registered(
-      sigReqAccount
+    const vkForAddress = await this.substrate.query.registry.modifiableKeys(
+      this.signer.pair.address
     )
 
-    if (registeredInfoOption.isEmpty) {
-      throw new Error(`Account not registered: ${sigReqAccount}`)
+    // @ts-ignore: next-line ... polkadot js anyjson type but his hould always be an array or what ever
+    if (!vkForAddress.toJSON().length) {
+      throw new Error(`Account not registered for: ${verifyingKey}`)
     }
 
-    const registeredInfo = registeredInfoOption.toJSON()
-    const isAuthorized =
-      // @ts-ignore: next line :{
-      registeredInfo.programModificationAccount === programModKey
-
+    // @ts-ignore: next line :{
+    const isAuthorized = vkForAddress.toJSON().includes(verifyingKey)
     if (!isAuthorized) {
-      throw new Error(`Unauthorized modification attempt by ${programModKey}`)
+      throw new Error(`Unauthorized modification attempt by ${verifyingKey}`)
     }
-
-    const newProgramInstances = newList.map((data) => ({
-      programPointer: data.programPointer,
-      programConfig: data.programConfig,
-    }))
 
     const tx: SubmittableExtrinsic<'promise'> =
-      this.substrate.tx.relayer.changeProgramInstance(
-        sigReqAccount,
-        newProgramInstances
+      this.substrate.tx.registry.changeProgramInstance(
+        verifyingKey,
+        newList.map(({ program_pointer, program_config }) => ({
+          program_pointer,
+          program_config,
+        }))
       )
-
-    await this.sendAndWaitFor(tx, false, {
-      section: 'relayer',
+    await this.sendAndWaitFor(tx, {
+      section: 'registry',
       name: 'ProgramInfoChanged',
     })
   }
@@ -146,53 +126,52 @@ class ProgramManager extends ExtrinsicBaseClass {
   /**
    * Removes a specific program from an account.
    * @param {string | Uint8Array} programHashToRemove - The hash of the program to remove.
-   * @param {string} [sigReqAccount=this.signer.wallet.address] - The account from which the program will be removed. Defaults to the signer's account.
-   * @param {string} [programModKey] - Optional. The authorized account to perform the removal, if different from the signer's account.
+   * @param {Signer} programModKey - The Signer instance for modifying programs.
+   * @param {string} verifyingKey - The verifying key of the account.
    * @returns {Promise<void>} - A Promise resolving when the program is successfully removed.
-   *
    * @remarks
    * This method removes a specified program from an account's associated programs. It filters out the specified program and updates the state with the remaining programs.
    * @alpha
    */
 
-  async remove(
+  async remove (
     programHashToRemove: string,
-    sigReqAccount = this.signer.wallet.address,
-    programModKey?: string
+    programModKey = this.signer.pair.address,
+    verifyingKey = this.verifyingKey
   ): Promise<void> {
-    const currentPrograms = await this.get(sigReqAccount)
+    const currentPrograms = await this.get(verifyingKey)
     // creates new array that contains all of the currentPrograms except programHashToRemove
     const updatedPrograms = currentPrograms.filter(
-      (program) => program.programPointer !== programHashToRemove
+      (program) => program.program_pointer !== programHashToRemove
     )
-    await this.set(updatedPrograms, sigReqAccount, programModKey)
+
+    await this.set(programModKey, updatedPrograms)
+    this.signer.verifyingKeys = this.signer.verifyingKeys.reduce(
+      (agg, pointer): string[] => {
+        if (pointer === programHashToRemove) return agg
+        agg.push(pointer)
+        return agg
+      },
+      []
+    )
   }
 
   /**
    * Adds a new program for a specific account.
    * @param {ProgramData} newProgram - The new program data to add.
-   * @param {string} [sigReqAccount=this.signer.wallet.address] - The account to add the program to. Defaults to the signer's account.
-   * @param {string} [programModKey] - Optional. The authorized account to modify the program, if different from the signer's account.
-   * @returns {Promise<void>} - A promise that resolves when the program is successfully added.
-   *
+   * @param {string} verifyingKey - The verifying key of the account.
+   * @returns {Promise<void>} A promise that resolves when the program is added.
    * @remarks
    * This method fetches the current programs of an account, adds the new program, and updates the state with the new set of programs.
    * It ensures the operation is performed by an authorized account.
    * @alpha
    */
 
-  async add(
-    newProgram: ProgramData,
-    sigReqAccount = this.signer.wallet.address,
-    programModKey?: string
+  async add (
+    newProgram: ProgramInstance,
+    verifyingKey: string = this.verifyingKey
   ): Promise<void> {
-    const currentPrograms = await this.get(sigReqAccount)
-    await this.set(
-      [...currentPrograms, newProgram],
-      sigReqAccount,
-      programModKey
-    )
+    const currentPrograms = await this.get(verifyingKey)
+    await this.set(verifyingKey, [...currentPrograms, newProgram])
   }
 }
-
-export default ProgramManager

@@ -183,3 +183,6 @@ test_db/
 testing-utils/test-binaries/entropy
 testing-utils/test-binaries/server
 prepTests.sh
+
+# Extra directories not needed in build
+bootstrap/

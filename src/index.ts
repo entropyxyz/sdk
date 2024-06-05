@@ -1,287 +1,168 @@
 import { ApiPromise, WsProvider } from '@polkadot/api'
-import { isValidSubstrateAddress } from './utils'
+import { debug, isValidSubstrateAddress } from './utils'
 import RegistrationManager, { RegistrationParams } from './registration'
-import SignatureRequestManager, { SigOps, SigTxOps } from './signing'
-import { crypto } from './utils/crypto'
+import SignatureRequestManager, { SigOps, SigWithAdapptersOps } from './signing'
+import { crypto, loadCryptoLib } from './utils/crypto'
 import { Adapter } from './signing/adapters/types'
-import { isValidPair, getWallet } from './keys'
-import { Signer, Address } from './types'
 import ProgramManager from './programs'
+import Keyring from './keys'
+import { keysCryptoWaitReady } from './keys/utils'
+import { ChildKey } from './keys/types/constants'
+import { DEVICE_KEY_PROXY_PROGRAM_INTERFACE } from './signing/adapters/device-key-proxy'
+import { HexString } from './keys/types/json'
 
-// TODO: docs - way more detail
-// TODO: are all of these fields really optional?
-// QUESTION: why are some of these strings, some objects?
-export interface EntropyAccount {
-  /** Signing object used for requests, use getWallet to build */
-  sigRequestKey?: Signer
-  /** Signing object used for modifiying programs, use getWallet to build */
-  programModKey?: Signer | string
-  /** Signing object used for deploying programs, use getWallet to build */
-  programDeployKey?: Signer
-  /** Key used to verify ..... what? */
-  verifyingKey?: string
+export async function wasmGlobalsReady () {
+  await loadCryptoLib()
+  await keysCryptoWaitReady
 }
-
 export interface EntropyOpts {
-  /** Account info for wallet initialization. */
-  account: EntropyAccount
-  /** The endpoint for connecting to validators, either local or devnet.
-   *
-   * @defaultValue `ws://127.0.0.1:9944` */
-  // TODO: is endpoint really optional? seems kinda necessary
-  // QUESTION: where is the default set? ... leave a comment
-  // TODO: did you know that in polkadot this is `string | [string]` ?!
+  /** Keyring class instance object. */
+  keyring: Keyring
+  /** Local or devnet endpoint for establishing a connection to validators */
   endpoint?: string
-  /** A collection of signing adapters for handling various transaction types. */
+  /** A collection of signing adapters. */
   adapters?: { [key: string | number]: Adapter }
 }
 
 /**
- * The main interface for users wanting to interact with Entropy.
- * This class provides methods to register, check registration status,
- * and sign transactions. Users can await the `ready` promise to ensure
- * that the class has been initialized before performing operations.
- *
- * @example
- * ```typescript
- * import Entropy, { getWallet } from '@entropyxyz/sdk'
- *
- * const seed = '98fb1f513a1d979aab3e77e4cb447fc7b0d724924314af4fb8f12e0140adc584'
- * const signer = await getWallet(seed);
- *
- * const entropyAccount: EntropyAccount = {
- *   sigRequestKey: signer,
- *   programModKey: signer,
- * };
- *
- * const entropy = new Entropy({ account: entropyAccount });
- * await entropy.ready;
- * ```
- * @alpha
+ * The main class to handle all interactions with the Entropy SDK.
  */
-
-class Entropy {
+export default class Entropy {
   /** @internal */
   #ready?: (value?: unknown) => void
   /** @internal */
   #fail?: (reason?: unknown) => void
-  /** @internal */
-  #programReadOnly: boolean
-  /** @internal */
-  #allReadOnly: boolean
-
-  /** A promise that resolves once chacha20poly1305 cryptoLib has been loaded */
+  /** A promise that resolves once the cryptographic library has been loaded. */
   ready: Promise<boolean>
-  /** An async getter to test if an address is registered */
-  isRegistered: (address: Address) => Promise<boolean>
-
-  // QUESTION - should these be hidden properties?
-  /** The RegistrationManager instance responsible for ... TODO: */
   registrationManager: RegistrationManager
-  /** The ProgramManager instance responsible for ... TODO: */
   programs: ProgramManager
-  /** The SignatureRequestManager instance responsible for ... TODO: */
   signingManager: SignatureRequestManager
-  /** The account this instance uses for signing ... TODO: */
-  account: EntropyAccount
-  /** The substrate instance used to ... TODO: */
+  keyring: Keyring
   substrate: ApiPromise
 
   /**
    * Initializes an instance of the Entropy class.
    *
    * @param {EntropyOpts} opts - The configuration options for the Entropy instance.
+   * @param {string} [opts.endpoint] - The endpoint for connecting to validators, either local or devnet.
+   * @param {Adapter[]} [opts.adapters] - A collection of signing adapters for handling various transaction types.
    */
 
-  constructor(opts: EntropyOpts) {
+  constructor (opts: EntropyOpts) {
     this.ready = new Promise((resolve, reject) => {
       this.#ready = resolve
       this.#fail = reject
+      debug('READY')
     })
-
     this.#init(opts).catch((error) => {
       this.#fail(error)
     })
   }
 
-  async #init(opts: EntropyOpts) {
-    this.account = opts.account
-    this.#setReadOnlyStates()
+  /**
+   * Initializes the Entropy instance by setting up the keyring, substrate API, and managers.
+   *
+   * @param {EntropyOpts} opts - The options for configuring the Entropy instance.
+   * @returns {Promise<void>} A promise that resolves when the initialization is complete.
+   * @private
+   */
 
+  async #init (opts: EntropyOpts) {
+    this.keyring = opts.keyring
     const wsProvider = new WsProvider(opts.endpoint)
     this.substrate = new ApiPromise({ provider: wsProvider })
-    await this.substrate.isReadyOrError.catch((err) => {
-      const cause =
-        err.message === 'connect ECONNREFUSED 127.0.0.1:9944'
-          ? 'Entropy#init EntropyAccount.endpoint not accessible'
-          : 'Entropy#init substrate startup failed'
-      throw new Error(err.error, { cause })
-      // NOTE this err is from ws, has non-standard API
-    })
+    await this.substrate.isReadyOrError.catch((err) => this.#fail(err))
 
     this.registrationManager = new RegistrationManager({
       substrate: this.substrate,
-      signer: {
-        wallet: this.account.sigRequestKey.wallet,
-        pair: this.account.sigRequestKey.pair,
-      },
+      signer: this.keyring.getLazyLoadAccountProxy(ChildKey.registration),
     })
     this.signingManager = new SignatureRequestManager({
-      signer: {
-        wallet: this.account.sigRequestKey.wallet,
-        pair: this.account.sigRequestKey.pair,
-      },
+      keyring: this.keyring,
+      signer: this.keyring.getLazyLoadAccountProxy(ChildKey.deviceKey),
       substrate: this.substrate,
       adapters: opts.adapters,
       crypto,
     })
 
-    const programModKeyPair = isValidPair(this.account.programModKey as Signer)
-      ? this.account.programModKey
-      : undefined
-
     this.programs = new ProgramManager({
       substrate: this.substrate,
-      programModKey:
-        (programModKeyPair as Signer) || this.account.sigRequestKey,
-      programDeployKey: this.account.programDeployKey,
+      programModKey: this.keyring.getLazyLoadAccountProxy(
+        ChildKey.registration
+      ),
+      deployer: this.keyring.getLazyLoadAccountProxy(ChildKey.programDev),
     })
-    if (this.#programReadOnly || this.#allReadOnly)
-      this.programs.set = async () => {
-        throw new Error(
-          'Programs is in a read only state: Must pass a valid key pair in initialization.'
-        )
-      }
     this.#ready(true)
-    this.isRegistered = this.registrationManager.checkRegistrationStatus.bind(
-      this.registrationManager
-    )
-    this.#setVerfiyingKeys()
-  }
-
-  async #setVerfiyingKeys(): Promise<void> {
-    // if an account was provided
-    if (this.account) {
-      // and their is a sigRequest key
-      if (this.account.sigRequestKey) {
-        const address = this.account.sigRequestKey.wallet.address
-        // check if it is registered
-        if (await this.isRegistered(address)) {
-          // then get the verifyingKey from the registration record
-          // on chain and set it on the account object
-          this.account.verifyingKey = await this.getVerifyingKey(address)
-        }
-      }
-    }
-  }
-
-  /** @internal */
-  #setReadOnlyStates(): void {
-    // the readOnly state will not allow for write functions
-    this.#programReadOnly = false
-    this.#allReadOnly = false
-
-    if (!this.account) {
-      this.#allReadOnly = true
-    } else if (!this.account.sigRequestKey && !this.account.programModKey) {
-      this.#allReadOnly = true
-    }
-
-    if (typeof this.account.sigRequestKey !== 'object') {
-      throw new Error('AccountTypeError: sigRequestKey can not be a string')
-    } else if (
-      !isValidPair({
-        wallet: this.account.sigRequestKey.wallet,
-        pair: this.account.sigRequestKey.pair,
-      })
-    ) {
-      throw new Error(
-        'AccountTypeError: sigRequestKey not a valid signing pair'
-      )
-    }
-
-    if (typeof this.account.programModKey === 'string') {
-      if (!isValidSubstrateAddress(this.account.programModKey)) {
-        throw new Error('AccountTypeError: programModKey not a valid address')
-      }
-      this.#programReadOnly = true
-    }
   }
 
   /**
-   * Registers an address with Entropy using the provided parameters.
+   * Registers a new account with the provided parameters.
    *
-   * @param {RegistrationParams & { account?: EntropyAccount }} params - The registration parameters.
-   * @returns {Promise<void>} A promise indicating the completion of the registration process.
-   * @throws {TypeError} - If the provided address format is incompatible.
+   * @param {RegistrationParams} params - Optional. The registration parameters.
+   * @param {Address} params.programModAccount - The address authorized to set programs on behalf of the user.
+   * @param {'Public' } [params.keyVisibility] - Visibility setting for the key.
+   * @param {ProgramData[]} [params.programData] - Optional initial programs associated with the user.
+   * @returns {Promise<HexString>} A promise that resolves the verifying key for the new account when the registration is complete.
    * @throws {Error} - If the address is already registered or if there's a problem during registration.
    */
 
-  async register(
-    params: RegistrationParams & { account?: EntropyAccount }
-  ): Promise<void> {
-    await this.ready
-    if (this.#allReadOnly)
-      throw new Error(
-        'Initialized in read only state: can not use write functions'
-      )
-    const account = params.account || this.account
+  async register (params?: RegistrationParams): Promise<HexString> {
+    const defaultProgram = DEVICE_KEY_PROXY_PROGRAM_INTERFACE
 
-    if (!account) {
-      throw new Error('No account provided for registration')
+    params = params || {
+      programData: [defaultProgram],
+      programDeployer: this.keyring.accounts.registration.address,
     }
 
+    await Promise.all([this.ready, this.substrate.isReady])
+
+    const deviceKey = this.keyring.getLazyLoadAccountProxy(ChildKey.deviceKey)
+    deviceKey.used = true
+    defaultProgram.program_config.sr25519_public_keys.push(
+      Buffer.from(deviceKey.pair.publicKey).toString('base64')
+    )
+
     if (
-      params.programModAccount &&
-      !isValidSubstrateAddress(params.programModAccount)
+      params.programDeployer &&
+      !isValidSubstrateAddress(params.programDeployer)
     ) {
       throw new TypeError('Incompatible address type')
     }
-    await this.registrationManager.register(params)
-    this.account.verifyingKey = await this.getVerifyingKey(
-      this.account.sigRequestKey.wallet.address
-    )
+
+    const verifyingKey = await this.registrationManager.register(params)
+    // fuck frankie TODO: Make legit function
+    const admin = this.keyring.getLazyLoadAccountProxy(ChildKey.registration)
+    const vk = admin.verifyingKeys || []
+    // HACK: these assignments trigger important `account-update` flows via the Proxy 
+    admin.verifyingKeys = [...vk, verifyingKey]
+    deviceKey.verifyingKeys = [verifyingKey, ...vk]
+    return verifyingKey
   }
 
-  /**
-   * Retrieves the verifying key associated with the given address's registration record.
-   *
-   * @param {Address} address - The address for which the verifying key is needed.
-   * @returns {Promise<string>} - A promise resolving to the verifying key.
+  /*
+
+
+    DO NOT DELETE THIS CODE BLOCK
+
+    Signs a given transaction based on the provided parameters.
+
+    The `signTransaction` method invokes the appropriate adapter (chain based configuration)
+    based on the type specified in the `params`. This modular approach ensures that various
+    transaction types can be supported. The method performs a series of operations, starting
+    with the `preSign` function of the selected adapter, followed by the actual signing of the
+    transaction request hash, and if necessary, the `postSign` function of the adapter.
+
+    @param {SigMsgOps} params - The parameters for signing the transaction.
+    @returns {Promise<unknown>} - A promise resolving to the transaction signature.
+    @throws {Error} - If no adapter is found for the specified transaction type.
+    @returns A promise that returns the transaction signature. Note that the structure
+             and format of this signature may differ based on the adapter.
+    @throws {Error} Will throw an error if the transaction type does not have a corresponding adapter.
    */
 
-  async getVerifyingKey(address: Address): Promise<string> {
-    const registeredInfo = await this.substrate.query.relayer.registered(
-      address
-    )
-    // @ts-ignore: next line
-    return registeredInfo.toHuman().verifyingKey
-  }
-
-  /**
-   * Signs a given transaction based on the provided parameters.
-   *
-   * The `signTransaction` method invokes the appropriate adapter (chain based configuration)
-   * based on the type specified in the `params`. This modular approach ensures that various
-   * transaction types can be supported. The method performs a series of operations, starting
-   * with the `preSign` function of the selected adapter, followed by the actual signing of the
-   * transaction request hash, and if necessary, the `postSign` function of the adapter.
-   *
-   * @param {SigTxOps} params - The parameters for signing the transaction.
-   * @returns {Promise<unknown>} - A promise resolving to the transaction signature.
-   * @throws {Error} - If no adapter is found for the specified transaction type.
-   * @returns A promise that returns the transaction signature. Note that the structure
-   *          and format of this signature may differ based on the adapter.
-   * @throws {Error} Will throw an error if the transaction type does not have a corresponding adapter.
-   */
-
-  async signTransaction(params: SigTxOps): Promise<unknown> {
-    await this.ready
-    if (this.#allReadOnly)
-      throw new Error(
-        'Initialized in read only state: can not use write functions'
-      )
-    return this.signingManager.signTransaction(params)
+  async signWithAdaptersInOrder (params: SigWithAdapptersOps): Promise<unknown> {
+    (await this.ready) && this.substrate.isReady
+    return await this.signingManager.signWithAdaptersInOrder(params)
   }
 
   /**
@@ -294,15 +175,19 @@ class Entropy {
    * @throws {Error} - If there's an error in the signing routine.
    */
 
-  async sign(params: SigOps): Promise<Uint8Array> {
+  async sign (params: SigOps): Promise<Uint8Array> {
     await this.ready
-    if (this.#allReadOnly)
-      throw new Error(
-        'Initialized in read only state: can not use write functions'
-      )
     return this.signingManager.sign(params)
   }
-}
 
-export default Entropy
-export { getWallet }
+  async close () {
+    if (this.substrate.isConnected) {
+      try {
+        await this.substrate.disconnect()
+        // console.log('Disconnected successfully.')
+      } catch (error) {
+        console.error('Error closing connection', error.message)
+      }
+    }
+  }
+}

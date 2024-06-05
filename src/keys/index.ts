@@ -1,98 +1,207 @@
+import EventEmitter from 'node:events'
+import { deepCopy } from '../utils/housekeeping'
+import * as utils from './utils'
+import { EntropyAccount, KeyMaterial, PairMaterial } from './types/json'
 import {
-  sr25519PairFromSeed,
-  cryptoWaitReady,
-  mnemonicToMiniSecret,
-  mnemonicGenerate,
-  keyFromPath,
-  keyExtractPath,
-} from '@polkadot/util-crypto'
-import { Keyring } from '@polkadot/keyring'
-import { hexToU8a } from '@polkadot/util'
-import { Signer } from '../types'
+  ChildKey,
+  EntropyAccountType,
+  EntropyAccountContextType,
+} from './types/constants'
+import { Signer } from './types/internal'
+import { AccountsEmitter } from './types'
+
+// Whats the point of remapping here?
+// .map of object.keys is same as object.values, and either way the
+// result is the same considering the enum keys are the values as well
+const ACCOUNTS = Object.keys(ChildKey)
 
 /**
- * Checks if the provided object is a valid `Signer` pair.
- *
- * @param pair - The `Signer` object to be validated.
- * @returns A boolean indicating whether the provided object is a valid `Signer` pair.
+ * A utility class to allow consumers of the SDK to subscribe to key creations and "account" updates.
  */
+export default class Keyring {
+  // private
+  // it's a unit8array if it comes from a mnemonic and a string if it comes from the user
+  // The seed used to generate keys, can be a Uint8Array (from mnemonic) or a string (user-provided).
+  #seed: Uint8Array | string
+  #used: string[]
+  accounts: AccountsEmitter
+  crypto: Crypto
 
-export function isValidPair(pair: Signer): boolean {
-  if (!pair) return false
-  if (typeof pair !== 'object') return false
-  if (!pair.pair.publicKey) return false
-  if (!pair.pair.secretKey) return false
-  if (!ArrayBuffer.isView(pair.pair.publicKey)) return false
-  if (!ArrayBuffer.isView(pair.pair.secretKey)) return false
-  if (pair.pair.secretKey.length !== 64) return false
-  if (pair.pair.publicKey.length !== 32) return false
-  return true
-}
+  /**
+   * Initializes a new instance of the `Keyring` class.
+   *
+   * @param account - The key material and entropy account used for key generation.
+   */
 
-/**
- *  Function to create a function that retrieves a wallet from a `Signer` seed string.
- *
- * @returns A function that takes a `Signer` or seed string and returns a Promise resolving to an object containing the wallet and its associated `Signer`.
- */
-
-function setupGetWallet(): (input: string) => Promise<Signer | undefined> {
-  const keyring = new Keyring({ type: 'sr25519' })
-
-  return async function getWallet(input: string): Promise<Signer | undefined> {
-    // do a string typecheck
-    if (typeof input === 'string') {
-      await cryptoWaitReady()
-      const seed = hexToU8a(input)
-      const pair = sr25519PairFromSeed(seed)
-      const wallet = keyring.addFromPair(pair)
-      return { wallet, pair }
+  constructor (account: KeyMaterial) {
+    // this repersents keys that are used by the user
+    this.#used = ['admin', ChildKey.registration]
+    Object.keys(account).forEach((key) => {
+      if (typeof account[key] === 'object' && account[key].userContext) {
+        this.#used.push(key)
+      } else if ((account as EntropyAccount).debug) {
+        this.#used.push(key)
+      }
+    })
+    const { seed, mnemonic } = account
+    if (!seed && !mnemonic)
+      throw new Error('Need at least a seed or mnemonic to create keys')
+    if (mnemonic) {
+      this.#seed = utils.seedFromMnemonic(mnemonic)
     } else {
-      throw new Error('input is not a string (32 bytes hex encoded)')
+      this.#seed = seed
     }
-  }
-}
-
-/**
- * Retrieves a wallet from a `Signer` object or a seed string.
- *
- * @param pair {String} - A `Signer` seed string (base64, hex encoded)
- * @returns A Promise resolving to an object containing the wallet and its associated `Signer`, or undefined if the input is invalid.
- */
-export const getWallet: (input: string) => Promise<Signer | undefined> =
-  setupGetWallet()
-
-/**
- * Generates a new mnemonic phrase or derives a wallet from an existing mnemonic and an optional derivation path.
- *
- * @param mnemonic - Optional. The mnemonic phrase to derive the wallet from. If not provided, a new one is generated.
- * @param derivationPath - Optional. The derivation path to use with the provided mnemonic.
- * @returns A Promise resolving to a `Signer` object containing the generated or derived wallet and its associated key pair.
- */
-
-export async function mnemonicGenOrDerive(
-  mnemonic?: string,
-  derivationPath?: string
-): Promise<Signer> {
-  await cryptoWaitReady()
-  const keyring = new Keyring({ type: 'sr25519' })
-
-  if (!mnemonic) {
-    mnemonic = mnemonicGenerate()
+    const accountsJson = this.#formatAccounts(account)
+    this.accounts = this.#createFunctionalAccounts(accountsJson)
+    this.accounts.masterAccountView = accountsJson
   }
 
-  const seed = mnemonicToMiniSecret(mnemonic)
-  let pair
+  #formatAccounts (accounts: EntropyAccount): EntropyAccount {
 
-  if (derivationPath) {
-    const masterPair = sr25519PairFromSeed(seed)
-    const { path } = keyExtractPath(derivationPath)
-    pair = keyFromPath(masterPair, path, 'sr25519')
-  } else {
-    pair = sr25519PairFromSeed(seed)
+    const { seed, type, admin } = accounts
+    const debug = true
+    const entropyAccountsJson = {
+      debug,
+      // previously was seed ? seed : utils.seedFromMnemonic(mnemonic) but this has already been derived in the constructor
+      // @frankie correct if im wrong here
+      seed: this.#seed,
+      type,
+      admin,
+    }
+
+
+    Object.keys(accounts)
+      .concat(ACCOUNTS)
+      .forEach((key) => {
+
+        let account: PairMaterial
+        if (entropyAccountsJson[key]) return
+        if (key === ChildKey.registration && admin?.seed) {
+          if (accounts[key]) {
+            account = { ...admin, ...accounts[key] }
+          } else {
+            account = admin
+          }
+
+          entropyAccountsJson[key] = this.#jsonAccountCreator(account, debug)
+          return
+        }
+        if (accounts[key] && accounts[key].userContext) account = accounts[key]
+        else if (ChildKey[key]) account = { type: ChildKey[key], seed }
+        if (!account) return
+        entropyAccountsJson[key] = this.#jsonAccountCreator(account, debug)
+      })
+    if (!admin) entropyAccountsJson.admin = entropyAccountsJson[ChildKey.registration]
+
+    return entropyAccountsJson as EntropyAccount
   }
-  const wallet = keyring.addFromPair(pair)
-  return {
-    wallet,
-    pair,
+
+  /**
+   * Formats and stores account information.
+   *
+   * @param account - The pair material for the account.
+   */
+
+  #jsonAccountCreator (
+    pairMaterial: PairMaterial,
+    debug: boolean
+  ): PairMaterial {
+    if (!pairMaterial) throw new TypeError('nothing to format please try again')
+    const {
+      seed,
+      address,
+      type,
+      userContext,
+      verifyingKeys = [],
+      path,
+    } = pairMaterial
+    const derivation = path || debug ? '' : utils.getPath(type)
+
+    const jsonAccount = {
+      seed: seed,
+      path: derivation,
+      address,
+      type,
+      verifyingKeys,
+      userContext: userContext || EntropyAccountContextType[type],
+    }
+
+    return jsonAccount
+  }
+
+  #createFunctionalAccounts (
+    masterAccountView: EntropyAccount
+  ): AccountsEmitter {
+
+    const accounts = new EventEmitter() as AccountsEmitter
+    accounts.type = accounts.type || EntropyAccountType.MIXED_ACCOUNT
+    Object.keys(masterAccountView).forEach((name) => {
+      if (name) {
+        if (typeof masterAccountView[name] !== 'object') return
+        const { seed, path, ...accountData } = masterAccountView[name]
+        if (!seed) return
+        const { pair, address } = utils.generateKeyPairFromSeed(seed, path)
+        const functionalAccount = {
+          ...accountData,
+          seed,
+          path,
+          address,
+          pair,
+        }
+        accounts[name] = functionalAccount
+      }
+    })
+    accounts.masterAccountView = masterAccountView
+    return accounts
+  }
+
+  /**
+   * Retrieves the current account information.
+   *
+   * @returns An object containing the Entropy account details.
+   */
+
+  // IMPORTANT!! WE SHOULD DECIDE IF WE WILL ALWAYS BE GENERATING UUID FOR ACCOUNTS OR IF WE
+  // WILL ALLOW USERS TO PASS THEIR OWN STRINGS
+
+  getAccount (): EntropyAccount {
+    const { debug, seed, type, verifyingKeys } = this.accounts.masterAccountView
+    const entropyAccount: EntropyAccount = { debug, seed, type, verifyingKeys }
+    this.#used.forEach((accountName) => {
+      if (this.accounts[accountName] === undefined) return
+      entropyAccount[accountName] = deepCopy(this.accounts[accountName] as PairMaterial)
+    })
+    entropyAccount.admin = entropyAccount.registration
+    return entropyAccount
+  }
+
+  /**
+   * Lazily loads a key proxy for a given type.
+   * This is so we dont just generate a bunch of useless keys that are getting
+   * stored for no reason
+   * @param type - The type of the key.
+   * @returns A `Signer` proxy object.
+   */
+
+  getLazyLoadAccountProxy (childKey: ChildKey): Signer {
+    // if (!this.accounts[childKey]) {
+    //   this.accounts[childKey] = {}
+    // }
+    return new Proxy(this.accounts[childKey], {
+      get: (_, key: string) => this.accounts[childKey][key],
+      set: (_, k: string, v) => {
+        if (k === 'used' && !this.accounts[childKey].used) {
+          this.#used.push(childKey)
+        }
+        this.accounts[childKey][k] = v
+        this.accounts.masterAccountView[childKey][k] = v
+        // DO NOT REMOVE setTimeout UNLESS YOU SOLVED THE RACE CONDITION
+        setTimeout(
+          () => this.accounts.emit(`account-update`, this.getAccount()),
+          10
+        )
+        return v
+      },
+    })
   }
 }
