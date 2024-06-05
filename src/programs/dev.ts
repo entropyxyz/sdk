@@ -57,7 +57,7 @@ export default class ProgramDev extends ExtrinsicBaseClass {
 
   async get (address: string): Promise<any> {
     const programs = await this.substrate.query.programs.ownedPrograms(address);
-    return programs
+    return programs.toHuman()
   }
 
   /**

@@ -65,13 +65,13 @@ test('Programs: GET', async (t) => {
   )
 
   t.equal(
-    programsDeployed.toHuman().length,
+    programsDeployed.length,
     1,
-    'charlie has deployed 1 program' + programsDeployed.toHuman()
+    'charlie has deployed 1 program' + programsDeployed
   )
 
   t.equal(
-    programsDeployed.toHuman()[0],
+    programsDeployed[0],
     newPointer,
     'program in list matches new pointer: ' + newPointer + ' = ' + programsDeployed[0]
   )
