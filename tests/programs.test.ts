@@ -23,7 +23,7 @@ test('Programs: GET', async (t) => {
 
   // this gets called after all tests are run
   t.teardown(async () => {
-    await spinNetworkDown(networkType, entropy)
+    await spinNetworkDown(networkType)
   })
 
   await run('wasm', wasmGlobalsReady())
