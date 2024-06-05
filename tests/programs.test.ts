@@ -21,13 +21,6 @@ test('Programs: GET', async (t) => {
 
   await sleep(process.env.GITHUB_WORKSPACE ? 30_000 : 5_000)
 
-  // this gets called after all tests are run
-  t.teardown(async () => {
-    await spinNetworkDown(networkType, entropy).catch((error) =>
-      console.error('Error while spinning network down', error.message)
-    )
-  })
-
   await run('wasm', wasmGlobalsReady())
 
   const keyring = new Keyring({ seed: charlieStashSeed, debug: true })
@@ -77,6 +70,11 @@ test('Programs: GET', async (t) => {
     newPointer,
     'program in list matches new pointer: ' + newPointer + ' = ' + programsDeployed[0]
   )
+
+  // this gets called after all tests are run
+  t.teardown(async () => {
+    await spinNetworkDown(networkType, entropy)
+  })
 
   await entropy.close()
   t.end()
