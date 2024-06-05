@@ -21,8 +21,11 @@ test('Programs: GET', async (t) => {
 
   await sleep(process.env.GITHUB_WORKSPACE ? 30_000 : 5_000)
 
+  // this gets called after all tests are run
   t.teardown(async () => {
-    await spinNetworkDown(networkType, entropy).catch(error => console.error('Error spinning network down', error.message))
+    await spinNetworkDown(networkType, entropy).catch((error) =>
+      console.error('Error while spinning network down', error.message)
+    )
   })
 
   await run('wasm', wasmGlobalsReady())
