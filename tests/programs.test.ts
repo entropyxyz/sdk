@@ -10,9 +10,7 @@ import {
   charlieStashSeed,
   charlieStashAddress,
   spinNetworkDown,
-  disconnect,
 } from './testing-utils'
-import { execFileSync } from 'child_process'
 
 const networkType = 'two-nodes'
 
@@ -22,6 +20,11 @@ test('Programs: GET', async (t) => {
   await run('network up', spinNetworkUp(networkType))
 
   await sleep(process.env.GITHUB_WORKSPACE ? 30_000 : 5_000)
+
+  // this gets called after all tests are run
+  t.teardown(async () => {
+    await spinNetworkDown(networkType, entropy)
+  })
 
   await run('wasm', wasmGlobalsReady())
 
@@ -72,20 +75,6 @@ test('Programs: GET', async (t) => {
     newPointer,
     'program in list matches new pointer: ' + newPointer + ' = ' + programsDeployed[0]
   )
-
-  // this gets called after all tests are run
-  t.teardown(async () => {
-    try {
-      await disconnect(entropy.substrate)
-      execFileSync('dev/bin/spin-down.sh', [networkType], {
-        shell: true,
-        cwd: process.cwd(),
-        stdio: 'inherit',
-      })
-    } catch (e) {
-      console.error('Error in afterAll: ', e.message)
-    }
-  })
 
   await entropy.close()
   t.end()
