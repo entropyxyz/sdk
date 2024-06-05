@@ -10,7 +10,9 @@ import {
   charlieStashSeed,
   charlieStashAddress,
   spinNetworkDown,
+  disconnect,
 } from './testing-utils'
+import { execFileSync } from 'child_process'
 
 const networkType = 'two-nodes'
 
@@ -73,7 +75,16 @@ test('Programs: GET', async (t) => {
 
   // this gets called after all tests are run
   t.teardown(async () => {
-    await spinNetworkDown(networkType, entropy)
+    try {
+      await disconnect(entropy.substrate)
+      execFileSync('dev/bin/spin-down.sh', [networkType], {
+        shell: true,
+        cwd: process.cwd(),
+        stdio: 'inherit',
+      })
+    } catch (e) {
+      console.error('Error in afterAll: ', e.message)
+    }
   })
 
   await entropy.close()
