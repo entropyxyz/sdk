@@ -1,8 +1,6 @@
 {
   "compilerOptions": {
     "target": "es2022",
-    "module": "es2022",
-    "moduleResolution": "node",
     "esModuleInterop": true,
     "skipLibCheck": true,
     "noEmit": true,
@@ -13,7 +11,9 @@
       "@polkadot/types/*",
       "substrate-generated-types/interfaces"
     ],
-    "tsBuildInfoFile": ".tsbuildinfo"
+    "tsBuildInfoFile": ".tsbuildinfo",
+    "moduleResolution": "node",
+    "module": "es2022"
   },
   "exclude": [
     "dev",
