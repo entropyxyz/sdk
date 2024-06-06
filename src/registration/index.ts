@@ -47,7 +47,6 @@ const keyVisibility = 'Public'
 export default class RegistrationManager extends ExtrinsicBaseClass {
   /**
    * The verification key that corresponds to a registered account.
-  
   */
   verifyingKey: string
 
