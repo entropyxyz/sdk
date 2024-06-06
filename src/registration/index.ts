@@ -11,11 +11,17 @@ export interface RegistrationParams {
   programDeployer?: SS58Address
 }
 
+/**
+ * Event Type returned by the chain upon success registration
+ * */
 export interface AccountRegisteredSuccess {
   accountId: Address
   verifyingKey: HexString
 }
 
+/**
+ * Returned query that show's registration details. Accessible by passing the verifyingKey
+ * */
 export interface RegisteredInfo {
   keyVisibility: KeyVisibilityInfo
   programsData: Uint8Array
@@ -30,8 +36,9 @@ export type KeyVisibilityInfo = { public: null }
  * */
 
 const keyVisibility = 'Public'
+
 /**
- * The `RegistrationManager` class provides functionality for user registration using Entropy
+ * The `RegistrationManager` class provides functionality for user registration using Entropy.
  * It extends the `ExtrinsicBaseClass` to handle extrinsic submissions and utility methods.
  *
  * A class to manage the registration of accounts, including handling key visibility and program data.
@@ -39,15 +46,17 @@ const keyVisibility = 'Public'
 
 export default class RegistrationManager extends ExtrinsicBaseClass {
   /**
+   * The verification key that corresponds to a registered account.
+  */
+  verifyingKey: string
+
+  /**
    * Constructs a new instance of the `RegistrationManager` class.
    *
    * @param {ApiPromise} substrate - The Polkadot/Substrate API instance.
    * @param {Signer} signer - The Signer instance.
-   * @param verifyingKey - The key verification key that corresponds to a signer.
-
+   * @param verifyingKey - The key verification key that corresponds a registered account.
    */
-
-  verifyingKey: string
 
   constructor ({
     substrate,
@@ -62,11 +71,11 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
   /**
    * Registers a user with the given parameters.
    *
-   * @param program_pointer - Optional. Initial program associated with the user.
-   * @param keyVisibility - Key visibility level ('Public', 'Private'). Defaults to 'Public'.
-   * @param programDeployer - Account authorized to modify programs on behalf of the user.
+   * @param {RegistrationParams} params - The registration parameters.
+   * @param {ProgramInstance[]} params.programData - The initial program data associated with the user.
+   * @param {SS58Address} [params.programDeployer] - Optional. The account authorized to modify programs on behalf of the user.
    *
-   * @returns {Promise<AccountRegisteredSuccess>} A promise that resolves to the registration success information.
+   * @returns {Promise<HexString>} A promise that resolves to the verifying key of the registered account.
    * @throws {Error} If registration information is not found or any other error occurs during registration.
    */
 
@@ -116,6 +125,13 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
     const verifyingKey = await dataFromEvents
     return verifyingKey
   }
+
+  /**
+   * Private method to get the verifying key from the registration event.
+   * @param {SS58Address} address - The address of the account.
+   * @returns {Promise<string>} A promise that resolves to the verifying key.
+   * @private
+   */
 
   #getVerifiyingKeyFromRegisterEvent (address: SS58Address): Promise<string> {
     const wantedMethods = ['FailedRegistration', 'AccountRegistered']

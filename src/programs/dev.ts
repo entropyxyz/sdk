@@ -82,7 +82,7 @@ export default class ProgramDev extends ExtrinsicBaseClass {
    * @param {ArrayBuffer} program - The program bytecode to deploy.
    * @param {unknown} configurationSchema - The configuration schema for the program.
    * @param {unknown} auxiliaryDataSchema - The auxiliary data schema for the program.
-   * @param {[]} oracleDataPointer - The oracle data pointer.
+   * @param {[]} oracleDataPointer - The oracle data pointer // not currently supported
    * @returns {Promise<HexString>} A promise that resolves to the hash of the deployed program.
    */
 
