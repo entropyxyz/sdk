@@ -46,7 +46,7 @@ test('Sign', async (t) => {
     'sign',
     entropy.signWithAdaptersInOrder({
       msg: { msg },
-      order: ['deviceKeyProxy', 'noop'],
+      order: ['deviceKeyProxy'],
     })
   )
 
