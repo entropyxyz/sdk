@@ -25,7 +25,7 @@ Version header format: `[version] Name - year-month-day (entropy-core compatibil
 ### Meta
 
 
-## [0.2.0] Amihan - 2024-06-06 (entropy-core compatibility: 0.1.0)
+## [0.2.1] Amihan - 2024-06-06 (entropy-core compatibility: 0.1.0)
 
 ### *** DISCLAIMER ***
 **A lot changed in this version this changelog entry may not be completely accurate and is non standard due to team change of hands complications**
