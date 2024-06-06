@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es2022",
-    "esModuleInterop": true,
+    "target": "ES6",
     "skipLibCheck": true,
     "noEmit": true,
     "incremental": true,
@@ -13,7 +12,7 @@
     ],
     "tsBuildInfoFile": ".tsbuildinfo",
     "moduleResolution": "node",
-    "module": "es2022"
+    "module": "Node16"
   },
   "exclude": [
     "dev",

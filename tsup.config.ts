@@ -16,6 +16,7 @@ export default defineConfig((options) => {
     sourcemap: false,
     clean: true,
     target: 'es2022',
+    minify: options.minify,
     watch: options.watch,
   }
 })
