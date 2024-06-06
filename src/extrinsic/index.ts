@@ -12,8 +12,8 @@ interface Decoded extends RegistryError {
   section: string
 }
 /**
- * A utility class to simplify extrinsic operations with Entropy
- * Allows the user to send extrinsics and automatically handles errors, and events
+ * A utility class to simplify extrinsic operations with Entropy.
+ * Allows the user to send extrinsics and automatically handles errors and events.
  */
 export default class ExtrinsicBaseClass {
   substrate: ApiPromise

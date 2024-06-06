@@ -98,14 +98,12 @@ export default class Entropy {
   /**
    * Registers a new account with the provided parameters.
    *
-   * @param {RegistrationParams} params - Optional. The registration parameters.
-   * @param {Address} params.programModAccount - The address authorized to set programs on behalf of the user.
-   * @param {'Public' } [params.keyVisibility] - Visibility setting for the key.
-   * @param {ProgramData[]} [params.programData] - Optional initial programs associated with the user.
-   * @returns {Promise<HexString>} A promise that resolves the verifying key for the new account when the registration is complete.
-   * @throws {Error} - If the address is already registered or if there's a problem during registration.
+   * @param {RegistrationParams} params - The registration parameters.
+   * @param {SS58Address} [params.programDeployer] - The account authorized to modify programs on behalf of the user.
+   * @param {ProgramInstance[]} [params.programData] - Optional initial programs associated with the user.
+   * @returns {Promise<HexString>} A promise that resolves to the verifying key for the new account when the registration is complete.
+   * @throws {Error} If the address is already registered or if there's a problem during registration.
    */
-
   async register (params?: RegistrationParams): Promise<HexString> {
     const defaultProgram = DEVICE_KEY_PROXY_PROGRAM_INTERFACE
 
@@ -152,12 +150,12 @@ export default class Entropy {
     with the `preSign` function of the selected adapter, followed by the actual signing of the
     transaction request hash, and if necessary, the `postSign` function of the adapter.
 
-    @param {SigMsgOps} params - The parameters for signing the transaction.
-    @returns {Promise<unknown>} - A promise resolving to the transaction signature.
-    @throws {Error} - If no adapter is found for the specified transaction type.
-    @returns A promise that returns the transaction signature. Note that the structure
-             and format of this signature may differ based on the adapter.
-    @throws {Error} Will throw an error if the transaction type does not have a corresponding adapter.
+  /**
+   * Signs a given transaction based on the provided parameters using the appropriate adapter.
+   *
+   * @param {SigWithAdapptersOps} params - The parameters for signing the transaction.
+   * @returns {Promise<unknown>} A promise that resolves to the transaction signature.
+   * @throws {Error} If no adapter is found for the specified transaction type.
    */
 
   async signWithAdaptersInOrder (params: SigWithAdapptersOps): Promise<unknown> {
@@ -166,13 +164,14 @@ export default class Entropy {
   }
 
   /**
-   * Signs a signature request hash. This method involves various steps including validator
-   * selection, transaction request formatting, and submission of these requests to validators
-   * for signing. It returns the signature from the first validator after validation.
+   * Signs a signature request hash.
+   * This method involves various steps including validator selection, transaction request formatting,
+   * and submission of these requests to validators for signing.
+   * It returns the signature from the first validator after validation.
    *
    * @param {SigOps} params - The signature operation parameters.
-   * @returns {Promise<Uint8Array>} - A promise resolving to the signed hash as a Uint8Array.
-   * @throws {Error} - If there's an error in the signing routine.
+   * @returns {Promise<Uint8Array>} A promise that resolves to the signed hash as a Uint8Array.
+   * @throws {Error} If there's an error in the signing routine.
    */
 
   async sign (params: SigOps): Promise<Uint8Array> {
