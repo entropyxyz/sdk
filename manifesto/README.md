@@ -43,4 +43,5 @@ Personal and codding practices to live by:
 
   if you are going to `fetch` don't forget the context your missing.
 
--
+- Always add to the CHANGELOG.md file
+  - theirs a `meta` section! if you don't feel comfortable adding to the meta section then please add to the `dev/README.md` or here to the `manifesto/README.md`
