@@ -6,6 +6,8 @@
 
 ![SDK](https://github.com/entropyxyz/sdk/assets/62079777/4e16b189-63ad-4753-9b0e-16dc85f5609f)
 
+> This tool is early development. As such, a lot of things do not work. Feel free to play around with it and report any issues at [github.com/entropyxyz/sdk](https://github.com/entropyxyz/sdk).
+
 ### Installation
 
 yarn:
