@@ -49,13 +49,25 @@ export default class ProgramDev extends ExtrinsicBaseClass {
   }
 
   /**
+   * Retrieves all programs for a given address.
+   * 
+   * @param {string} address - SS58 Address
+   * @returns {Promise<string[]>} A promise that resolves to the list of program pointers
+   */
+
+  async get (address: string): Promise<any> {
+    const programs = await this.substrate.query.programs.ownedPrograms(address);
+    return programs.toHuman()
+  }
+
+  /**
    * Retrieves program information using a program pointer.
    *
    * @param {string} pointer - The program pointer to fetch the program bytecode.
    * @returns {Promise<ProgramInfo>} A promise that resolves to the program information.
    */
 
-  async get (pointer: string): Promise<ProgramInfo> {
+  async getProgramInfo (pointer: string): Promise<ProgramInfo> {
     // fetch program bytecode using the program pointer at the specific block hash
     const responseOption = await this.substrate.query.programs.programs(pointer)
 
@@ -70,7 +82,7 @@ export default class ProgramDev extends ExtrinsicBaseClass {
    * @param {ArrayBuffer} program - The program bytecode to deploy.
    * @param {unknown} configurationSchema - The configuration schema for the program.
    * @param {unknown} auxiliaryDataSchema - The auxiliary data schema for the program.
-   * @param {[]} oracleDataPointer - The oracle data pointer.
+   * @param {[]} oracleDataPointer - The oracle data pointer // not currently supported
    * @returns {Promise<HexString>} A promise that resolves to the hash of the deployed program.
    */
 

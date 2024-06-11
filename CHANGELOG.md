@@ -2,12 +2,50 @@
 
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+The format extends [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+**At the moment this project DOES NOT adhere to
+[Semantic Versioning](https://semver.org/spec/v2.0.0.html).**
 
-At the moment this project **does not** adhere to
-[Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+**Until MAJOR version 1; All MINOR versions are breaking changes and all patch versions are bug fixes and features.**
 
-## [Unreleased]
+Version header format: `[version] Name - year-month-day (entropy-core compatibility: version [range])`
+
+## [UNRELEASED]
+
+### Added
+
+### Fixed
+
+### Changed
+
+### Broke
+
+### Dev
+
+### Meta
+
+
+## [0.2.1] Amihan - 2024-06-06 (entropy-core compatibility: 0.1.0)
+
+### *** DISCLAIMER ***
+**A lot changed in this version this changelog entry may not be completely accurate and is non standard due to team change of hands complications**
+
+### Changed/Added[/Broke]
+- `getWallet` was removed in favor of `keyring` pattern
+- verifying keys are now the main way to look up programs
+- we no longer have permission accounts. only public
+- default registration now registers you with a default program. See new adapter for this `deviceKeyProxy`
+- `signWithAdapter` has been replaced with `signWithAdaptersInOrder`
+- we no longer use jest it is now tape for tests
+- `dev/bin` has more scripts for network spin ups!
+- any mention of eth has been removed till further until further research has been conducted on the matter
+- `getOwnedPrograms` has been added to dev
+- core version has been updated to 0.1.0
+- polkadot should spew less logs now
+- loads of tests have been added
+- new process is being put in place for the team
+
+# versions under here are pre test-net and are not supported
 
 ## [0.1.4] Bacchus - 2024-01-09 (entropy-core compatibility: 0.0.10)
 
