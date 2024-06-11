@@ -17,6 +17,7 @@ Version header format: `[version] Name - year-month-day (entropy-core compatibil
 ### Fixed
 
 ### Changed
+- constructor now throws if you pass no object
 
 ### Broke
 
