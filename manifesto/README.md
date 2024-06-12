@@ -23,7 +23,7 @@ a place for us to agree on are values and motivation.
 
 ## Mission Statement:
 
-> To have a healthy `entropy-*.js` community that delivers account management solutions and distributed signing while extenuating the solar punk aesthetics!
+> To have a healthy `entropy-*.js` community that delivers account management solutions and distributed signing while practicing solar punk values.
 
 ## SYSTEM OF BELIEF:
 
