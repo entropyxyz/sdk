@@ -1,5 +1,5 @@
-import { Keyring } from './dist/keys/index.mjs'
+import { Keyring } from './dist/keys/index.js'
 
 export default Keyring
-export * from './dist/keys/index.mjs'
+export * from './dist/keys/index.js'
 

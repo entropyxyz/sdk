@@ -11,20 +11,19 @@
     "dist/**/*",
     "README.md"
   ],
-  "main": "./index.cjs",
-  "module": "./index.mjs",
+  "type": "module",
   "exports": {
     ".": {
-      "default": "./index.cjs",
       "import": "./index.mjs",
       "require": "./index.cjs"
     },
     "./keys": {
-      "default": "./keys.cjs",
       "import": "./keys.mjs",
       "require": "./keys.cjs"
     }
   },
+  "module": "./index.mjs",
+  "main": "./index.cjs",
   "types": "dist/index.d.ts",
   "scripts": {
     "test": "yarn test:setup && yarn test:types && yarn test:ts && yarn test:only && yarn test:require && yarn test:import",
