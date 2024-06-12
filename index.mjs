@@ -1,4 +1,4 @@
-import { Entropy } from './dist/index.js'
+import { Entropy } from './dist/node/index.mjs'
 
 export default Entropy
-export * from './dist/index.js'
+export * from './dist/node/index.mjs'

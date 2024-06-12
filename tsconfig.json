@@ -1,28 +1,38 @@
 {
   "compilerOptions": {
-    "target": "ES6",
+    // "strict": true,
+    // "noImplicitAny": true,
+    "esModuleInterop": true,
+    "declarationDir": "build/typings",
+    "module": "esnext",
+    "target": "es2020",
     "skipLibCheck": true,
-    "noEmit": true,
-    "incremental": true,
-    "typeRoots": [
-      "node_modules/@types",
-      "@types/",
-      "@polkadot/types/*",
-      "substrate-generated-types/interfaces"
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "allowJs": true,
+    "sourceMap": false,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "allowSyntheticDefaultImports": true,
+    "lib": [
+      "es2020",
+      "dom",
+      "dom.iterable",
+      "esnext"
     ],
-    "tsBuildInfoFile": ".tsbuildinfo",
     "moduleResolution": "node",
-    "module": "Node16"
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    // "jsx": "react-jsx"
   },
-  "exclude": [
-    "node_modules",
-    "dist",
-    "build",
-    "examples",
-    "old",
-    "substrate-generated-types"
+  "include": [
+    "src"
   ],
-  "ts-node": {
-    "experimentalSpecifierResolution": "node"
-  }
+  "exclude": [
+    "tests",
+    "build"
+  ]
 }
