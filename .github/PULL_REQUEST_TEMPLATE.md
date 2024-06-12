@@ -1,3 +1,5 @@
+<!-- Follow all the steps. Delete comments if you wish. -->
+
 <!-- STEP 1: Say what issue this PR closes. Each PR should close an issue. -->
 Closes issue [#123](https://github.com/entropyxyz/sdk/issues/291).
 
