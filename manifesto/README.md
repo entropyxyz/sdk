@@ -27,7 +27,7 @@ a place for us to agree on are values and motivation.
 
 ## SYSTEM OF BELIEF:
 
-Personal and codding practices to live by:
+Personal and coding practices to live by:
 
 - Take at least an "hour of joy" every day whatever that means to you just not writing more code
   go out side and hug a tree or something like that. A well rounded developer is one that participates in life.
