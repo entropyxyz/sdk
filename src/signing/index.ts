@@ -66,7 +66,7 @@ export default class SignatureRequestManager {
   keyring: Keyring
   signer: Signer
   substrate: ApiPromise
-
+  #keyGroups?: {[key: any]: any}
   /**
    * Initializes a new instance of `SignatureRequestManager`.
    *
@@ -190,14 +190,29 @@ export default class SignatureRequestManager {
 
     const signatureVerifyingKey = this.verifyingKey
 
-    const txRequests: Array<EncMsg> = await this.formatTxRequests({
+    const txRequest = {
       strippedsigRequestHash,
       auxiliaryData,
       validatorsInfo: validatorsInfo,
       hash,
       signatureVerifyingKey,
-    })
-    const sigs = await this.submitTransactionRequest(txRequests)
+    }
+
+    const txRequests: Array<EncMsg> = await this.formatTxRequests(txRequest)
+    // this is because of a bug we are seeing in signing groups see
+    // issue on entropy-core #890
+    // https://github.com/entropyxyz/entropy-core/issues/890
+    // https://github.com/entropyxyz/sdk/issues/380
+    let sigs
+    try {
+      sigs = await this.submitTransactionRequest(txRequests)
+      // clear preserved keygroups if not failed
+      this.#keyGroups = {}
+    } catch (e) {
+      // this is not a private function for tests?
+      // if this fails really fail
+      sigs = await this._shouldTryAgain(e, txRequest)
+    }
     const sig = await this.verifyAndReduceSignatures(sigs)
     return Uint8Array.from(atob(sig), (c) => c.charCodeAt(0))
   }
@@ -337,17 +352,24 @@ export default class SignatureRequestManager {
    * @returns {Promise<ValidatorInfo[]>} A promise resolving to an array of validator information.
    */
 
-  async pickValidators (sigRequest: string): Promise<ValidatorInfo[]> {
+  async pickValidators (sigRequest: string, inReverse?: boolean): Promise<ValidatorInfo[]> {
     const entries =
       await this.substrate.query.stakingExtension.signingGroups.entries()
-    const stashKeys = entries.map((group) => {
+    const stashKeys = entries.map((group, i) => {
       const keyGroup = group[1]
+      // define keygroups see issue#380 https://github.com/entropyxyz/sdk/issues/380
+      if (!this.#keyGroups) this.#keyGroups = {}
+      this.#keyGroups[i] = keyGroup
       // omg polkadot type gen is a head ache
       // @ts-ignore: next line
       const index = parseInt(sigRequest, 16) % keyGroup.unwrap().length
+      if (isNaN(index)) {
+        throw new Error(`when calculating the index for choosing a validator got: NaN`)
+      }
+      this#keyGroups.chosenIndex = index
       // omg polkadot type gen is a head ache
       // @ts-ignore: next line
-      return keyGroup.unwrap()[index]
+      return inReverse ? this.#keyGroups.unwrap().reverse()[index] : keyGroup.unwrap()[index]
     })
 
     const rawValidatorInfo = await Promise.all(
@@ -426,5 +448,24 @@ export default class SignatureRequestManager {
       throw new Error('Can not validate the identity of any validator')
 
     return seperatedSigsAndProofs.sigs[first]
+  }
+
+  async _shouldTryAgain (e, txRequest, alreadyTried?: boolean): Promise<any> {
+    if(e.message.includes('Invalid Signer') && alreadyTried) {
+      const message = `Something went wrong in choosing a validator from a group:
+      index: ${this.#keyGroups.chosenIndex}
+      sigRequest: ${txRequest.strippedsigRequestHash}
+      `
+      this.#keyGroups = {}
+      throw new Error(message)
+    } else if (e.message.includes('Invalid Signer')) {
+      txRequest = validatorsInfo = await this.pickValidators( strippedsigRequestHash, true)
+      await txRequestTry2 = await this.formatTxRequests(txRequest)
+      const sigs = await this.submitTransactionRequest(txRequests)
+      this.#keyGroups = {}
+      return sigs
+    }
+    // allways throw if you dont satisfy
+    throw e
   }
 }
