@@ -27,6 +27,7 @@ export interface SigMsgOps {
 
 export interface SigWithAdapptersOps extends SigMsgOps {
   order: string[]
+  signatureVerifyingKey?: string
 }
 
 export interface SigOps {
@@ -34,6 +35,7 @@ export interface SigOps {
   hash: string
   type?: string
   auxiliaryData?: unknown[]
+  signatureVerifyingKey?: string
 }
 
 /**
@@ -122,6 +124,7 @@ export default class SignatureRequestManager {
   async signWithAdaptersInOrder ({
     msg,
     order,
+    signatureVerifyingKey
   }: SigWithAdapptersOps): Promise<unknown> {
     if (!order) {
       throw new Error(
@@ -142,7 +145,7 @@ export default class SignatureRequestManager {
       }
       return agg
     }, [])
-    // const { sigRequestHash, auxilary_data } = await
+
     const results = await Promise.all(
       adaptersToRun.map((adapter) => {
         return adapter.preSign(this.signer, msg)
@@ -161,6 +164,7 @@ export default class SignatureRequestManager {
       sigRequestHash,
       hash: adaptersToRun[0].HASHING_ALGORITHM,
       auxiliaryData,
+      signatureVerifyingKey,
     })
     return signature
   }
@@ -180,6 +184,7 @@ export default class SignatureRequestManager {
     sigRequestHash,
     hash,
     auxiliaryData,
+    signatureVerifyingKey: signatureVerifyingKeyOverwrite,
   }: SigOps): Promise<Uint8Array> {
     const strippedsigRequestHash = stripHexPrefix(sigRequestHash)
     const validatorsInfo: Array<ValidatorInfo> = await this.pickValidators(
@@ -188,7 +193,7 @@ export default class SignatureRequestManager {
     // TO-DO: this needs to be and accounId ie hex string of the address
     // which means you need a new key ie device key here
 
-    const signatureVerifyingKey = this.verifyingKey
+    const signatureVerifyingKey = signatureVerifyingKeyOverwrite || this.verifyingKey
 
     const txRequests: Array<EncMsg> = await this.formatTxRequests({
       strippedsigRequestHash,
