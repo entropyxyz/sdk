@@ -9,7 +9,7 @@ export async function spinNetworkUp(networkType = 'two-nodes') {
       { shell: true, cwd: process.cwd(), stdio: 'inherit' } // Use shell's search path.
     )
   } catch (e) {
-    console.error('Error in spintNetworkUp: ', e.message)
+    console.error('Error in spinNetworkUp: ', e.message)
   }
 }
 

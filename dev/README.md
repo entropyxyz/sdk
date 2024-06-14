@@ -21,7 +21,7 @@ that program is already deployed boo").
 Have a look what's running:
 
 ```bash
-docker ps
+docker container list
 ```
 
 You can close them down like this:
