@@ -32,6 +32,8 @@ services:
     image: entropyxyz/entropy:${ENTROPY_CORE_VERSION:-latest}
     ports:
       - "127.0.0.1:9944:9944/tcp"
+    volumes:
+      - ${PWD}/dev:/srv/entropy/dev
     command:
       - "--chain"
       - "devnet-local"
@@ -64,6 +66,8 @@ services:
     image: entropyxyz/entropy:${ENTROPY_CORE_VERSION:-latest}
     ports:
       - "127.0.0.1:9945:9944/tcp"
+    volumes:
+      - ${PWD}/dev:/srv/entropy/dev
     command:
       - "--chain"
       - "devnet-local"
@@ -96,6 +100,8 @@ services:
     image: entropyxyz/entropy:${ENTROPY_CORE_VERSION:-latest}
     ports:
       - "127.0.0.1:9946:9944/tcp"
+    volumes:
+      - ${PWD}/dev:/srv/entropy/dev
     command:
       - "--chain"
       - "devnet-local"
@@ -128,6 +134,8 @@ services:
     image: entropyxyz/entropy:${ENTROPY_CORE_VERSION:-latest}
     ports:
       - "127.0.0.1:9947:9944/tcp"
+    volumes:
+      - ${PWD}/dev:/srv/entropy/dev
     command:
       - "--chain"
       - "devnet-local"
