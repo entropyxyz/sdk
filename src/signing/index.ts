@@ -33,6 +33,7 @@ export interface SigOps {
   sigRequestHash: string
   hash: string
   type?: string
+  verifyingKeyOverwrite?: string
   auxiliaryData?: unknown[]
 }
 
@@ -180,15 +181,22 @@ export default class SignatureRequestManager {
     sigRequestHash,
     hash,
     auxiliaryData,
+    verifyingKeyOverwrite,
   }: SigOps): Promise<Uint8Array> {
     const strippedsigRequestHash = stripHexPrefix(sigRequestHash)
+    console.log('hash', hash);
+    console.log('auxiliary data', JSON.parse(JSON.stringify(auxiliaryData)));
+    console.log('stripped hash', strippedsigRequestHash);
+    console.log('keys', this.verifyingKey, verifyingKeyOverwrite);
+    
+    
     const validatorsInfo: Array<ValidatorInfo> = await this.pickValidators(
       strippedsigRequestHash
     )
     // TO-DO: this needs to be and accounId ie hex string of the address
     // which means you need a new key ie device key here
 
-    const signatureVerifyingKey = this.verifyingKey
+    const signatureVerifyingKey = verifyingKeyOverwrite || this.verifyingKey
 
     const txRequests: Array<EncMsg> = await this.formatTxRequests({
       strippedsigRequestHash,
