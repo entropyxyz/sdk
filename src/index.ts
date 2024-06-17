@@ -189,3 +189,7 @@ export default class Entropy {
     }
   }
 }
+
+export {
+  Entropy
+}
