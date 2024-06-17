@@ -31,7 +31,7 @@ export interface SigWithAdapptersOps extends SigMsgOps {
 
 export interface SigOps {
   sigRequestHash: string
-  hash: string
+  hash: any
   type?: string
   verifyingKeyOverwrite?: string
   auxiliaryData?: unknown[]
@@ -46,7 +46,7 @@ export interface UserSignatureRequest {
   auxilary_data?: any
   validatorsInfo: ValidatorInfo[]
   timestamp: { secs_since_epoch: number; nanos_since_epoch: number }
-  hash: string
+  hash: any
   signature_verifying_key: number[]
 }
 
@@ -249,7 +249,7 @@ export default class SignatureRequestManager {
     strippedsigRequestHash: string
     auxiliaryData?: unknown[]
     validatorsInfo: Array<ValidatorInfo>
-    hash?: string
+    hash?: any
     signatureVerifyingKey: string
   }): Promise<EncMsg[]> {
     return await Promise.all(
