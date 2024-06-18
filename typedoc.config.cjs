@@ -26,9 +26,6 @@ module.exports = {
   entryPoints: [
     'src/index.ts',
     'src/keys/index.ts',
-    'src/keys/utils.ts',
-    'src/utils/crypto.ts',
-    'src/utils/index.ts',
   ],
   // entryPointStrategy: 'expand',
 
