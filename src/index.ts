@@ -44,11 +44,10 @@ export default class Entropy {
    * Initializes an instance of the Entropy class.
    *
    * @param {EntropyOpts} opts - The configuration options for the Entropy instance.
-   * @param {string} [opts.endpoint] - The endpoint for connecting to validators, either local or devnet.
-   * @param {Adapter[]} [opts.adapters] - A collection of signing adapters for handling various transaction types.
    */
 
   constructor (opts: EntropyOpts) {
+    if (!opts) throw new Error('missing opts object')
     this.ready = new Promise((resolve, reject) => {
       this.#ready = resolve
       this.#fail = reject
@@ -189,4 +188,8 @@ export default class Entropy {
       }
     }
   }
+}
+
+export {
+  Entropy
 }
