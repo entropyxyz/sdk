@@ -30,7 +30,8 @@ export default class Keyring {
   /**
    * Initializes a new instance of the `Keyring` class.
    *
-   * @param keyMaterial - The key material (or account) used for key generation.
+   * @param account - The key material (or account) used for key generation.
+   *
    * @example
    *
    * ```ts
