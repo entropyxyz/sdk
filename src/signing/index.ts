@@ -207,7 +207,11 @@ export default class SignatureRequestManager {
     })
     const sigs = await this.submitTransactionRequest(txRequests)
     const sig = await this.verifyAndReduceSignatures(sigs)
-    return Uint8Array.from(atob(sig), (c) => c.charCodeAt(0))
+    console.log('atob(sig)', btoa(sig));
+    return Uint8Array.from(atob(sig), (c) => {
+      console.log('char', c, c.charCodeAt(0));
+      return c.charCodeAt(0)
+    })
   }
 
   /**
@@ -355,7 +359,7 @@ export default class SignatureRequestManager {
       const index = parseInt(sigRequest, 16) % keyGroup.unwrap().length
       // omg polkadot type gen is a head ache
       // @ts-ignore: next line
-      return keyGroup.unwrap()[index]
+      return keyGroup.unwrap()[0]
     })
 
     const rawValidatorInfo = await Promise.all(
@@ -432,7 +436,7 @@ export default class SignatureRequestManager {
     const first = validated.findIndex((v) => v)
     if (first === -1)
       throw new Error('Can not validate the identity of any validator')
-
+    console.log({"first sig": btoa(seperatedSigsAndProofs.sigs[first])})
     return seperatedSigsAndProofs.sigs[first]
   }
 }
