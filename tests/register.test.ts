@@ -1,7 +1,7 @@
 import test from 'tape'
 /*
 import { readFileSync } from 'fs'
-import Entropy from '../src'
+import { Entropy } from '../src'
 
 import {
   promiseRunner,

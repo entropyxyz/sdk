@@ -5,7 +5,7 @@ import SignatureRequestManager, { SigOps, SigWithAdapptersOps } from './signing'
 import { crypto, loadCryptoLib } from './utils/crypto'
 import { Adapter } from './signing/adapters/types'
 import ProgramManager from './programs'
-import Keyring from './keys'
+import { Keyring } from './keys'
 import { keysCryptoWaitReady } from './keys/utils'
 import { ChildKey } from './keys/types/constants'
 import { DEVICE_KEY_PROXY_PROGRAM_INTERFACE } from './signing/adapters/device-key-proxy'
@@ -27,7 +27,7 @@ export interface EntropyOpts {
 /**
  * The main class to handle all interactions with the Entropy SDK.
  */
-export default class Entropy {
+export class Entropy {
   /** @internal */
   #ready?: (value?: unknown) => void
   /** @internal */
@@ -188,8 +188,4 @@ export default class Entropy {
       }
     }
   }
-}
-
-export {
-  Entropy
 }

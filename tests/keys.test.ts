@@ -1,6 +1,6 @@
 import test from 'tape'
 import { mnemonicGenerate } from '@polkadot/util-crypto'
-import Keyring from '../src/keys'
+import { Keyring } from '../src/keys'
 import { wasmGlobalsReady } from '../src'
 // import { MnemonicSeedMaterial } from '../src/keys/types/json'
 import { charlieStashSeed } from './testing-utils/constants'

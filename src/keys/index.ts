@@ -18,7 +18,7 @@ const ACCOUNTS = Object.keys(ChildKey)
 /**
  * A utility class to allow consumers of the SDK to subscribe to key creations and "account" updates.
  */
-export default class Keyring {
+export class Keyring {
   // private
   // it's a unit8array if it comes from a mnemonic and a string if it comes from the user
   // The seed used to generate keys, can be a Uint8Array (from mnemonic) or a string (user-provided).
@@ -204,8 +204,4 @@ export default class Keyring {
       },
     })
   }
-}
-
-export {
-  Keyring
 }

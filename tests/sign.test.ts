@@ -1,6 +1,6 @@
 import test from 'tape'
-import Entropy, { wasmGlobalsReady } from '../src'
-import Keyring from '../src/keys'
+import { Entropy, wasmGlobalsReady } from '../src'
+import { Keyring } from '../src/keys'
 
 import {
   sleep,

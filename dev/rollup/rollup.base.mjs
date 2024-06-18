@@ -59,9 +59,13 @@ export default (outputs, plugins = []) => {
     // commonjs({ transformMixedEsModules: true }),
     cleanup(),
   ]
+
   return outputs.map((output) => {
     return {
-      input: "src/index.ts",
+      input: [
+        'src/index.ts',
+        'src/keys/index.ts',
+      ],
       output: {
         sourcemap: isDev,
         ...output

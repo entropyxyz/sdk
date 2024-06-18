@@ -1,7 +1,7 @@
 /**
  * These are internal facing types
  * */
-import Entropy from './../index'
+import { Entropy } from './../index'
 import type { AccountId32 } from '@polkadot/types/interfaces/runtime'
 
 /**

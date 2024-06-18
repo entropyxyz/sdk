@@ -3,7 +3,7 @@
     // "strict": true,
     // "noImplicitAny": true,
     "esModuleInterop": true,
-    "declarationDir": "build/typings",
+    "declarationDir": "dist/typings",
     "module": "esnext",
     "target": "es2020",
     "skipLibCheck": true,
@@ -33,6 +33,6 @@
   ],
   "exclude": [
     "tests",
-    "build"
+    "dist"
   ]
 }

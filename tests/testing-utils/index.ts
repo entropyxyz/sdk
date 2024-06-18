@@ -1,7 +1,7 @@
 import * as readline from 'readline'
 
-import Entropy, { wasmGlobalsReady } from '../../src'
-import Keyring from '../../src/keys'
+import { Entropy, wasmGlobalsReady } from '../../src'
+import { Keyring } from '../../src/keys'
 import { KeyMaterial } from '../../src/keys/types/json'
 import { charlieStashSeed } from './constants'
 

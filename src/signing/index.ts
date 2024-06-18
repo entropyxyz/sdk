@@ -6,7 +6,7 @@ import { EncMsg, ValidatorInfo } from '../types/internal'
 import { stripHexPrefix, sendHttpPost, toHex } from '../utils'
 import { crypto } from '../utils/crypto'
 import { CryptoLib } from '../utils/crypto/types'
-import Keyring from '../keys'
+import { Keyring } from '../keys'
 
 export interface Config {
   keyring: Keyring

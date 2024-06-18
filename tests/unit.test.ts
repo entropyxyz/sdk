@@ -1,6 +1,6 @@
 import test from 'tape'
 
-import Entropy, { wasmGlobalsReady } from '../src'
+import { Entropy, wasmGlobalsReady } from '../src'
 
 async function testSetup() {
   await wasmGlobalsReady()

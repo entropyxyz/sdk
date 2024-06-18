@@ -1,7 +1,7 @@
 import test from 'tape'
 import { randomBytes } from 'crypto'
-import Entropy, { wasmGlobalsReady } from '../src'
-import Keyring from '../src/keys'
+import { Entropy, wasmGlobalsReady } from '../src'
+import { Keyring } from '../src/keys'
 
 import {
   sleep,
