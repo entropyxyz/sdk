@@ -30,7 +30,20 @@ export default class Keyring {
   /**
    * Initializes a new instance of the `Keyring` class.
    *
-   * @param account - The key material and entropy account used for key generation.
+   * @param keyMaterial - The key material (or account) used for key generation.
+   * @example
+   *
+   * ```ts
+   * import { Keyring } from '@entropyxyz/sdk/keys'
+   *
+   * const keyring = new Keyring({
+   *   seed: '0xbc1ede780f784bb6991a585e4f6e61522c14e1cae6ad0895fb57b9a205a8f938'
+   * })
+   *
+   * keyring.accounts.on('account-update', (fullAccount) => {
+   *   // TODO: persist this
+   * })
+   * ```
    */
 
   constructor (account: KeyMaterial) {

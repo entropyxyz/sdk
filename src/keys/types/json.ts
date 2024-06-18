@@ -73,7 +73,7 @@ export type Mnemonic = string
 
 export type KeyMaterial =
   | (HexSeedMaterial & MnemonicSeedMaterial)
-  | EntropyAccount //HexSeedMaterial & MnemonicSeedMaterial
+  | EntropyAccount // HexSeedMaterial & MnemonicSeedMaterial
 
 /**
  * Represents key material using a hexadecimal seed.
