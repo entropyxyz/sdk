@@ -14,7 +14,7 @@ module.exports = {
 
   tsconfig: './tsconfig.json',
   excludePrivate: true,
-  excludeInternal: true,
+  // excludeInternal: true,
   validation: {
     notExported: true,
     invalidLink: true,

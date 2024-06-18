@@ -38,13 +38,16 @@ export default class Entropy {
   /** A promise that resolves once all internal setup has been successfully completed. */
   ready: Promise<boolean>
 
-  /* Accessory for ... TODO: */
+  /* Accessor for ... TODO: */
   registrationManager: RegistrationManager
 
-  /* Accessory for ... TODO: */
+  /* Accessor for ... TODO: */
   programs: ProgramManager
 
-  /* Accessory for ... TODO: */
+  /* Accessor for the SignatureRequestManager.
+   * Generally you will use entropy.sign or entropy.signWithAdapter
+   *
+   */
   signingManager: SignatureRequestManager
 
   /** Accessor for the keyring passed at instantiation */
@@ -58,11 +61,18 @@ export default class Entropy {
    *
    * @example
    * ```ts
-   * import { Entropy } from '@entropyxyz/sdk'
+   * import { Entropy, wasmGlobalsReady } from '@entropyxyz/sdk'
    * import { Keyring } from '@entropyxyz/sdk/keys'
    *
-   * const keyring = new Keyring({ seed })
-   * const entropy = new Entropy({ keyring })
+   * async function main () {
+   *   const keyring = new Keyring({ seed })
+   *   const entropy = new Entropy({ keyring })
+   *
+   *   await wasmGlobalsReady()
+   *   await entropy.ready
+   * }
+   *
+   * main()
    * ```
    */
 
@@ -124,14 +134,12 @@ export default class Entropy {
    * @throws {Error} If the address is already registered or if there's a problem during registration.
    */
   async register (params?: RegistrationParams): Promise<HexString> {
+    await this.ready
     const defaultProgram = DEVICE_KEY_PROXY_PROGRAM_INTERFACE
-
     params = params || {
       programData: [defaultProgram],
       programDeployer: this.keyring.accounts.registration.address,
     }
-
-    await Promise.all([this.ready, this.substrate.isReady])
 
     const deviceKey = this.keyring.getLazyLoadAccountProxy(ChildKey.deviceKey)
     deviceKey.used = true
@@ -147,9 +155,11 @@ export default class Entropy {
     }
 
     const verifyingKey = await this.registrationManager.register(params)
-    // fuck frankie TODO: Make legit function
+
+    // TODO: Make legit function
     const admin = this.keyring.getLazyLoadAccountProxy(ChildKey.registration)
     const vk = admin.verifyingKeys || []
+
     // HACK: these assignments trigger important `account-update` flows via the Proxy 
     admin.verifyingKeys = [...vk, verifyingKey]
     deviceKey.verifyingKeys = [verifyingKey, ...vk]
@@ -178,7 +188,7 @@ export default class Entropy {
    */
 
   async signWithAdaptersInOrder (params: SigWithAdapptersOps): Promise<unknown> {
-    (await this.ready) && this.substrate.isReady
+    await this.ready
     return await this.signingManager.signWithAdaptersInOrder(params)
   }
 

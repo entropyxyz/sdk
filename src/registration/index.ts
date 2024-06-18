@@ -6,8 +6,9 @@ import { Signer } from '../keys/types/internal'
 import { Address } from '../types/internal'
 
 export interface RegistrationParams {
+  /** initial programs associated with the user */
   programData: ProgramInstance[]
-  /** just testing this functionality, not intending to use this as the set program */
+  /** The account authorized to modify programs on behalf of the user. */
   programDeployer?: SS58Address
 }
 
