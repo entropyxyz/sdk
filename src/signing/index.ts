@@ -143,7 +143,7 @@ export default class SignatureRequestManager {
       }
       return agg
     }, [])
-
+// this is the named keys we care about from post sign. { sigRequestHash, auxilary_data }
     const results = await Promise.all(
       adaptersToRun.map((adapter) => {
         return adapter.preSign(this.signer, msg)
