@@ -66,7 +66,7 @@ export default class SignatureRequestManager {
   keyring: Keyring
   signer: Signer
   substrate: ApiPromise
-  #keyGroups?: {[key: any]: any}
+  #keyGroups?: {[key: string | number]: any}
   /**
    * Initializes a new instance of `SignatureRequestManager`.
    *
@@ -353,12 +353,13 @@ export default class SignatureRequestManager {
    */
 
   async pickValidators (sigRequest: string, inReverse?: boolean): Promise<ValidatorInfo[]> {
+    if (!this.#keyGroups) this.#keyGroups = {}
+
     const entries =
       await this.substrate.query.stakingExtension.signingGroups.entries()
     const stashKeys = entries.map((group, i) => {
       const keyGroup = group[1]
       // define keygroups see issue#380 https://github.com/entropyxyz/sdk/issues/380
-      if (!this.#keyGroups) this.#keyGroups = {}
       this.#keyGroups[i] = keyGroup
       // omg polkadot type gen is a head ache
       // @ts-ignore: next line
@@ -366,7 +367,7 @@ export default class SignatureRequestManager {
       if (isNaN(index)) {
         throw new Error(`when calculating the index for choosing a validator got: NaN`)
       }
-      this#keyGroups.chosenIndex = index
+      this.#keyGroups.chosenIndex = index
       // omg polkadot type gen is a head ache
       // @ts-ignore: next line
       return inReverse ? this.#keyGroups.unwrap().reverse()[index] : keyGroup.unwrap()[index]
@@ -459,9 +460,9 @@ export default class SignatureRequestManager {
       this.#keyGroups = {}
       throw new Error(message)
     } else if (e.message.includes('Invalid Signer')) {
-      txRequest = validatorsInfo = await this.pickValidators( strippedsigRequestHash, true)
-      await txRequestTry2 = await this.formatTxRequests(txRequest)
-      const sigs = await this.submitTransactionRequest(txRequests)
+      txRequest.validatorsInfo = await this.pickValidators(txRequest.strippedsigRequestHash, true)
+      const txRequestTry2 = await this.formatTxRequests(txRequest)
+      const sigs = await this.submitTransactionRequest(txRequestTry2)
       this.#keyGroups = {}
       return sigs
     }
