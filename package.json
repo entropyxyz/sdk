@@ -21,6 +21,9 @@
     "./keys": {
       "import": "./keys.mjs",
       "require": "./keys.cjs"
+    },
+    "./testing": {
+      "import": "./dev/testing-utils.mjs"
     }
   },
   "module": "./index.mjs",
