@@ -39,7 +39,7 @@ Personal and coding practices to live by:
   `git pull origin` :yellow_heart:
 
   > Git pull vs fetch: What's the difference?
-  > The key difference between git fetch and pull is that git pull copies changes from a remote repository directly into your working directory, while git fetch does not. The git fetch command only copies changes into your local Git repo. The git pull command does both.
+  > The key difference between git fetch and pull is that git pull merges changes from a remote repository directly into your working directory, while git fetch only copies changes into your local memory of remote branches.
 
   if you are going to `fetch` don't forget the context your missing.
 
