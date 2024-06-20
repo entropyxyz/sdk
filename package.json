@@ -9,7 +9,7 @@
     "keys.cjs",
     "keys.mjs",
     "dist/**/*",
-    "dev",
+    "dev/**/*",
     "README.md"
   ],
   "type": "module",
