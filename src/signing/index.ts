@@ -32,8 +32,7 @@ export interface SigWithAdaptersOps extends SigMsgOps {
 
 export interface SigOps {
   sigRequestHash: string
-  // hashing algorigthm will not always be a string, i.e faucet hash algo is {cutom:0}
-  hash: any
+  hash: string
   type?: string
   auxiliaryData?: unknown[]
   signatureVerifyingKey?: string
@@ -48,7 +47,7 @@ export interface UserSignatureRequest {
   auxilary_data?: any
   validatorsInfo: ValidatorInfo[]
   timestamp: { secs_since_epoch: number; nanos_since_epoch: number }
-  hash: any
+  hash: string
   signature_verifying_key: number[]
 }
 
