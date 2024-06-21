@@ -10,10 +10,10 @@ The format extends [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 Version header format: `[version] Name - year-month-day (entropy-core compatibility: version [range])`
 
-## [UNRELEASED]
+## [0.2.2-0]
 
 ### Added
-
+- we now conveniently export our dev directory which can spin up dev environment networks [PR#389](https://github.com/entropyxyz/sdk/pull/389)
 ### Fixed
 - hot fix for issue #380: try in reverse order for testnet environment
 ### Changed
