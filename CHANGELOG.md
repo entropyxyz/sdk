@@ -15,7 +15,7 @@ Version header format: `[version] Name - year-month-day (entropy-core compatibil
 ### Added
 
 ### Fixed
-
+- hot fix for issue #380: try in reverse order for testnet environment
 ### Changed
 - constructor now throws if you pass no object
 
