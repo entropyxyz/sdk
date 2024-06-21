@@ -370,7 +370,7 @@ export default class SignatureRequestManager {
       this.#keyGroups.chosenIndex = index
       // omg polkadot type gen is a head ache
       // @ts-ignore: next line
-      return inReverse ? this.#keyGroups.unwrap().reverse()[index] : keyGroup.unwrap()[index]
+      return inReverse ? this.#keyGroups[i].unwrap().reverse()[index] : keyGroup.unwrap()[index]
     })
 
     const rawValidatorInfo = await Promise.all(
@@ -453,16 +453,24 @@ export default class SignatureRequestManager {
 
   async _shouldTryAgain (e, txRequest, alreadyTried?: boolean): Promise<any> {
     if(e.message.includes('Invalid Signer') && alreadyTried) {
-      const message = `Something went wrong in choosing a validator from a group:
-      index: ${this.#keyGroups.chosenIndex}
-      sigRequest: ${txRequest.strippedsigRequestHash}
-      `
+      const message = [
+        'Something went wrong in choosing a validator from a group:',
+        `index: ${this.#keyGroups.chosenIndex}`,
+        `sigRequest: ${txRequest.strippedsigRequestHash}`,
+      ].join('\n')
+
       this.#keyGroups = {}
       throw new Error(message)
     } else if (e.message.includes('Invalid Signer')) {
       txRequest.validatorsInfo = await this.pickValidators(txRequest.strippedsigRequestHash, true)
       const txRequestTry2 = await this.formatTxRequests(txRequest)
-      const sigs = await this.submitTransactionRequest(txRequestTry2)
+      let sigs
+      try {
+        sigs = await this.submitTransactionRequest(txRequestTry2)
+      } catch (error) {
+        // just calling again to throw
+        await this._shouldTryAgain(error, txRequest, true)
+      }
       this.#keyGroups = {}
       return sigs
     }
