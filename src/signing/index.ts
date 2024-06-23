@@ -143,7 +143,7 @@ export default class SignatureRequestManager {
       }
       return agg
     }, [])
-
+// this is the named keys we care about from post sign. { sigRequestHash, auxilary_data }
     const results = await Promise.all(
       adaptersToRun.map((adapter) => {
         return adapter.preSign(this.signer, msg)
@@ -172,7 +172,7 @@ export default class SignatureRequestManager {
    *
    * @param {SigOps} sigOps - Parameters for the signature operation.
    * @param {string} sigOps.sigRequestHash - The hash of the signature request to be signed.
-   * @param {any} sigOps.hash - The name of the hashing algorithm used to hash the signature.
+   * @param {string} sigOps.hash - The name of the hashing algorithm used to hash the signature.
    * @param {unknown[]} sigOps.auxilaryData - Additional data for the signature operation.
    * @param {signatureVerifyingKey} sigOps.signatureVerifyingKey - The verifying key for the signature requested
    * @returns {Promise<Uint8Array>} A promise resolving to the signed hash as a Uint8Array.
