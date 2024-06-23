@@ -29,11 +29,15 @@ export interface SigWithAdapptersOps extends SigMsgOps {
   order: string[]
 }
 
+type CustomHashingAlgo = {
+  custom: number
+}
+
 export interface SigOps {
   sigRequestHash: string
-  hash: any
+  hash: string | CustomHashingAlgo
   type?: string
-  verifyingKeyOverwrite?: string
+  signatureVerifyingKey?: string
   auxiliaryData?: unknown[]
 }
 
@@ -171,7 +175,7 @@ export default class SignatureRequestManager {
    *
    * @param {SigOps} sigOps - Parameters for the signature operation.
    * @param {string} sigOps.sigRequestHash - The hash of the signature request to be signed.
-   * @param {string} [sigOps.hash] - The hash type.
+   * @param {string | CustomHashingAlgo} [sigOps.hash] - The hash type.
    * @param {unknown[]} [sigOps.auxilaryData] - Additional data for the signature operation.
    * @param {signatureVerifyingKey} signatureVerifyingKey - The verifying key for the signature requested
    * @returns {Promise<Uint8Array>} A promise resolving to the signed hash as a Uint8Array.
@@ -181,22 +185,16 @@ export default class SignatureRequestManager {
     sigRequestHash,
     hash,
     auxiliaryData,
-    verifyingKeyOverwrite,
+    signatureVerifyingKey: signatureVerifyingKeyOverwrite,
   }: SigOps): Promise<Uint8Array> {
-    const strippedsigRequestHash = stripHexPrefix(sigRequestHash)
-    console.log('hash', hash);
-    console.log('auxiliary data', JSON.parse(JSON.stringify(auxiliaryData)));
-    console.log('stripped hash', strippedsigRequestHash);
-    console.log('keys', this.verifyingKey, verifyingKeyOverwrite);
-    
-    
+    const strippedsigRequestHash = stripHexPrefix(sigRequestHash)    
     const validatorsInfo: Array<ValidatorInfo> = await this.pickValidators(
       strippedsigRequestHash
     )
     // TO-DO: this needs to be and accounId ie hex string of the address
     // which means you need a new key ie device key here
 
-    const signatureVerifyingKey = verifyingKeyOverwrite || this.verifyingKey
+    const signatureVerifyingKey = signatureVerifyingKeyOverwrite || this.verifyingKey
 
     const txRequest = {
       strippedsigRequestHash,
@@ -222,11 +220,7 @@ export default class SignatureRequestManager {
       sigs = await this._shouldTryAgain(e, txRequest)
     }
     const sig = await this.verifyAndReduceSignatures(sigs)
-    console.log('atob(sig)', btoa(sig));
-    return Uint8Array.from(atob(sig), (c) => {
-      console.log('char', c, c.charCodeAt(0));
-      return c.charCodeAt(0)
-    })
+    return Uint8Array.from(atob(sig), (c) => c.charCodeAt(0))
   }
 
   /**
@@ -457,9 +451,7 @@ export default class SignatureRequestManager {
       )
     )
     const first = validated.findIndex((v) => v)
-    if (first === -1)
-      throw new Error('Can not validate the identity of any validator')
-    console.log({"first sig": btoa(seperatedSigsAndProofs.sigs[first])})
+    if (first === -1) throw new Error('Can not validate the identity of any validator')
     return seperatedSigsAndProofs.sigs[first]
   }
 
