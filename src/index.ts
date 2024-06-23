@@ -1,6 +1,6 @@
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import xtend from 'xtend'
-import { debug, isValidSubstrateAddress as isDeployer } from './utils'
+import { isValidSubstrateAddress as isDeployer } from './utils'
 import RegistrationManager, { RegistrationParams } from './registration'
 import SignatureRequestManager, { SigOps, SigWithAdapptersOps } from './signing'
 import { crypto, loadCryptoLib } from './utils/crypto'
@@ -29,10 +29,6 @@ export interface EntropyOpts {
  * The main class to handle all interactions with the Entropy SDK.
  */
 export default class Entropy {
-  /** @internal */
-  #ready?: (value?: unknown) => void
-  /** @internal */
-  #fail?: (reason?: unknown) => void
   /** A promise that resolves once the cryptographic library has been loaded. */
   ready: Promise<boolean>
   registrationManager: RegistrationManager
@@ -49,14 +45,16 @@ export default class Entropy {
 
   constructor (opts: EntropyOpts) {
     if (!opts) throw new Error('missing opts object')
+
+    let ready, fail
     this.ready = new Promise((resolve, reject) => {
-      this.#ready = resolve
-      this.#fail = reject
-      debug('READY')
+      ready = resolve
+      fail = reject
     })
-    this.#init(opts).catch((error) => {
-      this.#fail(error)
-    })
+
+    this.#init(opts)
+      .then(() => ready(true))
+      .catch((error) => fail(error))
   }
 
   /**
@@ -71,7 +69,7 @@ export default class Entropy {
     this.keyring = opts.keyring
     const wsProvider = new WsProvider(opts.endpoint)
     this.substrate = new ApiPromise({ provider: wsProvider })
-    await this.substrate.isReadyOrError.catch((err) => this.#fail(err))
+    await this.substrate.isReadyOrError // throws an error if fails
 
     this.registrationManager = new RegistrationManager({
       substrate: this.substrate,
@@ -92,7 +90,6 @@ export default class Entropy {
       ),
       deployer: this.keyring.getLazyLoadAccountProxy(ChildKey.programDev),
     })
-    this.#ready(true)
   }
 
   /**
@@ -183,14 +180,11 @@ export default class Entropy {
   }
 
   async close () {
-    if (this.substrate.isConnected) {
-      try {
-        await this.substrate.disconnect()
-        // console.log('Disconnected successfully.')
-      } catch (error) {
-        console.error('Error closing connection', error.message)
-      }
-    }
+    if (!this.substrate) return
+
+    // NOTE: still need to call disconnect even if !isConnected (T_T)
+    await this.substrate.disconnect()
+      .catch(err => console.error('Error closing connection', err.message))
   }
 }
 
