@@ -5,8 +5,10 @@ import Keyring from '../../src/keys'
 import { KeyMaterial } from '../../src/keys/types/json'
 import { charlieStashSeed } from './constants'
 
+import { spinNetworkUp, spinNetworkDown } from '../../dev/testing-utils.mjs'
+export { spinNetworkUp, spinNetworkDown }
+
 export * from './constants'
-export * from './network'
 export * from './readKey'
 
 export async function createTestAccount(

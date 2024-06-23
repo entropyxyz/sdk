@@ -10,16 +10,24 @@
     "keys.cjs",
     "keys.mjs",
     "dist/**/*",
+    "dev/**/*",
     "README.md"
   ],
   "exports": {
     ".": {
       "import": "./index.mjs",
-      "require": "./index.cjs"
+      "require": "./index.cjs",
+      "default": "./dist/index.js",
+      "types": "./dist/index.d.ts"
     },
     "./keys": {
       "import": "./keys.mjs",
-      "require": "./keys.cjs"
+      "require": "./keys.cjs",
+      "default": "./dist/keys/index.js",
+      "types": "./dist/keys/index.d.ts"
+    },
+    "./testing": {
+      "import": "./dev/testing-utils.mjs"
     }
   },
   "module": "./index.mjs",
