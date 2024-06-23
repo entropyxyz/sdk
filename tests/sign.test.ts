@@ -74,7 +74,6 @@ test('Sign: Inputted Verifying Keys', async (t) => {
   t.teardown(async () => {
     // this gets called after all tests are run
     await charlieStashEntropy.close()
-    await charlieEntropy.close()
     await spinNetworkDown(NETWORK_TYPE).catch((error) =>
       console.error('Error while spinning network down', error.message)
     )
@@ -83,24 +82,14 @@ test('Sign: Inputted Verifying Keys', async (t) => {
   /* Setup Entropy */
   await run('wasm', wasmGlobalsReady())
   const charlieStashKeyring = new Keyring({ seed: charlieStashSeed, debug: true })
-  const charlieKeyring = new Keyring({ seed: charlieSeed, debug: true })
   const charlieStashEntropy = new Entropy({
     keyring: charlieStashKeyring,
     endpoint: 'ws://127.0.0.1:9944',
   })
-  const charlieEntropy = new Entropy({
-    keyring: charlieKeyring,
-    endpoint: 'ws://127.0.0.1:9944',
-  })
 
-  await Promise.all([
-    run('charlieStashEntropy ready', charlieStashEntropy.ready),
-    run('charlieEntropy ready', charlieEntropy.ready)
-  ])
-  await Promise.all([
-    run('charlie stash register', charlieStashEntropy.register()),
-    run('charlie register', charlieEntropy.register())
-  ])
+  await run('charlieStashEntropy ready', charlieStashEntropy.ready),
+  await run('charlie stash register', charlieStashEntropy.register())
+  await run('charlie stash second register', charlieStashEntropy.register())
 
   /* Sign */
   const msg = Buffer
@@ -114,7 +103,7 @@ test('Sign: Inputted Verifying Keys', async (t) => {
       order: ['deviceKeyProxy'],
       // no rhyme or reason for the choice of using the charlie seed verifying key, needed to use
       // a pre-loaded acct on our local devnet in order to get a valid verifying key
-      signatureVerifyingKey: charlieEntropy.keyring.accounts.deviceKey.verifyingKeys[0]
+      signatureVerifyingKey: charlieStashEntropy.keyring.accounts.deviceKey.verifyingKeys[1]
     })
   )
 
