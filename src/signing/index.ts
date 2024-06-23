@@ -67,7 +67,7 @@ export default class SignatureRequestManager {
   keyring: Keyring
   signer: Signer
   substrate: ApiPromise
-
+  #keyGroups?: {[key: string | number]: any}
   /**
    * Initializes a new instance of `SignatureRequestManager`.
    *
@@ -198,14 +198,29 @@ export default class SignatureRequestManager {
 
     const signatureVerifyingKey = verifyingKeyOverwrite || this.verifyingKey
 
-    const txRequests: Array<EncMsg> = await this.formatTxRequests({
+    const txRequest = {
       strippedsigRequestHash,
       auxiliaryData,
       validatorsInfo: validatorsInfo,
       hash,
       signatureVerifyingKey,
-    })
-    const sigs = await this.submitTransactionRequest(txRequests)
+    }
+
+    const txRequests: Array<EncMsg> = await this.formatTxRequests(txRequest)
+    // this is because of a bug we are seeing in signing groups see
+    // issue on entropy-core #890
+    // https://github.com/entropyxyz/entropy-core/issues/890
+    // https://github.com/entropyxyz/sdk/issues/380
+    let sigs
+    try {
+      sigs = await this.submitTransactionRequest(txRequests)
+      // clear preserved keygroups if not failed
+      this.#keyGroups = {}
+    } catch (e) {
+      // this is not a private function for tests?
+      // if this fails really fail
+      sigs = await this._shouldTryAgain(e, txRequest)
+    }
     const sig = await this.verifyAndReduceSignatures(sigs)
     console.log('atob(sig)', btoa(sig));
     return Uint8Array.from(atob(sig), (c) => {
@@ -349,17 +364,25 @@ export default class SignatureRequestManager {
    * @returns {Promise<ValidatorInfo[]>} A promise resolving to an array of validator information.
    */
 
-  async pickValidators (sigRequest: string): Promise<ValidatorInfo[]> {
+  async pickValidators (sigRequest: string, inReverse?: boolean): Promise<ValidatorInfo[]> {
+    if (!this.#keyGroups) this.#keyGroups = {}
+
     const entries =
       await this.substrate.query.stakingExtension.signingGroups.entries()
-    const stashKeys = entries.map((group) => {
+    const stashKeys = entries.map((group, i) => {
       const keyGroup = group[1]
+      // define keygroups see issue#380 https://github.com/entropyxyz/sdk/issues/380
+      this.#keyGroups[i] = keyGroup
       // omg polkadot type gen is a head ache
       // @ts-ignore: next line
       const index = parseInt(sigRequest, 16) % keyGroup.unwrap().length
+      if (isNaN(index)) {
+        throw new Error(`when calculating the index for choosing a validator got: NaN`)
+      }
+      this.#keyGroups.chosenIndex = index
       // omg polkadot type gen is a head ache
       // @ts-ignore: next line
-      return keyGroup.unwrap()[0]
+      return inReverse ? this.#keyGroups[i].unwrap().reverse()[index] : keyGroup.unwrap()[index]
     })
 
     const rawValidatorInfo = await Promise.all(
@@ -438,5 +461,32 @@ export default class SignatureRequestManager {
       throw new Error('Can not validate the identity of any validator')
     console.log({"first sig": btoa(seperatedSigsAndProofs.sigs[first])})
     return seperatedSigsAndProofs.sigs[first]
+  }
+
+  async _shouldTryAgain (e, txRequest, alreadyTried?: boolean): Promise<any> {
+    if(e.message.includes('Invalid Signer') && alreadyTried) {
+      const message = [
+        'Something went wrong in choosing a validator from a group:',
+        `index: ${this.#keyGroups.chosenIndex}`,
+        `sigRequest: ${txRequest.strippedsigRequestHash}`,
+      ].join('\n')
+
+      this.#keyGroups = {}
+      throw new Error(message)
+    } else if (e.message.includes('Invalid Signer')) {
+      txRequest.validatorsInfo = await this.pickValidators(txRequest.strippedsigRequestHash, true)
+      const txRequestTry2 = await this.formatTxRequests(txRequest)
+      let sigs
+      try {
+        sigs = await this.submitTransactionRequest(txRequestTry2)
+      } catch (error) {
+        // just calling again to throw
+        await this._shouldTryAgain(error, txRequest, true)
+      }
+      this.#keyGroups = {}
+      return sigs
+    }
+    // allways throw if you dont satisfy
+    throw e
   }
 }

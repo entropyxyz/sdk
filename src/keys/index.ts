@@ -205,3 +205,7 @@ export default class Keyring {
     })
   }
 }
+
+export {
+  Keyring
+}
