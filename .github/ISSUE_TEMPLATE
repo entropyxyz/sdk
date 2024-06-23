@@ -1,0 +1,33 @@
+<!-- 
+  Before submitting an issue, please review the project documentation and search for existing issues.
+  The more details you provide, the easier it will be to diagnose and address the issue.
+-->
+
+**Title**: `<A clear and concise title that reflects the nature of your issue.>`
+
+**Issue type**: (Select one)
+
+- [ ] Bug
+- [ ] Question
+- [ ] Improvement
+
+**Description**:
+
+Describe the issue you're encountering in detail.
+
+**Steps to reproduce**:
+
+Provide a step-by-step explanation of how to reproduce the issue.
+
+**Error messages**:
+
+Include any relevant error messages, logs, or screenshots.
+
+**Expected behavior**: 
+
+What were you expecting to happen? This seems like a silly question but it's very helpful to know what you'd were hoping to see. Please be specific.
+
+**Additional information**:
+
+- Operating System: (e.g., Windows 11, MacOS Monterey, Ubuntu 22.04)
+- Other Software/Hardware: (if applicable)

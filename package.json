@@ -4,39 +4,34 @@
   "license": "AGPL-3.0-only",
   "description": "JS SDK for entropy blockchain ",
   "files": [
-    "dist",
-    "dist/keys",
-    "dist/keys/utils.ts",
-    "dist/utils"
+    "index.cjs",
+    "index.mjs",
+    "keys.cjs",
+    "keys.mjs",
+    "dist/**/*",
+    "dev/**/*",
+    "README.md"
   ],
   "type": "module",
   "exports": {
     ".": {
-      "module": "./dist/index.js",
-      "require": "./dist/index.cjs",
-      "default": "./dist/index.js"
+      "import": "./index.mjs",
+      "require": "./index.cjs",
+      "default": "./dist/index.js",
+      "types": "./dist/index.d.ts"
     },
     "./keys": {
-      "module": "./dist/keys/index.js",
-      "require": "./dist/keys/index.cjs",
-      "default": "./dist/keys/index.js"
+      "import": "./keys.mjs",
+      "require": "./keys.cjs",
+      "default": "./dist/keys/index.js",
+      "types": "./dist/keys/index.d.ts"
     },
-    "./keys/utils": {
-      "module": "./dist/keys/utils.js",
-      "require": "./dist/keys/utils.cjs",
-      "default": "./dist/keys/index.js"
-    },
-    "./crypto-utils": {
-      "module": "./dist/utils/crypto.js",
-      "require": "./dist/utils/crypto.cjs",
-      "default": "./dist/utils/crypto.js"
-    },
-    "./gen-utils": {
-      "module": "./dist/utils/index.js",
-      "require": "./dist/utils/index.cjs",
-      "default": "./dist/utils/index.js"
+    "./testing": {
+      "import": "./dev/testing-utils.mjs"
     }
   },
+  "module": "./index.mjs",
+  "main": "./index.cjs",
   "types": "dist/index.d.ts",
   "scripts": {
     "test": "yarn test:setup && yarn test:types && yarn test:ts && yarn test:only && yarn test:require && yarn test:import",
