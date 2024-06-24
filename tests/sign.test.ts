@@ -3,7 +3,6 @@ import Entropy, { wasmGlobalsReady } from '../src'
 import Keyring from '../src/keys'
 
 import {
-  sleep,
   promiseRunner,
   spinNetworkUp,
   spinNetworkDown,
@@ -19,12 +18,8 @@ const msg = Buffer
 
 async function setupTest (t): Promise<{ entropy: Entropy; run: any }> {
   const run = promiseRunner(t)
-
-  /* Setup Network */
   await run('network up', spinNetworkUp(NETWORK_TYPE))
-  await sleep(process.env.GITHUB_WORKSPACE ? 30_000 : 5_000)
   t.teardown(async () => {
-    // this gets called after all tests are run
     await entropy.close()
     await spinNetworkDown(NETWORK_TYPE).catch((error) =>
       console.error('Error while spinning network down', error.message)
