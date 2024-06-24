@@ -96,7 +96,7 @@ test('Sign: custom signatureVerifyingKey', async (t) => {
     .from('Hello world: new signature from charlieStashEntropy!')
     .toString('hex')
 
-  // no rhyme or reason for the choice of using the charlie seed verifying key, needed to use
+  // no rhyme or reason for the choice of using one of verifying keys from Charlie stash, needed to use
   // a pre-loaded acct on our local devnet in order to get a valid verifying key
   const signatureVerifyingKey = charlieStashEntropy.keyring.accounts.deviceKey.verifyingKeys[1]
   t.notEqual(signatureVerifyingKey, charlieStashEntropy.signingManager.verifyingKey, 'choose non-default signatureVerifyingKey')
