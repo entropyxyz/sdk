@@ -21,12 +21,16 @@ export async function spinNetworkUp (networkType = 'two-nodes') {
     return Promise.reject(err)
   }
 
-  // TODO: pull the endpoints we want to test from the networkType
+  // TODO: pull all the endpoints we want to test from the networkType
   const endpoint = 'ws://127.0.0.1:9944'
   return retryUntil(() => isWebSocketReady(endpoint))
 }
 
-async function retryUntil (fn, isSuccess = Boolean, opts = { triesRemaining: 10 }) {
+async function retryUntil (fn, isSuccess = Boolean, opts = {}) {
+  const {
+    triesRemaining = process.env.GITHUB_WORKSPACE ? 30 : 10,
+    timeout = 1000
+  } = opts
   return fn()
     .then(result => {
       if (isSuccess(result)) return result
@@ -34,10 +38,13 @@ async function retryUntil (fn, isSuccess = Boolean, opts = { triesRemaining: 10 
     })
     .catch(async (err) => {
       // out of tries, do not recurse
-      if (opts.triesRemaining === 1) throw err
+      if (triesRemaining === 1) throw err
+      await promisify(setTimeout)(timeout)
 
-      await promisify(setTimeout)(1000)
-      return retryUntil(fn, isSuccess, { triesRemaining: opts.triesRemaining - 1 })
+      return retryUntil(fn, isSuccess, {
+        triesRemaining: triesRemaining - 1,
+        timeout
+      })
     })
 }
 
