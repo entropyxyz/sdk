@@ -102,7 +102,8 @@
     "@types/node": "^20.12.12",
     "debug": "^4.3.4",
     "hpke-js": "^1.2.7",
-    "uuid": "^9.0.1"
+    "uuid": "^9.0.1",
+    "xtend": "^4.0.2"
   },
   "lint-staged": {
     "*.ts": "eslint --fix"
