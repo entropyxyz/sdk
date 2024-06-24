@@ -101,7 +101,7 @@ export default class SignatureRequestManager {
     let key = this.signer?.verifyingKeys?.[0]
     // Returning verifying key from regsitration account if device key keys do not exist
     if (!key) {
-      key = this.keyring.accounts.registration.verifyingKeys[0]
+      key = this.keyring.accounts.registration.verifyingKeys[this.keyring.accounts.registration.verifyingKeys.length - 1]
     }
     return key
   }
@@ -143,7 +143,7 @@ export default class SignatureRequestManager {
       }
       return agg
     }, [])
-// this is the named keys we care about from post sign. { sigRequestHash, auxilary_data }
+    // this is the named keys we care about from post sign. { sigRequestHash, auxilary_data }
     const results = await Promise.all(
       adaptersToRun.map((adapter) => {
         return adapter.preSign(this.signer, msg)
