@@ -35,9 +35,9 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "test": "yarn test:setup && yarn test:types && yarn test:ts && yarn test:only && yarn test:require && yarn test:import",
-    "test:setup": "./dev/bin/check-tools.sh && yarn removedb && yarn build",
+    "test:setup": "./dev/bin/check-tools.sh && yarn build",
     "test:types": "tsc",
-    "test:ts": "./dev/bin/test-ts.sh",
+    "test:ts": "yarn removedb && ./dev/bin/test-ts.sh",
     "test:require": "node tests/require.test.cjs | tap-spec",
     "test:import": "node tests/import.test.mjs | tap-spec",
     "test:only": "./dev/bin/test-only.sh",
@@ -92,7 +92,8 @@
     "tsx": "^4.9.3",
     "typedoc": "^0.25.3",
     "typedoc-plugin-markdown": "^3.17.0",
-    "typescript": "^4.9.5"
+    "typescript": "^4.9.5",
+    "ws": "^8.17.1"
   },
   "dependencies": {
     "@entropyxyz/entropy-protocol-nodejs": "^0.2.0",
