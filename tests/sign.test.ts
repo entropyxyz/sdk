@@ -65,7 +65,7 @@ test('Sign', async (t) => {
   t.end()
 })
 
-test('Sign: Inputted Verifying Keys', async (t) => {
+test('Sign: custom signatureVerifyingKey', async (t) => {
   const run = promiseRunner(t)
 
   /* Setup Network */
@@ -96,14 +96,17 @@ test('Sign: Inputted Verifying Keys', async (t) => {
     .from('Hello world: new signature from charlieStashEntropy!')
     .toString('hex')
 
+  // no rhyme or reason for the choice of using one of verifying keys from Charlie stash, needed to use
+  // a different verifying key than the one retrieved in the SigningManager
+  const signatureVerifyingKey = charlieStashEntropy.keyring.accounts.deviceKey.verifyingKeys[1]
+  t.notEqual(signatureVerifyingKey, charlieStashEntropy.signingManager.verifyingKey, 'choose non-default signatureVerifyingKey')
+
   const signature = await run(
     'sign',
     charlieStashEntropy.signWithAdaptersInOrder({
       msg: { msg },
       order: ['deviceKeyProxy'],
-      // no rhyme or reason for the choice of using the charlie seed verifying key, needed to use
-      // a pre-loaded acct on our local devnet in order to get a valid verifying key
-      signatureVerifyingKey: charlieStashEntropy.keyring.accounts.deviceKey.verifyingKeys[1]
+      signatureVerifyingKey
     })
   )
 

@@ -188,7 +188,6 @@ export default class SignatureRequestManager {
     const validatorsInfo: Array<ValidatorInfo> = await this.pickValidators(
       strippedsigRequestHash
     )
-    // @frankie is this comment still valid?
     // TO-DO: this needs to be and accounId ie hex string of the address
     // which means you need a new key ie device key here
 
