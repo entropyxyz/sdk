@@ -8,6 +8,7 @@ import {
   spinNetworkDown,
   charlieStashSeed,
   charlieSeed,
+  sleep,
 } from './testing-utils'
 
 const NETWORK_TYPE = 'two-nodes'
@@ -65,7 +66,6 @@ test('Sign: custom signatureVerifyingKey', async (t) => {
 
   /* Setup Network */
   await run('network up', spinNetworkUp(NETWORK_TYPE))
-  await sleep(process.env.GITHUB_WORKSPACE ? 30_000 : 5_000)
   t.teardown(async () => {
     // this gets called after all tests are run
     await charlieStashEntropy.close()
