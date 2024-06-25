@@ -17,30 +17,59 @@ export async function wasmGlobalsReady () {
   await keysCryptoWaitReady
 }
 export interface EntropyOpts {
-  /** Keyring class instance object. */
+  /** Keyring used to manage all the keys Entropy uses */
   keyring: Keyring
-  /** Local or devnet endpoint for establishing a connection to validators */
+  /** A websocket endpoint for establishing a connection to validators */
   endpoint?: string
-  /** A collection of signing adapters. */
+  /** A collection of adapters used for signing messages of particular types.
+   *  These help with formatting, configuring hash functions to use, etc.
+   * */
   adapters?: { [key: string | number]: Adapter }
 }
 
 /**
- * The main class to handle all interactions with the Entropy SDK.
+ * The main class to handle all interactions within the Entropy SDK.
  */
 export default class Entropy {
-  /** A promise that resolves once the cryptographic library has been loaded. */
+  /** A promise that resolves once all internal setup has been successfully completed. */
   ready: Promise<boolean>
+
+  /* Accessor for ... TODO: */
   registrationManager: RegistrationManager
+
+  /* Accessor for ... TODO: */
   programs: ProgramManager
+
+  /* Accessor for the SignatureRequestManager.
+   * Generally you will use entropy.sign or entropy.signWithAdapter
+   *
+   */
   signingManager: SignatureRequestManager
+
+  /** Accessor for the keyring passed at instantiation */
   keyring: Keyring
+
+  /** (Advanced) Accessor for the raw subtate API. */
   substrate: ApiPromise
 
   /**
-   * Initializes an instance of the Entropy class.
+   * @param {EntropyOpts} opts
    *
-   * @param {EntropyOpts} opts - The configuration options for the Entropy instance.
+   * @example
+   * ```ts
+   * import { Entropy, wasmGlobalsReady } from '@entropyxyz/sdk'
+   * import { Keyring } from '@entropyxyz/sdk/keys'
+   *
+   * async function main () {
+   *   const keyring = new Keyring({ seed })
+   *   const entropy = new Entropy({ keyring })
+   *
+   *   await wasmGlobalsReady()
+   *   await entropy.ready
+   * }
+   *
+   * main()
+   * ```
    */
 
   constructor (opts: EntropyOpts) {
@@ -114,6 +143,7 @@ export default class Entropy {
     const admin = this.keyring.getLazyLoadAccountProxy(ChildKey.registration)
     const deviceKey = this.keyring.getLazyLoadAccountProxy(ChildKey.deviceKey)
     const vk = admin.verifyingKeys || []
+
     // HACK: these assignments trigger important `account-update` flows via the Proxy 
     admin.verifyingKeys = [...vk, verifyingKey]
     deviceKey.verifyingKeys = [verifyingKey, ...vk]
@@ -179,6 +209,10 @@ export default class Entropy {
     return this.signingManager.sign(params)
   }
 
+  /**
+   * Shuts the Entropy SDK down gracefully.
+   * Closes substrate connections for you.
+   */
   async close () {
     if (!this.substrate) return
 

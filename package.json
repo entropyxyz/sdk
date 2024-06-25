@@ -3,6 +3,7 @@
   "version": "0.2.1",
   "license": "AGPL-3.0-only",
   "description": "JS SDK for entropy blockchain ",
+  "type": "module",
   "files": [
     "index.cjs",
     "index.mjs",
@@ -12,7 +13,6 @@
     "dev/**/*",
     "README.md"
   ],
-  "type": "module",
   "exports": {
     ".": {
       "import": "./index.mjs",
@@ -54,6 +54,7 @@
     "build:link": "yarn build && yarn unlink && yarn link",
     "find-deadcode": "ts-prune",
     "generate:types": "dev/bin/generate-types.sh",
+    "generate:docs": "typedoc --options typedoc.config.cjs --tsconfig tsconfig.json",
     "prepare": "husky",
     "postinstall": "patch-package",
     "prepack": "pinst --disable",
@@ -73,6 +74,7 @@
   },
   "homepage": "https://github.com/entropyxyz/sdk#readme",
   "devDependencies": {
+    "@mxssfd/typedoc-theme": "^1.1.3",
     "@polkadot/typegen": "^10.11.1",
     "@types/tape": "^5",
     "@typescript-eslint/eslint-plugin": "^5.43.0",
@@ -91,7 +93,9 @@
     "tsup": "^6.5.0",
     "tsx": "^4.9.3",
     "typedoc": "^0.25.3",
-    "typedoc-plugin-markdown": "^3.17.0",
+    "typedoc-plugin-merge-modules": "^5.1.0",
+    "typedoc-plugin-missing-exports": "^2.3.0",
+    "typedoc-plugin-rename-defaults": "^0.7.0",
     "typescript": "^4.9.5",
     "ws": "^8.17.1"
   },

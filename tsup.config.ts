@@ -3,7 +3,7 @@ import { defineConfig } from 'tsup'
 export default defineConfig((options) => {
   return {
     entry: [
-      `src/index.ts`,
+      'src/index.ts',
       'src/keys/index.ts',
       'src/keys/utils.ts',
       'src/utils/index.ts',
