@@ -2,7 +2,7 @@ import { ApiPromise, WsProvider } from '@polkadot/api'
 import xtend from 'xtend'
 import { isValidSubstrateAddress as isDeployer } from './utils'
 import RegistrationManager, { RegistrationParams } from './registration'
-import SignatureRequestManager, { SigOps, SigWithAdapptersOps } from './signing'
+import SignatureRequestManager, { SigOps, SigWithAdaptersOps } from './signing'
 import { crypto, loadCryptoLib } from './utils/crypto'
 import { Adapter } from './signing/adapters/types'
 import ProgramManager from './programs'
@@ -153,12 +153,12 @@ export default class Entropy {
   /**
    * Signs a given transaction based on the provided parameters using the appropriate adapter.
    *
-   * @param {SigWithAdapptersOps} params - The parameters for signing the transaction.
+   * @param {SigWithAdaptersOps} params - The parameters for signing the transaction.
    * @returns {Promise<unknown>} A promise that resolves to the transaction signature.
    * @throws {Error} If no adapter is found for the specified transaction type.
    */
 
-  async signWithAdaptersInOrder (params: SigWithAdapptersOps): Promise<unknown> {
+  async signWithAdaptersInOrder (params: SigWithAdaptersOps): Promise<unknown> {
     await this.ready
     return await this.signingManager.signWithAdaptersInOrder(params)
   }
