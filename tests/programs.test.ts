@@ -4,7 +4,6 @@ import Entropy, { wasmGlobalsReady } from '../src'
 import Keyring from '../src/keys'
 
 import {
-  sleep,
   promiseRunner,
   spinNetworkUp,
   charlieStashSeed,
@@ -16,13 +15,9 @@ const networkType = 'two-nodes'
 
 test('Programs: GET', async (t) => {
   const run = promiseRunner(t)
-
   await run('network up', spinNetworkUp(networkType))
-
-  await sleep(process.env.GITHUB_WORKSPACE ? 30_000 : 5_000)
-
-  // this gets called after all tests are run
   t.teardown(async () => {
+    await entropy.close()
     await spinNetworkDown(networkType)
   })
 
@@ -76,6 +71,5 @@ test('Programs: GET', async (t) => {
     'program in list matches new pointer: ' + newPointer + ' = ' + programsDeployed[0]
   )
 
-  await entropy.close()
   t.end()
 })

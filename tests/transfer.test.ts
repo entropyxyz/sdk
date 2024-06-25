@@ -4,7 +4,6 @@ import Entropy, { wasmGlobalsReady } from '../src'
 import Keyring from '../src/keys'
 
 import {
-  sleep,
   promiseRunner,
   spinNetworkUp,
   spinNetworkDown,
@@ -23,10 +22,6 @@ function createSeed() {
 test('Transfer', async (t) => {
   const run = promiseRunner(t)
   await run('network up', spinNetworkUp(NETWORK_TYPE))
-
-  await sleep(process.env.GITHUB_WORKSPACE ? 30_000 : 5_000)
-
-  // this gets called after all tests are run
   t.teardown(async () => {
     await Promise.all([charlie.close(), naynay.close()])
     await spinNetworkDown(NETWORK_TYPE).catch((error) =>

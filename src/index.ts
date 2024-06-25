@@ -1,7 +1,8 @@
 import { ApiPromise, WsProvider } from '@polkadot/api'
-import { isValidSubstrateAddress } from './utils'
+import xtend from 'xtend'
+import { isValidSubstrateAddress as isDeployer } from './utils'
 import RegistrationManager, { RegistrationParams } from './registration'
-import SignatureRequestManager, { SigOps, SigWithAdapptersOps } from './signing'
+import SignatureRequestManager, { SigOps, SigWithAdaptersOps } from './signing'
 import { crypto, loadCryptoLib } from './utils/crypto'
 import { Adapter } from './signing/adapters/types'
 import ProgramManager from './programs'
@@ -130,41 +131,45 @@ export default class Entropy {
    * @throws {Error} If the address is already registered or if there's a problem during registration.
    */
   async register (params?: RegistrationParams): Promise<HexString> {
-    await this.ready
-    const defaultProgram = DEVICE_KEY_PROXY_PROGRAM_INTERFACE
-    params = params || {
-      programData: [defaultProgram],
-      programDeployer: this.keyring.accounts.registration.address,
-    }
-
-    const deviceKey = this.keyring.getLazyLoadAccountProxy(ChildKey.deviceKey)
-    deviceKey.used = true
-    defaultProgram.program_config.sr25519_public_keys.push(
-      Buffer.from(deviceKey.pair.publicKey).toString('base64')
-    )
-
-    if (
-      params.programDeployer &&
-      !isValidSubstrateAddress(params.programDeployer)
-    ) {
+    params = params || this.#getRegisterParamsDefault()
+    if (params.programDeployer && !isDeployer(params.programDeployer)) {
       throw new TypeError('Incompatible address type')
     }
 
+    await this.ready
     const verifyingKey = await this.registrationManager.register(params)
 
     // TODO: Make legit function
     const admin = this.keyring.getLazyLoadAccountProxy(ChildKey.registration)
+    const deviceKey = this.keyring.getLazyLoadAccountProxy(ChildKey.deviceKey)
     const vk = admin.verifyingKeys || []
 
     // HACK: these assignments trigger important `account-update` flows via the Proxy 
     admin.verifyingKeys = [...vk, verifyingKey]
     deviceKey.verifyingKeys = [verifyingKey, ...vk]
+
     return verifyingKey
   }
 
+  #getRegisterParamsDefault (): RegistrationParams {
+    const deviceKey = this.keyring.getLazyLoadAccountProxy(ChildKey.deviceKey)
+    deviceKey.used = true
+
+    const defaultProgram = xtend(DEVICE_KEY_PROXY_PROGRAM_INTERFACE, {
+      program_config: {
+        sr25519_public_keys: [
+          Buffer.from(deviceKey.pair.publicKey).toString('base64')
+        ]
+      }
+    })
+
+    return {
+      programData: [defaultProgram],
+      programDeployer: this.keyring.accounts.registration.address,
+    }
+  }
+
   /*
-
-
     DO NOT DELETE THIS CODE BLOCK
 
     Signs a given transaction based on the provided parameters.
@@ -178,12 +183,12 @@ export default class Entropy {
   /**
    * Signs a given transaction based on the provided parameters using the appropriate adapter.
    *
-   * @param {SigWithAdapptersOps} params - The parameters for signing the transaction.
+   * @param {SigWithAdaptersOps} params - The parameters for signing the transaction.
    * @returns {Promise<unknown>} A promise that resolves to the transaction signature.
    * @throws {Error} If no adapter is found for the specified transaction type.
    */
 
-  async signWithAdaptersInOrder (params: SigWithAdapptersOps): Promise<unknown> {
+  async signWithAdaptersInOrder (params: SigWithAdaptersOps): Promise<unknown> {
     await this.ready
     return await this.signingManager.signWithAdaptersInOrder(params)
   }

@@ -1,13 +1,13 @@
-import test from 'tape'
+import test, { Test } from 'tape'
 import Entropy, { wasmGlobalsReady } from '../src'
 import Keyring from '../src/keys'
 
 import {
-  sleep,
   promiseRunner,
   spinNetworkUp,
   spinNetworkDown,
   charlieStashSeed,
+  charlieSeed,
 } from './testing-utils'
 
 const NETWORK_TYPE = 'two-nodes'
@@ -17,14 +17,10 @@ const msg = Buffer
   .toString('hex')
 
 
-async function setupTest (t): Promise<{ entropy: Entropy; run: any }> {
+async function setupTest (t: Test): Promise<{ entropy: Entropy; run: any }> {
   const run = promiseRunner(t)
-
-  /* Setup Network */
   await run('network up', spinNetworkUp(NETWORK_TYPE))
-  await sleep(process.env.GITHUB_WORKSPACE ? 30_000 : 5_000)
   t.teardown(async () => {
-    // this gets called after all tests are run
     await entropy.close()
     await spinNetworkDown(NETWORK_TYPE).catch((error) =>
       console.error('Error while spinning network down', error.message)
@@ -64,6 +60,79 @@ test('Sign', async (t) => {
   t.end()
 })
 
+test('Sign: custom signatureVerifyingKey', async (t) => {
+  const run = promiseRunner(t)
+
+  /* Setup Network */
+  await run('network up', spinNetworkUp(NETWORK_TYPE))
+  await sleep(process.env.GITHUB_WORKSPACE ? 30_000 : 5_000)
+  t.teardown(async () => {
+    // this gets called after all tests are run
+    await charlieStashEntropy.close()
+    await charlieEntropy.close()
+    await spinNetworkDown(NETWORK_TYPE).catch((error) =>
+      console.error('Error while spinning network down', error.message)
+    )
+  })
+
+  /* Setup Entropy */
+  await run('wasm', wasmGlobalsReady())
+  const charlieStashKeyring = new Keyring({ seed: charlieStashSeed, debug: true })
+  const charlieStashEntropy = new Entropy({
+    keyring: charlieStashKeyring,
+    endpoint: 'ws://127.0.0.1:9944',
+  })
+
+  const charlieKeyring = new Keyring({ seed: charlieSeed, debug: true })
+  const charlieEntropy = new Entropy({
+    keyring: charlieKeyring,
+    endpoint: 'ws://127.0.0.1:9944',
+  })
+
+  await Promise.all([
+    await run('charlieStashEntropy ready', charlieStashEntropy.ready),
+    await run('charlieEntropy ready', charlieEntropy.ready)
+  ])
+  await run('charlie stash register', charlieStashEntropy.register())
+  // HACK: when registering the same account twice in this test, the verifying keys returned are the exact same.
+  // charlie stash keys [
+  //  '0x02836d642dd49256c8b771ee54f2b497decd23362b1f2e0e7d37643bab7100e4c0',
+  //  '0x02836d642dd49256c8b771ee54f2b497decd23362b1f2e0e7d37643bab7100e4c0'
+  // ]
+  // thus failing the notEqual test below. Calling the register method on charlieEntropy seems to fix this and
+  // generate different keys
+  // charlie stash keys [
+  //   '0x03b7a59059a8aafb631b1b8a6e8266cfd76ef3bb9b15c6c2d80a331fc1438a616e',
+  //   '0x023145efe2b7360085123893f1dbfb8e6c31b209f2ee11fa556c25c1bd8bd6bf8e'
+  // ]
+  await run('charlie register', charlieEntropy.register())
+  await run('charlie stash register 2', charlieStashEntropy.register())
+  
+  /* Sign */
+  const msg = Buffer
+    .from('Hello world: new signature from charlieStashEntropy!')
+    .toString('hex')
+
+  // no rhyme or reason for the choice of using the verifying key from Charlie, needed to use
+  // a different verifying key than the one retrieved in the SigningManager for Charlie Stash
+  const signatureVerifyingKey = charlieStashEntropy.keyring.accounts.deviceKey.verifyingKeys[1]
+
+  t.notEqual(signatureVerifyingKey, charlieStashEntropy.signingManager.verifyingKey, 'choose non-default signatureVerifyingKey')
+
+  const signature = await run(
+    'sign',
+    charlieStashEntropy.signWithAdaptersInOrder({
+      msg: { msg },
+      order: ['deviceKeyProxy'],
+      signatureVerifyingKey
+    })
+  )
+
+  t.true(signature && signature.length > 32, 'signature has some body!')
+  signature && console.log(signature)
+
+  t.end()
+})
 
 test('Sign:issue#380', async (t) => {
   const { run, entropy } = await setupTest(t)

@@ -44,7 +44,7 @@ export const DEVICE_KEY_PROXY_PROGRAM_INTERFACE = {
   ],
 }
 
-export const ADAPTER_PROGRAMS = [DEVICE_KEY_PROXY_PROGRAM_INTERFACE]
+// export const ADAPTER_PROGRAMS = [DEVICE_KEY_PROXY_PROGRAM_INTERFACE]
 
 export interface PreSignResult extends PRESIGN_RESULT {
   sigRequestHash: HexString
