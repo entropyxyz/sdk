@@ -33,6 +33,8 @@ For the tests to run you **must** edit your `/etc/hosts` file, adding:
 ```
 127.0.0.1   alice-tss-server
 127.0.0.1   bob-tss-server
+127.0.0.1   dave-tss-server
+127.0.0.1   eve-tss-server
 ```
 
 ### Gotcha 1 - dirty docker
@@ -45,7 +47,7 @@ that program is already deployed boo").
 Have a look what's running:
 
 ```bash
-docker ps
+docker container list
 ```
 
 You can close them down like this:
