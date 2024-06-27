@@ -1,11 +1,14 @@
 import * as readline from 'readline'
+// @ts-ignore
+import { spinNetworkUp, spinNetworkDown } from '@entropyxyz/sdk/testing'
+// NOTE: an implicit test that we're correctly exporting the testing tools!
+// WARN: the @ts-ignore is currently required because we've not exported types?
 
 import Entropy, { wasmGlobalsReady } from '../../src'
 import Keyring from '../../src/keys'
 import { KeyMaterial } from '../../src/keys/types/json'
 import { charlieStashSeed } from './constants'
 
-import { spinNetworkUp, spinNetworkDown } from '../../dev/testing-utils.mjs'
 export { spinNetworkUp, spinNetworkDown }
 
 export * from './constants'

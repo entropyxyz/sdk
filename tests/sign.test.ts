@@ -8,7 +8,6 @@ import {
   spinNetworkDown,
   charlieStashSeed,
   charlieSeed,
-  sleep,
 } from './testing-utils'
 
 const NETWORK_TYPE = 'two-nodes'
