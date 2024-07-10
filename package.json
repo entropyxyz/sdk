@@ -26,6 +26,12 @@
       "default": "./dist/keys/index.js",
       "types": "./dist/keys/index.d.ts"
     },
+    "./utils": {
+      "import": "./dist/utils/index.js",
+      "require": "./dist/utils/index.cjs",
+      "default": "./dist/utils/index.js",
+      "types": "./dist/utils/index.d.ts"
+    },
     "./testing": {
       "import": "./dev/testing-utils.mjs"
     }
