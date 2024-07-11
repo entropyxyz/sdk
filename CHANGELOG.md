@@ -10,12 +10,14 @@ The format extends [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 Version header format: `[version] Name - year-month-day (entropy-core compatibility: version [range])`
 
-## [UNRELEASED]
+## [UNRELEASED] (entropy-core compatibility: 0.2.0)
 
 ### Added
 
 ### Fixed
 - hot fix for issue #380: try in reverse order for testnet environment
+- `entropy.signingManager.getTimeStamp` -> `entropy.signingManager.getBlockNumber` signature request no longer takes a time stamp and now takes a block number.
+
 ### Changed
 - constructor now throws if you pass no object
 

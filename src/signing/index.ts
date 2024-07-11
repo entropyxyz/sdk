@@ -46,7 +46,7 @@ export interface UserSignatureRequest {
   // Any type for now i assume?
   auxilary_data?: any
   validatorsInfo: ValidatorInfo[]
-  timestamp: { secs_since_epoch: number; nanos_since_epoch: number }
+  block_number: number
   hash: string
   signature_verifying_key: number[]
 }
@@ -225,20 +225,15 @@ export default class SignatureRequestManager {
   }
 
   /**
-   * Retrieves the current timestamp split into seconds and nanoseconds.
+   * Retrieves the current block number
    *
-   * @returns An object containing `secs_since_epoch` and `nanos_since_epoch`.
+   * @returns
    */
 
-  getTimeStamp () {
-    const timestampInMilliseconds = Date.now()
-    const secs_since_epoch = Math.floor(timestampInMilliseconds / 1000)
-    const nanos_since_epoch = (timestampInMilliseconds % 1000) * 1_000_000
-
-    return {
-      secs_since_epoch: secs_since_epoch,
-      nanos_since_epoch: nanos_since_epoch,
-    }
+  async getBlockNumber (): Promise<number> {
+    const signedBlock = await this.substrate.rpc.chain.getBlock()
+    // @ts-ignore
+    return signedBlock.block.header.toJSON().number
   }
 
   /**
@@ -272,7 +267,7 @@ export default class SignatureRequestManager {
           message: stripHexPrefix(strippedsigRequestHash),
           auxilary_data: auxiliaryData,
           validatorsInfo: validatorsInfo,
-          timestamp: this.getTimeStamp(),
+          block_number: await this.getBlockNumber(),
           hash,
           signature_verifying_key: Array.from(
             Buffer.from(stripHexPrefix(signatureVerifyingKey), 'hex')
