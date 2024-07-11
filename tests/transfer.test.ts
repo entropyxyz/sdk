@@ -132,14 +132,6 @@ test('Transfer', async (t) => {
     )
   }
 
-  // NOTE: Leaving this test as commented for now, not sure if still needed now 
-  // that small values can be sent whenever
-  // {
-  //   const amount = BigInt(10 * 10 ** DECIMAL_PLACES)
-  //   // NOTE: once an account is funded, we can send small amounts!
-  //   const sender = charlie.keyring.accounts.registration.pair
-  //   await run('transfer funds (small top-up)', sendMoney(amount))
-  // }
 
   t.end()
 })
