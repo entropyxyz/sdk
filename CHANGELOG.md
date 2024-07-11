@@ -16,7 +16,7 @@ Version header format: `[version] Name - year-month-day (entropy-core compatibil
 
 ### Fixed
 - hot fix for issue #380: try in reverse order for testnet environment
-- `entropy.signingManager.getTimeStamp` -> `entropy.signingManager.getBlockNumber` signature request no longer take a time stamp and now take a block number.
+- `entropy.signingManager.getTimeStamp` -> `entropy.signingManager.getBlockNumber` signature request no longer takes a time stamp and now takes a block number.
 
 ### Changed
 - constructor now throws if you pass no object
