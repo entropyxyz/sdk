@@ -10,16 +10,13 @@ The format extends [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 Version header format: `[version] Name - year-month-day (entropy-core compatibility: version [range])`
 
-## [UNRELEASED] (entropy-core compatibility: 0.2.0)
+## [UNRELEASED]
 
 ### Added
 
 ### Fixed
-- hot fix for issue #380: try in reverse order for testnet environment
-- `entropy.signingManager.getTimeStamp` -> `entropy.signingManager.getBlockNumber` signature request no longer takes a time stamp and now takes a block number.
 
 ### Changed
-- constructor now throws if you pass no object
 
 ### Broke
 
@@ -27,6 +24,19 @@ Version header format: `[version] Name - year-month-day (entropy-core compatibil
 
 ### Meta
 
+
+## [0.2.2] Bathala - 2024-07-11 (entropy-core compatibility: 0.2.0)
+
+### Added
+- now exports utils [395](https://github.com/entropyxyz/sdk/pull/395)
+- now exports testing environments from /dev [393](https://github.com/entropyxyz/sdk/pull/393/files)
+### Fixed
+- hot fix for issue #380: try in reverse order for testnet environment
+- `entropy.signingManager.getTimeStamp` -> `entropy.signingManager.getBlockNumber` signature request no longer takes a time stamp and now takes a block number. [396](https://github.com/entropyxyz/sdk/pull/396)
+
+### Changed
+- constructor now throws if you pass no object
+- sign now takes a verifying key [382](https://github.com/entropyxyz/sdk/pull/382)
 
 ## [0.2.1] Amihan - 2024-06-06 (entropy-core compatibility: 0.1.0)
 
