@@ -132,7 +132,6 @@ test('Transfer', async (t) => {
     )
   }
 
-  /* Test small top-up */
   // NOTE: Leaving this test as commented for now, not sure if still needed now 
   // that small values can be sent whenever
   // {
