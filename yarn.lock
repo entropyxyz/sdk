@@ -714,7 +714,7 @@
     rxjs "^7.8.1"
     tslib "^2.6.2"
 
-"@polkadot/api@10.13.1", "@polkadot/api@^10.13.1":
+"@polkadot/api@10.13.1":
   version "10.13.1"
   resolved "https://registry.npmjs.org/@polkadot/api/-/api-10.13.1.tgz"
   integrity sha512-YrKWR4TQR5CDyGkF0mloEUo7OsUA+bdtENpJGOtNavzOQUDEbxFE0PVzokzZfVfHhHX2CojPVmtzmmLxztyJkg==

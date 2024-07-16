@@ -1,4 +1,4 @@
-import EventEmitter from 'node:events'
+import { EventEmitter } from 'node:events'
 import { deepCopy } from '../utils/housekeeping'
 import * as utils from './utils'
 import { EntropyAccount, KeyMaterial, PairMaterial } from './types/json'

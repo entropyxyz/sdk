@@ -5,30 +5,25 @@
   "description": "JS SDK for entropy blockchain ",
   "type": "module",
   "files": [
-    "index.cjs",
-    "index.mjs",
-    "keys.cjs",
-    "keys.mjs",
+    "index.js",
+    "keys.js",
     "dist/**/*",
     "dev/**/*",
     "README.md"
   ],
   "exports": {
     ".": {
-      "import": "./index.mjs",
-      "require": "./index.cjs",
+      "import": "./index.js",
       "default": "./dist/index.js",
       "types": "./dist/index.d.ts"
     },
     "./keys": {
-      "import": "./keys.mjs",
-      "require": "./keys.cjs",
+      "import": "./keys.js",
       "default": "./dist/keys/index.js",
       "types": "./dist/keys/index.d.ts"
     },
     "./utils": {
       "import": "./dist/utils/index.js",
-      "require": "./dist/utils/index.cjs",
       "default": "./dist/utils/index.js",
       "types": "./dist/utils/index.d.ts"
     },
@@ -36,16 +31,15 @@
       "import": "./dev/testing-utils.mjs"
     }
   },
-  "module": "./index.mjs",
-  "main": "./index.cjs",
+  "main": "./index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "test": "yarn test:setup && yarn test:types && yarn test:ts && yarn test:only && yarn test:require && yarn test:import",
-    "test:setup": "./dev/bin/check-tools.sh && yarn build",
-    "test:types": "tsc",
+    "test:setup": "./dev/bin/check-tools.sh && tsc",
+    "test:types": "tsc --noEmit",
     "test:ts": "yarn removedb && ./dev/bin/test-ts.sh",
     "test:require": "node tests/require.test.cjs | tap-spec",
-    "test:import": "node tests/import.test.mjs | tap-spec",
+    "test:import": "node tests/import.test.js | tap-spec",
     "test:only": "./dev/bin/test-only.sh",
     "test:coverage": "nyc yarn test",
     "lint": "yarn lint:ts && yarn lint:eslint",
@@ -53,11 +47,8 @@
     "lint:eslint": "eslint . --ext .ts --fix",
     "peek": "tsc --build --clean",
     "burn": "rm -Rf node_modules && yarn cache clean --all && yarn install",
-    "build": "tsup",
-    "build:watch": "tsup --watch",
-    "build:node": "tsup --platform node ",
-    "build:browser": "tsup --platform browser",
-    "build:link": "yarn build && yarn unlink && yarn link",
+    "build": "rm -rf dist && npx tsc",
+    "build:link": "tsc && yarn unlink && yarn link",
     "find-deadcode": "ts-prune",
     "generate:types": "dev/bin/generate-types.sh",
     "generate:docs": "typedoc --options typedoc.config.cjs --tsconfig tsconfig.json",
@@ -96,7 +87,6 @@
     "tape": "^5.7.5",
     "ts-node": "^10.9.1",
     "ts-prune": "^0.10.3",
-    "tsup": "^6.5.0",
     "tsx": "^4.9.3",
     "typedoc": "^0.25.3",
     "typedoc-plugin-merge-modules": "^5.1.0",
@@ -108,7 +98,7 @@
   "dependencies": {
     "@entropyxyz/entropy-protocol-nodejs": "^0.2.0",
     "@entropyxyz/entropy-protocol-web": "^0.2.0",
-    "@polkadot/api": "^10.13.1",
+    "@polkadot/api": "10.13.1",
     "@types/node": "^20.12.12",
     "debug": "^4.3.4",
     "hpke-js": "^1.2.7",

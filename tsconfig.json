@@ -1,19 +1,21 @@
 {
   "compilerOptions": {
+    "noEmit": false,
+    "module": "esnext",
     "target": "ES6",
     "skipLibCheck": true,
-    "noEmit": true,
     "incremental": true,
+    "outDir": "dist",
     "typeRoots": [
       "node_modules/@types",
       "@types/",
       "@polkadot/types/*",
       "substrate-generated-types/interfaces"
     ],
-    "tsBuildInfoFile": ".tsbuildinfo",
     "moduleResolution": "node",
-    "module": "Node16"
+    "tsBuildInfoFile": ".tsbuildinfo",
   },
+  "include": ["src/*.ts"],
   "exclude": [
     "dev",
     "dist",

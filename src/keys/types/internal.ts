@@ -1,4 +1,4 @@
-import EventEmitter from 'node:events'
+import * as EventEmitter from 'node:events'
 import { Keys } from '@polkadot/types/interfaces/types'
 import { KeyringPair } from '@polkadot/keyring/types'
 import { ChildKey } from './constants'
