@@ -1,16 +1,17 @@
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import xtend from 'xtend'
-import { isValidSubstrateAddress as isDeployer } from './utils'
-import RegistrationManager, { RegistrationParams } from './registration'
-import SignatureRequestManager, { SigOps, SigWithAdaptersOps } from './signing'
-import { crypto, loadCryptoLib } from './utils/crypto'
-import { Adapter } from './signing/adapters/types'
-import ProgramManager from './programs'
-import Keyring from './keys'
-import { keysCryptoWaitReady } from './keys/utils'
-import { ChildKey } from './keys/types/constants'
-import { DEVICE_KEY_PROXY_PROGRAM_INTERFACE } from './signing/adapters/device-key-proxy'
-import { HexString } from './keys/types/json'
+
+import { isValidSubstrateAddress as isDeployer } from './utils/index.js'
+import RegistrationManager, { RegistrationParams } from './registration/index.js'
+import SignatureRequestManager, { SigOps, SigWithAdaptersOps } from './signing/index.js'
+import { crypto, loadCryptoLib } from './utils/crypto/index.js'
+import ProgramManager from './programs/index.js'
+import Keyring from './keys/index.js'
+import { keysCryptoWaitReady } from './keys/utils.js'
+import { DEVICE_KEY_PROXY_PROGRAM_INTERFACE } from './signing/adapters/device-key-proxy.js'
+import { Adapter } from './signing/adapters/types.js'
+import { ChildKey } from './keys/types/constants.js'
+import { HexString } from './keys/types/json.js'
 
 export async function wasmGlobalsReady () {
   await loadCryptoLib()

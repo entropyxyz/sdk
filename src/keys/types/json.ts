@@ -14,7 +14,7 @@ import {
   ChildKey,
   EntropyAccountType,
   EntropyAccountContextType,
-} from './constants'
+} from './constants.js'
 
 export type UIDv4 = string
 

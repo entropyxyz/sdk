@@ -1,8 +1,9 @@
 import { ApiPromise } from '@polkadot/api'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
-import ExtrinsicBaseClass from '../extrinsic'
-import ProgramDev from './dev'
-import { Signer } from '../keys/types/internal'
+
+import ProgramDev from './dev.js'
+import ExtrinsicBaseClass from '../extrinsic/index.js'
+import { Signer } from '../keys/types/internal.js'
 
 export interface ProgramInstance {
   program_pointer: string

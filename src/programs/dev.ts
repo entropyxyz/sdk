@@ -1,10 +1,11 @@
-import ExtrinsicBaseClass from '../extrinsic'
 import { ApiPromise } from '@polkadot/api'
-import { Signer } from '../keys/types/internal'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
-import { hex2buf, stripHexPrefix } from '../utils'
 import * as util from '@polkadot/util'
-import { HexString } from '../keys/types/json'
+
+import ExtrinsicBaseClass from '../extrinsic/index.js'
+import { Signer } from '../keys/types/internal.js'
+import { HexString } from '../keys/types/json.js'
+import { hex2buf, stripHexPrefix } from '../utils/index.js'
 
 /**
  * Represents program information.

@@ -9,9 +9,9 @@ import {
   sr25519PairFromSeed,
   cryptoWaitReady,
 } from '@polkadot/util-crypto'
-import { debug } from '../utils'
-import { Pair } from './types/internal'
-import { ChildKeyBasePaths } from './types/constants'
+import { debug } from '../utils/index.js'
+import { Pair } from './types/internal.js'
+import { ChildKeyBasePaths } from './types/constants.js'
 
 export const keysCryptoWaitReady = cryptoWaitReady()
 

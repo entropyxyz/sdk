@@ -4,7 +4,7 @@
  * */
 
 // are we sure this is right?
-import Entropy from './../index'
+import Entropy from './../index.js'
 
 export type EntropyInstance = InstanceType<typeof Entropy>
 

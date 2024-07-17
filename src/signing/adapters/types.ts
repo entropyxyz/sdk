@@ -1,6 +1,6 @@
-import { MsgParams } from '..'
-import { Signer } from '../../keys/types/internal'
-import { HexString } from '../../keys/types/json'
+import { MsgParams } from '../index.js'
+import { Signer } from '../../keys/types/internal.js'
+import { HexString } from '../../keys/types/json.js'
 
 /**
  * THIS TYPE DENOTES AUXILIARY DATA MUST BE ABLE TO PASS JSON.stringify()

@@ -1,7 +1,10 @@
 {
   "compilerOptions": {
-    "module": "esnext",
-    "target": "ES6",
+    "target": "esnext", // Compile to a modern ECMAScript version that supports ES modules
+    "module": "esnext", // Use ES module syntax for module code generation
+    "moduleResolution": "node", // Use Node.js style module resolution
+    // "module": "esnext",
+    // "target": "ES6",
     "skipLibCheck": true,
     "outDir": "dist",
     "typeRoots": [
@@ -10,7 +13,6 @@
       "@polkadot/types/*",
       "substrate-generated-types/interfaces"
     ],
-    "moduleResolution": "node"
   },
   "exclude": [
     "dev",

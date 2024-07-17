@@ -1,12 +1,12 @@
 import { ApiPromise } from '@polkadot/api'
-import { Signer } from '../keys/types/internal'
-import { defaultAdapters } from './adapters/default'
-import { Adapter } from './adapters/types'
-import { EncMsg, ValidatorInfo } from '../types/internal'
-import { stripHexPrefix, sendHttpPost, toHex } from '../utils'
-import { crypto } from '../utils/crypto'
-import { CryptoLib } from '../utils/crypto/types'
-import Keyring from '../keys'
+import { defaultAdapters } from './adapters/default.js'
+import { stripHexPrefix, sendHttpPost, toHex } from '../utils/index.js'
+import { crypto } from '../utils/crypto/index.js'
+import Keyring from '../keys/index.js'
+import { EncMsg, ValidatorInfo } from '../types/internal.js'
+import { Signer } from '../keys/types/internal.js'
+import { Adapter } from './adapters/types.js'
+import { CryptoLib } from '../utils/crypto/types/index.js'
 
 export interface Config {
   keyring: Keyring

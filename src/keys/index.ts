@@ -1,14 +1,14 @@
 import { EventEmitter } from 'node:events'
-import { deepCopy } from '../utils/housekeeping'
-import * as utils from './utils'
-import { EntropyAccount, KeyMaterial, PairMaterial } from './types/json'
+import { deepCopy } from '../utils/housekeeping/index.js'
+import * as utils from './utils.js'
+import { EntropyAccount, KeyMaterial, PairMaterial } from './types/json.js'
 import {
   ChildKey,
   EntropyAccountType,
   EntropyAccountContextType,
-} from './types/constants'
-import { Signer } from './types/internal'
-import { AccountsEmitter } from './types'
+} from './types/constants.js'
+import { Signer } from './types/internal.js'
+import { AccountsEmitter } from './types/index.js'
 
 // Whats the point of remapping here?
 // .map of object.keys is same as object.values, and either way the

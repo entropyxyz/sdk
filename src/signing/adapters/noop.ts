@@ -1,7 +1,7 @@
-import { HexString } from '../../keys/types/json'
-import { Signer } from '../../keys/types/internal'
-import { PRESIGN_RESULT } from './types'
-import { toHex } from '../../utils'
+import { toHex } from '../../utils/index.js'
+import { HexString } from '../../keys/types/json.js'
+import { Signer } from '../../keys/types/internal.js'
+import { PRESIGN_RESULT } from './types.js'
 
 /**
  *

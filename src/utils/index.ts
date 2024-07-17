@@ -1,7 +1,7 @@
 import { decodeAddress, encodeAddress } from '@polkadot/keyring'
 import { hexToU8a, isHex } from '@polkadot/util'
 import Debug from 'debug'
-import { Address } from '../types/internal'
+import { Address } from '../types/internal.js'
 
 export const debug = Debug('@entropyxyz/sdk')
 

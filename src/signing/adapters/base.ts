@@ -1,9 +1,9 @@
 /*eslint-disable*/
 // @ts-nocheck
-import { HexString } from '../../keys/types/json'
-import { Signer } from '../../keys/types/internal'
-import { AUX_DATA, PRESIGN_RESULT } from './types'
-import { toHex } from '../../utils'
+import { AUX_DATA, PRESIGN_RESULT } from './types.js'
+import { HexString } from '../../keys/types/json.js'
+import { Signer } from '../../keys/types/internal.js'
+import { toHex } from '../../utils/index.js'
 
 /**
  * The configuration for the specific program

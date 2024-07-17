@@ -3,8 +3,8 @@ import { EventRecord } from '@polkadot/types/interfaces/types'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
 import { RegistryError } from '@polkadot/types-codec/types'
 
-import { Signer } from '../keys/types/internal'
-import { EventFilter } from '../types/internal'
+import { Signer } from '../keys/types/internal.js'
+import { EventFilter } from '../types/internal.js'
 
 interface Decoded extends RegistryError {
   name: string

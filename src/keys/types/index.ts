@@ -3,9 +3,9 @@
  * */
 
 import { EventEmitter } from 'node:events'
-import { EntropyAccountType, ChildKey } from './constants'
-import { EntropyAccount, PairMaterial } from './json'
-import { Signer } from './internal'
+import { EntropyAccountType, ChildKey } from './constants.js'
+import { EntropyAccount, PairMaterial } from './json.js'
+import { Signer } from './internal.js'
 export type RegisteredAccountType = 'Private' | 'Public'
 
 export interface AccountsEmitter extends EventEmitter {

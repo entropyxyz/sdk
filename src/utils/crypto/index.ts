@@ -3,10 +3,10 @@ import {
   decodeAddress,
   signatureVerify,
 } from '@polkadot/util-crypto'
-
 import * as polkadotCryptoUtil from '@polkadot/util-crypto'
-import { CryptoLib, ResObjectType } from './types'
 import { u8aToHex } from '@polkadot/util'
+
+import { CryptoLib, ResObjectType } from './types/index.js'
 
 let cryptoLib
 const res: ResObjectType = {

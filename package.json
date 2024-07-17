@@ -7,6 +7,7 @@
   "files": [
     "index.js",
     "keys.js",
+    "utils.js",
     "dist/**/*",
     "dev/**/*",
     "README.md"
@@ -14,17 +15,17 @@
   "exports": {
     ".": {
       "import": "./index.js",
-      "default": "./dist/index.js",
+      "default": "./index.js",
       "types": "./dist/index.d.ts"
     },
     "./keys": {
       "import": "./keys.js",
-      "default": "./dist/keys/index.js",
+      "default": "./keys.js",
       "types": "./dist/keys/index.d.ts"
     },
     "./utils": {
-      "import": "./dist/utils/index.js",
-      "default": "./dist/utils/index.js",
+      "import": "./utils.js",
+      "default": "./utils.js",
       "types": "./dist/utils/index.d.ts"
     },
     "./testing": {
@@ -35,12 +36,12 @@
   "module": "./index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "test": "yarn test:setup && yarn test:types && yarn test:ts && yarn test:only && yarn test:require && yarn test:import",
+    "test": "yarn test:setup && yarn test:types && yarn test:cjs && yarn test:mjs && yarn test:ts && yarn test:only",
     "test:setup": "./dev/bin/check-tools.sh && tsc",
     "test:types": "tsc --noEmit",
     "test:ts": "yarn removedb && ./dev/bin/test-ts.sh",
-    "test:require": "node tests/require.test.cjs | tap-spec",
-    "test:import": "node tests/import.test.mjs | tap-spec",
+    "test:cjs": "node tests/import.test.cjs | tap-spec",
+    "test:mjs": "node tests/import.test.mjs | tap-spec",
     "test:only": "./dev/bin/test-only.sh",
     "test:coverage": "nyc yarn test",
     "lint": "yarn lint:ts && yarn lint:eslint",

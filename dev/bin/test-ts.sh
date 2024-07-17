@@ -5,7 +5,7 @@
 #
 # but here we are fighting TS ... this works well enough
 
-ONLY_FILES=`grep 'test.only' tests/*.test.*s -l`
+ONLY_FILES=`grep 'test.only' tests/*.test.ts -l`
 
 if [ $ONLY_FILES ]; then
   # If there are files with test.only, run only those files

@@ -1,9 +1,10 @@
 import { ApiPromise } from '@polkadot/api'
-import ExtrinsicBaseClass from '../extrinsic'
-import { HexString, SS58Address } from '../keys/types/json'
-import { ProgramInstance } from '../programs'
-import { Signer } from '../keys/types/internal'
-import { Address } from '../types/internal'
+
+import ExtrinsicBaseClass from '../extrinsic/index.js'
+import { ProgramInstance } from '../programs/index.js'
+import { Signer } from '../keys/types/internal.js'
+import { HexString, SS58Address } from '../keys/types/json.js'
+import { Address } from '../types/internal.js'
 
 export interface RegistrationParams {
   /** initial programs associated with the user */
