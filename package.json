@@ -40,7 +40,7 @@
     "test:types": "tsc --noEmit",
     "test:ts": "yarn removedb && ./dev/bin/test-ts.sh",
     "test:require": "node tests/require.test.cjs | tap-spec",
-    "test:import": "node tests/import.test.js | tap-spec",
+    "test:import": "node tests/import.test.mjs | tap-spec",
     "test:only": "./dev/bin/test-only.sh",
     "test:coverage": "nyc yarn test",
     "lint": "yarn lint:ts && yarn lint:eslint",
