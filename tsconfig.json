@@ -1,10 +1,8 @@
 {
   "compilerOptions": {
-    "noEmit": false,
     "module": "esnext",
     "target": "ES6",
     "skipLibCheck": true,
-    "incremental": true,
     "outDir": "dist",
     "typeRoots": [
       "node_modules/@types",
@@ -12,16 +10,15 @@
       "@polkadot/types/*",
       "substrate-generated-types/interfaces"
     ],
-    "moduleResolution": "node",
-    "tsBuildInfoFile": ".tsbuildinfo",
+    "moduleResolution": "node"
   },
-  "include": ["src/*.ts"],
   "exclude": [
     "dev",
     "dist",
     "docs",
     "node_modules",
-    "substrate-generated-types"
+    "substrate-generated-types",
+    "tests"
   ],
   "ts-node": {
     "experimentalSpecifierResolution": "node"

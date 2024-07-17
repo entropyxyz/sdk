@@ -2,12 +2,14 @@ const test = require('tape')
 
 const charlieSeed = '0xbc1ede780f784bb6991a585e4f6e61522c14e1cae6ad0895fb57b9a205a8f938'
 
-test.only('CJS require', async t => {
-  const { default: DefaultEntropy, Entropy, wasmGlobalsReady } = await import('@entropyxyz/sdk')
-  const { default: DefaultKeyring, Keyring } = await import('@entropyxyz/sdk/keys')
+test('CJS require', async t => {
   try {
+    const { default: DefaultEntropy, Entropy, wasmGlobalsReady } = await import('@entropyxyz/sdk')
+    const { default: DefaultKeyring, Keyring } = await import('@entropyxyz/sdk/keys')
+
     t.deepEqual(DefaultEntropy, Entropy, 'Entropy exported as default + named')
     await wasmGlobalsReady()
+
     t.true(
       typeof Entropy === 'function'
       && Entropy.name === 'Entropy',

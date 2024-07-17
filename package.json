@@ -32,6 +32,7 @@
     }
   },
   "main": "./index.js",
+  "module": "./index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "test": "yarn test:setup && yarn test:types && yarn test:ts && yarn test:only && yarn test:require && yarn test:import",
@@ -47,8 +48,8 @@
     "lint:eslint": "eslint . --ext .ts --fix",
     "peek": "tsc --build --clean",
     "burn": "rm -Rf node_modules && yarn cache clean --all && yarn install",
-    "build": "rm -rf dist && npx tsc",
-    "build:link": "tsc && yarn unlink && yarn link",
+    "build": "rm -rf dist && tsc",
+    "build:link": "yarn build && yarn unlink && yarn link",
     "find-deadcode": "ts-prune",
     "generate:types": "dev/bin/generate-types.sh",
     "generate:docs": "typedoc --options typedoc.config.cjs --tsconfig tsconfig.json",
