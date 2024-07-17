@@ -1,18 +1,25 @@
 {
   "compilerOptions": {
-    "target": "esnext", // Compile to a modern ECMAScript version that supports ES modules
-    "module": "esnext", // Use ES module syntax for module code generation
-    "moduleResolution": "node", // Use Node.js style module resolution
-    // "module": "esnext",
-    // "target": "ES6",
-    "skipLibCheck": true,
+    "target": "ES6",
+    // Note: this is conservative and would help with browser compat
+    // References
+    //  - https://www.typescriptlang.org/tsconfig/#target
+
+    "module": "node16",
+    // References (must read)
+    //   - https://www.typescriptlang.org/tsconfig/#module
+    //   - https://www.typescriptlang.org/docs/handbook/modules/theory.html#the-module-output-format
+    //   - https://www.typescriptlang.org/docs/handbook/modules/reference.html#the-module-compiler-option
+    // "moduleResolution": "node16", << set by "module"
+
     "outDir": "dist",
+    "skipLibCheck": true,
     "typeRoots": [
       "node_modules/@types",
       "@types/",
       "@polkadot/types/*",
       "substrate-generated-types/interfaces"
-    ],
+    ]
   },
   "exclude": [
     "dev",
@@ -22,7 +29,8 @@
     "substrate-generated-types",
     "tests"
   ],
-  "ts-node": {
-    "experimentalSpecifierResolution": "node"
-  }
+
+  // "ts-node": {
+  //   "experimentalSpecifierResolution": "node"
+  // }
 }

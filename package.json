@@ -37,7 +37,7 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "test": "yarn test:setup && yarn test:types && yarn test:cjs && yarn test:mjs && yarn test:ts && yarn test:only",
-    "test:setup": "./dev/bin/check-tools.sh && tsc",
+    "test:setup": "./dev/bin/check-tools.sh && yarn build",
     "test:types": "tsc --noEmit",
     "test:ts": "yarn removedb && ./dev/bin/test-ts.sh",
     "test:cjs": "node tests/import.test.cjs | tap-spec",
