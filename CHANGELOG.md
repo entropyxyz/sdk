@@ -21,7 +21,7 @@ Version header format: `[version] Name - year-month-day (entropy-core compatibil
 ### Broke
 
 ### Dev
- - no longer building not modules into dist
+ - no longer building node modules into dist
 ### Meta
 
 
