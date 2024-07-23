@@ -9,6 +9,8 @@ export default defineConfig((options) => {
       'src/utils/index.ts',
       'src/utils/crypto/index.ts',
     ],
+    treeshake: true,
+    skipNodeModulesBundle: true,
     replaceNodeEnv: true,
     format: ['esm', 'cjs'],
     dts: true,
