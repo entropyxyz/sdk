@@ -54,7 +54,6 @@
     "peek": "tsc --build --clean",
     "burn": "rm -Rf node_modules && yarn cache clean --all && yarn install",
     "build": "rm -rf dist && tsup",
-    "build:watch": "tsup --watch",
     "build:node": "tsup --platform node ",
     "build:browser": "tsup --platform browser",
     "build:link": "yarn build && yarn unlink && yarn link",

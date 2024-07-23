@@ -19,6 +19,5 @@ export default defineConfig((options) => {
     clean: true,
     target: 'es2022',
     minify: options.minify,
-    watch: options.watch,
   }
 })
