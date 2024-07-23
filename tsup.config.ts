@@ -9,6 +9,8 @@ export default defineConfig((options) => {
       'src/utils/index.ts',
       'src/utils/crypto/index.ts',
     ],
+    treeshake: true,
+    skipNodeModulesBundle: true,
     replaceNodeEnv: true,
     format: ['esm', 'cjs'],
     dts: true,
@@ -17,6 +19,5 @@ export default defineConfig((options) => {
     clean: true,
     target: 'es2022',
     minify: options.minify,
-    watch: options.watch,
   }
 })
