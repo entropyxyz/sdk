@@ -21,8 +21,14 @@ Version header format: `[version] Name - year-month-day (entropy-core compatibil
 ### Broke
 
 ### Dev
- - no longer building node modules into dist
+
 ### Meta
+
+
+## [0.2.3] Cybele - 2024-07-24 (entropy-core compatibility: 0.2.0)
+
+### Dev
+ - no longer building node modules into dist [402](https://github.com/entropyxyz/sdk/pull/402)
 
 
 ## [0.2.2] Bathala - 2024-07-11 (entropy-core compatibility: 0.2.0)
