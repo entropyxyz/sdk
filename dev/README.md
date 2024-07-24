@@ -117,35 +117,36 @@ If you are blocked from committing, you can skip these hooks
 git commit --no-verify
 ```
 
-## Publishing
+## Cutting a new release
 
-**Unfinished section**
+- [ ] Check out new version branch `release/v#Number` example: `release/v0.2.0`
+- [ ] Update CHANGELOG
+  - change logs should be hand written as apart of the version pr
+- [ ] update package.json
+  - `yarn version patch #or major.minor.patch`
+- [ ] merge release branch into main and push tag
+- [ ] `git push origin main --tags`
 
-Always publish from `stable` branch
+### Publish from version tag
 
-- [ ] craft version pr for `dev` into `main`
+- [ ] check out version tag
 - [ ] `yarn burn`
 - [ ] `yarn build`
 - [ ] `yarn test`
 
-  - change logs should be hand written as apart of the version pr
-  - `yarn version patch #or major.minor.patch`
 
   <!-- TO-DO: figure out with him an automated system -->
 
 - [ ] minimum day ideally two day before ping @johnnymatthews on version bump pr set 48 hour timer
 - [ ] after timer merge into main
-- [ ] `git push origin main --tags`
 - [ ] make sure we have a version tag
-- [ ] check out version tag
-- [ ] create a tag push to main? this might be handled by yarn needs to be checked
 - [ ] `npm publish`
+- [ ] create release on github
 
 ```bash
-git checkout stable
+git checkout $version-tag
 yarn burn
 yarn
 yarn version --patch # patch|minor|major
 npm publish
-git push origin stable --tags
 ```
