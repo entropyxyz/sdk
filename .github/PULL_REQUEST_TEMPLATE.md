@@ -31,3 +31,8 @@
 - [ ] I have performed a self-review of my code.
 - [ ] I have commented my code.
 - [ ] I have updated documentation, where necessary.
+
+
+<!-- you must include this line for cla bot -->
+I have read the CLA Document and I hereby sign the CLA
+
