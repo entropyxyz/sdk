@@ -7,13 +7,12 @@ import {
   promiseRunner,
   spinNetworkUp,
   charlieStashSeed,
-  charlieStashAddress,
   spinNetworkDown,
 } from './testing-utils'
 
 const networkType = 'two-nodes'
 
-test('Programs: GET', async (t) => {
+test('Programs: account programs get', async (t) => {
   const run = promiseRunner(t)
   await run('network up', spinNetworkUp(networkType))
   t.teardown(async () => {
@@ -34,15 +33,12 @@ test('Programs: GET', async (t) => {
     keyring,
     endpoint: 'ws://127.0.0.1:9944',
   })
-
-  // register
-  const verifyingKeyFromRegistration = await run('register', entropy.register())
-
-  t.equal(
-    verifyingKeyFromRegistration,
-    entropy.keyring.accounts.registration.verifyingKeys[0],
-    'verifyingKeys match after registration'
+  // wait for entropy to be ready
+  await run(
+    'entropy ready',
+    entropy.ready
   )
+
 
   // deploy
   const noopProgram: any = readFileSync(
@@ -54,21 +50,36 @@ test('Programs: GET', async (t) => {
     entropy.programs.dev.deploy(noopProgram)
   )
 
-  const programsDeployed = await run(
-    'get deployed programs',
-    entropy.programs.dev.get(charlieStashAddress)
+  // register
+  const registerOpts = {
+    programData: [{
+      program_pointer: newPointer
+    }],
+  }
+  console.log('registerOpts:', registerOpts)
+  const verifyingKeyFromRegistration = await run('register', entropy.register(registerOpts))
+
+  t.equal(
+    verifyingKeyFromRegistration,
+    entropy.keyring.accounts.registration.verifyingKeys[0],
+    'verifyingKeys match after registration'
+  )
+
+  const programsForAccount = await run(
+    'get programs for verifyingKey',
+    entropy.programs.get(verifyingKeyFromRegistration)
   )
 
   t.equal(
-    programsDeployed.length,
+    programsForAccount.length,
     1,
-    'charlie has deployed 1 program' + programsDeployed
+    'charlie entropy account has 1 program' + programsForAccount
   )
 
   t.equal(
-    programsDeployed[0],
+    programsForAccount[0].program_pointer,
     newPointer,
-    'program in list matches new pointer: ' + newPointer + ' = ' + programsDeployed[0]
+    'program in list matches new pointer: ' + newPointer + ' = ' + programsForAccount[0].program_pointer
   )
 
   t.end()
