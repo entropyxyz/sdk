@@ -56,7 +56,7 @@ test('Programs: account programs get', async (t) => {
       program_pointer: newPointer
     }],
   }
-  console.log('registerOpts:', registerOpts)
+
   const verifyingKeyFromRegistration = await run('register', entropy.register(registerOpts))
 
   t.equal(
