@@ -93,12 +93,11 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
       programDeployer,
       keyVisibility,
       programData.map((programInfo) => {
-        return {
-          program_pointer: programInfo.program_pointer,
-          program_config: Array.from(
-            Buffer.from(JSON.stringify(programInfo.program_config))
-          ),
-        }
+        const program: ProgramInstance = { program_pointer: programInfo.program_pointer }
+        if (programInfo.program_config) program.program_config = Array.from(
+          Buffer.from(JSON.stringify(programInfo.program_config))
+        )
+        return program
       })
     )
     // @ts-ignore: next line

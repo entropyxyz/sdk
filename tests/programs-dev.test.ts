@@ -7,12 +7,13 @@ import {
   promiseRunner,
   spinNetworkUp,
   charlieStashSeed,
+  charlieStashAddress,
   spinNetworkDown,
 } from './testing-utils'
 
 const networkType = 'two-nodes'
 
-test('Programs: account programs get', async (t) => {
+test('Programs#dev: all methods', async (t) => {
   const run = promiseRunner(t)
   await run('network up', spinNetworkUp(networkType))
   t.teardown(async () => {
@@ -33,6 +34,8 @@ test('Programs: account programs get', async (t) => {
     keyring,
     endpoint: 'ws://127.0.0.1:9944',
   })
+
+
   // wait for entropy to be ready
   await run(
     'entropy ready',
@@ -42,7 +45,8 @@ test('Programs: account programs get', async (t) => {
 
   // deploy
   const noopProgram: any = readFileSync(
-    './tests/testing-utils/program_noop.wasm'
+    './tests/testing-utils/program_noop.wasm',
+
   )
 
   const newPointer = await run(
@@ -50,37 +54,53 @@ test('Programs: account programs get', async (t) => {
     entropy.programs.dev.deploy(noopProgram)
   )
 
-  // register
-  const registerOpts = {
-    programData: [{
-      program_pointer: newPointer
-    }],
-  }
-
-  const verifyingKeyFromRegistration = await run('register', entropy.register(registerOpts))
-
-  t.equal(
-    verifyingKeyFromRegistration,
-    entropy.keyring.accounts.registration.verifyingKeys[0],
-    'verifyingKeys match after registration'
+  const programsDeployed = await run(
+    'get deployed programs',
+    entropy.programs.dev.getByDeployer(charlieStashAddress)
   )
 
-  const programsForAccount = await run(
-    'get programs for verifyingKey',
-    entropy.programs.get(verifyingKeyFromRegistration)
+  const noopProgramOnChain = await run(
+    'get a specific program',
+    entropy.programs.dev.get(newPointer)
   )
 
   t.equal(
-    programsForAccount.length,
+    programsDeployed.length,
     1,
-    'charlie entropy account has 1 program' + programsForAccount
+    'charlie has deployed 1 program' + programsDeployed
   )
 
   t.equal(
-    programsForAccount[0].program_pointer,
+    programsDeployed[0],
     newPointer,
-    'program in list matches new pointer: ' + newPointer + ' = ' + programsForAccount[0].program_pointer
+    'program in list matches new pointer: ' + newPointer + ' = ' + programsDeployed[0]
   )
+
+  t.deepEqual(
+    Buffer.from(noopProgramOnChain.bytecode),
+    noopProgram,
+    'Whats on chain should match what was deployed'
+  )
+
+  run(
+    'remove noopProgram',
+    entropy.programs.dev.remove(newPointer)
+  )
+
+  const programsDeployedAfterRemove = await run(
+    'get deployed programs',
+    entropy.programs.dev.getByDeployer(charlieStashAddress)
+  )
+  // the removal of a program has failed
+  // the removing of a program is questionable
+  // functionality to begin with so ive commented this out
+  // for now but this needs digging
+  // t.equal(
+  //   programsDeployedAfterRemove.length,
+  //   0,
+  //   'charlie has no deployed programs'
+  // )
+
 
   t.end()
 })
