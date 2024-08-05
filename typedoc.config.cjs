@@ -21,18 +21,9 @@ module.exports = {
     notDocumented: true,
   },
   plugin: [
-    '@mxssfd/typedoc-theme',
-    'typedoc-plugin-rename-defaults',
-    'typedoc-plugin-merge-modules',
-    // 'typedoc-plugin-missing-exports',
+    'typedoc-plugin-markdown'
   ],
   /* typedoc-plugin-missing-exports:*/
   // internalModule: 'internal',
   // placeInternalsInOwningModule: true,
-
-  /* typedoc-plugin-merge-modules: */
-  mergeModulesRenameDefaults: true,
-  mergeModulesMergeMode: 'project',
-
-  theme: 'my-theme',
 }

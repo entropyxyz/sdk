@@ -64,7 +64,8 @@
     "postinstall": "patch-package",
     "prepack": "pinst --disable",
     "postpack": "pinst --enable",
-    "removedb": "rm -rf .entropy && docker compose --file dev/docker-scripts/two-nodes.yaml down 2> /dev/null"
+    "removedb": "rm -rf .entropy && docker compose --file dev/docker-scripts/two-nodes.yaml down 2> /dev/null",
+    "docs": "typedoc"
   },
   "repository": {
     "type": "git",
@@ -97,7 +98,8 @@
     "ts-prune": "^0.10.3",
     "tsup": "^6.5.0",
     "tsx": "^4.9.3",
-    "typedoc": "^0.25.3",
+    "typedoc": "^0.26.5",
+    "typedoc-plugin-markdown": "^4.2.3",
     "typedoc-plugin-merge-modules": "^5.1.0",
     "typedoc-plugin-missing-exports": "^2.3.0",
     "typedoc-plugin-rename-defaults": "^0.7.0",
