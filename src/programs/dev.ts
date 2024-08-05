@@ -55,7 +55,7 @@ export default class ProgramDev extends ExtrinsicBaseClass {
    * @returns {Promise<string[]>} A promise that resolves to the list of program pointers
    */
 
-  async get (address: string): Promise<any> {
+  async getByDeployer (address: string): Promise<any> {
     const programs = await this.substrate.query.programs.ownedPrograms(address);
     return programs.toHuman()
   }
@@ -67,7 +67,7 @@ export default class ProgramDev extends ExtrinsicBaseClass {
    * @returns {Promise<ProgramInfo>} A promise that resolves to the program information.
    */
 
-  async getProgramInfo (pointer: string): Promise<ProgramInfo> {
+  async get (pointer: string): Promise<ProgramInfo> {
     // fetch program bytecode using the program pointer at the specific block hash
     const responseOption = await this.substrate.query.programs.programs(pointer)
 
