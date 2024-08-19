@@ -77,7 +77,7 @@ test('Programs#dev: all methods', async (t) => {
   )
 
   t.deepEqual(
-    Buffer.from(noopProgramOnChain.bytecode),
+    noopProgramOnChain.bytecode,
     noopProgram,
     'Whats on chain should match what was deployed'
   )

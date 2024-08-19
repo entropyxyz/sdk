@@ -2,7 +2,7 @@ import ExtrinsicBaseClass from '../extrinsic'
 import { ApiPromise } from '@polkadot/api'
 import { Signer } from '../keys/types/internal'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
-import { hex2buf, stripHexPrefix } from '../utils'
+import { hexStringToBuffer, stripHexPrefix } from '../utils'
 import * as util from '@polkadot/util'
 import { HexString } from '../keys/types/json'
 
@@ -140,7 +140,7 @@ export default class ProgramDev extends ExtrinsicBaseClass {
 
   #formatProgramInfo (programInfo): ProgramInfo {
     const { interfaceDescription, deployer, refCounter } = programInfo
-    const bytecode = hex2buf(stripHexPrefix(programInfo.bytecode)) // Convert hex string to ArrayBuffer
+    const bytecode = hexStringToBuffer(stripHexPrefix(programInfo.bytecode)) // Convert hex string to ArrayBuffer
     return { interfaceDescription, deployer, refCounter, bytecode }
   }
 }
