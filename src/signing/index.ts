@@ -364,8 +364,14 @@ export default class SignatureRequestManager {
       // define keygroups see issue#380 https://github.com/entropyxyz/sdk/issues/380
       this.#keyGroups[i] = keyGroup
       // omg polkadot type gen is a head ache
+      // 
+      // If the Message being signed is too long the sigRequestHash is then converted to a number
+      // so large that the resulting parsed value of parseInt(sigRequest, 16) would return Infinity.
+      // Using BigInt instead solves the Infinity issue, and now allows messages of any length to be
+      // signed.
+      //
       // @ts-ignore: next line
-      const index = parseInt(sigRequest, 16) % keyGroup.unwrap().length
+      const index = Number(BigInt(`0x${sigRequest}`) % BigInt(keyGroup.unwrap().length))
       if (isNaN(index)) {
         throw new Error(`when calculating the index for choosing a validator got: NaN`)
       }
