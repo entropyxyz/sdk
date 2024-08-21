@@ -1,4 +1,5 @@
 import { ApiPromise } from '@polkadot/api'
+import { hexHasPrefix, hexAddPrefix } from '@polkadot/util'
 import { Signer } from '../keys/types/internal'
 import { defaultAdapters } from './adapters/default'
 import { Adapter } from './adapters/types'
@@ -370,8 +371,12 @@ export default class SignatureRequestManager {
       // Using BigInt instead solves the Infinity issue, and now allows messages of any length to be
       // signed.
       //
+      let sigToConvert = sigRequest
+      if (!hexHasPrefix(sigToConvert)) {
+        sigToConvert = hexAddPrefix(sigRequest)
+      }
       // @ts-ignore: next line
-      const index = Number(BigInt(`0x${sigRequest}`) % BigInt(keyGroup.unwrap().length))
+      const index = Number(BigInt(sigToConvert) % BigInt(keyGroup.unwrap().length))
       if (isNaN(index)) {
         throw new Error(`when calculating the index for choosing a validator got: NaN`)
       }
