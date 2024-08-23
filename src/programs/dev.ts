@@ -115,6 +115,8 @@ export default class ProgramDev extends ExtrinsicBaseClass {
   /**
    * Removes an existing program.
    *
+   * (removing a program is currently unstable and may not remove the program from chain as intended.)
+   *
    * @param {string | Uint8Array} programHash - The hash of the program to remove.
    * @returns {Promise<void>} A promise that resolves when the program is removed.
    */

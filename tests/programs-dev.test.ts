@@ -95,6 +95,7 @@ test('Programs#dev: all methods', async (t) => {
   // the removing of a program is questionable
   // functionality to begin with so ive commented this out
   // for now but this needs digging
+  // see issue https://github.com/entropyxyz/sdk/issues/414
   // t.equal(
   //   programsDeployedAfterRemove.length,
   //   0,
