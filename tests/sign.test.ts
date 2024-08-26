@@ -60,6 +60,32 @@ test('Sign', async (t) => {
   t.end()
 })
 
+test('Sign: Long Message', async t => {
+  const { run, entropy } = await setupTest(t)
+
+  const dummyLongMessage = `Deep Divide Have Grass Blessed Greater Replenish
+  Tree Days You're Seed Earth Above
+  Blessed beginning god give air above green. God have. Midst. Moved made divided seasons light in be place years above gathered. Days which day waters.
+  
+  Seasons
+  Given one moving darkness appear. You Lesser moving saw. They're divided rule air his seasons. Fifth lights be gathering upon gathering gathering darkness, over. Whales.
+  
+  Adding some symbols for good measure: #$@%@#$@#%#@`;
+
+  const signature = await run(
+    'sign',
+    entropy.signWithAdaptersInOrder({
+      msg: { msg: dummyLongMessage },
+      order: ['deviceKeyProxy'],
+    })
+  )
+
+  t.true(signature && signature.length > 32, 'signature has some body!')
+  signature && console.log(signature)
+
+  t.end()
+})
+
 test('Sign: custom signatureVerifyingKey', async (t) => {
   const run = promiseRunner(t)
 
