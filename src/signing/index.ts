@@ -371,10 +371,7 @@ export default class SignatureRequestManager {
       // Using BigInt instead solves the Infinity issue, and now allows messages of any length to be
       // signed.
       //
-      let sigToConvert = sigRequest
-      if (!hexHasPrefix(sigToConvert)) {
-        sigToConvert = hexAddPrefix(sigRequest)
-      }
+      const sigToConvert = hexAddPrefix(sigRequest)
       // @ts-ignore: next line
       const index = Number(BigInt(sigToConvert) % BigInt(keyGroup.unwrap().length))
       if (isNaN(index)) {
