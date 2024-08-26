@@ -1,5 +1,5 @@
 import { ApiPromise } from '@polkadot/api'
-import { hexHasPrefix, hexAddPrefix } from '@polkadot/util'
+import { hexAddPrefix } from '@polkadot/util'
 import { Signer } from '../keys/types/internal'
 import { defaultAdapters } from './adapters/default'
 import { Adapter } from './adapters/types'
