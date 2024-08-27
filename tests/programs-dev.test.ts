@@ -49,9 +49,15 @@ test('Programs#dev: all methods', async (t) => {
 
   )
 
+  const configSchema = {
+    noop_param: 'string',
+  }
+  const auxDataSchema = {
+    noop_param: 'number'
+  }
   const newPointer = await run(
     'deploy',
-    entropy.programs.dev.deploy(noopProgram)
+    entropy.programs.dev.deploy(noopProgram, configSchema, auxDataSchema)
   )
 
   const programsDeployed = await run(
@@ -63,7 +69,6 @@ test('Programs#dev: all methods', async (t) => {
     'get a specific program',
     entropy.programs.dev.get(newPointer)
   )
-
   t.equal(
     programsDeployed.length,
     1,
@@ -79,7 +84,17 @@ test('Programs#dev: all methods', async (t) => {
   t.deepEqual(
     noopProgramOnChain.bytecode,
     noopProgram,
-    'Whats on chain should match what was deployed'
+    'bytecode on chain should match what was deployed'
+  )
+  t.deepEqual(
+    noopProgramOnChain.configurationSchema,
+    configSchema,
+    'configurationSchema on chain should match what was deployed'
+  )
+  t.deepEqual(
+    noopProgramOnChain.auxiliaryDataSchema,
+    auxDataSchema,
+    'auxiliaryDataSchema on chain should match what was deployed'
   )
 
   run(

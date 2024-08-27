@@ -144,6 +144,17 @@ export function hexStringToBuffer (hex: string): ArrayBuffer {
   return Buffer.from(hex, 'hex')
 }
 
+/**
+ * Converts a hexadecimal string to a JSON object.
+ *
+ * @param {string} hex - The hexadecimal string to convert.
+ * @returns {unknown} The ArrayBuffer representation of the hexadecimal string.
+ */
+
+export function hexStringToJSON (hex: string): ArrayBuffer {
+  return JSON.parse(hexStringToBuffer(stripHexPrefix(hex)).toString())
+}
+
 export function hexStringToUint8Array (hex: string): Uint8Array {
   if (hex.startsWith('0x')) {
     hex = hex.slice(2)

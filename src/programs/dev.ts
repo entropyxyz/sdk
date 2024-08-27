@@ -2,14 +2,14 @@ import ExtrinsicBaseClass from '../extrinsic'
 import { ApiPromise } from '@polkadot/api'
 import { Signer } from '../keys/types/internal'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
-import { hexStringToBuffer, stripHexPrefix } from '../utils'
+import { hexStringToBuffer, stripHexPrefix, hexStringToJSON } from '../utils'
 import * as util from '@polkadot/util'
 import { HexString } from '../keys/types/json'
 
 /**
  * Represents program information.
  *
- * @interface ProgramInfo
+ * @interface ProgramInterface
  * @property {ArrayBuffer} bytecode - The bytecode of the program.
  * @property {unknown} [interfaceDescription] - Optional. The configuration interface of the program.
  * @property {string} deployer - The address of the deployer of the program.
@@ -17,9 +17,12 @@ import { HexString } from '../keys/types/json'
  */
 
 // interfaceDescription needs better design and another type other than 'unknown'
-export interface ProgramInfo {
+export interface ProgramInterface {
   bytecode: ArrayBuffer
-  interfaceDescription?: unknown
+  configurationSchema: unknown
+  auxiliaryDataSchema: unknown
+  // not quite supported yet
+  // oracleDataPointer?: []
   deployer: string
   refCounter: number
 }
@@ -64,16 +67,16 @@ export default class ProgramDev extends ExtrinsicBaseClass {
    * Retrieves program information using a program pointer.
    *
    * @param {string} pointer - The program pointer to fetch the program bytecode.
-   * @returns {Promise<ProgramInfo>} A promise that resolves to the program information.
+   * @returns {Promise<ProgramInterface>} A promise that resolves to the program information.
    */
 
-  async get (pointer: string): Promise<ProgramInfo> {
+  async get (pointer: string): Promise<ProgramInterface> {
     // fetch program bytecode using the program pointer at the specific block hash
     const responseOption = await this.substrate.query.programs.programs(pointer)
 
     const programInfo = responseOption.toJSON()
 
-    return this.#formatProgramInfo(programInfo)
+    return this.#formatProgramInterface(programInfo)
   }
 
   /**
@@ -95,12 +98,13 @@ export default class ProgramDev extends ExtrinsicBaseClass {
   ): Promise<HexString> {
     // converts program and configurationInterface into a palatable format
     const formatedConfig = JSON.stringify(configurationSchema)
+    const formatedAuxData = JSON.stringify(auxiliaryDataSchema)
     // programModKey is the caller of the extrinsic
     const tx: SubmittableExtrinsic<'promise'> =
       this.substrate.tx.programs.setProgram(
         util.u8aToHex(new Uint8Array(program)), // new program
         formatedConfig, // config schema
-        auxiliaryDataSchema, // auxilary config schema
+        formatedAuxData, // auxilary config schema
         [] // oracleDataPointer // oracle data pointer
       )
     const record = await this.sendAndWaitFor(tx, {
@@ -134,15 +138,40 @@ export default class ProgramDev extends ExtrinsicBaseClass {
   /**
    * @internal
    *
+   * trys to parse schema as a json. If fails because it's not a json returns original schema. throws for any other reason
+   *
+   * @param {any} programInfo - The program information in JSON format.
+   * @returns {unknown} - The formatted program information.
+   */
+  #tryParseSchema (schema: any): unknown {
+    try {
+      return hexStringToJSON(schema)
+    } catch (e) {
+      if (e.message.includes('is not valid JSON')) return schema
+      throw e
+    }
+  }
+
+  /**
+   * @internal
+   *
    * Formats program information.
    *
-   * @param {ProgramInfoJSON} programInfo - The program information in JSON format.
-   * @returns {ProgramInfo} - The formatted program information.
+   * @param {ProgramInterfaceJSON} programInfo - The program information in JSON format.
+   * @returns {ProgramInterface} - The formatted program information.
    */
 
-  #formatProgramInfo (programInfo): ProgramInfo {
-    const { interfaceDescription, deployer, refCounter } = programInfo
+  #formatProgramInterface (programInfo): ProgramInterface {
+    const { deployer, refCounter } = programInfo
     const bytecode = hexStringToBuffer(stripHexPrefix(programInfo.bytecode)) // Convert hex string to ArrayBuffer
-    return { interfaceDescription, deployer, refCounter, bytecode }
+    const configurationSchema = this.#tryParseSchema(programInfo.configurationSchema)// Convert hex string to ArrayBuffer
+    const auxiliaryDataSchema = this.#tryParseSchema(programInfo.auxiliaryDataSchema)// Convert hex string to ArrayBuffer
+    return {
+      configurationSchema,
+      auxiliaryDataSchema,
+      deployer,
+      refCounter,
+      bytecode,
+    }
   }
 }

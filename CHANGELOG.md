@@ -13,6 +13,8 @@ Version header format: `[version] Name - year-month-day (entropy-core compatibil
 ## [UNRELEASED]
 
 ### Added
+  - `configurationSchema` & `auxiliaryDataSchema` to `ProgramInterface`
+
 
 ### Fixed
 
@@ -21,7 +23,7 @@ Version header format: `[version] Name - year-month-day (entropy-core compatibil
   - massive changes to `entropy.programs.dev`: (Look at documentation for more details)
     - `getProgramInfo` -> `get` and bytecode is returned as a buffer. not a Uint8buffer to match what was deployed
     - you now get owned programs for an address using `getByDeployer`.
-
+    - interface name change: `ProgramInfo` -> `ProgramInterface`
 ### Broke
 
 ### Dev
