@@ -72,6 +72,7 @@ export default class ProgramDev extends ExtrinsicBaseClass {
 
   async get (pointer: string): Promise<ProgramInterface> {
     // fetch program bytecode using the program pointer at the specific block hash
+    if (pointer.length <= 48) throw new Error('pointer length is less then or equal to 48. are you using an address?')
     const responseOption = await this.substrate.query.programs.programs(pointer)
 
     const programInfo = responseOption.toJSON()

@@ -59,11 +59,17 @@ test('Programs#dev: all methods', async (t) => {
     'deploy',
     entropy.programs.dev.deploy(noopProgram, configSchema, auxDataSchema)
   )
-
+  console.log('newPointer:', newPointer)
   const programsDeployed = await run(
     'get deployed programs',
     entropy.programs.dev.getByDeployer(charlieStashAddress)
   )
+  try {
+    await entropy.programs.dev.get(charlieStashAddress)
+    t.fail('entropy.programs.dev.get(charlieStashAddress) should have failed')
+  } catch (e) {
+    t.ok(e.message.includes('pointer length is less then or equal to 48. are you using an address?'), 'should error when using an address')
+  }
 
   const noopProgramOnChain = await run(
     'get a specific program',
