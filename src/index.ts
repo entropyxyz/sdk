@@ -97,7 +97,7 @@ export default class Entropy {
   async #init (opts: EntropyOpts) {
     this.keyring = opts.keyring
     const wsProvider = new WsProvider(opts.endpoint)
-    this.substrate = new ApiPromise({ provider: wsProvider })
+    this.substrate = new ApiPromise({ provider: wsProvider, noInitWarn: true })
     await this.substrate.isReadyOrError // throws an error if fails
 
     this.registrationManager = new RegistrationManager({
