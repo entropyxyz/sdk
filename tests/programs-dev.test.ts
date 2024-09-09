@@ -6,9 +6,9 @@ import Keyring from '../src/keys'
 import {
   promiseRunner,
   spinNetworkUp,
-  charlieStashSeed,
   charlieStashAddress,
   spinNetworkDown,
+  createTestAccount,
 } from './testing-utils'
 
 const networkType = 'two-nodes'
@@ -16,23 +16,14 @@ const networkType = 'two-nodes'
 test('Programs#dev: all methods', async (t) => {
   const run = promiseRunner(t)
   await run('network up', spinNetworkUp(networkType))
-  t.teardown(async () => {
-    await entropy.close()
-    await spinNetworkDown(networkType)
-  })
 
   await run('wasm', wasmGlobalsReady())
 
-  const keyring = new Keyring({ seed: charlieStashSeed, debug: true })
-  let store = keyring.getAccount()
-  t.equal(store.admin.address, keyring.accounts.registration.pair.address, 'admin account should have an address and for now it should match registrations address')
-  keyring.accounts.on('account-update', (fullAccount) => {
-    store = fullAccount
-  })
+  const entropy = await createTestAccount()
 
-  const entropy = new Entropy({
-    keyring,
-    endpoint: 'ws://127.0.0.1:9944',
+  t.teardown(async () => {
+    await entropy.close()
+    await spinNetworkDown(networkType)
   })
 
 
