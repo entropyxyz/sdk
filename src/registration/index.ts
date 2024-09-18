@@ -92,13 +92,7 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
     const registerTx = this.substrate.tx.registry.register(
       programDeployer,
       keyVisibility,
-      programData.map((programInfo) => {
-        const program: ProgramInstance = { program_pointer: programInfo.program_pointer }
-        if (programInfo.program_config) program.program_config = Array.from(
-          Buffer.from(JSON.stringify(programInfo.program_config))
-        )
-        return program
-      })
+      programData.map(this.#formatProgramInfo)
     )
     // @ts-ignore: next line
     // Send the registration transaction and wait for the result.
@@ -158,5 +152,13 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
         })
       })
     })
+  }
+
+  #formatProgramInfo (programInfo): ProgramInstance {
+    const program: ProgramInstance = { program_pointer: programInfo.program_pointer }
+    if (programInfo.program_config) program.program_config = Array.from(
+      Buffer.from(JSON.stringify(programInfo.program_config))
+    )
+    return program
   }
 }
