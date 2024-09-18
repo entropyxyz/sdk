@@ -53,11 +53,11 @@ test('Programs#dev: all methods', async (t) => {
   console.log('newPointer:', newPointer)
   const programsDeployed = await run(
     'get deployed programs',
-    entropy.programs.dev.getByDeployer(charlieStashAddress)
+    entropy.programs.dev.getByDeployer(entropy.keyring.accounts.programDev.address)
   )
   try {
-    await entropy.programs.dev.get(charlieStashAddress)
-    t.fail('entropy.programs.dev.get(charlieStashAddress) should have failed')
+    await entropy.programs.dev.get(entropy.keyring.accounts.programDev.address)
+    t.fail('entropy.programs.dev.get(entropy.keyring.accounts.programDev.address) should have failed')
   } catch (e) {
     t.ok(e.message.includes('pointer length is less then or equal to 48. are you using an address?'), 'should error when using an address')
   }
@@ -101,7 +101,7 @@ test('Programs#dev: all methods', async (t) => {
 
   const programsDeployedAfterRemove = await run(
     'get deployed programs',
-    entropy.programs.dev.getByDeployer(charlieStashAddress)
+    entropy.programs.dev.getByDeployer(entropy.keyring.accounts.programDev.address)
   )
   // the removal of a program has failed
   // the removing of a program is questionable
