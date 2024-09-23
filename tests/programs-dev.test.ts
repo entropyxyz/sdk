@@ -66,16 +66,10 @@ test('Programs#dev: all methods', async (t) => {
     'get a specific program',
     entropy.programs.dev.get(newPointer)
   )
-  t.equal(
-    programsDeployed.length,
-    1,
-    'charlie has deployed 1 program' + programsDeployed
-  )
-
-  t.equal(
-    programsDeployed[0],
-    newPointer,
-    'program in list matches new pointer: ' + newPointer + ' = ' + programsDeployed[0]
+  t.deepEqual(
+    programsDeployed,
+    [newPointer],
+    'charlie has 1 program deployed'
   )
 
   t.deepEqual(
