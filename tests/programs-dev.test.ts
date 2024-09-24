@@ -41,10 +41,16 @@ test('Programs#dev: all methods', async (t) => {
   )
 
   const configSchema = {
-    noop_param: 'string',
+    type: 'object',
+    properties: {
+      noop_param: { type: 'string' }
+    }
   }
   const auxDataSchema = {
-    noop_param: 'number'
+    type: 'object',
+    properties: {
+      noop_param: { type: 'number' }
+    }
   }
   const newPointer = await run(
     'deploy',
