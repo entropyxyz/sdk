@@ -41,10 +41,16 @@ test('Programs#dev: all methods', async (t) => {
   )
 
   const configSchema = {
-    noop_param: 'string',
+    type: 'object',
+    properties: {
+      noop_param: { type: 'string' }
+    }
   }
   const auxDataSchema = {
-    noop_param: 'number'
+    type: 'object',
+    properties: {
+      noop_param: { type: 'number' }
+    }
   }
   const newPointer = await run(
     'deploy',
@@ -55,6 +61,13 @@ test('Programs#dev: all methods', async (t) => {
     'get deployed programs',
     entropy.programs.dev.getByDeployer(entropy.keyring.accounts.programDev.address)
   )
+  t.deepEqual(
+    programsDeployed,
+    [newPointer],
+    'charlie has 1 program deployed'
+  )
+  
+  // Helpful error for old usage
   try {
     await entropy.programs.dev.get(entropy.keyring.accounts.programDev.address)
     t.fail('entropy.programs.dev.get(entropy.keyring.accounts.programDev.address) should have failed')
@@ -65,17 +78,6 @@ test('Programs#dev: all methods', async (t) => {
   const noopProgramOnChain = await run(
     'get a specific program',
     entropy.programs.dev.get(newPointer)
-  )
-  t.equal(
-    programsDeployed.length,
-    1,
-    'charlie has deployed 1 program' + programsDeployed
-  )
-
-  t.equal(
-    programsDeployed[0],
-    newPointer,
-    'program in list matches new pointer: ' + newPointer + ' = ' + programsDeployed[0]
   )
 
   t.deepEqual(
