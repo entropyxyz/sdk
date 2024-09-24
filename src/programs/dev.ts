@@ -165,8 +165,8 @@ export default class ProgramDev extends ExtrinsicBaseClass {
   #formatProgramInterface (programInfo): ProgramInterface {
     const { deployer, refCounter } = programInfo
     const bytecode = hexStringToBuffer(stripHexPrefix(programInfo.bytecode)) // Convert hex string to ArrayBuffer
-    const configurationSchema = this.#tryParseSchema(programInfo.configurationSchema)// Convert hex string to ArrayBuffer
-    const auxiliaryDataSchema = this.#tryParseSchema(programInfo.auxiliaryDataSchema)// Convert hex string to ArrayBuffer
+    const configurationSchema = this.#tryParseSchema(programInfo.configurationSchema)
+    const auxiliaryDataSchema = this.#tryParseSchema(programInfo.auxiliaryDataSchema)
     return {
       configurationSchema,
       auxiliaryDataSchema,
