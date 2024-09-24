@@ -141,7 +141,7 @@ export function toHex (str: any) {
  */
 
 export function hexStringToBuffer (hex: string): ArrayBuffer {
-  return Buffer.from(hex, 'hex')
+  return Buffer.from(stripHexPrefix(hex), 'hex')
 }
 
 /**
@@ -152,7 +152,7 @@ export function hexStringToBuffer (hex: string): ArrayBuffer {
  */
 
 export function hexStringToJSON (hex: string): ArrayBuffer {
-  return JSON.parse(hexStringToBuffer(stripHexPrefix(hex)).toString())
+  return JSON.parse(hexStringToBuffer(hex).toString())
 }
 
 export function hexStringToUint8Array (hex: string): Uint8Array {
