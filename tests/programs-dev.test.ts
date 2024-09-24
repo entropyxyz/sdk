@@ -55,6 +55,13 @@ test('Programs#dev: all methods', async (t) => {
     'get deployed programs',
     entropy.programs.dev.getByDeployer(entropy.keyring.accounts.programDev.address)
   )
+  t.deepEqual(
+    programsDeployed,
+    [newPointer],
+    'charlie has 1 program deployed'
+  )
+  
+  // Helpful error for old usage
   try {
     await entropy.programs.dev.get(entropy.keyring.accounts.programDev.address)
     t.fail('entropy.programs.dev.get(entropy.keyring.accounts.programDev.address) should have failed')
@@ -65,11 +72,6 @@ test('Programs#dev: all methods', async (t) => {
   const noopProgramOnChain = await run(
     'get a specific program',
     entropy.programs.dev.get(newPointer)
-  )
-  t.deepEqual(
-    programsDeployed,
-    [newPointer],
-    'charlie has 1 program deployed'
   )
 
   t.deepEqual(
