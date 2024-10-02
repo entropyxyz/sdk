@@ -108,9 +108,11 @@
     "@entropyxyz/entropy-protocol-nodejs": "^0.2.0",
     "@entropyxyz/entropy-protocol-web": "^0.2.0",
     "@polkadot/api": "^10.13.1",
+    "@types/lodash.clonedeep": "^4.5.9",
     "@types/node": "^20.12.12",
     "debug": "^4.3.4",
     "hpke-js": "^1.2.7",
+    "lodash.clonedeep": "^4.5.0",
     "uuid": "^9.0.1",
     "xtend": "^4.0.2"
   },

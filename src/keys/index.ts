@@ -1,5 +1,5 @@
 import EventEmitter from 'node:events'
-import { deepCopy } from '../utils/housekeeping'
+import { default as cloneDeep } from 'lodash.clonedeep'
 import * as utils from './utils'
 import { EntropyAccount, KeyMaterial, PairMaterial } from './types/json'
 import {
@@ -185,7 +185,7 @@ export default class Keyring {
     const entropyAccount: EntropyAccount = { debug, seed, type, verifyingKeys }
     this.#used.forEach((accountName) => {
       if (this.accounts[accountName] === undefined) return
-      entropyAccount[accountName] = deepCopy(this.accounts[accountName] as PairMaterial)
+      entropyAccount[accountName] = cloneDeep(this.accounts[accountName] as PairMaterial)
     })
     entropyAccount.admin = entropyAccount.registration
     return entropyAccount
