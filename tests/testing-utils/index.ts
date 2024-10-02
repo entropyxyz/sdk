@@ -15,14 +15,17 @@ export * from './constants'
 export * from './readKey'
 
 export async function createTestAccount(
-  entropy: Entropy,
-  seed = charlieStashSeed
+  seed = charlieStashSeed,
+  endpoint = 'ws://127.0.0.1:9944'
 ) {
   await wasmGlobalsReady()
 
   const keyring = new Keyring({ seed } as KeyMaterial)
+  const entropy = new Entropy({
+    keyring,
+    endpoint,
+  })
 
-  entropy = new Entropy({ keyring })
   await entropy.ready.catch((err) => {
     console.log('createTestAccount failed: ', err)
     throw err
