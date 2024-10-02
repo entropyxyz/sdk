@@ -1,5 +1,5 @@
 import EventEmitter from 'node:events'
-import { cloneDeep } from 'lodash'
+import { cloneDeep } from 'lodash-es'
 import * as utils from './utils'
 import { EntropyAccount, KeyMaterial, PairMaterial } from './types/json'
 import {
