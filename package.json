@@ -73,7 +73,7 @@
   },
   "homepage": "https://github.com/entropyxyz/sdk#readme",
   "devDependencies": {
-    "@polkadot/typegen": "^10.11.1",
+    "@polkadot/typegen": "^14.0.1",
     "@types/tape": "^5",
     "@typescript-eslint/eslint-plugin": "^5.43.0",
     "@typescript-eslint/parser": "^5.43.0",
@@ -97,7 +97,7 @@
   "dependencies": {
     "@entropyxyz/entropy-protocol-nodejs": "^0.2.0",
     "@entropyxyz/entropy-protocol-web": "^0.2.0",
-    "@polkadot/api": "^10.13.1",
+    "@polkadot/api": "^14.0.1",
     "@types/node": "^20.12.12",
     "debug": "^4.3.4",
     "hpke-js": "^1.2.7",
