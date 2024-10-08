@@ -47,6 +47,24 @@ test.only('test the four-nodes docker script for subgroups', async (t) => {
   })
 
   await run('entropy ready', entropy.ready)
+  await entropy.substrate.tx.registry.jumpStartNetwork().signAndSend(entropy.keyring.accounts.registration.pair)
+  const wantedMethod = 'FinishedNetworkJumpStart'
+  let unsub
+  await new Promise(async (res, reject) => {
+    unsub = await entropy.substrate.query.system.events((events) => {
+      events.forEach(async (record) => {
+        const { event } = record
+        const { method } = event
+        console.log('method', method, event.toHuman())
+        if (method === 'ExtrinsicFailed') console.log('ExtrinsicFailed:', event.toHuman().data.dispatchError)
+        if (method === wantedMethod) {
+          unsub()
+          res(undefined)
+        }
+      })
+    })
+  })
+
   const validators = (await run('validators', entropy.substrate.query.session.validators())).toHuman()
   const signingGroup = (await run('signingGroup', entropy.substrate.query.stakingExtension.signers())).toHuman()
   console.log('validators:', validators)
