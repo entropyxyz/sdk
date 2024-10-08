@@ -1,5 +1,5 @@
 import EventEmitter from 'node:events'
-import { deepCopy } from '../utils/housekeeping'
+import { default as cloneDeep } from 'lodash.clonedeep'
 import * as utils from './utils'
 import { EntropyAccount, KeyMaterial, PairMaterial } from './types/json'
 import {
@@ -20,55 +20,71 @@ const ACCOUNTS = Object.keys(ChildKey)
  */
 export default class Keyring {
   // private
-  // it's a unit8array if it comes from a mnemonic and a string if it comes from the user
-  // The seed used to generate keys, can be a Uint8Array (from mnemonic) or a string (user-provided).
+  // The seed used to generate keys. Can be a Uint8Array (from mnemonic) or a string (from seed).
   #seed: Uint8Array | string
+  // The the names of accounts used in this keyring
   #used: string[]
+
+  /** The accounts  */
   accounts: AccountsEmitter
   crypto: Crypto
 
   /**
    * Initializes a new instance of the `Keyring` class.
    *
-   * @param account - The key material and entropy account used for key generation.
+   * @param account - The key material (or account) used for key generation.
+   *
+   * @example
+   *
+   * ```ts
+   * import { Keyring } from '@entropyxyz/sdk/keys'
+   *
+   * const keyring = new Keyring({
+   *   seed: '0xbc1ede780f784bb6991a585e4f6e61522c14e1cae6ad0895fb57b9a205a8f938'
+   * })
+   *
+   * keyring.accounts.on('account-update', (fullAccount) => {
+   *   // TODO: persist this
+   * })
+   * ```
    */
 
   constructor (account: KeyMaterial) {
-    // this repersents keys that are used by the user
+    // The the names of accounts used in this keyring
     this.#used = ['admin', ChildKey.registration]
     Object.keys(account).forEach((key) => {
-      if (typeof account[key] === 'object' && account[key].userContext) {
+      if (account[key]?.userContext) {
         this.#used.push(key)
       } else if ((account as EntropyAccount).debug) {
         this.#used.push(key)
       }
     })
+
+    // set #seed
     const { seed, mnemonic } = account
     if (!seed && !mnemonic)
       throw new Error('Need at least a seed or mnemonic to create keys')
-    if (mnemonic) {
-      this.#seed = utils.seedFromMnemonic(mnemonic)
-    } else {
-      this.#seed = seed
-    }
+    this.#seed = mnemonic
+      ? utils.seedFromMnemonic(mnemonic)
+      : seed
+
+    // setup accounts
     const accountsJson = this.#formatAccounts(account)
     this.accounts = this.#createFunctionalAccounts(accountsJson)
     this.accounts.masterAccountView = accountsJson
   }
 
-  #formatAccounts (accounts: EntropyAccount): EntropyAccount {
 
+  #formatAccounts (accounts: EntropyAccount): EntropyAccount {
+    // TODO: refactor to use "account" not "accounts"
     const { seed, type, admin } = accounts
     const debug = true
     const entropyAccountsJson = {
       debug,
-      // previously was seed ? seed : utils.seedFromMnemonic(mnemonic) but this has already been derived in the constructor
-      // @frankie correct if im wrong here
       seed: this.#seed,
       type,
       admin,
     }
-
 
     Object.keys(accounts)
       .concat(ACCOUNTS)
@@ -169,7 +185,7 @@ export default class Keyring {
     const entropyAccount: EntropyAccount = { debug, seed, type, verifyingKeys }
     this.#used.forEach((accountName) => {
       if (this.accounts[accountName] === undefined) return
-      entropyAccount[accountName] = deepCopy(this.accounts[accountName] as PairMaterial)
+      entropyAccount[accountName] = cloneDeep(this.accounts[accountName] as PairMaterial)
     })
     entropyAccount.admin = entropyAccount.registration
     return entropyAccount

@@ -1,5 +1,31 @@
 # Hello sdk dev!
 
+This is your home base for how to develop on the project locally and process around that
+
+## Branches
+
+- `dev`
+  in development
+- `main`
+  "stable" what is on npm
+
+- `<name>/<issue_number>-<short_title>` (personal branches)
+  for example `frankie/i123-docs`
+
+all PRS go into `dev`
+
+## Versions
+
+The SDK version must match a compatible [`entropy-core`](https://github.com/entropyxyz/entropy-core) version.
+
+<!-- TODO: -->
+
+| module            | tag               |
+| ----------------- | ----------------- |
+| `@entropyxyz/sdk` | `main` TODO       |
+| `entropy-core`    | `release/v0.0.12` |
+
+
 ## Tests
 
 For the tests to run you **must** edit your `/etc/hosts` file, adding:
@@ -93,16 +119,36 @@ If you are blocked from committing, you can skip these hooks
 git commit --no-verify
 ```
 
-## Publishing
+## Cutting a new release
 
-Always publish from `stable` branch
+- [ ] Check out new version branch `release/v#Number` example: `release/v0.2.0`
+- [ ] Update CHANGELOG
+  - change logs should be hand written as apart of the version pr
+- [ ] update package.json
+  - `yarn version patch #or major.minor.patch`
+- [ ] merge release branch into main and push tag
+- [ ] `git push origin main --tags`
+
+### Publish from version tag
+
+- [ ] check out version tag
+- [ ] `yarn burn`
+- [ ] `yarn build`
+- [ ] `yarn test`
+
+
+  <!-- TO-DO: figure out with him an automated system -->
+
+- [ ] minimum day ideally two day before ping @johnnymatthews on version bump pr set 48 hour timer
+- [ ] after timer merge into main
+- [ ] make sure we have a version tag
+- [ ] `npm publish`
+- [ ] create release on github
 
 ```bash
-git checkout stable
+git checkout $version-tag
 yarn burn
 yarn
-yarn build
 yarn version --patch # patch|minor|major
 npm publish
-git push origin stable --tags
 ```

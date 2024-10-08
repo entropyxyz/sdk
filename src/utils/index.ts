@@ -140,12 +140,19 @@ export function toHex (str: any) {
  * @returns {ArrayBuffer} The ArrayBuffer representation of the hexadecimal string.
  */
 
-export function hex2buf (hex: string): ArrayBuffer {
-  const bytes = new Uint8Array(Math.ceil(hex.length / 2))
-  for (let i = 0; i < bytes.length; i++) {
-    bytes[i] = parseInt(hex.slice(i * 2, i * 2 + 2), 16)
-  }
-  return bytes.buffer
+export function hexStringToBuffer (hex: string): ArrayBuffer {
+  return Buffer.from(stripHexPrefix(hex), 'hex')
+}
+
+/**
+ * Converts a hexadecimal string to a JSON object.
+ *
+ * @param {string} hex - The hexadecimal string to convert.
+ * @returns {unknown} The ArrayBuffer representation of the hexadecimal string.
+ */
+
+export function hexStringToJSON (hex: string): ArrayBuffer {
+  return JSON.parse(hexStringToBuffer(hex).toString())
 }
 
 export function hexStringToUint8Array (hex: string): Uint8Array {

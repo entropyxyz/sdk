@@ -15,11 +15,10 @@
     "module": "Node16"
   },
   "exclude": [
-    "node_modules",
+    "dev",
     "dist",
-    "build",
-    "examples",
-    "old",
+    "docs",
+    "node_modules",
     "substrate-generated-types"
   ],
   "ts-node": {

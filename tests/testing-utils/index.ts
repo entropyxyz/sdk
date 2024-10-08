@@ -1,25 +1,31 @@
 import * as readline from 'readline'
+// @ts-ignore
+import { spinNetworkUp, spinNetworkDown } from '@entropyxyz/sdk/testing'
+// NOTE: an implicit test that we're correctly exporting the testing tools!
+// WARN: the @ts-ignore is currently required because we've not exported types?
 
 import Entropy, { wasmGlobalsReady } from '../../src'
 import Keyring from '../../src/keys'
 import { KeyMaterial } from '../../src/keys/types/json'
 import { charlieStashSeed } from './constants'
 
-import { spinNetworkUp, spinNetworkDown } from '../../dev/testing-utils.mjs'
 export { spinNetworkUp, spinNetworkDown }
 
 export * from './constants'
 export * from './readKey'
 
 export async function createTestAccount(
-  entropy: Entropy,
-  seed = charlieStashSeed
+  seed = charlieStashSeed,
+  endpoint = 'ws://127.0.0.1:9944'
 ) {
   await wasmGlobalsReady()
 
   const keyring = new Keyring({ seed } as KeyMaterial)
+  const entropy = new Entropy({
+    keyring,
+    endpoint,
+  })
 
-  entropy = new Entropy({ keyring })
   await entropy.ready.catch((err) => {
     console.log('createTestAccount failed: ', err)
     throw err

@@ -1,7 +1,8 @@
 import { ApiPromise, WsProvider } from '@polkadot/api'
-import { isValidSubstrateAddress } from './utils'
+import xtend from 'xtend'
+import { isValidSubstrateAddress as isDeployer } from './utils'
 import RegistrationManager, { RegistrationParams } from './registration'
-import SignatureRequestManager, { SigOps, SigWithAdapptersOps } from './signing'
+import SignatureRequestManager, { SigOps, SigWithAdaptersOps } from './signing'
 import { crypto, loadCryptoLib } from './utils/crypto'
 import { Adapter } from './signing/adapters/types'
 import ProgramManager from './programs'
@@ -16,30 +17,59 @@ export async function wasmGlobalsReady () {
   await keysCryptoWaitReady
 }
 export interface EntropyOpts {
-  /** Keyring class instance object. */
+  /** Keyring used to manage all the keys Entropy uses */
   keyring: Keyring
-  /** Local or devnet endpoint for establishing a connection to validators */
+  /** A websocket endpoint for establishing a connection to validators */
   endpoint?: string
-  /** A collection of signing adapters. */
+  /** A collection of adapters used for signing messages of particular types.
+   *  These help with formatting, configuring hash functions to use, etc.
+   * */
   adapters?: { [key: string | number]: Adapter }
 }
 
 /**
- * The main class to handle all interactions with the Entropy SDK.
+ * The main class to handle all interactions within the Entropy SDK.
  */
 export default class Entropy {
-  /** A promise that resolves once the cryptographic library has been loaded. */
+  /** A promise that resolves once all internal setup has been successfully completed. */
   ready: Promise<boolean>
+
+  /* Accessor for ... TODO: */
   registrationManager: RegistrationManager
+
+  /* Accessor for ... TODO: */
   programs: ProgramManager
+
+  /* Accessor for the SignatureRequestManager.
+   * Generally you will use entropy.sign or entropy.signWithAdapter
+   *
+   */
   signingManager: SignatureRequestManager
+
+  /** Accessor for the keyring passed at instantiation */
   keyring: Keyring
+
+  /** (Advanced) Accessor for the raw subtate API. */
   substrate: ApiPromise
 
   /**
-   * Initializes an instance of the Entropy class.
+   * @param {EntropyOpts} opts
    *
-   * @param {EntropyOpts} opts - The configuration options for the Entropy instance.
+   * @example
+   * ```ts
+   * import { Entropy, wasmGlobalsReady } from '@entropyxyz/sdk'
+   * import { Keyring } from '@entropyxyz/sdk/keys'
+   *
+   * async function main () {
+   *   const keyring = new Keyring({ seed })
+   *   const entropy = new Entropy({ keyring })
+   *
+   *   await wasmGlobalsReady()
+   *   await entropy.ready
+   * }
+   *
+   * main()
+   * ```
    */
 
   constructor (opts: EntropyOpts) {
@@ -67,7 +97,7 @@ export default class Entropy {
   async #init (opts: EntropyOpts) {
     this.keyring = opts.keyring
     const wsProvider = new WsProvider(opts.endpoint)
-    this.substrate = new ApiPromise({ provider: wsProvider })
+    this.substrate = new ApiPromise({ provider: wsProvider, noInitWarn: true })
     await this.substrate.isReadyOrError // throws an error if fails
 
     this.registrationManager = new RegistrationManager({
@@ -101,41 +131,45 @@ export default class Entropy {
    * @throws {Error} If the address is already registered or if there's a problem during registration.
    */
   async register (params?: RegistrationParams): Promise<HexString> {
-    const defaultProgram = DEVICE_KEY_PROXY_PROGRAM_INTERFACE
-
-    params = params || {
-      programData: [defaultProgram],
-      programDeployer: this.keyring.accounts.registration.address,
-    }
-
-    await Promise.all([this.ready, this.substrate.isReady])
-
-    const deviceKey = this.keyring.getLazyLoadAccountProxy(ChildKey.deviceKey)
-    deviceKey.used = true
-    defaultProgram.program_config.sr25519_public_keys.push(
-      Buffer.from(deviceKey.pair.publicKey).toString('base64')
-    )
-
-    if (
-      params.programDeployer &&
-      !isValidSubstrateAddress(params.programDeployer)
-    ) {
+    params = params || this.#getRegisterParamsDefault()
+    if (params.programDeployer && !isDeployer(params.programDeployer)) {
       throw new TypeError('Incompatible address type')
     }
 
+    await this.ready
     const verifyingKey = await this.registrationManager.register(params)
-    // fuck frankie TODO: Make legit function
+
+    // TODO: Make legit function
     const admin = this.keyring.getLazyLoadAccountProxy(ChildKey.registration)
+    const deviceKey = this.keyring.getLazyLoadAccountProxy(ChildKey.deviceKey)
     const vk = admin.verifyingKeys || []
+
     // HACK: these assignments trigger important `account-update` flows via the Proxy 
     admin.verifyingKeys = [...vk, verifyingKey]
     deviceKey.verifyingKeys = [verifyingKey, ...vk]
+
     return verifyingKey
   }
 
+  #getRegisterParamsDefault (): RegistrationParams {
+    const deviceKey = this.keyring.getLazyLoadAccountProxy(ChildKey.deviceKey)
+    deviceKey.used = true
+
+    const defaultProgram = xtend(DEVICE_KEY_PROXY_PROGRAM_INTERFACE, {
+      program_config: {
+        sr25519_public_keys: [
+          Buffer.from(deviceKey.pair.publicKey).toString('base64')
+        ]
+      }
+    })
+
+    return {
+      programData: [defaultProgram],
+      programDeployer: this.keyring.accounts.registration.address,
+    }
+  }
+
   /*
-
-
     DO NOT DELETE THIS CODE BLOCK
 
     Signs a given transaction based on the provided parameters.
@@ -149,13 +183,13 @@ export default class Entropy {
   /**
    * Signs a given transaction based on the provided parameters using the appropriate adapter.
    *
-   * @param {SigWithAdapptersOps} params - The parameters for signing the transaction.
+   * @param {SigWithAdaptersOps} params - The parameters for signing the transaction.
    * @returns {Promise<unknown>} A promise that resolves to the transaction signature.
    * @throws {Error} If no adapter is found for the specified transaction type.
    */
 
-  async signWithAdaptersInOrder (params: SigWithAdapptersOps): Promise<unknown> {
-    (await this.ready) && this.substrate.isReady
+  async signWithAdaptersInOrder (params: SigWithAdaptersOps): Promise<unknown> {
+    await this.ready
     return await this.signingManager.signWithAdaptersInOrder(params)
   }
 
@@ -175,6 +209,10 @@ export default class Entropy {
     return this.signingManager.sign(params)
   }
 
+  /**
+   * Shuts the Entropy SDK down gracefully.
+   * Closes substrate connections for you.
+   */
   async close () {
     if (!this.substrate) return
 

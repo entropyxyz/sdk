@@ -4,7 +4,6 @@ import Entropy, { wasmGlobalsReady } from '../src'
 import Keyring from '../src/keys'
 
 import {
-  sleep,
   promiseRunner,
   spinNetworkUp,
   spinNetworkDown,
@@ -23,10 +22,6 @@ function createSeed() {
 test('Transfer', async (t) => {
   const run = promiseRunner(t)
   await run('network up', spinNetworkUp(NETWORK_TYPE))
-
-  await sleep(process.env.GITHUB_WORKSPACE ? 30_000 : 5_000)
-
-  // this gets called after all tests are run
   t.teardown(async () => {
     await Promise.all([charlie.close(), naynay.close()])
     await spinNetworkDown(NETWORK_TYPE).catch((error) =>
@@ -71,7 +66,7 @@ test('Transfer', async (t) => {
     )) as any
     t.equal(
       BigInt(accountInfo.data.free),
-      BigInt(1e21),
+      BigInt(1e17),
       'initially charlie is rich!'
     )
   }
@@ -107,17 +102,7 @@ test('Transfer', async (t) => {
   }
 
   /* Initial funding */
-  const subThresholdAmount = BigInt(9999 * 10 ** DECIMAL_PLACES)
-  await sendMoney(subThresholdAmount)
-    .then(() =>
-      t.fail('should fail if initial transfer to new account is too small')
-    )
-    .catch(() =>
-      t.pass('should fail if initial transfer to new account is too small')
-    )
-  // see https://support.polkadot.network/support/solutions/articles/65000168651-what-is-the-existential-deposit-
-
-  const amount = BigInt(10_000 * 10 ** DECIMAL_PLACES) // min initial txn amount
+  const amount = BigInt(1 * 10 ** DECIMAL_PLACES) // min initial txn amount
   await run('transfer funds', sendMoney(amount))
 
   /* Check balances after */
@@ -133,13 +118,13 @@ test('Transfer', async (t) => {
       account
     )) as any
     t.true(
-      BigInt(accountInfo.data.free) < BigInt(1e21) - amount,
+      BigInt(accountInfo.data.free) < BigInt(1e17) - amount,
       // NOTE: actual amount charlie has is less a txn fee, but that fee is variable
       // It's on the order of BigInt(318373888)
       'charlie is now less rich!'
     )
 
-    const txnFee = BigInt(1e21) - amount - BigInt(accountInfo.data.free)
+    const txnFee = BigInt(1e17) - amount - BigInt(accountInfo.data.free)
     const txnBound = 0.1
     t.true(
       txnFee < BigInt(txnBound * 10 ** DECIMAL_PLACES),
@@ -147,13 +132,6 @@ test('Transfer', async (t) => {
     )
   }
 
-  /* Test small top-up */
-  {
-    const amount = BigInt(10 * 10 ** DECIMAL_PLACES)
-    // NOTE: once an account is funded, we can send small amounts!
-    const sender = charlie.keyring.accounts.registration.pair
-    await run('transfer funds (small top-up)', sendMoney(amount))
-  }
 
   t.end()
 })

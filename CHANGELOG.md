@@ -13,18 +13,42 @@ Version header format: `[version] Name - year-month-day (entropy-core compatibil
 ## [UNRELEASED]
 
 ### Added
+  - `configurationSchema` & `auxiliaryDataSchema` to `ProgramInterface`
+
 
 ### Fixed
-- hot fix for issue #380: try in reverse order for testnet environment
-### Changed
-- constructor now throws if you pass no object
 
+### Changed
+  - util function rename: `hex2buf` -> `hexStringToBuffer`
+  - massive changes to `entropy.programs.dev`: (Look at documentation for more details)
+    - `getProgramInfo` -> `get` and bytecode is returned as a buffer. not a Uint8buffer to match what was deployed
+    - you now get owned programs for an address using `getByDeployer`.
+    - interface name change: `ProgramInfo` -> `ProgramInterface`
 ### Broke
 
 ### Dev
 
 ### Meta
 
+
+## [0.2.3] Cybele - 2024-07-24 (entropy-core compatibility: 0.2.0)
+
+### Dev
+ - no longer building node modules into dist [402](https://github.com/entropyxyz/sdk/pull/402)
+
+
+## [0.2.2] Bathala - 2024-07-11 (entropy-core compatibility: 0.2.0)
+
+### Added
+- now exports utils [395](https://github.com/entropyxyz/sdk/pull/395)
+- now exports testing environments from /dev [393](https://github.com/entropyxyz/sdk/pull/393/files)
+### Fixed
+- hot fix for issue #380: try in reverse order for testnet environment
+- `entropy.signingManager.getTimeStamp` -> `entropy.signingManager.getBlockNumber` signature request no longer takes a time stamp and now takes a block number. [396](https://github.com/entropyxyz/sdk/pull/396)
+
+### Changed
+- constructor now throws if you pass no object
+- sign now takes a verifying key [382](https://github.com/entropyxyz/sdk/pull/382)
 
 ## [0.2.1] Amihan - 2024-06-06 (entropy-core compatibility: 0.1.0)
 

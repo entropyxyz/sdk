@@ -6,7 +6,6 @@ import Entropy from '../src'
 import {
   promiseRunner,
   createTimeout,
-  sleep,
   charlieStashAddress,
   spinNetworkUp,
   createTestAccount,
@@ -18,8 +17,6 @@ async function testSetup(t: any) {
   const timeout = createTimeout(30_000, 'setup')
 
   await run('network up', spinNetworkUp())
-
-  await sleep(5_000)
 
   entropy = await run('account', createTestAccount(entropy))
 
