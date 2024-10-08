@@ -7,7 +7,7 @@
 # environment for their tests. Eventually, we will converge on
 # a more canonical set of environments and configuration files.
 ---
-name: entropy-devnet-local-four-nodes-4-nodes
+name: entropy-devnet-local-4-nodes
 
 services:
   alice-tss-server:
@@ -36,7 +36,7 @@ services:
       - ${PWD}/dev:/srv/entropy/dev
     command:
       - "--chain"
-      - "devnet-local-four-nodes"
+      - "devnet-local"
       - "--alice"
       - "--base-path"
       - ".entropy/alice"
@@ -70,7 +70,7 @@ services:
       - ${PWD}/dev:/srv/entropy/dev
     command:
       - "--chain"
-      - "devnet-local-four-nodes"
+      - "devnet-local"
       - "--bob"
       - "--base-path"
       - ".entropy/bob"
@@ -104,7 +104,7 @@ services:
       - ${PWD}/dev:/srv/entropy/dev
     command:
       - "--chain"
-      - "devnet-local-four-nodes"
+      - "devnet-local"
       - "--dave"
       - "--base-path"
       - ".entropy/dave"
@@ -138,7 +138,7 @@ services:
       - ${PWD}/dev:/srv/entropy/dev
     command:
       - "--chain"
-      - "devnet-local-four-nodes"
+      - "devnet-local"
       - "--eve"
       - "--base-path"
       - ".entropy/eve"
