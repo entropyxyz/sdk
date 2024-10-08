@@ -16,7 +16,7 @@ import {
 const networkType = 'four-nodes'
 
 
-test('test the four-nodes docker script for subgroups', async (t) => {
+test.only('test the four-nodes docker script for subgroups', async (t) => {
   const run = promiseRunner(t)
   // context: all run does is checks that it runs
   await run('network up', spinNetworkUp(networkType))
@@ -47,18 +47,11 @@ test('test the four-nodes docker script for subgroups', async (t) => {
   })
 
   await run('entropy ready', entropy.ready)
-  const entries = await run('signingGroups', entropy.substrate.query.stakingExtension.signingGroups.entries())
-
-  const subGroups = entries.map((group) => {
-      // aka: subGroup
-      const keyGroup = group[1]
-      console.log('')
-      // omg polkadot type gen is a head ache
-      // @ts-ignore: next line
-      return keyGroup.unwrap()
-  })
-  t.equal(subGroups.length, 2, 'expecting 2 subgroups')
-  t.equal(subGroups[0].length, 2, 'expecting 2 validators per subgroup')
+  const validators = (await run('validators', entropy.substrate.query.session.validators())).toHuman()
+  const signingGroup = (await run('signingGroup', entropy.substrate.query.stakingExtension.signers())).toHuman()
+  console.log('validators:', validators)
+  console.log('signingGroup:', signingGroup)
+  t.equal(signingGroup.length, 3, 'expecting 3 validators in the signing group')
   await entropy.close()
   t.end()
 })
