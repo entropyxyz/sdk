@@ -1,6 +1,6 @@
 import * as readline from 'readline'
 // @ts-ignore
-import { spinNetworkUp, spinNetworkDown } from '@entropyxyz/sdk/testing'
+import { spinNetworkUp, spinNetworkDown, jumpStartNetwork } from '@entropyxyz/sdk/testing'
 // NOTE: an implicit test that we're correctly exporting the testing tools!
 // WARN: the @ts-ignore is currently required because we've not exported types?
 
@@ -9,7 +9,7 @@ import Keyring from '../../src/keys'
 import { KeyMaterial } from '../../src/keys/types/json'
 import { charlieStashSeed } from './constants'
 
-export { spinNetworkUp, spinNetworkDown }
+export { spinNetworkUp, spinNetworkDown, jumpStartNetwork }
 
 export * from './constants'
 export * from './readKey'

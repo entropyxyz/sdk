@@ -5,6 +5,7 @@ import Keyring from '../src/keys'
 import {
   promiseRunner,
   spinNetworkUp,
+  jumpStartNetwork,
   spinNetworkDown,
   charlieStashSeed,
   charlieSeed,
@@ -35,6 +36,7 @@ async function setupTest (t: Test): Promise<{ entropy: Entropy; run: any }> {
     endpoint: 'ws://127.0.0.1:9944',
   })
   await run('entropy ready', entropy.ready)
+  await run('jump Start Network', jumpStartNetwork(entropy))
   await run('register', entropy.register())
 
   return { run, entropy }

@@ -6,6 +6,7 @@ import Keyring from '../src/keys'
 import {
   promiseRunner,
   spinNetworkUp,
+  jumpStartNetwork,
   charlieStashSeed,
   spinNetworkDown,
 } from './testing-utils'
@@ -38,6 +39,7 @@ test('Programs: account programs get', async (t) => {
     'entropy ready',
     entropy.ready
   )
+  await run('jump Start Network', jumpStartNetwork(entropy))
 
 
   // deploy

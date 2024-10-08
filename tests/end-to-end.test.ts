@@ -7,6 +7,7 @@ import * as util from '@polkadot/util'
 import {
   promiseRunner,
   spinNetworkUp,
+  jumpStartNetwork,
   charlieStashSeed,
   charlieStashAddress,
   spinNetworkDown,
@@ -52,6 +53,7 @@ test('End To End', async (t) => {
     'entropy ready',
     entropy.ready
   )
+  await run('jump Start Network', jumpStartNetwork(entropy))
 
   /* deploy */
   // const bareBones: any = readFileSync(
