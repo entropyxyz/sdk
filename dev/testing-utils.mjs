@@ -68,6 +68,24 @@ async function isWebSocketReady (endpoint) {
   })
 }
 
+export async function jumpStartNetwork (entropy) {
+  await entropy.substrate.tx.registry.jumpStartNetwork().signAndSend(entropy.keyring.accounts.registration.pair)
+  const wantedMethod = 'FinishedNetworkJumpStart'
+  let unsub
+  await new Promise(async (res, reject) => {
+    unsub = await entropy.substrate.query.system.events((events) => {
+      events.forEach(async (record) => {
+        const { event } = record
+        const { method } = event
+        if (method === wantedMethod) {
+          unsub()
+          res(undefined)
+        }
+      })
+    })
+  })
+}
+
 export async function spinNetworkDown (networkType = 'two-nodes') {
   try {
     execFileSync('dev/bin/spin-down.sh', [networkType], { 
