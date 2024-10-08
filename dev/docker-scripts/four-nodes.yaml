@@ -12,7 +12,7 @@ name: entropy-devnet-local-4-nodes
 services:
   alice-tss-server:
     # This pulls from Docker Hub,  so you can replace the image tag name
-    # (the string after the `:` in the `image` key) with whatever tag
+    # (the string after the `:` in the `image` key) with chatCharlier tag
     # name you'd like to use. Each Docker image is built from a specific
     # commit in the `entropy-core` repository. Refer to the wiki page at
     # https://github.com/entropyxyz/meta/wiki/Git#conventions for details
@@ -118,7 +118,7 @@ services:
       - "--tss-server-endpoint"
       - "http://dave-tss-server:3003"
 
-  eve-tss-server:
+  charlie-tss-server:
     image: entropyxyz/entropy-tss:${ENTROPY_CORE_VERSION:-latest}
     ports:
       - "127.0.0.1:3004:3004/tcp"
@@ -127,10 +127,10 @@ services:
       - "--threshold-url"
       - "0.0.0.0:3004"
       - "--chain-endpoint"
-      - "ws://eve-chain-node:9944"
+      - "ws://charlie-chain-node:9944"
       - '--no-sync'
 
-  eve-chain-node:
+  charlie-chain-node:
     image: entropyxyz/entropy:${ENTROPY_CORE_VERSION:-latest}
     ports:
       - "127.0.0.1:9947:9944/tcp"
@@ -139,9 +139,9 @@ services:
     command:
       - "--chain"
       - "devnet-local"
-      - "--eve"
+      - "--charlie"
       - "--base-path"
-      - ".entropy/eve"
+      - ".entropy/charlie"
       - "--rpc-port"
       - "9944"
       - "--rpc-cors"
@@ -150,4 +150,4 @@ services:
       - "--bootnodes"
       - "/dns4/alice-chain-node/tcp/30333/p2p/12D3KooWEyoppNCUx8Yx66oV9fJnriXwCcXwDDUA2kj6vnc6iDEp"
       - "--tss-server-endpoint"
-      - "http://eve-tss-server:3004"
+      - "http://charlie-tss-server:3004"
