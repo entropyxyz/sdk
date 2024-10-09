@@ -15,11 +15,11 @@ import {
 import { ProgramInstance } from '../src/programs'
 import { MsgParams } from '../src/signing'
 
-const networkType = 'two-nodes'
+const networkType = 'four-nodes'
 
 const msg = Buffer.from('Hello world: signature from entropy!').toString('hex')
 
-test('End To End', async (t) => {
+test.only('End To End', async (t) => {
   const run = promiseRunner(t)
   await run('network up', spinNetworkUp(networkType))
   t.teardown(async () => {

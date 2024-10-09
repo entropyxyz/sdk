@@ -17,7 +17,7 @@ import {
 const networkType = 'four-nodes'
 
 
-test.only('test the four-nodes docker script for subgroups', async (t) => {
+test('test the four-nodes docker script for subgroups', async (t) => {
   const run = promiseRunner(t)
   // context: all run does is checks that it runs
   await run('network up', spinNetworkUp(networkType))

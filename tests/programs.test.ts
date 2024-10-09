@@ -11,7 +11,7 @@ import {
   spinNetworkDown,
 } from './testing-utils'
 
-const networkType = 'two-nodes'
+const networkType = 'four-nodes'
 
 test('Programs: account programs get', async (t) => {
   const run = promiseRunner(t)

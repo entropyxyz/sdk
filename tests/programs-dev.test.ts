@@ -12,7 +12,7 @@ import {
   createTestAccount,
 } from './testing-utils'
 
-const networkType = 'two-nodes'
+const networkType = 'four-nodes'
 
 test('Programs#dev: all methods', async (t) => {
   const run = promiseRunner(t)
