@@ -310,18 +310,14 @@ export default class SignatureRequestManager {
 
   async submitTransactionRequest (message: EncMsg): Promise<string[][]> {
     // Extract the required fields from parsedMsg
-    const parsedMsg = JSON.parse(message.msg)
+    const payload = JSON.parse(message.msg)
     console.log('EncMsg', message)
-    console.log('parsedMsg', parsedMsg)
-    const payload = {
-      ...parsedMsg,
-      msg: parsedMsg.msg,
-    }
     console.log('payload', payload)
     const sigProof = (await sendHttpPost(
-      `http://${message.url}/user/sign_tx`,
+      `http://${message.url}/user/relay_tx`,
       JSON.stringify(payload)
     ))
+    console.log('fetch returned:',sigProof, new Date(Date.now()))
     return sigProof
   }
 
@@ -341,7 +337,7 @@ export default class SignatureRequestManager {
     const info = await Promise.all(validators.map(async (stashKey) => {
       const i = (await this.substrate.query.stakingExtension.thresholdServers(stashKey)).toHuman()
       // @ts-ignore
-      return {...i, stashKey}
+      return {...i, stashKey, relayer: relayers.includes(stashKey)}
     }))
     console.log('validators', validators, info)
     console.log('signingGroup', signingGroup)
