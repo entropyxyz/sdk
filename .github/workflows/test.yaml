@@ -12,6 +12,7 @@ on:
 jobs:
   build_test_lint:
     name: Build, test, and lint
+    timeout-minutes: 45
     permissions:
       contents: read
     runs-on: ubuntu-22.04
