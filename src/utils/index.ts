@@ -76,8 +76,10 @@ export async function sendHttpPost (url: string, data: any): Promise<any> {
     method: 'POST',
     headers,
     body: data,
+    // 25 seconds
+    signal: AbortSignal.timeout(5000 * 5)
   })
-
+  console.log('status', response.status)
   if (!response.ok) {
     throw new Error(
       `request failed ${response.status}, ${

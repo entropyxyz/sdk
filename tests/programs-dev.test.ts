@@ -6,12 +6,13 @@ import Keyring from '../src/keys'
 import {
   promiseRunner,
   spinNetworkUp,
+  jumpStartNetwork,
   charlieStashAddress,
   spinNetworkDown,
   createTestAccount,
 } from './testing-utils'
 
-const networkType = 'two-nodes'
+const networkType = 'four-nodes'
 
 test('Programs#dev: all methods', async (t) => {
   const run = promiseRunner(t)
@@ -32,6 +33,7 @@ test('Programs#dev: all methods', async (t) => {
     'entropy ready',
     entropy.ready
   )
+  await run('jump Start Network', jumpStartNetwork(entropy))
 
 
   // deploy

@@ -1,0 +1,152 @@
+# Docker Compose file for making an Entropy blockchain network.
+# Currently, it's intended for LOCAL DEVNET FUNCTIONALITY ONLY.
+# Things will get better and more generic, but for the moment
+# this iteration is for simplifying the dogfooding and testing
+# workflows our engineers use, and trying to cut down on some
+# of the more complicated test code that spins up this kind of
+# environment for their tests. Eventually, we will converge on
+# a more canonical set of environments and configuration files.
+---
+name: entropy-devnet-local-4-nodes
+
+services:
+  alice-tss-server:
+    # This pulls from Docker Hub,  so you can replace the image tag name
+    # (the string after the `:` in the `image` key) with chatCharlier tag
+    # name you'd like to use. Each Docker image is built from a specific
+    # commit in the `entropy-core` repository. Refer to the wiki page at
+    # https://github.com/entropyxyz/meta/wiki/Git#conventions for details
+    # about how Git tags, branches, and commits refer to image tags here.
+    image: entropyxyz/entropy-tss:${ENTROPY_CORE_VERSION:-latest}
+    ports:
+      - "127.0.0.1:3001:3001/tcp"
+    command:
+      - "--alice"
+      - "--threshold-url"
+      - "0.0.0.0:3001"
+      - "--chain-endpoint"
+      - "ws://alice-chain-node:9944"
+      - "--no-sync"
+
+  alice-chain-node:
+    image: entropyxyz/entropy:${ENTROPY_CORE_VERSION:-latest}
+    ports:
+      - "127.0.0.1:9944:9944/tcp"
+    volumes:
+      - ${PWD}/dev:/srv/entropy/dev
+    command:
+      - "--chain"
+      - "devnet-local"
+      - "--alice"
+      - "--base-path"
+      - ".entropy/alice"
+      - "--rpc-port"
+      - "9944"
+      - "--rpc-cors"
+      - "all"
+      - "--unsafe-rpc-external" # Intentional, for TSS's access.
+      - "--node-key=0000000000000000000000000000000000000000000000000000000000000001"
+      - "--tss-server-endpoint"
+      - "http://alice-tss-server:3001"
+
+  bob-tss-server:
+    image: entropyxyz/entropy-tss:${ENTROPY_CORE_VERSION:-latest}
+    ports:
+      - "127.0.0.1:3002:3002/tcp"
+    command:
+      - "--bob"
+      - "--threshold-url"
+      - "0.0.0.0:3002"
+      - "--chain-endpoint"
+      - "ws://bob-chain-node:9944"
+      - "--no-sync"
+
+  # "Bob's chain node."
+  bob-chain-node:
+    image: entropyxyz/entropy:${ENTROPY_CORE_VERSION:-latest}
+    ports:
+      - "127.0.0.1:9945:9944/tcp"
+    volumes:
+      - ${PWD}/dev:/srv/entropy/dev
+    command:
+      - "--chain"
+      - "devnet-local"
+      - "--bob"
+      - "--base-path"
+      - ".entropy/bob"
+      - "--rpc-port"
+      - "9944"
+      - "--rpc-cors"
+      - "all"
+      - "--unsafe-rpc-external" # Intentional, for TSS's access.
+      - "--bootnodes"
+      - "/dns4/alice-chain-node/tcp/30333/p2p/12D3KooWEyoppNCUx8Yx66oV9fJnriXwCcXwDDUA2kj6vnc6iDEp"
+      - "--tss-server-endpoint"
+      - "http://bob-tss-server:3002"
+
+  charlie-tss-server:
+    image: entropyxyz/entropy-tss:${ENTROPY_CORE_VERSION:-latest}
+    ports:
+      - "127.0.0.1:3003:3003/tcp"
+    command:
+      - "--charlie"
+      - "--threshold-url"
+      - "0.0.0.0:3003"
+      - "--chain-endpoint"
+      - "ws://charlie-chain-node:9944"
+      - "--no-sync"
+
+  charlie-chain-node:
+    image: entropyxyz/entropy:${ENTROPY_CORE_VERSION:-latest}
+    ports:
+      - "127.0.0.1:9946:9944/tcp"
+    volumes:
+      - ${PWD}/dev:/srv/entropy/dev
+    command:
+      - "--chain"
+      - "devnet-local"
+      - "--charlie"                 # Shortcut for `--name Charlie --validator`
+      - "--base-path"
+      - ".entropy/charlie"
+      - "--rpc-port"
+      - "9944"
+      - "--rpc-cors"
+      - "all"
+      - "--unsafe-rpc-external" # Intentional, for TSS's access.
+      - "--bootnodes"
+      - "/dns4/alice-chain-node/tcp/30333/p2p/12D3KooWEyoppNCUx8Yx66oV9fJnriXwCcXwDDUA2kj6vnc6iDEp"
+      - "--tss-server-endpoint"
+      - "http://charlie-tss-server:3003"
+  dave-tss-server:
+    image: entropyxyz/entropy-tss:${ENTROPY_CORE_VERSION:-latest}
+    ports:
+      - "127.0.0.1:3004:3004/tcp"
+    command:
+      - "--dave"
+      - "--threshold-url"
+      - "0.0.0.0:3004"
+      - "--chain-endpoint"
+      - "ws://dave-chain-node:9944"
+      - "--no-sync"
+
+  dave-chain-node:
+    image: entropyxyz/entropy:${ENTROPY_CORE_VERSION:-latest}
+    ports:
+      - "127.0.0.1:9947:9944/tcp"
+    volumes:
+      - ${PWD}/dev:/srv/entropy/dev
+    command:
+      - "--chain"
+      - "devnet-local"
+      - "--dave"                 # Shortcut for `--name Dave --validator`
+      - "--base-path"
+      - ".entropy/dave"
+      - "--rpc-port"
+      - "9944"
+      - "--rpc-cors"
+      - "all"
+      - "--unsafe-rpc-external" # Intentional, for TSS's access.
+      - "--bootnodes"
+      - "/dns4/alice-chain-node/tcp/30333/p2p/12D3KooWEyoppNCUx8Yx66oV9fJnriXwCcXwDDUA2kj6vnc6iDEp"
+      - "--tss-server-endpoint"
+      - "http://dave-tss-server:3004"

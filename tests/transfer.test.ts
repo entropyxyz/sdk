@@ -6,6 +6,7 @@ import Keyring from '../src/keys'
 import {
   promiseRunner,
   spinNetworkUp,
+  jumpStartNetwork,
   spinNetworkDown,
   charlieStashSeed,
 } from './testing-utils'
@@ -37,6 +38,7 @@ test('Transfer', async (t) => {
     endpoint: 'ws://127.0.0.1:9944',
   })
   await run('charlie ready', charlie.ready)
+  await run('jump Start Network', jumpStartNetwork(charlie))
 
   const naynaySeed = createSeed()
   const naynayKeyring = new Keyring({ seed: naynaySeed, debug: true })

@@ -298,7 +298,6 @@ A promise indicating the completion of the registration process.
 
 await entropy.register({
   // insert address to specify ProgramModAccount
-  keyVisibility: 'Permissioned',
   initialPrograms: [programData],
   programModAccount: '5Gw3s7q9...',
 })
