@@ -51,6 +51,7 @@ test('test the four-nodes docker script for subgroups', async (t) => {
   await run('jump Start Network', jumpStartNetwork(entropy))
   const validators = (await run('validators', entropy.substrate.query.session.validators())).toHuman()
   const signingGroup = (await run('signingGroup', entropy.substrate.query.stakingExtension.signers())).toHuman()
+  console.log('validators, signingGroup', validators, signingGroup)
   t.equal(validators.length, 4, 'expecting 4 validators in validator set')
   t.equal(signingGroup.length, 3, 'expecting 3 validators in the signing group')
   await entropy.close()

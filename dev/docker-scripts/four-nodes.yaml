@@ -26,7 +26,7 @@ services:
       - "0.0.0.0:3001"
       - "--chain-endpoint"
       - "ws://alice-chain-node:9944"
-      - '--no-sync'
+      - "--no-sync"
 
   alice-chain-node:
     image: entropyxyz/entropy:${ENTROPY_CORE_VERSION:-latest}
@@ -59,7 +59,7 @@ services:
       - "0.0.0.0:3002"
       - "--chain-endpoint"
       - "ws://bob-chain-node:9944"
-      - '--no-sync'
+      - "--no-sync"
 
   # "Bob's chain node."
   bob-chain-node:
@@ -87,25 +87,25 @@ services:
   charlie-tss-server:
     image: entropyxyz/entropy-tss:${ENTROPY_CORE_VERSION:-latest}
     ports:
-      - "127.0.0.1:3004:3004/tcp"
+      - "127.0.0.1:3003:3003/tcp"
     command:
       - "--charlie"
       - "--threshold-url"
       - "0.0.0.0:3003"
       - "--chain-endpoint"
       - "ws://charlie-chain-node:9944"
-      - '--no-sync'
+      - "--no-sync"
 
   charlie-chain-node:
     image: entropyxyz/entropy:${ENTROPY_CORE_VERSION:-latest}
     ports:
-      - "127.0.0.1:9947:9944/tcp"
+      - "127.0.0.1:9946:9944/tcp"
     volumes:
       - ${PWD}/dev:/srv/entropy/dev
     command:
       - "--chain"
       - "devnet-local"
-      - "--charlie"
+      - "--charlie"                 # Shortcut for `--name Charlie --validator`
       - "--base-path"
       - ".entropy/charlie"
       - "--rpc-port"
@@ -117,29 +117,28 @@ services:
       - "/dns4/alice-chain-node/tcp/30333/p2p/12D3KooWEyoppNCUx8Yx66oV9fJnriXwCcXwDDUA2kj6vnc6iDEp"
       - "--tss-server-endpoint"
       - "http://charlie-tss-server:3003"
-
   dave-tss-server:
     image: entropyxyz/entropy-tss:${ENTROPY_CORE_VERSION:-latest}
     ports:
-      - "127.0.0.1:3003:3004/tcp"
+      - "127.0.0.1:3004:3004/tcp"
     command:
       - "--dave"
       - "--threshold-url"
       - "0.0.0.0:3004"
       - "--chain-endpoint"
       - "ws://dave-chain-node:9944"
-      - '--no-sync'
+      - "--no-sync"
 
   dave-chain-node:
     image: entropyxyz/entropy:${ENTROPY_CORE_VERSION:-latest}
     ports:
-      - "127.0.0.1:9946:9944/tcp"
+      - "127.0.0.1:9947:9944/tcp"
     volumes:
       - ${PWD}/dev:/srv/entropy/dev
     command:
       - "--chain"
       - "devnet-local"
-      - "--dave"
+      - "--dave"                 # Shortcut for `--name Dave --validator`
       - "--base-path"
       - ".entropy/dave"
       - "--rpc-port"
@@ -151,4 +150,3 @@ services:
       - "/dns4/alice-chain-node/tcp/30333/p2p/12D3KooWEyoppNCUx8Yx66oV9fJnriXwCcXwDDUA2kj6vnc6iDEp"
       - "--tss-server-endpoint"
       - "http://dave-tss-server:3004"
-

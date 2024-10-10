@@ -72,6 +72,7 @@ export async function jumpStartNetwork (entropy) {
   await entropy.substrate.tx.registry.jumpStartNetwork().signAndSend(entropy.keyring.accounts.registration.pair)
   const wantedMethod = 'FinishedNetworkJumpStart'
   let unsub
+  // put a time out in here where at 2 minutes reject
   await new Promise(async (res, reject) => {
     unsub = await entropy.substrate.query.system.events((events) => {
       events.forEach(async (record) => {

@@ -23,6 +23,8 @@ export interface ProgramInterface {
   auxiliaryDataSchema: unknown
   // not quite supported yet
   // oracleDataPointer?: []
+  // keeping out of the interface untill tss node does something with it
+  // versionNumber: number
   deployer: string
   refCounter: number
 }
@@ -106,7 +108,8 @@ export default class ProgramDev extends ExtrinsicBaseClass {
         util.u8aToHex(new Uint8Array(program)), // new program
         formatedConfig, // config schema
         formatedAuxData, // auxilary config schema
-        [] // oracleDataPointer // oracle data pointer
+        [], // oracleDataPointer // oracle data pointer
+        0
       )
     const record = await this.sendAndWaitFor(tx, {
       section: 'programs',

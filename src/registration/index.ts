@@ -24,7 +24,6 @@ export interface AccountRegisteredSuccess {
  * Returned query that show's registration details. Accessible by passing the verifyingKey
  * */
 export interface RegisteredInfo {
-  keyVisibility: KeyVisibilityInfo
   programsData: Uint8Array
   programDeployer: SS58Address
   versionNumber: number
@@ -36,7 +35,6 @@ export type KeyVisibilityInfo = { public: null }
  * the sdk currently only supports 'public' account types from core
  * */
 
-const keyVisibility = 'Public'
 
 /**
  * The `RegistrationManager` class provides functionality for user registration using Entropy.
@@ -91,7 +89,6 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
     // Convert the program data to the appropriate format and create a registration transaction.
     const registerTx = this.substrate.tx.registry.register(
       programDeployer,
-      keyVisibility,
       programData.map(this.#formatProgramInfo)
     )
     // @ts-ignore: next line
