@@ -1,10 +1,9 @@
 import { ApiPromise } from '@polkadot/api'
-import { hexAddPrefix } from '@polkadot/util'
 import { Signer } from '../keys/types/internal'
 import { defaultAdapters } from './adapters/default'
 import { Adapter } from './adapters/types'
 import { ValidatorInfo } from '../types/internal'
-import { stripHexPrefix, sendHttpPost, toHex } from '../utils'
+import { stripHexPrefix, sendHttpPost, toHex, } from '../utils'
 import { crypto } from '../utils/crypto'
 import { CryptoLib } from '../utils/crypto/types'
 import Keyring from '../keys'
@@ -199,8 +198,8 @@ export default class SignatureRequestManager {
     // @ts-ignore: next line
     const validators: string[] = (await this.substrate.query.session.validators()).toHuman()
     // @ts-ignore: next line
-    const signingGroup: string[] = (await this.substrate.query.stakingExtension.signers()).toHuman()
-    const validatorInfo: ValidatorInfo = await this.pickValidator(validators, signingGroup)
+    const signingCommittee: string[] = (await this.substrate.query.stakingExtension.signers()).toHuman()
+    const validatorInfo: ValidatorInfo = await this.pickValidator(validators, signingCommittee)
     // TO-DO: this needs to be and accounId ie hex string of the address
     // which means you need a new key ie device key here
 
@@ -220,7 +219,7 @@ export default class SignatureRequestManager {
 
     const message: EncMsg = await this.formatTxRequest(txRequest)
     const sigs = await this.submitTransactionRequest(message)
-    const sig = await this.verifyAndReduceSignatures(sigs)
+    const sig = await this.verifyAndReduceSignatures(sigs, signingCommittee)
     return Uint8Array.from(atob(sig), (c) => c.charCodeAt(0))
   }
 
@@ -261,7 +260,6 @@ export default class SignatureRequestManager {
     hash?: string
     signatureVerifyingKey: string
   }): Promise<EncMsg> {
-    console.log('validator', validator)
     const txRequestData: UserSignatureRequest = {
       message: stripHexPrefix(strippedsigRequestHash),
       auxilary_data: auxiliaryData,
@@ -311,13 +309,10 @@ export default class SignatureRequestManager {
   async submitTransactionRequest (message: EncMsg): Promise<string[][]> {
     // Extract the required fields from parsedMsg
     const payload = JSON.parse(message.msg)
-    console.log('EncMsg', message)
-    console.log('payload', payload)
     const sigProof = (await sendHttpPost(
       `http://${message.url}/user/relay_tx`,
       JSON.stringify(payload)
     ))
-    console.log('fetch returned:',sigProof, new Date(Date.now()))
     return sigProof
   }
 
@@ -328,24 +323,15 @@ export default class SignatureRequestManager {
    * @returns {Promise<ValidatorInfo[]>} A promise resolving to an array of validator information.
    */
 
-  async pickValidator (validators: string[], signingGroup: string[]): Promise<ValidatorInfo> {
+  async pickValidator (validators: string[], signingCommittee: string[]): Promise<ValidatorInfo> {
     const relayers = validators.reduce((agg, stashKey) => {
-      if (signingGroup.includes(stashKey)) return agg
+      if (signingCommittee.includes(stashKey)) return agg
       agg.push(stashKey)
       return agg
     }, [])
-    const info = await Promise.all(validators.map(async (stashKey) => {
-      const i = (await this.substrate.query.stakingExtension.thresholdServers(stashKey)).toHuman()
-      // @ts-ignore
-      return {...i, stashKey, relayer: relayers.includes(stashKey)}
-    }))
-    console.log('validators', validators, info)
-    console.log('signingGroup', signingGroup)
-    console.log('relayers', relayers)
     // pick a relayer at random
     const stashKey = relayers[Math.floor(Math.random() * relayers.length)]
     const rawValidatorInfo = (await this.substrate.query.stakingExtension.thresholdServers(stashKey)).toHuman()
-    console.log('rawValidatorInfo', rawValidatorInfo)
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     const { x25519PublicKey, endpoint, tssAccount } = rawValidatorInfo
@@ -363,47 +349,24 @@ export default class SignatureRequestManager {
    * @returns The first valid signature after verification.
    */
 
-  async verifyAndReduceSignatures (sigsAndProofs: string[][]): Promise<string> {
-    const seperatedSigsAndProofs = sigsAndProofs.reduce(
-      (a, sp) => {
-        if (!sp || !sp.length) return a
-        // the place holder is for holding an index. in the future we should notify
-        // the nodes or something about faulty validators
-        // this is really just good house keeping because you never know?
-        a.sigs.push(sp[0] || 'place-holder')
-        a.proofs.push(sp[1] || 'place-holder')
-        a.addresses.push(sp[2] || 'place-holder')
-        return a
-      },
-      { sigs: [], proofs: [], addresses: [] }
-    )
-    // find a valid signature
-    const sigMatch = seperatedSigsAndProofs.sigs.find(
-      (s) => s !== 'place-holder'
-    )
-    if (!sigMatch) throw new Error('Did not receive a valid signature')
-    // use valid signature to see if they all match
-    const allSigsMatch = seperatedSigsAndProofs.sigs.every(
-      (s) => s === sigMatch
-    )
-    if (!allSigsMatch) throw new Error('All signatures do not match')
-    // in the future. notify network of compromise?
-    // check to see if the tss_account signed the proof
-    const validated = await Promise.all(
-      seperatedSigsAndProofs.proofs.map(
-        async (proof: string, index: number): Promise<boolean> => {
-          return await this.crypto.verifySignature(
-            seperatedSigsAndProofs.sigs[index],
-            proof,
-            seperatedSigsAndProofs.addresses[index]
-          )
-        }
-      )
-    )
-    const first = validated.findIndex((v) => v)
-    if (first === -1)
-      throw new Error('Can not validate the identity of any validator')
-
-    return seperatedSigsAndProofs.sigs[first]
+  async verifyAndReduceSignatures (sigsAndProofs: string[][], signingCommittee): Promise<string> {
+    // take the sigs and proofs and until a valid proof is found
+    // keep trying
+    let validated = false
+    let sig, proof
+    while (!validated && !!sigsAndProofs.length) {
+      [sig, proof] = sigsAndProofs.pop()
+      let index = 0
+      do {
+        validated = await this.crypto.verifySignature(
+          sig,
+          proof,
+          signingCommittee[index]
+        )
+        ++index
+      } while (index < signingCommittee.length && !validated)
+    }
+    if (!validated) throw new Error('invalid signature')
+    return sig
   }
 }
