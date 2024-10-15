@@ -38,7 +38,7 @@ test('Transfer', async (t) => {
     endpoint: 'ws://127.0.0.1:9944',
   })
   await run('charlie ready', charlie.ready)
-  await run('jump Start Network', jumpStartNetwork(charlie))
+  await run('jump-start network', jumpStartNetwork(charlie))
 
   const naynaySeed = createSeed()
   const naynayKeyring = new Keyring({ seed: naynaySeed, debug: true })
