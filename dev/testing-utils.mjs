@@ -76,7 +76,6 @@ export async function jumpStartNetwork (entropy, maxTime = 120 * SECONDS) {
   // this is done this way so we can still use this for other
   // applications
   if (global.networkType && global.networkType !== 'four-nodes') throw new Error(`jump start requires four-nodes network you are running: ${global.networkType}`)
-  await entropy.substrate.tx.registry.jumpStartNetwork().signAndSend(entropy.keyring.accounts.registration.pair)
   const wantedMethod = 'FinishedNetworkJumpStart'
 
   const isDone = new Promise(async (res, reject) => {
