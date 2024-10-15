@@ -16,8 +16,7 @@ import {
 
 const networkType = 'four-nodes'
 
-
-test('test the four-nodes docker script for subgroups', async (t) => {
+test('test the four-nodes docker script', async (t) => {
   const run = promiseRunner(t)
   // context: all run does is checks that it runs
   await run('network up', spinNetworkUp(networkType))
@@ -48,7 +47,7 @@ test('test the four-nodes docker script for subgroups', async (t) => {
   })
 
   await run('entropy ready', entropy.ready)
-  await run('jump Start Network', jumpStartNetwork(entropy))
+  await run('jump-start network', jumpStartNetwork(entropy))
   const validators = (await run('validators', entropy.substrate.query.session.validators())).toHuman()
   const signingGroup = (await run('signingGroup', entropy.substrate.query.stakingExtension.signers())).toHuman()
   t.equal(validators.length, 4, 'expecting 4 validators in validator set')

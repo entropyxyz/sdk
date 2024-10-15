@@ -33,7 +33,7 @@ test('Programs#dev: all methods', async (t) => {
     'entropy ready',
     entropy.ready
   )
-  await run('jump Start Network', jumpStartNetwork(entropy))
+  await run('jump-start network', jumpStartNetwork(entropy))
 
 
   // deploy

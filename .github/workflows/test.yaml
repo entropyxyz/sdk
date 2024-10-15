@@ -13,6 +13,7 @@ jobs:
   build_test_lint:
     name: Build, test, and lint
     runs-on: ubuntu-22.04
+    timeout-minutes: 45
     permissions:
       contents: read
     steps:
@@ -33,7 +34,6 @@ jobs:
           password: ${{ secrets.DOCKER_HUB_CI_TOKEN }}
       - name: Add TSS server host mappings
         run: |
-          echo "127.0.0.1 alice-tss-server bob-tss-server dave-tss-server eve-tss-server" | sudo tee -a /etc/hosts
+          echo "127.0.0.1 alice-tss-server bob-tss-server charlie-tss-server dave-tss-server" | sudo tee -a /etc/hosts
       - name: Test
         run: yarn run test
-          timeout-minutes: 30

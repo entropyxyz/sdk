@@ -53,7 +53,7 @@ test('End To End', async (t) => {
     'entropy ready',
     entropy.ready
   )
-  await run('jump Start Network', jumpStartNetwork(entropy))
+  await run('jump-start network', jumpStartNetwork(entropy))
 
   /* deploy */
   // const bareBones: any = readFileSync(
