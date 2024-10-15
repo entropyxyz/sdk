@@ -14,8 +14,8 @@ Version header format: `[version] Name - year-month-day (entropy-core compatibil
 
 ### Added
   - `configurationSchema` & `auxiliaryDataSchema` to `ProgramInterface`
-  - added new testing function `jumpStartNetwork(entropy: Entropy) => Promise<undefined>` This function must be called now with a funded key to kick off the network.
-
+  - added new testing function `jumpStartNetwork(entropy: Entropy) => Promise<undefined>` This function must be called now with a funded key to kick off the network. **It will not work for networks with less then 4 validators**
+  - added new docker script for four nodes
 
 ### Fixed
 
@@ -29,6 +29,7 @@ Version header format: `[version] Name - year-month-day (entropy-core compatibil
 
 ### Dev
   - update core version: v0.3.0
+  -
 
 ## [0.2.3] Cybele - 2024-07-24 (entropy-core compatibility: 0.2.0)
 
