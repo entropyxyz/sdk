@@ -8,6 +8,7 @@ import {
   createTimeout,
   charlieStashAddress,
   spinNetworkUp,
+  jumpStartNetwork,
   createTestAccount,
   spinNetworkDown,
 } from './testing-utils'

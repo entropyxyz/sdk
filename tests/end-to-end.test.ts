@@ -7,6 +7,7 @@ import * as util from '@polkadot/util'
 import {
   promiseRunner,
   spinNetworkUp,
+  jumpStartNetwork,
   charlieStashSeed,
   charlieStashAddress,
   spinNetworkDown,
@@ -14,7 +15,7 @@ import {
 import { ProgramInstance } from '../src/programs'
 import { MsgParams } from '../src/signing'
 
-const networkType = 'two-nodes'
+const networkType = 'four-nodes'
 
 const msg = Buffer.from('Hello world: signature from entropy!').toString('hex')
 
@@ -23,7 +24,7 @@ test('End To End', async (t) => {
   await run('network up', spinNetworkUp(networkType))
   t.teardown(async () => {
     await entropy.close()
-    await spinNetworkDown(networkType).catch((error) =>
+    if (!process.env.DONT_KILL) await spinNetworkDown(networkType).catch((error) =>
       console.error('Error while spinning network down', error.message)
     )
   })
@@ -52,6 +53,7 @@ test('End To End', async (t) => {
     'entropy ready',
     entropy.ready
   )
+  await run('jump-start network', jumpStartNetwork(entropy))
 
   /* deploy */
   // const bareBones: any = readFileSync(

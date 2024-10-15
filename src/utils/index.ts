@@ -77,7 +77,7 @@ export async function sendHttpPost (url: string, data: any): Promise<any> {
     headers,
     body: data,
   })
-
+  console.log('status', response.status)
   if (!response.ok) {
     throw new Error(
       `request failed ${response.status}, ${
@@ -108,8 +108,15 @@ export async function sendHttpPost (url: string, data: any): Promise<any> {
       } FULLRESPONSE: ${await streamResponse.text()}`
     )
   }
-  return (await streamResponse.json()).Ok
+  const responseResult = await streamResponse.arrayBuffer()
+  const decoder = new TextDecoder()
+  const str = decoder.decode(responseResult)
+  const parsed = JSON.parse(str)
+  const oks = parsed.map(r => r.Ok)
+  return oks
 }
+
+
 
 /**
  * Converts an ArrayBuffer to a hexadecimal string.
@@ -118,10 +125,8 @@ export async function sendHttpPost (url: string, data: any): Promise<any> {
  * @returns {string} The hexadecimal representation of the buffer.
  */
 
-export function buf2hex (buffer: ArrayBuffer): string {
-  return [...new Uint8Array(buffer)]
-    .map((x) => x.toString(16).padStart(2, '0'))
-    .join('')
+export function bufferToHex (buffer: ArrayBuffer): string {
+  return Buffer.from(buffer).toString('hex')
 }
 
 export function toHex (str: any) {
