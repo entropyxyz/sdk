@@ -11,7 +11,7 @@ import {
   charlieSeed,
 } from './testing-utils'
 
-const NETWORK_TYPE = 'two-nodes'
+const NETWORK_TYPE = 'four-nodes'
 
 const msg = Buffer
   .from('Hello world: new signature from entropy!')
