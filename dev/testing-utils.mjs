@@ -10,6 +10,7 @@ const moduleRoot = join(__dirname, '..')
 // NOTE: you need to edit your /etc/hosts file to use these. See dev/README.md
 
 export async function spinNetworkUp (networkType = 'two-nodes') {
+  global.networkType = networkType
   try {
     execFileSync('dev/bin/spin-up.sh', [networkType], { 
       shell: true, 
@@ -69,6 +70,10 @@ async function isWebSocketReady (endpoint) {
 }
 
 export async function jumpStartNetwork (entropy) {
+  // if you used spinNetworkUp check what network was used
+  // this is done this way so we can still use this for other
+  // applications
+  if (global.networkType && global.networkType !== 'four-nodes') throw new Error(`jump start requires four-nodes network you are running: ${global.networkType}`)
   await entropy.substrate.tx.registry.jumpStartNetwork().signAndSend(entropy.keyring.accounts.registration.pair)
   const wantedMethod = 'FinishedNetworkJumpStart'
   let unsub
