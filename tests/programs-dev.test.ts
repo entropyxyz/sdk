@@ -98,7 +98,7 @@ test('Programs#dev: all methods', async (t) => {
     'auxiliaryDataSchema on chain should match what was deployed'
   )
 
-  run(
+  await run(
     'remove noopProgram',
     entropy.programs.dev.remove(newPointer)
   )
@@ -112,11 +112,11 @@ test('Programs#dev: all methods', async (t) => {
   // functionality to begin with so ive commented this out
   // for now but this needs digging
   // see issue https://github.com/entropyxyz/sdk/issues/414
-  // t.equal(
-  //   programsDeployedAfterRemove.length,
-  //   0,
-  //   'charlie has no deployed programs'
-  // )
+  t.equal(
+    programsDeployedAfterRemove.length,
+    0,
+    'charlie has no deployed programs'
+  )
 
 
   t.end()
