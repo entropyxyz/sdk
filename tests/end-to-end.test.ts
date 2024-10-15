@@ -19,7 +19,7 @@ const networkType = 'four-nodes'
 
 const msg = Buffer.from('Hello world: signature from entropy!').toString('hex')
 
-test.only('End To End', async (t) => {
+test('End To End', async (t) => {
   const run = promiseRunner(t)
   await run('network up', spinNetworkUp(networkType))
   t.teardown(async () => {
@@ -53,7 +53,7 @@ test.only('End To End', async (t) => {
     'entropy ready',
     entropy.ready
   )
-  await run('jump Start Network', jumpStartNetwork(entropy))
+  await run('jump-start network', jumpStartNetwork(entropy))
 
   /* deploy */
   // const bareBones: any = readFileSync(
