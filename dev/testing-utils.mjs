@@ -78,15 +78,21 @@ export async function jumpStartNetwork (entropy, maxTime = 360 * SECONDS) {
   // applications
   if (global.networkType && global.networkType !== 'four-nodes') throw new Error(`jump start requires four-nodes network you are running: ${global.networkType}`)
   const wantedMethod = 'FinishedNetworkJumpStart'
-
+  const startTime = Date.now()
+  let startHeader
   const isDone = new Promise(async (res, reject) => {
     // if timeout is hit, testing should be exited.
     timeout = setTimeout(() => { unsub(); reject(); process.exit(1) }, maxTime, new Error('jump-start network timed out'))
-
+    const blockUnsub = await entropy.substrate.derive.chain.subscribeNewHeads((header) => {
+      if (!startHeader) startHeader = header
+      console.log(`#${header.number}: ${header.author}`);
+    })
     unsub = await entropy.substrate.query.system.events((records) => {
+      console.log('time sense start:', Math.floor((Date.now() - startTime)/1000))
       console.log('event methods:', records.map((record) => record?.event?.method))
       if (records.find(record => record?.event?.method === wantedMethod)) {
         unsub()
+        blockUnsub()
         clearTimeout(timeout)
         res(undefined)
       }
