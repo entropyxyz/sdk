@@ -81,7 +81,7 @@ export async function jumpStartNetwork (entropy, maxTime = 360 * SECONDS) {
 
   const isDone = new Promise(async (res, reject) => {
     // if timeout is hit, testing should be exited.
-    timeout = setTimeout(() => { reject(); process.exit(1) }, maxTime, new Error('jump-start network timed out'))
+    timeout = setTimeout(() => { unsub(); reject(); process.exit(1) }, maxTime, new Error('jump-start network timed out'))
 
     unsub = await entropy.substrate.query.system.events((records) => {
       console.log('event methods:', records.map((record) => record?.event?.method))
