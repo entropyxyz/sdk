@@ -1,6 +1,6 @@
 {
   "name": "@entropyxyz/sdk",
-  "version": "0.2.3",
+  "version": "0.3.0-0",
   "license": "AGPL-3.0-only",
   "description": "JS SDK for entropy blockchain ",
   "type": "module",
