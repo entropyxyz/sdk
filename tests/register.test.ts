@@ -35,7 +35,7 @@ async function testSetup(t: any) {
 
 async function testTeardown() {
   await entropy.close()
-  await spinNetworkDown('two-nodes').catch((err) =>
+  await spinNetworkDown('four-nodes').catch((err) =>
     console.log('Teardown failed:', err.message)
   )
 }

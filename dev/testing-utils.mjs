@@ -81,13 +81,17 @@ export async function jumpStartNetwork (entropy, maxTime = 360 * SECONDS) {
   const startTime = Date.now()
   let startHeader, started
   let headersSenseStart = 0
+  let lastEventTime = 0
   const isDone = new Promise(async (res, reject) => {
     // if timeout is hit, testing should be exited.
     timeout = setTimeout(() => { blockUnsub(); unsub(); reject(new Error('jump-start network timed out'))}, maxTime)
     const blockUnsub = await entropy.substrate.derive.chain.subscribeNewHeads(async (header) => {
       if (!startHeader) startHeader = header
-      if (started) headersSenseStart++
-      if (started && headersSenseStart > 0 && headersSenseStart % 50 === 0) {
+      if (started) {
+        headersSenseStart++
+        if (lastEventTime) console.log('time sense last events seen:', Math.floor((Date.now() - lastEventTime)/1000), 'seconds')
+      }
+      if (started && headersSenseStart > 0 && headersSenseStart % 10 === 0) {
         await entropy.substrate.tx.registry.jumpStartNetwork()
           .signAndSend(entropy.keyring.accounts.registration.pair)
         console.log('retrying jumpstart', headersSenseStart, 'headers sense initial try')
@@ -96,6 +100,9 @@ export async function jumpStartNetwork (entropy, maxTime = 360 * SECONDS) {
       console.log(`#${header.number}: ${header.author}`);
     })
     unsub = await entropy.substrate.query.system.events((records) => {
+      const nowEvents = Date.now()
+      if (lastEventTime) console.log('time sense last events:', Math.floor((lastEventTime - nowEvents)/1000), 'seconds')
+      lastEventTime = nowEvents
       console.log('time sense start:', Math.floor((Date.now() - startTime)/1000), 'seconds')
       console.log('event methods:', records.map((record) => record?.event?.method))
       if (records.find(record => record?.event?.method === wantedMethod)) {
@@ -115,7 +122,7 @@ export async function jumpStartNetwork (entropy, maxTime = 360 * SECONDS) {
   await isDone.catch((err) => {console.error(err); process.exit(1)})
 }
 
-export async function spinNetworkDown (networkType = 'two-nodes') {
+export async function spinNetworkDown (networkType = 'four-nodes') {
   try {
     execFileSync('dev/bin/spin-down.sh', [networkType], { 
       shell: true, 

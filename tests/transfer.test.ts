@@ -11,7 +11,7 @@ import {
   charlieStashSeed,
 } from './testing-utils'
 
-const NETWORK_TYPE = 'two-nodes'
+const NETWORK_TYPE = 'four-nodes'
 const DECIMAL_PLACES = 10
 
 /* utils ========================================*/
