@@ -219,7 +219,7 @@ export default class SignatureRequestManager {
 
     const message: EncMsg = await this.formatTxRequest(txRequest)
     const sigs = await this.submitTransactionRequest(message)
-    const sig = await this.verifyAndReduceSignatures(sigs, signingCommittee)
+    const sig = await this.#verifyAndPick(sigs, signingCommittee)
     return Uint8Array.from(atob(sig), (c) => c.charCodeAt(0))
   }
 
@@ -343,29 +343,25 @@ export default class SignatureRequestManager {
   }
 
   /**
-   * Verifies and consolidates signatures received from validators.
+   * Verifies and chooses a signature received from validators.
    *
    * @param sigsAndProofs - Arrays of signatures and proofs.
+   * @param signingCommittee - Arrays of string address.
    * @returns The first valid signature after verification.
    */
 
-  async verifyAndReduceSignatures (sigsAndProofs: string[][], signingCommittee): Promise<string> {
-    // take the sigs and proofs and until a valid proof is found
-    // keep trying
+  async #verifyAndPick (sigsAndProofs: string[][], signingCommittee: string[]): Promise<string> {
+    const [sig, proof] = sigsAndProofs[Math.floor(Math.random()*sigsAndProofs.length)]
     let validated = false
-    let sig, proof
-    while (!validated && !!sigsAndProofs.length) {
-      [sig, proof] = sigsAndProofs.pop()
-      let index = 0
-      do {
-        validated = await this.crypto.verifySignature(
-          sig,
-          proof,
-          signingCommittee[index]
-        )
-        ++index
-      } while (index < signingCommittee.length && !validated)
-    }
+    let index = 0
+    do {
+      validated = await this.crypto.verifySignature(
+        sig,
+        proof,
+        signingCommittee[index]
+      )
+      ++index
+    } while (index < signingCommittee.length && !validated)
     if (!validated) throw new Error('invalid signature')
     return sig
   }
