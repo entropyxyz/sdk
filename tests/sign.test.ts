@@ -120,6 +120,7 @@ test('Sign: custom signatureVerifyingKey', async (t) => {
     await run('charlieStashEntropy ready', charlieStashEntropy.ready),
     await run('charlieEntropy ready', charlieEntropy.ready)
   ])
+  await run('jump-start network', jumpStartNetwork(charlieStashEntropy))
   await run('charlie stash register', charlieStashEntropy.register())
   // HACK: when registering the same account twice in this test, the verifying keys returned are the exact same.
   // charlie stash keys [
