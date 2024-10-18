@@ -10,7 +10,8 @@ const SECONDS = 1000
 
 // NOTE: you need to edit your /etc/hosts file to use these. See dev/README.md
 
-export async function spinNetworkUp (networkType = 'two-nodes') {
+export async function spinNetworkUp (networkType = 'four-nodes') {
+  if (networkType === 'two-nodes') throw new Error('two-node network script has been deprecated')
   global.networkType = networkType
   try {
     execFileSync('dev/bin/spin-up.sh', [networkType], { 
@@ -70,7 +71,7 @@ async function isWebSocketReady (endpoint) {
   })
 }
 
-export async function jumpStartNetwork (entropy, maxTime = 120 * SECONDS) {
+export async function jumpStartNetwork (entropy, maxTime = 360 * SECONDS) {
   let timeout, unsub
   // if you used spinNetworkUp check what network was used
   // this is done this way so we can still use this for other

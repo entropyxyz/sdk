@@ -77,7 +77,6 @@ export async function sendHttpPost (url: string, data: any): Promise<any> {
     headers,
     body: data,
   })
-  console.log('status', response.status)
   if (!response.ok) {
     throw new Error(
       `request failed ${response.status}, ${
@@ -108,11 +107,8 @@ export async function sendHttpPost (url: string, data: any): Promise<any> {
       } FULLRESPONSE: ${await streamResponse.text()}`
     )
   }
-  const responseResult = await streamResponse.arrayBuffer()
-  const decoder = new TextDecoder()
-  const str = decoder.decode(responseResult)
-  const parsed = JSON.parse(str)
-  const oks = parsed.map(r => r.Ok)
+  const responseResult = await streamResponse.json()
+  const oks = responseResult.map(r => r.Ok)
   return oks
 }
 
