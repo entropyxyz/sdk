@@ -80,8 +80,7 @@ export async function jumpStartNetwork (entropy, maxTime = 360 * SECONDS) {
   const wantedMethod = 'FinishedNetworkJumpStart'
 
   const isDone = new Promise(async (res, reject) => {
-    // if timeout is hit, testing should be exited.
-    timeout = setTimeout(() => { reject(); process.exit(1) }, maxTime, new Error('jump-start network timed out'))
+    timeout = setTimeout(reject, maxTime, new Error('jump-start network timed out'))
 
     unsub = await entropy.substrate.query.system.events((records) => {
       if (records.find(record => record?.event?.method === wantedMethod)) {
@@ -95,7 +94,13 @@ export async function jumpStartNetwork (entropy, maxTime = 360 * SECONDS) {
   entropy.substrate.tx.registry.jumpStartNetwork()
     .signAndSend(entropy.keyring.accounts.registration.pair)
 
-  await isDone
+  try {
+    await isDone 
+  } catch (error) {
+    // if timeout fails, log error to stdout and exit process
+    console.error(error.message)
+    process.exit(1)
+  }
 }
 
 export async function spinNetworkDown (networkType = 'two-nodes') {
