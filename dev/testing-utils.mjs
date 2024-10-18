@@ -83,13 +83,14 @@ export async function jumpStartNetwork (entropy, maxTime = 360 * SECONDS) {
   let headersSenseStart = 0
   const isDone = new Promise(async (res, reject) => {
     // if timeout is hit, testing should be exited.
-    timeout = setTimeout(() => { unsub(); reject(new Error('jump-start network timed out'))}, maxTime)
-    const blockUnsub = await entropy.substrate.derive.chain.subscribeNewHeads((header) => {
+    timeout = setTimeout(() => { blockUnsub(); unsub(); reject(new Error('jump-start network timed out'))}, maxTime)
+    const blockUnsub = await entropy.substrate.derive.chain.subscribeNewHeads(async (header) => {
       if (!startHeader) startHeader = header
       if (started) headersSenseStart++
       if (started && headersSenseStart > 0 && headersSenseStart % 10 === 0) {
-        entropy.substrate.tx.registry.jumpStartNetwork()
+        await entropy.substrate.tx.registry.jumpStartNetwork()
           .signAndSend(entropy.keyring.accounts.registration.pair)
+        console.log('retrying jumpstart', headersSenseStart, 'headers sense initial try')
       }
 
       console.log(`#${header.number}: ${header.author}`);
@@ -108,7 +109,7 @@ export async function jumpStartNetwork (entropy, maxTime = 360 * SECONDS) {
     })
   })
 
-  entropy.substrate.tx.registry.jumpStartNetwork()
+  await entropy.substrate.tx.registry.jumpStartNetwork()
     .signAndSend(entropy.keyring.accounts.registration.pair)
 
   await isDone.catch((err) => {console.error(err); process.exit(1)})
