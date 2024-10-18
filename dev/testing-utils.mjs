@@ -92,7 +92,7 @@ export async function jumpStartNetwork (entropy, maxTime = 360 * SECONDS) {
         if (lastEventTime) console.log('context#headers time sense last events seen:', Math.floor((Date.now() - lastEventTime)/1000), 'seconds')
 
       }
-      if (started && headersSenseStart > 0 && headersSenseStart % 10 === 0) {
+      if (started && headersSenseStart > 0 && headersSenseStart % 50 === 0) {
         await entropy.substrate.tx.registry.jumpStartNetwork()
           .signAndSend(entropy.keyring.accounts.registration.pair)
         console.log('retrying jumpstart', headersSenseStart, 'headers sense initial try')
