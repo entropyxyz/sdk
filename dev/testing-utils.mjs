@@ -89,7 +89,8 @@ export async function jumpStartNetwork (entropy, maxTime = 360 * SECONDS) {
       if (!startHeader) startHeader = header
       if (started) {
         headersSenseStart++
-        if (lastEventTime) console.log('time sense last events seen:', Math.floor((Date.now() - lastEventTime)/1000), 'seconds')
+        if (lastEventTime) console.log('context#headers time sense last events seen:', Math.floor((Date.now() - lastEventTime)/1000), 'seconds')
+
       }
       if (started && headersSenseStart > 0 && headersSenseStart % 10 === 0) {
         await entropy.substrate.tx.registry.jumpStartNetwork()
@@ -101,7 +102,7 @@ export async function jumpStartNetwork (entropy, maxTime = 360 * SECONDS) {
     })
     unsub = await entropy.substrate.query.system.events((records) => {
       const nowEvents = Date.now()
-      if (lastEventTime) console.log('time sense last events:', Math.floor((lastEventTime - nowEvents)/1000), 'seconds')
+      if (lastEventTime) console.log('context#events time sense last events:', Math.floor((nowEvents - lastEventTime)/1000), 'seconds')
       lastEventTime = nowEvents
       console.log('time sense start:', Math.floor((Date.now() - startTime)/1000), 'seconds')
       console.log('event methods:', records.map((record) => record?.event?.method))
