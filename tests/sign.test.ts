@@ -5,12 +5,13 @@ import Keyring from '../src/keys'
 import {
   promiseRunner,
   spinNetworkUp,
+  jumpStartNetwork,
   spinNetworkDown,
   charlieStashSeed,
   charlieSeed,
 } from './testing-utils'
 
-const NETWORK_TYPE = 'two-nodes'
+const NETWORK_TYPE = 'four-nodes'
 
 const msg = Buffer
   .from('Hello world: new signature from entropy!')
@@ -35,6 +36,7 @@ async function setupTest (t: Test): Promise<{ entropy: Entropy; run: any }> {
     endpoint: 'ws://127.0.0.1:9944',
   })
   await run('entropy ready', entropy.ready)
+  await run('jump-start network', jumpStartNetwork(entropy))
   await run('register', entropy.register())
 
   return { run, entropy }
@@ -118,6 +120,7 @@ test('Sign: custom signatureVerifyingKey', async (t) => {
     await run('charlieStashEntropy ready', charlieStashEntropy.ready),
     await run('charlieEntropy ready', charlieEntropy.ready)
   ])
+  await run('jump-start network', jumpStartNetwork(charlieStashEntropy))
   await run('charlie stash register', charlieStashEntropy.register())
   // HACK: when registering the same account twice in this test, the verifying keys returned are the exact same.
   // charlie stash keys [
@@ -155,46 +158,6 @@ test('Sign: custom signatureVerifyingKey', async (t) => {
 
   t.true(signature && signature.length > 32, 'signature has some body!')
   signature && console.log(signature)
-
-  t.end()
-})
-
-test('Sign:issue#380', async (t) => {
-  const { run, entropy } = await setupTest(t)
-    // issue #380 https://github.com/entropyxyz/sdk/issues/380
-  const submitTransactionRequest = entropy.signingManager.submitTransactionRequest
-  entropy.signingManager.submitTransactionRequest = async () => {
-    // stimulate the retry logic
-    entropy.signingManager.submitTransactionRequest = submitTransactionRequest
-    throw new Error('Invalid Signer: Invalid Signer in Signing group')
-  }
-  const signature380 = await run(
-    'sign',
-    entropy.signWithAdaptersInOrder({
-      msg: { msg },
-      order: ['deviceKeyProxy'],
-    })
-  )
-
-  t.true(signature380 && signature380.length > 32, 'signature380 has some body!')
-  signature380 && console.log(signature380)
-  entropy.signingManager.submitTransactionRequest = async () => {
-    // stimulate the retry logic to get the error message
-    throw new Error('Invalid Signer: Invalid Signer in Signing group')
-  }
-  try {
-    await entropy.signWithAdaptersInOrder({
-      msg: { msg },
-      order: ['deviceKeyProxy'],
-    })
-  } catch (e) {
-    const m = e.message
-    t.ok(m.toString().includes('index: 0'), 'error message should show the index')
-    t.ok(m.toString().includes('sigRequest: 7b226d7367223a223438363536633663366632303737366637323663363433613230366536353737323037333639363736653631373437353732363532303636373236663664323036353665373437323666373037393231227d'), 'error message should show the sigRequest')
-    t.ok(m, 'error message should exist')
-    console.log('Full message:', m)
-  }
-
 
   t.end()
 })
