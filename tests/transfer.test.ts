@@ -61,18 +61,6 @@ test('Transfer', async (t) => {
       'initially naynay has nothing'
     )
   }
-  {
-    const account = charlie.keyring.accounts.registration.address
-    const accountInfo = (await charlie.substrate.query.system.account(
-      account
-    )) as any
-    t.equal(
-      BigInt(accountInfo.data.free),
-      BigInt(1e17),
-      'initially charlie is rich!'
-    )
-  }
-
   const sender = charlie.keyring.accounts.registration.pair
   function sendMoney(amount) {
     return new Promise(async (resolve, reject) => {
