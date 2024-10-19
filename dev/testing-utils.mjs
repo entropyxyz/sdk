@@ -84,7 +84,6 @@ export async function jumpStartNetwork (entropy, maxTime = 360 * SECONDS) {
   let lastEventTime = 0
   const isDone = new Promise(async (res, reject) => {
     // if timeout is hit, testing should be exited.
-    timeout = setTimeout(() => { blockUnsub(); unsub(); reject(new Error('jump-start network timed out'))}, maxTime)
     const blockUnsub = await entropy.substrate.derive.chain.subscribeNewHeads(async (header) => {
       if (!startHeader) startHeader = header
       if (started) {
@@ -92,13 +91,27 @@ export async function jumpStartNetwork (entropy, maxTime = 360 * SECONDS) {
         if (lastEventTime) console.log('context#headers time sense last events seen:', Math.floor((Date.now() - lastEventTime)/1000), 'seconds')
 
       }
-      if (started && headersSenseStart > 0 && headersSenseStart % 50 === 0) {
+      if (
+        // we tried once
+        started &&
+        // and this isnt the first block
+        headersSenseStart > 0 &&
+        // and its been some set of 50 sense start
+        headersSenseStart % 50 === 0 &&
+        // and i dont want to try more then 3 times
+        headersSenseStart <= 150
+        ) {
         await entropy.substrate.tx.registry.jumpStartNetwork()
           .signAndSend(entropy.keyring.accounts.registration.pair)
         console.log('retrying jumpstart', headersSenseStart, 'headers sense initial try')
       }
 
       console.log(`#${header.number}: ${header.author}`);
+      if (headersSenseStart === 200) {
+        reject('waiting period of 200 blocks sense initial jump start reached')
+        blockUnsub()
+        unsub()
+      }
     })
     unsub = await entropy.substrate.query.system.events((records) => {
       const nowEvents = Date.now()
@@ -109,7 +122,6 @@ export async function jumpStartNetwork (entropy, maxTime = 360 * SECONDS) {
       if (records.find(record => record?.event?.method === wantedMethod)) {
         unsub()
         blockUnsub()
-        clearTimeout(timeout)
         res(undefined)
       } else if (records.find(record => record?.event?.method === 'StartedNetworkJumpStart')) {
         started = true
