@@ -136,7 +136,7 @@ total-block-time: ${headersSenseStart} blocks
 }
 
 export async function spinNetworkDown (networkType = 'four-nodes') {
-  if (!process.env.ENTROPY_DONT_KILL) {
+  if (process.env.ENTROPY_DONT_KILL) {
     console.warn('$ENTROPY_DONT_KILL is set not spinning the network down')
     return false
   }
