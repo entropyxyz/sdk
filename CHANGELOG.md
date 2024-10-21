@@ -16,6 +16,8 @@ Version header format: `[version] Name - year-month-day (entropy-core compatibil
   - `configurationSchema` & `auxiliaryDataSchema` to `ProgramInterface`
   - added new testing function `jumpStartNetwork(entropy: Entropy) => Promise<undefined>` This function must be called now with a funded key to kick off the network. **It will not work for networks with less then 4 validators**
   - added new docker script for four nodes
+  - `spinNetworkDown` now has an access to the env var `ENTROPY_DONT_KILL` which will preserve the network
+    the initial though for this was to look at network logs for debugging
 
 ### Fixed
 

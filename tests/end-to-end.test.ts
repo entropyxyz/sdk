@@ -24,7 +24,7 @@ test('End To End', async (t) => {
   await run('network up', spinNetworkUp(networkType))
   t.teardown(async () => {
     await entropy.close()
-    if (!process.env.DONT_KILL) await spinNetworkDown(networkType).catch((error) =>
+    await spinNetworkDown(networkType).catch((error) =>
       console.error('Error while spinning network down', error.message)
     )
   })
