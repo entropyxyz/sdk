@@ -6,7 +6,7 @@ import Entropy from '../src'
 import {
   promiseRunner,
   createTimeout,
-  charlieStashAddress,
+  eveAddress,
   spinNetworkUp,
   jumpStartNetwork,
   createTestAccount,
@@ -60,7 +60,7 @@ test('Register', async (t) => {
   )
 
   await entropy.register({
-    programDeployer: charlieStashAddress,
+    programDeployer: eveAddress,
     programData: [{ programPointer: pointer, programConfig: '0x' }],
   })
     .then(() => t.fail('throws error on duplicate registrations'))

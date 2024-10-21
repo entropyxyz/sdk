@@ -7,7 +7,7 @@ import { spinNetworkUp, spinNetworkDown, jumpStartNetwork } from '@entropyxyz/sd
 import Entropy, { wasmGlobalsReady } from '../../src'
 import Keyring from '../../src/keys'
 import { KeyMaterial } from '../../src/keys/types/json'
-import { charlieStashSeed } from './constants'
+import { eveSeed } from './constants'
 
 export { spinNetworkUp, spinNetworkDown, jumpStartNetwork }
 
@@ -15,7 +15,7 @@ export * from './constants'
 export * from './readKey'
 
 export async function createTestAccount(
-  seed = charlieStashSeed,
+  seed = eveSeed,
   endpoint = 'ws://127.0.0.1:9944'
 ) {
   await wasmGlobalsReady()

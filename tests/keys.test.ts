@@ -3,7 +3,7 @@ import { mnemonicGenerate } from '@polkadot/util-crypto'
 import Keyring from '../src/keys'
 import { wasmGlobalsReady } from '../src'
 // import { MnemonicSeedMaterial } from '../src/keys/types/json'
-import { charlieStashSeed } from './testing-utils/constants'
+import { eveSeed } from './testing-utils/constants'
 
 let testMnemonic: string
 let derivationPath: string
@@ -17,7 +17,7 @@ async function testSetup() {
 test('Keys: create a keyring with seed', async (t) => {
   await testSetup()
 
-  const keyring = new Keyring({ seed: charlieStashSeed })
+  const keyring = new Keyring({ seed: eveSeed })
 
   t.true(Object.keys(keyring).includes('accounts'), 'has wallet')
   t.true(

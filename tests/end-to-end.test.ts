@@ -8,8 +8,8 @@ import {
   promiseRunner,
   spinNetworkUp,
   jumpStartNetwork,
-  charlieStashSeed,
-  charlieStashAddress,
+  eveSeed,
+  eveAddress,
   spinNetworkDown,
 } from './testing-utils'
 import { ProgramInstance } from '../src/programs'
@@ -31,7 +31,7 @@ test('End To End', async (t) => {
 
   await run('wasm', wasmGlobalsReady())
 
-  const keyring = new Keyring({ seed: charlieStashSeed, debug: true })
+  const keyring = new Keyring({ seed: eveSeed, debug: true })
   let store = keyring.getAccount()
   t.equal(store.admin.address, keyring.accounts.registration.pair.address, 'admin account should have an address and for now it should match registrations address')
   keyring.accounts.on('account-update', (fullAccount) => {
@@ -40,7 +40,7 @@ test('End To End', async (t) => {
 
   t.equal(
     keyring.accounts.registration.address,
-    charlieStashAddress,
+    eveAddress,
     'got right address'
   )
 
@@ -116,7 +116,7 @@ test('End To End', async (t) => {
   // const preRegistrationStatusCheck = await run(
   //   'checkRegistrationStatus',
   //   entropy.substrate.query.registry.registered(verifyingKey)
-  //   // entropy.registrationManager.checkRegistrationStatus(charlieStashAddress)
+  //   // entropy.registrationManager.checkRegistrationStatus(eveAddress)
   // )
   // t.ok(preRegistrationStatusCheck, 'preRegistrationStatusCheck ...') // TODO: better check
 
@@ -156,17 +156,17 @@ test('End To End', async (t) => {
   t.equal(
     programsBeforeAdd.length,
     1,
-    'charlie has 1 programs' + JSON.stringify(programsBeforeAdd)
+    'eve has 1 programs' + JSON.stringify(programsBeforeAdd)
   )
 
   await run('add program', entropy.programs.add(noopProgramInstance))
-  // getting charlie programs
+  // getting eve programs
   const programsAfterAdd = await run(
     'get programs',
     entropy.programs.get(verifyingKey)
   )
 
-  t.equal(programsAfterAdd.length, 2, 'charlie has 2 programs')
+  t.equal(programsAfterAdd.length, 2, 'eve has 2 programs')
 
   const msgParam: MsgParams = { msg }
 
@@ -196,7 +196,7 @@ test('End To End', async (t) => {
     'get programs',
     entropy.programs.get(verifyingKey)
   )
-  t.equal(programsAftreRemoveDefault.length, 1, 'charlie has 1 program')
+  t.equal(programsAftreRemoveDefault.length, 1, 'eve has 1 program')
   const signature = await run(
     'sign',
     entropy.sign({

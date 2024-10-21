@@ -7,7 +7,7 @@ import {
   promiseRunner,
   spinNetworkUp,
   jumpStartNetwork,
-  charlieStashAddress,
+  eveAddress,
   spinNetworkDown,
   createTestAccount,
 } from './testing-utils'
@@ -66,7 +66,7 @@ test('Programs#dev: all methods', async (t) => {
   t.deepEqual(
     programsDeployed,
     [newPointer],
-    'charlie has 1 program deployed'
+    'eve has 1 program deployed'
   )
   
   // Helpful error for old usage
@@ -115,7 +115,7 @@ test('Programs#dev: all methods', async (t) => {
   t.equal(
     programsDeployedAfterRemove.length,
     0,
-    'charlie has no deployed programs'
+    'eve has no deployed programs'
   )
 
 

@@ -7,7 +7,7 @@ import {
   spinNetworkUp,
   jumpStartNetwork,
   spinNetworkDown,
-  charlieStashSeed,
+  eveSeed,
   charlieSeed,
 } from './testing-utils'
 
@@ -30,7 +30,7 @@ async function setupTest (t: Test): Promise<{ entropy: Entropy; run: any }> {
 
   /* Setup Entropy */
   await run('wasm', wasmGlobalsReady())
-  const keyring = new Keyring({ seed: charlieStashSeed, debug: true })
+  const keyring = new Keyring({ seed: eveSeed, debug: true })
   const entropy = new Entropy({
     keyring,
     endpoint: 'ws://127.0.0.1:9944',
@@ -95,7 +95,7 @@ test('Sign: custom signatureVerifyingKey', async (t) => {
   await run('network up', spinNetworkUp(NETWORK_TYPE))
   t.teardown(async () => {
     // this gets called after all tests are run
-    await charlieStashEntropy.close()
+    await eveEntropy.close()
     await charlieEntropy.close()
     await spinNetworkDown(NETWORK_TYPE).catch((error) =>
       console.error('Error while spinning network down', error.message)
@@ -104,8 +104,8 @@ test('Sign: custom signatureVerifyingKey', async (t) => {
 
   /* Setup Entropy */
   await run('wasm', wasmGlobalsReady())
-  const charlieStashKeyring = new Keyring({ seed: charlieStashSeed, debug: true })
-  const charlieStashEntropy = new Entropy({
+  const charlieStashKeyring = new Keyring({ seed: eveSeed, debug: true })
+  const eveEntropy = new Entropy({
     keyring: charlieStashKeyring,
     endpoint: 'ws://127.0.0.1:9944',
   })
@@ -117,11 +117,11 @@ test('Sign: custom signatureVerifyingKey', async (t) => {
   })
 
   await Promise.all([
-    await run('charlieStashEntropy ready', charlieStashEntropy.ready),
+    await run('eveEntropy ready', eveEntropy.ready),
     await run('charlieEntropy ready', charlieEntropy.ready)
   ])
-  await run('jump-start network', jumpStartNetwork(charlieStashEntropy))
-  await run('charlie stash register', charlieStashEntropy.register())
+  await run('jump-start network', jumpStartNetwork(eveEntropy))
+  await run('charlie stash register', eveEntropy.register())
   // HACK: when registering the same account twice in this test, the verifying keys returned are the exact same.
   // charlie stash keys [
   //  '0x02836d642dd49256c8b771ee54f2b497decd23362b1f2e0e7d37643bab7100e4c0',
@@ -134,22 +134,22 @@ test('Sign: custom signatureVerifyingKey', async (t) => {
   //   '0x023145efe2b7360085123893f1dbfb8e6c31b209f2ee11fa556c25c1bd8bd6bf8e'
   // ]
   await run('charlie register', charlieEntropy.register())
-  await run('charlie stash register 2', charlieStashEntropy.register())
+  await run('charlie stash register 2', eveEntropy.register())
   
   /* Sign */
   const msg = Buffer
-    .from('Hello world: new signature from charlieStashEntropy!')
+    .from('Hello world: new signature from eveEntropy!')
     .toString('hex')
 
   // no rhyme or reason for the choice of using the verifying key from Charlie, needed to use
   // a different verifying key than the one retrieved in the SigningManager for Charlie Stash
-  const signatureVerifyingKey = charlieStashEntropy.keyring.accounts.deviceKey.verifyingKeys[1]
+  const signatureVerifyingKey = eveEntropy.keyring.accounts.deviceKey.verifyingKeys[1]
 
-  t.notEqual(signatureVerifyingKey, charlieStashEntropy.signingManager.verifyingKey, 'choose non-default signatureVerifyingKey')
+  t.notEqual(signatureVerifyingKey, eveEntropy.signingManager.verifyingKey, 'choose non-default signatureVerifyingKey')
 
   const signature = await run(
     'sign',
-    charlieStashEntropy.signWithAdaptersInOrder({
+    eveEntropy.signWithAdaptersInOrder({
       msg: { msg },
       order: ['deviceKeyProxy'],
       signatureVerifyingKey

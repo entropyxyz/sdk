@@ -71,8 +71,7 @@ async function isWebSocketReady (endpoint) {
   })
 }
 
-export async function jumpStartNetwork (entropy, maxTime = 360 * SECONDS) {
-  console.log('jumping')
+export async function jumpStartNetwork (entropy, logFinalReport=false) {
   let timeout, unsub
   // if you used spinNetworkUp check what network was used
   // this is done this way so we can still use this for other
@@ -103,7 +102,6 @@ export async function jumpStartNetwork (entropy, maxTime = 360 * SECONDS) {
         ) {
         await entropy.substrate.tx.registry.jumpStartNetwork()
           .signAndSend(entropy.keyring.accounts.registration.pair)
-          console.log('had to tell everyone to jump again')
       }
 
       if (headersSenseStart === 200) {
@@ -121,7 +119,6 @@ export async function jumpStartNetwork (entropy, maxTime = 360 * SECONDS) {
         res(undefined)
       } else if (records.find(record => record?.event?.method === 'StartedNetworkJumpStart')) {
         started = true
-        console.log('everyone knows to start jumping')
       }
     })
   })
@@ -130,7 +127,7 @@ export async function jumpStartNetwork (entropy, maxTime = 360 * SECONDS) {
     .signAndSend(entropy.keyring.accounts.registration.pair)
 
   return isDone.then(() => {
-    console.log(`
+    if (logFinalReport) console.log(`
 final report:jump-start
 total-time: ${Math.floor((Date.now() - startTime)/1000)} seconds
 total-block-time: ${headersSenseStart} blocks

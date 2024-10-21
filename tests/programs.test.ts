@@ -7,7 +7,7 @@ import {
   promiseRunner,
   spinNetworkUp,
   jumpStartNetwork,
-  charlieStashSeed,
+  eveSeed,
   spinNetworkDown,
 } from './testing-utils'
 
@@ -23,7 +23,7 @@ test('Programs: account programs get', async (t) => {
 
   await run('wasm', wasmGlobalsReady())
 
-  const keyring = new Keyring({ seed: charlieStashSeed, debug: true })
+  const keyring = new Keyring({ seed: eveSeed, debug: true })
   let store = keyring.getAccount()
   t.equal(store.admin.address, keyring.accounts.registration.pair.address, 'admin account should have an address and for now it should match registrations address')
   keyring.accounts.on('account-update', (fullAccount) => {
@@ -75,7 +75,7 @@ test('Programs: account programs get', async (t) => {
   t.equal(
     programsForAccount.length,
     1,
-    'charlie entropy account has 1 program' + programsForAccount
+    'eve entropy account has 1 program' + programsForAccount
   )
 
   t.equal(

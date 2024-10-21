@@ -3,7 +3,7 @@ import test from 'tape'
 import { Entropy, wasmGlobalsReady } from '../src'
 import { Keyring } from '../src/keys'
 
-import { charlieSeed as seed } from './testing-utils/constants'
+import { eveSeed as seed } from './testing-utils/constants'
 
 async function testSetup() {
   await wasmGlobalsReady()

@@ -9,8 +9,8 @@ import {
   promiseRunner,
   spinNetworkUp,
   jumpStartNetwork,
-  charlieStashSeed,
-  charlieStashAddress,
+  eveSeed,
+  eveAddress,
   spinNetworkDown,
 } from './testing-utils'
 
@@ -33,7 +33,7 @@ test('test the four-nodes docker script', async (t) => {
 
   await run('wasm', wasmGlobalsReady())
 
-  const keyring = new Keyring({ seed: charlieStashSeed, debug: true })
+  const keyring = new Keyring({ seed: eveSeed, debug: true })
   let store = keyring.getAccount()
   t.equal(store.admin.address, keyring.accounts.registration.pair.address, 'admin account should have an address and for now it should match registrations address')
   keyring.accounts.on('account-update', (fullAccount) => {
