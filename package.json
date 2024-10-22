@@ -64,6 +64,7 @@
     "postinstall": "patch-package",
     "prepack": "pinst --disable",
     "postpack": "pinst --enable",
+    "publish:rc": "yarn burn && yarn build && npm publish --no-tag",
     "removedb": "./dev/bin/remove-db.sh"
   },
   "repository": {
