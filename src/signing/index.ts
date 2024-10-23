@@ -308,11 +308,10 @@ export default class SignatureRequestManager {
 
   async submitTransactionRequest (message: EncMsg): Promise<string[][]> {
     // Extract the required fields from parsedMsg
-    const payload = JSON.parse(message.msg)
-    const sigProof = (await sendHttpPost(
+    const sigProof = await sendHttpPost(
       `http://${message.url}/user/relay_tx`,
-      JSON.stringify(payload)
-    ))
+      message.msg
+    )
     return sigProof
   }
 
