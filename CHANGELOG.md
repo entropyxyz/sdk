@@ -13,6 +13,20 @@ Version header format: `[version] Name - year-month-day (entropy-core compatibil
 ## [UNRELEASED]
 
 ### Added
+
+### Fixed
+
+### Changed
+
+### Broke
+
+### Dev
+
+### Meta
+
+## [0.3.0] Echo - 2024-10-23 (entropy-core compatibility: 0.3.0)
+
+### Added
   - `configurationSchema` & `auxiliaryDataSchema` to `ProgramInterface`
   - added new testing function `jumpStartNetwork(entropy: Entropy) => Promise<undefined>` This function must be called now with a funded key to kick off the network. **It will not work for networks with less then 4 validators**
   - added new docker script for four nodes
@@ -33,7 +47,8 @@ Version header format: `[version] Name - year-month-day (entropy-core compatibil
 
 ### Dev
   - update core version: v0.3.0
-  -
+  - `CharlieStash` should no longer be used in dev environments use `eve` see sdk test
+  - warning logs from polkadot js should be quieter
 
 ## [0.2.3] Cybele - 2024-07-24 (entropy-core compatibility: 0.2.0)
 
