@@ -38,7 +38,6 @@ test('Transfer', async (t) => {
     endpoint: 'ws://127.0.0.1:9944',
   })
   await run('eve ready', eve.ready)
-  await run('jump-start network', jumpStartNetwork(eve))
 
   const naynaySeed = createSeed()
   const naynayKeyring = new Keyring({ seed: naynaySeed, debug: true })
