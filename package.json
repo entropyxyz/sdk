@@ -1,6 +1,6 @@
 {
   "name": "@entropyxyz/sdk",
-  "version": "0.2.3",
+  "version": "0.3.0",
   "license": "AGPL-3.0-only",
   "description": "JS SDK for entropy blockchain ",
   "type": "module",
@@ -64,6 +64,7 @@
     "postinstall": "patch-package",
     "prepack": "pinst --disable",
     "postpack": "pinst --enable",
+    "publish:rc": "yarn burn && yarn build && npm publish --tag next",
     "removedb": "./dev/bin/remove-db.sh"
   },
   "repository": {
