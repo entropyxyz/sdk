@@ -33,6 +33,8 @@ For the tests to run you **must** edit your `/etc/hosts` file, adding:
 ```
 127.0.0.1   alice-tss-server
 127.0.0.1   bob-tss-server
+127.0.0.1   charlie-tss-server
+127.0.0.1   dave-tss-server
 ```
 
 ### Gotcha 1 - dirty docker
@@ -45,13 +47,13 @@ that program is already deployed boo").
 Have a look what's running:
 
 ```bash
-docker ps
+docker container list
 ```
 
 You can close them down like this:
 
 ```bash
-docker compose --file dev/docker-scripts/two-nodes.yaml down
+docker compose --file dev/docker-scripts/four-nodes.yaml down
 ```
 
 ### Gotcha 2 - ports still in use?
@@ -80,7 +82,7 @@ export ENTROPY_CORE_VERSION=latest
 If you must do this you should run
 
 ```bash
-docker compose --file dev/docker-scripts/two-nodes.yaml pull
+docker compose --file dev/docker-scripts/four-nodes.yaml pull
 ```
 
 ## When updating core version:
@@ -91,9 +93,9 @@ docker compose --file dev/docker-scripts/two-nodes.yaml pull
    directly from the root directory and then call the generate types script and
    then the spin down script:
 
-- `dev/bin/spin-up.sh two-nodes`
+- `dev/bin/spin-up.sh four-nodes`
 - `dev/bin/generate-types.sh`
-- `dev/bin/spin-down.sh two-nodes`
+- `dev/bin/spin-down.sh four-nodes`
 
 2. run `yarn tsc` just to make sure that went "okay" or as okay as it can be.
    generated types are ignored in tsc check but are used in project (kind of not

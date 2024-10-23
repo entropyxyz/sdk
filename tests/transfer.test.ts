@@ -6,11 +6,12 @@ import Keyring from '../src/keys'
 import {
   promiseRunner,
   spinNetworkUp,
+  jumpStartNetwork,
   spinNetworkDown,
-  charlieStashSeed,
+  eveSeed,
 } from './testing-utils'
 
-const NETWORK_TYPE = 'two-nodes'
+const NETWORK_TYPE = 'four-nodes'
 const DECIMAL_PLACES = 10
 
 /* utils ========================================*/
@@ -23,7 +24,7 @@ test('Transfer', async (t) => {
   const run = promiseRunner(t)
   await run('network up', spinNetworkUp(NETWORK_TYPE))
   t.teardown(async () => {
-    await Promise.all([charlie.close(), naynay.close()])
+    await Promise.all([eve.close(), naynay.close()])
     await spinNetworkDown(NETWORK_TYPE).catch((error) =>
       console.error('Error while spinning network down', error.message)
     )
@@ -31,12 +32,12 @@ test('Transfer', async (t) => {
 
   await run('wasm', wasmGlobalsReady())
 
-  const charlieKeyring = new Keyring({ seed: charlieStashSeed, debug: true })
-  const charlie = new Entropy({
-    keyring: charlieKeyring,
+  const eveKeyring = new Keyring({ seed: eveSeed, debug: true })
+  const eve = new Entropy({
+    keyring: eveKeyring,
     endpoint: 'ws://127.0.0.1:9944',
   })
-  await run('charlie ready', charlie.ready)
+  await run('eve ready', eve.ready)
 
   const naynaySeed = createSeed()
   const naynayKeyring = new Keyring({ seed: naynaySeed, debug: true })
@@ -59,31 +60,19 @@ test('Transfer', async (t) => {
       'initially naynay has nothing'
     )
   }
-  {
-    const account = charlie.keyring.accounts.registration.address
-    const accountInfo = (await charlie.substrate.query.system.account(
-      account
-    )) as any
-    t.equal(
-      BigInt(accountInfo.data.free),
-      BigInt(1e17),
-      'initially charlie is rich!'
-    )
-  }
-
-  const sender = charlie.keyring.accounts.registration.pair
+  const sender = eve.keyring.accounts.registration.pair
   function sendMoney(amount) {
     return new Promise(async (resolve, reject) => {
       // WARN: await signAndSend is dangerous as it does not resolve
       // after transaction is complete :melt:
-      charlie.substrate.tx.balances
+      eve.substrate.tx.balances
         .transferAllowDeath(recipientAddress, amount)
         .signAndSend(sender, ({ status, events, dispatchError }) => {
           if (dispatchError) {
             let msg: string
             if (dispatchError.isModule) {
               // for module errors, we have the section indexed, lookup
-              const decoded = charlie.substrate.registry.findMetaError(
+              const decoded = eve.substrate.registry.findMetaError(
                 dispatchError.asModule
               )
               const { docs, name, section } = decoded
@@ -113,15 +102,15 @@ test('Transfer', async (t) => {
     t.equal(BigInt(accountInfo.data.free), amount, 'naynay is rollin')
   }
   {
-    const account = charlie.keyring.accounts.registration.address
-    const accountInfo = (await charlie.substrate.query.system.account(
+    const account = eve.keyring.accounts.registration.address
+    const accountInfo = (await eve.substrate.query.system.account(
       account
     )) as any
     t.true(
       BigInt(accountInfo.data.free) < BigInt(1e17) - amount,
-      // NOTE: actual amount charlie has is less a txn fee, but that fee is variable
+      // NOTE: actual amount eve has is less a txn fee, but that fee is variable
       // It's on the order of BigInt(318373888)
-      'charlie is now less rich!'
+      'eve is now less rich!'
     )
 
     const txnFee = BigInt(1e17) - amount - BigInt(accountInfo.data.free)

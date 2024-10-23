@@ -6,8 +6,9 @@ import Entropy from '../src'
 import {
   promiseRunner,
   createTimeout,
-  charlieStashAddress,
+  eveAddress,
   spinNetworkUp,
+  jumpStartNetwork,
   createTestAccount,
   spinNetworkDown,
 } from './testing-utils'
@@ -34,7 +35,7 @@ async function testSetup(t: any) {
 
 async function testTeardown() {
   await entropy.close()
-  await spinNetworkDown('two-nodes').catch((err) =>
+  await spinNetworkDown('four-nodes').catch((err) =>
     console.log('Teardown failed:', err.message)
   )
 }
@@ -59,7 +60,7 @@ test('Register', async (t) => {
   )
 
   await entropy.register({
-    programDeployer: charlieStashAddress,
+    programDeployer: eveAddress,
     programData: [{ programPointer: pointer, programConfig: '0x' }],
   })
     .then(() => t.fail('throws error on duplicate registrations'))

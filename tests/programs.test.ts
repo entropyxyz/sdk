@@ -6,11 +6,12 @@ import Keyring from '../src/keys'
 import {
   promiseRunner,
   spinNetworkUp,
-  charlieStashSeed,
+  jumpStartNetwork,
+  eveSeed,
   spinNetworkDown,
 } from './testing-utils'
 
-const networkType = 'two-nodes'
+const networkType = 'four-nodes'
 
 test('Programs: account programs get', async (t) => {
   const run = promiseRunner(t)
@@ -22,7 +23,7 @@ test('Programs: account programs get', async (t) => {
 
   await run('wasm', wasmGlobalsReady())
 
-  const keyring = new Keyring({ seed: charlieStashSeed, debug: true })
+  const keyring = new Keyring({ seed: eveSeed, debug: true })
   let store = keyring.getAccount()
   t.equal(store.admin.address, keyring.accounts.registration.pair.address, 'admin account should have an address and for now it should match registrations address')
   keyring.accounts.on('account-update', (fullAccount) => {
@@ -38,6 +39,7 @@ test('Programs: account programs get', async (t) => {
     'entropy ready',
     entropy.ready
   )
+  await run('jump-start network', jumpStartNetwork(entropy))
 
 
   // deploy
@@ -73,7 +75,7 @@ test('Programs: account programs get', async (t) => {
   t.equal(
     programsForAccount.length,
     1,
-    'charlie entropy account has 1 program' + programsForAccount
+    'eve entropy account has 1 program' + programsForAccount
   )
 
   t.equal(

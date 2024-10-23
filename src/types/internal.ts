@@ -33,29 +33,3 @@ export interface EventFilter {
   section: string
   name: string
 }
-
-/**
- * Associates an architecture with a transaction request.
- */
-
-export enum Arch {
-  /**
-   * Represents the Ethereum Virtual Machine (EVM) architecture.
-   */
-  Evm = 'evm',
-
-  /**
-   * Represents the Bitcoin (BTC) architecture (not supported yet).
-   */
-  Btc = 'btc',
-}
-
-/**
- * Represents an encrypted message for transaction requests.
- */
-export interface EncMsg {
-  msg: string
-  url: string
-  tss_account: string
-  // signature_verifying_key: number[]
-}

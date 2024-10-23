@@ -14,13 +14,22 @@ name: entropy-devnet-local
 
 services:
   alice-chain-node:
-    image: entropyxyz/entropy:$ENTROPY_CORE_VERSION
+    image: entropyxyz/entropy:${ENTROPY_CORE_VERSION:-latest}
     ports:
-      - "127.0.0.1:9944:9944/tcp"   # "RPC Port."
+      - "127.0.0.1:9944:9944/tcp"
+    volumes:
+      - ${PWD}/dev:/srv/entropy/dev
     command:
       - "--chain"
       - "devnet-local"
+      - "--alice"
+      - "--base-path"
+      - ".entropy/alice"
       - "--rpc-port"
       - "9944"
       - "--rpc-cors"
       - "all"
+      - "--unsafe-rpc-external" # Intentional, for TSS's access.
+      - "--node-key=0000000000000000000000000000000000000000000000000000000000000001"
+      - "--tss-server-endpoint"
+      - "http://alice-tss-server:3001"

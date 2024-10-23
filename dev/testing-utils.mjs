@@ -6,10 +6,13 @@ import { promisify } from 'util'
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const moduleRoot = join(__dirname, '..')
+const SECONDS = 1000
 
 // NOTE: you need to edit your /etc/hosts file to use these. See dev/README.md
 
-export async function spinNetworkUp (networkType = 'two-nodes') {
+export async function spinNetworkUp (networkType = 'four-nodes') {
+  if (networkType === 'two-nodes') throw new Error('two-node network script has been deprecated')
+  global.networkType = networkType
   try {
     execFileSync('dev/bin/spin-up.sh', [networkType], { 
       shell: true, 
@@ -28,8 +31,8 @@ export async function spinNetworkUp (networkType = 'two-nodes') {
 
 async function retryUntil (fn, isSuccess = Boolean, opts = {}) {
   const {
-    triesRemaining = process.env.GITHUB_WORKSPACE ? 30 : 10,
-    timeout = 1000
+    triesRemaining = process.env.GITHUB_WORKSPACE ? 60 : 10,
+    timeout = 1 * SECONDS
   } = opts
   return fn()
     .then(result => {
@@ -68,7 +71,75 @@ async function isWebSocketReady (endpoint) {
   })
 }
 
-export async function spinNetworkDown (networkType = 'two-nodes') {
+export async function jumpStartNetwork (entropy, logFinalReport=false) {
+  let timeout, unsub
+  // if you used spinNetworkUp check what network was used
+  // this is done this way so we can still use this for other
+  // applications
+  if (global.networkType && global.networkType !== 'four-nodes') throw new Error(`jump start requires four-nodes network you are running: ${global.networkType}`)
+  const wantedMethod = 'FinishedNetworkJumpStart'
+  const startTime = Date.now()
+  let startHeader, started
+  let headersSenseStart = 0
+  let lastEventTime = 0
+  const isDone = new Promise(async (res, reject) => {
+    // if timeout is hit, testing should be exited.
+    const blockUnsub = await entropy.substrate.derive.chain.subscribeNewHeads(async (header) => {
+      if (!startHeader) startHeader = header
+      if (started) {
+        headersSenseStart++
+
+      }
+      if (
+        // we tried once
+        started &&
+        // and this isnt the first block
+        headersSenseStart > 0 &&
+        // and its been some set of 50 sense start
+        headersSenseStart % 50 === 0 &&
+        // and i dont want to try more then 3 times
+        headersSenseStart <= 150
+        ) {
+        await entropy.substrate.tx.registry.jumpStartNetwork()
+          .signAndSend(entropy.keyring.accounts.registration.pair)
+      }
+
+      if (headersSenseStart === 200) {
+        reject('waiting period of 200 blocks sense initial jump start reached')
+        blockUnsub()
+        unsub()
+      }
+    })
+    unsub = await entropy.substrate.query.system.events((records) => {
+      const nowEvents = Date.now()
+      lastEventTime = nowEvents
+      if (records.find(record => record?.event?.method === wantedMethod)) {
+        unsub()
+        blockUnsub()
+        res(undefined)
+      } else if (records.find(record => record?.event?.method === 'StartedNetworkJumpStart')) {
+        started = true
+      }
+    })
+  })
+
+  await entropy.substrate.tx.registry.jumpStartNetwork()
+    .signAndSend(entropy.keyring.accounts.registration.pair)
+
+  return isDone.then(() => {
+    if (logFinalReport) console.log(`
+final report:jump-start
+total-time: ${Math.floor((Date.now() - startTime)/1000)} seconds
+total-block-time: ${headersSenseStart} blocks
+      `)
+  }).catch((err) => {console.error(err); process.exit(1)})
+}
+
+export async function spinNetworkDown (networkType = 'four-nodes') {
+  if (process.env.ENTROPY_DONT_KILL) {
+    console.warn('$ENTROPY_DONT_KILL is set not spinning the network down')
+    return false
+  }
   try {
     execFileSync('dev/bin/spin-down.sh', [networkType], { 
       shell: true, 

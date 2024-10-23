@@ -1,21 +1,21 @@
 import * as readline from 'readline'
 // @ts-ignore
-import { spinNetworkUp, spinNetworkDown } from '@entropyxyz/sdk/testing'
+import { spinNetworkUp, spinNetworkDown, jumpStartNetwork } from '@entropyxyz/sdk/testing'
 // NOTE: an implicit test that we're correctly exporting the testing tools!
 // WARN: the @ts-ignore is currently required because we've not exported types?
 
 import Entropy, { wasmGlobalsReady } from '../../src'
 import Keyring from '../../src/keys'
 import { KeyMaterial } from '../../src/keys/types/json'
-import { charlieStashSeed } from './constants'
+import { eveSeed } from './constants'
 
-export { spinNetworkUp, spinNetworkDown }
+export { spinNetworkUp, spinNetworkDown, jumpStartNetwork }
 
 export * from './constants'
 export * from './readKey'
 
 export async function createTestAccount(
-  seed = charlieStashSeed,
+  seed = eveSeed,
   endpoint = 'ws://127.0.0.1:9944'
 ) {
   await wasmGlobalsReady()

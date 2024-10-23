@@ -14,22 +14,26 @@ Version header format: `[version] Name - year-month-day (entropy-core compatibil
 
 ### Added
   - `configurationSchema` & `auxiliaryDataSchema` to `ProgramInterface`
-
+  - added new testing function `jumpStartNetwork(entropy: Entropy) => Promise<undefined>` This function must be called now with a funded key to kick off the network. **It will not work for networks with less then 4 validators**
+  - added new docker script for four nodes
+  - `spinNetworkDown` now has an access to the env var `ENTROPY_DONT_KILL` which will preserve the network
+    the initial though for this was to look at network logs for debugging
 
 ### Fixed
 
-### Changed
+### Breaking Changes
   - util function rename: `hex2buf` -> `hexStringToBuffer`
   - massive changes to `entropy.programs.dev`: (Look at documentation for more details)
     - `getProgramInfo` -> `get` and bytecode is returned as a buffer. not a Uint8buffer to match what was deployed
     - you now get owned programs for an address using `getByDeployer`.
     - interface name change: `ProgramInfo` -> `ProgramInterface`
-### Broke
+
+### Removed
+  - `dev/docker-scripts/two-nodes.yaml`
 
 ### Dev
-
-### Meta
-
+  - update core version: v0.3.0
+  -
 
 ## [0.2.3] Cybele - 2024-07-24 (entropy-core compatibility: 0.2.0)
 

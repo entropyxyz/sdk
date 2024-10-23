@@ -5,12 +5,13 @@ import Keyring from '../src/keys'
 import {
   promiseRunner,
   spinNetworkUp,
+  jumpStartNetwork,
   spinNetworkDown,
-  charlieStashSeed,
+  eveSeed,
   charlieSeed,
 } from './testing-utils'
 
-const NETWORK_TYPE = 'two-nodes'
+const NETWORK_TYPE = 'four-nodes'
 
 const msg = Buffer
   .from('Hello world: new signature from entropy!')
@@ -29,12 +30,13 @@ async function setupTest (t: Test): Promise<{ entropy: Entropy; run: any }> {
 
   /* Setup Entropy */
   await run('wasm', wasmGlobalsReady())
-  const keyring = new Keyring({ seed: charlieStashSeed, debug: true })
+  const keyring = new Keyring({ seed: eveSeed, debug: true })
   const entropy = new Entropy({
     keyring,
     endpoint: 'ws://127.0.0.1:9944',
   })
   await run('entropy ready', entropy.ready)
+  await run('jump-start network', jumpStartNetwork(entropy))
   await run('register', entropy.register())
 
   return { run, entropy }
@@ -93,7 +95,7 @@ test('Sign: custom signatureVerifyingKey', async (t) => {
   await run('network up', spinNetworkUp(NETWORK_TYPE))
   t.teardown(async () => {
     // this gets called after all tests are run
-    await charlieStashEntropy.close()
+    await eveEntropy.close()
     await charlieEntropy.close()
     await spinNetworkDown(NETWORK_TYPE).catch((error) =>
       console.error('Error while spinning network down', error.message)
@@ -102,8 +104,8 @@ test('Sign: custom signatureVerifyingKey', async (t) => {
 
   /* Setup Entropy */
   await run('wasm', wasmGlobalsReady())
-  const charlieStashKeyring = new Keyring({ seed: charlieStashSeed, debug: true })
-  const charlieStashEntropy = new Entropy({
+  const charlieStashKeyring = new Keyring({ seed: eveSeed, debug: true })
+  const eveEntropy = new Entropy({
     keyring: charlieStashKeyring,
     endpoint: 'ws://127.0.0.1:9944',
   })
@@ -115,10 +117,11 @@ test('Sign: custom signatureVerifyingKey', async (t) => {
   })
 
   await Promise.all([
-    await run('charlieStashEntropy ready', charlieStashEntropy.ready),
+    await run('eveEntropy ready', eveEntropy.ready),
     await run('charlieEntropy ready', charlieEntropy.ready)
   ])
-  await run('charlie stash register', charlieStashEntropy.register())
+  await run('jump-start network', jumpStartNetwork(eveEntropy))
+  await run('charlie stash register', eveEntropy.register())
   // HACK: when registering the same account twice in this test, the verifying keys returned are the exact same.
   // charlie stash keys [
   //  '0x02836d642dd49256c8b771ee54f2b497decd23362b1f2e0e7d37643bab7100e4c0',
@@ -131,22 +134,22 @@ test('Sign: custom signatureVerifyingKey', async (t) => {
   //   '0x023145efe2b7360085123893f1dbfb8e6c31b209f2ee11fa556c25c1bd8bd6bf8e'
   // ]
   await run('charlie register', charlieEntropy.register())
-  await run('charlie stash register 2', charlieStashEntropy.register())
+  await run('charlie stash register 2', eveEntropy.register())
   
   /* Sign */
   const msg = Buffer
-    .from('Hello world: new signature from charlieStashEntropy!')
+    .from('Hello world: new signature from eveEntropy!')
     .toString('hex')
 
   // no rhyme or reason for the choice of using the verifying key from Charlie, needed to use
   // a different verifying key than the one retrieved in the SigningManager for Charlie Stash
-  const signatureVerifyingKey = charlieStashEntropy.keyring.accounts.deviceKey.verifyingKeys[1]
+  const signatureVerifyingKey = eveEntropy.keyring.accounts.deviceKey.verifyingKeys[1]
 
-  t.notEqual(signatureVerifyingKey, charlieStashEntropy.signingManager.verifyingKey, 'choose non-default signatureVerifyingKey')
+  t.notEqual(signatureVerifyingKey, eveEntropy.signingManager.verifyingKey, 'choose non-default signatureVerifyingKey')
 
   const signature = await run(
     'sign',
-    charlieStashEntropy.signWithAdaptersInOrder({
+    eveEntropy.signWithAdaptersInOrder({
       msg: { msg },
       order: ['deviceKeyProxy'],
       signatureVerifyingKey
@@ -155,46 +158,6 @@ test('Sign: custom signatureVerifyingKey', async (t) => {
 
   t.true(signature && signature.length > 32, 'signature has some body!')
   signature && console.log(signature)
-
-  t.end()
-})
-
-test('Sign:issue#380', async (t) => {
-  const { run, entropy } = await setupTest(t)
-    // issue #380 https://github.com/entropyxyz/sdk/issues/380
-  const submitTransactionRequest = entropy.signingManager.submitTransactionRequest
-  entropy.signingManager.submitTransactionRequest = async () => {
-    // stimulate the retry logic
-    entropy.signingManager.submitTransactionRequest = submitTransactionRequest
-    throw new Error('Invalid Signer: Invalid Signer in Signing group')
-  }
-  const signature380 = await run(
-    'sign',
-    entropy.signWithAdaptersInOrder({
-      msg: { msg },
-      order: ['deviceKeyProxy'],
-    })
-  )
-
-  t.true(signature380 && signature380.length > 32, 'signature380 has some body!')
-  signature380 && console.log(signature380)
-  entropy.signingManager.submitTransactionRequest = async () => {
-    // stimulate the retry logic to get the error message
-    throw new Error('Invalid Signer: Invalid Signer in Signing group')
-  }
-  try {
-    await entropy.signWithAdaptersInOrder({
-      msg: { msg },
-      order: ['deviceKeyProxy'],
-    })
-  } catch (e) {
-    const m = e.message
-    t.ok(m.toString().includes('index: 0'), 'error message should show the index')
-    t.ok(m.toString().includes('sigRequest: 7b226d7367223a223438363536633663366632303737366637323663363433613230366536353737323037333639363736653631373437353732363532303636373236663664323036353665373437323666373037393231227d'), 'error message should show the sigRequest')
-    t.ok(m, 'error message should exist')
-    console.log('Full message:', m)
-  }
-
 
   t.end()
 })

@@ -6,12 +6,13 @@ import Keyring from '../src/keys'
 import {
   promiseRunner,
   spinNetworkUp,
-  charlieStashAddress,
+  jumpStartNetwork,
+  eveAddress,
   spinNetworkDown,
   createTestAccount,
 } from './testing-utils'
 
-const networkType = 'two-nodes'
+const networkType = 'four-nodes'
 
 test('Programs#dev: all methods', async (t) => {
   const run = promiseRunner(t)
@@ -32,6 +33,7 @@ test('Programs#dev: all methods', async (t) => {
     'entropy ready',
     entropy.ready
   )
+  await run('jump-start network', jumpStartNetwork(entropy))
 
 
   // deploy
@@ -64,7 +66,7 @@ test('Programs#dev: all methods', async (t) => {
   t.deepEqual(
     programsDeployed,
     [newPointer],
-    'charlie has 1 program deployed'
+    'eve has 1 program deployed'
   )
   
   // Helpful error for old usage
@@ -96,7 +98,7 @@ test('Programs#dev: all methods', async (t) => {
     'auxiliaryDataSchema on chain should match what was deployed'
   )
 
-  run(
+  await run(
     'remove noopProgram',
     entropy.programs.dev.remove(newPointer)
   )
@@ -110,11 +112,11 @@ test('Programs#dev: all methods', async (t) => {
   // functionality to begin with so ive commented this out
   // for now but this needs digging
   // see issue https://github.com/entropyxyz/sdk/issues/414
-  // t.equal(
-  //   programsDeployedAfterRemove.length,
-  //   0,
-  //   'charlie has no deployed programs'
-  // )
+  t.equal(
+    programsDeployedAfterRemove.length,
+    0,
+    'eve has no deployed programs'
+  )
 
 
   t.end()
