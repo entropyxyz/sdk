@@ -1,9 +1,20 @@
 #! /usr/bin/env bash
 source ./dev/bin/ENTROPY_CORE_VERSION.sh
 
-docker_file=dev/docker-scripts/$1.yaml
-if [ $GITHUB_WORKSPACE ]; then
-  docker compose --file $docker_file up --detach --quiet-pull;
+FILE="dev/docker-scripts/$1.yaml"
+
+spin_up() {
+  docker compose --file "$FILE" "$@" up --detach
+
+  if [ $? -ne 0 ]; then
+    echo "Error: 'docker compose up' failed."
+    echo "Retrying verbose:"
+    docker compose --file "$FILE" up --detach
+  fi
+}
+
+if [ -n "$GITHUB_WORKSPACE" ]; then
+  spin_up --progress quiet --quiet-pull
 else
-  docker compose --file $docker_file --progress quiet up --detach;
+  spin_up --progress quiet
 fi
