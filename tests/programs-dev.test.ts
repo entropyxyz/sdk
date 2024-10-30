@@ -35,6 +35,11 @@ test('Programs#dev: all methods', async (t) => {
   )
   await run('jump-start network', jumpStartNetwork(entropy))
 
+  const programNotOnChain = await run(
+    'get a program not on chain',
+    entropy.programs.dev.get('0x6c8228950ca8dfb557d42ce11643c67ba5a3e5cee3ce7232808ea7477b846bcb')
+  )
+  t.equal(programNotOnChain, null, 'get a program not on chain should be null')
 
   // deploy
   const noopProgram: any = readFileSync(
@@ -58,7 +63,6 @@ test('Programs#dev: all methods', async (t) => {
     'deploy',
     entropy.programs.dev.deploy(noopProgram, configSchema, auxDataSchema)
   )
-  console.log('newPointer:', newPointer)
   const programsDeployed = await run(
     'get deployed programs',
     entropy.programs.dev.getByDeployer(entropy.keyring.accounts.programDev.address)
@@ -81,7 +85,6 @@ test('Programs#dev: all methods', async (t) => {
     'get a specific program',
     entropy.programs.dev.get(newPointer)
   )
-
   t.deepEqual(
     noopProgramOnChain.bytecode,
     noopProgram,
