@@ -78,7 +78,7 @@ export default class ProgramDev extends ExtrinsicBaseClass {
     const responseOption = await this.substrate.query.programs.programs(pointer)
 
     const programInfo = responseOption.toJSON()
-
+    if (programInfo === null) return null
     return this.#formatProgramInterface(programInfo)
   }
 
