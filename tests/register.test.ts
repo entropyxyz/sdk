@@ -54,13 +54,13 @@ test('Register', async (t) => {
   await run(
     'register',
     entropy.register({
-      programDeployer: entropy.keyring.accounts.registration.address,
+      programModAddress: entropy.keyring.accounts.registration.address,
       programData: [{ programPointer: pointer, programConfig: '0x' }],
     })
   )
 
   await entropy.register({
-    programDeployer: eveAddress,
+    programModAddress: eveAddress,
     programData: [{ programPointer: pointer, programConfig: '0x' }],
   })
     .then(() => t.fail('throws error on duplicate registrations'))
