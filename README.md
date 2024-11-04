@@ -26,7 +26,7 @@ npm i @entropyxyz/sdk --save
 
 #### NOTICE
 
-`endpoint ` defaults to 'ws://127.0.0.1:9944' if no value is provided.
+`endpoint ` defaults to `wss://testnet.entropy.xyz` if no value is provided.
 
 The main interface to interact with Entropy.
 This class provides methods to register, check registration status, interact with programs,
