@@ -111,7 +111,7 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
 
     const result = await registrationTxResult
     // @ts-ignore: not sure where the void is coming from
-    const verifyingKey = result.toHuman().data[1]
+    const verifyingKey = result.toHuman().event.data[1]
     return verifyingKey
   }
 
