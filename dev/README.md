@@ -165,7 +165,7 @@ I would take a deep breath here to allow for the 4 nodes to connect before runni
 the first argument is the `endpoint` to target, the second is the `fundingSeed` and the third `faucetLookUpSeed` <!--yes seeds()! not mnemonic go play alone this script will never take a mnemonic maybe one day i'll make it preterite to use like asci fireworks or something else integrated with the cli-->
 
 ```bash
-node dev/deploy-facuets.mjs ws://127.0.0.1:9944 0x786ad0e2df456fe43dd1f91ebca22e235bc162e0bb8d53c633e8c85b2af68b7a 0x20423b5ff4984bcb8922483c98afb7eaa056c40fc431f8a314211e3d94a4222f
+node dev/deploy-faucets.mjs ws://127.0.0.1:9944 0x786ad0e2df456fe43dd1f91ebca22e235bc162e0bb8d53c633e8c85b2af68b7a 0x20423b5ff4984bcb8922483c98afb7eaa056c40fc431f8a314211e3d94a4222f
 
 ```
 this example above should run in a dev enviroment the funding seed is eve and the report looks something like this and will log to your console:
