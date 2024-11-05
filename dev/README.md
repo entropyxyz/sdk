@@ -155,7 +155,7 @@ npm publish
 
 ## sdk "boot script"
 
-For convince at [./deploy-faucets.mjs](./deploy-facuets.mjs ) is a script we use to "deploy" and fund the faucets for our entropy network you can refer to this section and the script itself to deploy your own faucets! Here is it running with a dev environment setup from the root of this project:
+For convenience, at [./deploy-faucets.mjs](./deploy-faucets.mjs ) is a script we use to "deploy" and fund the faucets for our entropy network. You can refer to this section of the README and the script itself to deploy your own faucets! Here it is running with a dev environment setup from the root of this project:
 
 ```bash
 dev/bin/spin-up.sh four-nodes
