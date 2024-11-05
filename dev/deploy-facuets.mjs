@@ -6,19 +6,41 @@ import { jumpStartNetwork } from '@entropyxyz/sdk/testing'
 const endpoint = process.argv[2]
 const fundingSeed = process.argv[3]
 const faucetLookUpSeed = process.argv[4]
+// change this number to deploy more faucets
+const faucetCount = 3
+// change me if you change the schemas!
 const pointer = '0x3a1d45fecdee990925286ccce71f78693ff2bb27eae62adf8cfb7d3d61e142aa'
 if (!endpoint) throw new Error('please provide arguments for endpoint, fundingSeed, faucetLookUpSeed')
 if (!fundingSeed) throw new Error('please provide arguments for fundingSeed, faucetLookUpSeed')
 if (!faucetLookUpSeed) throw new Error('please provide arguments for faucetLookUpSeed')
-const report = {}
+
+// this is just a novel reporter object that gets logged
+let lastLoggedTime
+let edits = 0
+const report = new Proxy({ time: { start: (lastLoggedTime = Date.now()) }, endpoint }, {
+  set: (o, k, v) => {
+    const now = Date.now()
+    if (k === 'finished') o.time['total time in seconds'] = (Date.now() - o.time.start)/1000
+    else o.time[`${edits} - "${k}" seconds sense last log`] = (now - lastLoggedTime)/1000
+    ++edits
+    lastLoggedTime = now
+    return o[k] = v
+  }
+})
+// run checks
 checkEndpoint(endpoint)
 checkSeed(faucetLookUpSeed)
 checkSeed(fundingSeed)
 
 const faucetAddresses = []
+// actually run the function!
+deployAndFundFaucet().then(() => process.exit(0)).catch((e) => {
+  console.warn(report)
+  console.error(e)
+  process.exit(1)
+})
 
-deployAndFundFaucet().then(() => process.exit(0)).catch((e) => { console.error(e); process.exit(1) })
-
+// function defined
 async function deployAndFundFaucet () {
   await wasmGlobalsReady()
   const moneyRing = new Keyring({
@@ -63,9 +85,9 @@ async function deployAndFundFaucet () {
     }
     report['faucet program pointer from deployment'] = await moneyBags.programs.dev.deploy(faucetProgram, configurationSchema, auxDataSchema)
   }
-  // transfer funds to faucet account enough to register (5 whole tokens)
+  // transfer funds to faucet account "enough" to register (5 whole tokens)
   await sendMoney(moneyBags, faucetRing.accounts.registration.address, BigInt(5 * 10 ** 10))
-  let faucetCount = 3
+  let faucetCountDown = faucetCount
   const genesisHash = await moneyBags.substrate.rpc.chain.getBlockHash(0)
   const userConfig = {
     max_transfer_amount: 20_000_000_000,
@@ -76,10 +98,11 @@ async function deployAndFundFaucet () {
   const funderBalance = BigInt((await faucetEntropy.substrate.query.system.account(
     moneyRing.accounts.registration.address)).data.free)
   report['initial balance for funding account'] = funderBalance
-  const fundingAmount = funderBalance / BigInt(4)
+  // dont transfer all funds ¯\_(ツ)_/¯ so if we run out of faucet funds you still have a small nest egg
+  const fundingAmount = funderBalance / BigInt(faucetCount + 1)
   report['initial funding faucet amount'] = fundingAmount
 
-  while (!!faucetCount) {
+  while (!!faucetCountDown) {
     const vk = await faucetEntropy.register({
       programModAddress: faucetEntropy.keyring.accounts.registration.address,
       programData: [{
@@ -92,18 +115,19 @@ async function deployAndFundFaucet () {
     await sendMoney(moneyBags, faucetAddress, fundingAmount)
     const balance = (await faucetEntropy.substrate.query.system.account(
       faucetAddress)).data.toHuman()
+
     faucets.push({
-      vk,
+      'verification key': vk,
       address: faucetAddress,
       balance: balance.free
     })
-    --faucetCount
+    report['faucets'] = faucets
+    --faucetCountDown
   }
   const modifiableKeys = await moneyBags.substrate.query.registry.modifiableKeys(faucetRing.accounts.registration.address)
   report['modifiableKeys on chain'] = modifiableKeys.toHuman()
   report['faucet look up address'] = faucetRing.accounts.registration.address
-  report['faucets'] = faucets
-  report.endpoint = endpoint
+  report.finished = true
   console.log(report)
 }
 
