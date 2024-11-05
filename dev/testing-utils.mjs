@@ -150,3 +150,18 @@ export async function spinNetworkDown (networkType = 'four-nodes') {
     return Promise.reject(err)
   }
 }
+
+export function createTimeLogProxy (extraStartData={}) {
+  let lastLoggedTime
+  let edits = 0
+  return new Proxy({ time: { start: (lastLoggedTime = Date.now()) }, ...extraStartData }, {
+    set: (o, k, v) => {
+      const now = Date.now()
+      if (k === 'finished') o.time['total time in seconds'] = (Date.now() - o.time.start)/1000
+      else o.time[`${edits} - "${k}" seconds since last log`] = (now - lastLoggedTime)/1000
+      ++edits
+      lastLoggedTime = now
+      return o[k] = v
+    }
+  })
+}

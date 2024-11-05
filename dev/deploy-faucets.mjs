@@ -2,7 +2,7 @@ import { readFileSync } from 'fs'
 import { blake2AsHex, encodeAddress } from "@polkadot/util-crypto";
 import Keyring from '@entropyxyz/sdk/keys'
 import Entropy, { wasmGlobalsReady } from '@entropyxyz/sdk'
-import { jumpStartNetwork } from '@entropyxyz/sdk/testing'
+import { jumpStartNetwork, createTimeLogProxy } from '@entropyxyz/sdk/testing'
 const endpoint = process.argv[2]
 const fundingSeed = process.argv[3]
 const faucetLookUpSeed = process.argv[4]
@@ -13,20 +13,9 @@ const pointer = '0x3a1d45fecdee990925286ccce71f78693ff2bb27eae62adf8cfb7d3d61e14
 if (!endpoint) throw new Error('please provide arguments for endpoint, fundingSeed, faucetLookUpSeed')
 if (!fundingSeed) throw new Error('please provide arguments for fundingSeed, faucetLookUpSeed')
 if (!faucetLookUpSeed) throw new Error('please provide arguments for faucetLookUpSeed')
-
+const monkeys = ['🙉 - pandemonium', '🙈 - chaos', '🙊 - anarchy', '🐵 - entropy']
 // this is just a novel reporter object that gets logged
-let lastLoggedTime
-let edits = 0
-const report = new Proxy({ time: { start: (lastLoggedTime = Date.now()) }, endpoint }, {
-  set: (o, k, v) => {
-    const now = Date.now()
-    if (k === 'finished') o.time['total time in seconds'] = (Date.now() - o.time.start)/1000
-    else o.time[`${edits} - "${k}" seconds sense last log`] = (now - lastLoggedTime)/1000
-    ++edits
-    lastLoggedTime = now
-    return o[k] = v
-  }
-})
+const report = createTimeLogProxy({ endpoint })
 // run checks
 checkEndpoint(endpoint)
 checkSeed(faucetLookUpSeed)
@@ -39,9 +28,24 @@ deployAndFundFaucet().then(() => process.exit(0)).catch((e) => {
   console.error(e)
   process.exit(1)
 })
-
+function evilMonkeyAnimation () {
+  const clear = () => process.stdout.write("\r\x1b[K")
+  let frame = 0
+  process.stdout.write(monkeys[frame])
+  ++frame
+  const animate = setInterval(() => {
+    clear()
+    process.stdout.write(monkeys[frame])
+    if (frame === 3) frame = 0
+    else ++frame
+  }, 1000)
+  return () => {
+    clearInterval(animate)
+  }
+}
 // function defined
 async function deployAndFundFaucet () {
+  let monkeyAnimationStop = evilMonkeyAnimation()
   await wasmGlobalsReady()
   const moneyRing = new Keyring({
     seed: fundingSeed
@@ -63,6 +67,8 @@ async function deployAndFundFaucet () {
   report['jump start status at start'] = jumpStartStatus
   // deploy faucet program to chain if not already up
   if (jumpStartStatus === 'Ready') await jumpStartNetwork(moneyBags, true)
+  monkeyAnimationStop()
+  monkeyAnimationStop = evilMonkeyAnimation()
   const faucetProgramInfo = await moneyBags.programs.dev.get(pointer)
   report['using faucet program pointer'] = pointer
   if (faucetProgramInfo === null) {
@@ -97,10 +103,10 @@ async function deployAndFundFaucet () {
   const faucets = []
   const funderBalance = BigInt((await faucetEntropy.substrate.query.system.account(
     moneyRing.accounts.registration.address)).data.free)
-  report['initial balance for funding account'] = funderBalance
+  report['initial balance for funding account'] = funderBalance.toLocaleString()
   // dont transfer all funds ¯\_(ツ)_/¯ so if we run out of faucet funds you still have a small nest egg
   const fundingAmount = funderBalance / BigInt(faucetCount + 1)
-  report['initial funding faucet amount'] = fundingAmount
+  report['initial funding faucet amount'] = fundingAmount.toLocaleString()
 
   while (!!faucetCountDown) {
     const vk = await faucetEntropy.register({
@@ -119,7 +125,7 @@ async function deployAndFundFaucet () {
     faucets.push({
       'verification key': vk,
       address: faucetAddress,
-      balance: balance.free
+      balance: balance.free.toLocaleString()
     })
     report['faucets'] = faucets
     --faucetCountDown
@@ -128,6 +134,7 @@ async function deployAndFundFaucet () {
   report['modifiableKeys on chain'] = modifiableKeys.toHuman()
   report['faucet look up address'] = faucetRing.accounts.registration.address
   report.finished = true
+  monkeyAnimationStop()
   console.log(report)
 }
 
