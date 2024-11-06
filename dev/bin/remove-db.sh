@@ -1,5 +1,5 @@
 #! /usr/bin/env bash
 
 rm -rf .entropy
-docker compose --file dev/docker-scripts/four-nodes.yaml down 2> /dev/null
-docker compose --file dev/docker-scripts/one-node-no-tss.yaml down 2> /dev/null
+./dev/bin/spin-down.sh four-nodes
+./dev/bin/spin-down.sh one-node-no-tss
