@@ -15,15 +15,22 @@ Version header format: `[version] Name - year-month-day (entropy-core compatibil
 ### Added
 
 ### Fixed
-- format error when getting a program not on chain [#429](https://github.com/entropyxyz/sdk/pull/429)
+
 ### Changed
 
 ### Broke
-- registration parmas now matches core language `programDeployer` -> `programModAddress` when [#429](https://github.com/entropyxyz/sdk/pull/429)
 
 ### Dev
 
 ### Meta
+
+## [0.4.0] Fa - 2024-11-05 (entropy-core compatibility: 0.3.0)
+
+### Fixed
+- format error when getting a program not on chain [#429](https://github.com/entropyxyz/sdk/pull/429)
+
+### Broke
+- registration parmas now matches core language `programDeployer` -> `programModAddress` when [#429](https://github.com/entropyxyz/sdk/pull/429)
 
 ## [0.3.0] Echo - 2024-10-23 (entropy-core compatibility: 0.3.0)
 
