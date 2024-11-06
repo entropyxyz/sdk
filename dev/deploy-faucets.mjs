@@ -3,6 +3,7 @@ import { blake2AsHex, encodeAddress } from "@polkadot/util-crypto";
 import Keyring from '@entropyxyz/sdk/keys'
 import Entropy, { wasmGlobalsReady } from '@entropyxyz/sdk'
 import { jumpStartNetwork, createTimeLogProxy } from '@entropyxyz/sdk/testing'
+import { evilMonkeyAnimation } from './fun-bucket.mjs'
 const endpoint = process.argv[2]
 const fundingSeed = process.argv[3]
 const faucetLookUpSeed = process.argv[4]
@@ -13,7 +14,6 @@ const pointer = '0x3a1d45fecdee990925286ccce71f78693ff2bb27eae62adf8cfb7d3d61e14
 if (!endpoint) throw new Error('please provide arguments for endpoint, fundingSeed, faucetLookUpSeed')
 if (!fundingSeed) throw new Error('please provide arguments for fundingSeed, faucetLookUpSeed')
 if (!faucetLookUpSeed) throw new Error('please provide arguments for faucetLookUpSeed')
-const monkeys = ['🙉 - pandemonium', '🙈 - chaos', '🙊 - anarchy', '🐵 - entropy']
 // this is just a novel reporter object that gets logged
 const report = createTimeLogProxy({ endpoint })
 // run checks
@@ -28,21 +28,6 @@ deployAndFundFaucet().then(() => process.exit(0)).catch((e) => {
   console.error(e)
   process.exit(1)
 })
-function evilMonkeyAnimation () {
-  const clear = () => process.stdout.write("\r\x1b[K")
-  let frame = 0
-  process.stdout.write(monkeys[frame])
-  ++frame
-  const animate = setInterval(() => {
-    clear()
-    process.stdout.write(monkeys[frame])
-    if (frame === 3) frame = 0
-    else ++frame
-  }, 1000)
-  return () => {
-    clearInterval(animate)
-  }
-}
 // function defined
 async function deployAndFundFaucet () {
   let monkeyAnimationStop = evilMonkeyAnimation()
