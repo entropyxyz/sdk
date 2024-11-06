@@ -4,13 +4,20 @@ import Keyring from '@entropyxyz/sdk/keys'
 import Entropy, { wasmGlobalsReady } from '@entropyxyz/sdk'
 import { jumpStartNetwork, createTimeLogProxy } from '@entropyxyz/sdk/testing'
 import { evilMonkeyAnimation } from './fun-bucket.mjs'
+
 const endpoint = process.argv[2]
 const fundingSeed = process.argv[3]
 const faucetLookUpSeed = process.argv[4]
+
+
+
 // change this number to deploy more faucets
-const faucetCount = 3
+const FAUCET_COUNT = 3
+const BITS_PER_TOKEN = 1e10
 // change me if you change the schemas!
-const pointer = '0x3a1d45fecdee990925286ccce71f78693ff2bb27eae62adf8cfb7d3d61e142aa'
+const POINTER = '0x3a1d45fecdee990925286ccce71f78693ff2bb27eae62adf8cfb7d3d61e142aa'
+
+
 if (!endpoint) throw new Error('please provide arguments for endpoint, fundingSeed, faucetLookUpSeed')
 if (!fundingSeed) throw new Error('please provide arguments for fundingSeed, faucetLookUpSeed')
 if (!faucetLookUpSeed) throw new Error('please provide arguments for faucetLookUpSeed')
@@ -72,9 +79,9 @@ async function deployAndFundFaucet () {
     monkeyAnimationStop = evilMonkeyAnimation()
   }
   report.step = 'getting faucet program on chain'
-  const faucetProgramInfo = await moneyBags.programs.dev.get(pointer)
+  const faucetProgramInfo = await moneyBags.programs.dev.get(POINTER)
   report.step = 'got faucet program on chain'
-  report['using faucet program pointer'] = pointer
+  report['using faucet program POINTER'] = POINTER
   if (faucetProgramInfo === null) {
     const faucetProgram = readFileSync(new URL('./faucet_program.wasm', import.meta.url))
     const configurationSchema = {
@@ -94,14 +101,14 @@ async function deployAndFundFaucet () {
       }
     }
     report.step = 'deploying faucet program'
-    report['faucet program pointer from deployment'] = await moneyBags.programs.dev.deploy(faucetProgram, configurationSchema, auxDataSchema)
+    report['faucet program POINTER from deployment'] = await moneyBags.programs.dev.deploy(faucetProgram, configurationSchema, auxDataSchema)
     report.step = 'deployed faucet program'
   }
   // transfer funds to faucet account "enough" to register (5 whole tokens)
   report.step = 'transferring funds to faucet look up address from funding account'
-  await sendMoney(moneyBags, faucetRing.accounts.registration.address, BigInt(faucetCount * 10 ** 10))
+  await sendMoney(moneyBags, faucetRing.accounts.registration.address, BigInt(FAUCET_COUNT * BITS_PER_TOKEN))
   report.step = 'finish transfer'
-  let faucetCountDown = faucetCount
+  let faucetCountDown = FAUCET_COUNT
   const genesisHash = await moneyBags.substrate.rpc.chain.getBlockHash(0)
   const userConfig = {
     max_transfer_amount: 20_000_000_000,
@@ -115,7 +122,7 @@ async function deployAndFundFaucet () {
   report.step = 'balance for funding account'
   report['initial balance for funding account'] = funderBalance.toLocaleString()
   // dont transfer all funds ¯\_(ツ)_/¯ so if we run out of faucet funds you still have a small nest egg
-  const fundingAmount = funderBalance / BigInt(faucetCount + 1)
+  const fundingAmount = funderBalance / BigInt(FAUCET_COUNT + 1)
   report['initial funding faucet amount'] = fundingAmount.toLocaleString()
 
   while (!!faucetCountDown) {
@@ -123,7 +130,7 @@ async function deployAndFundFaucet () {
     const vk = await faucetEntropy.register({
       programModAddress: faucetEntropy.keyring.accounts.registration.address,
       programData: [{
-        program_pointer: pointer,
+        program_pointer: POINTER,
         program_config: userConfig,
       }]
     })
@@ -147,6 +154,7 @@ async function deployAndFundFaucet () {
     --faucetCountDown
   }
   report.step = 'getting modifiableKeys from chain for sanity check'
+  // These should be the same as faucets.map(faucet => faucet['verification key'])
   const modifiableKeys = await moneyBags.substrate.query.registry.modifiableKeys(faucetRing.accounts.registration.address)
   report.step = 'retrieved modifiableKeys from chain for sanity check'
   report['modifiableKeys on chain'] = modifiableKeys.toHuman()
