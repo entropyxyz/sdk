@@ -93,7 +93,7 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
     )
     // @ts-ignore: next line
     // Send the registration transaction and wait for the result.
-    const registrationTxResult = this.sendAndWaitFor(registerTx, {
+    const registrationTxResult = await this.sendAndWaitFor(registerTx, {
       section: 'registry',
       name: 'AccountRegistered',
     }).catch((error) => {
@@ -109,9 +109,8 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
       }
     })
 
-    const result = await registrationTxResult
     // @ts-ignore: not sure where the void is coming from
-    const verifyingKey = result.toHuman().event.data[1]
+    const verifyingKey = registrationTxResult.toHuman().event.data[1]
     return verifyingKey
   }
 
