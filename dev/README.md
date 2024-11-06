@@ -155,6 +155,16 @@ npm publish
 
 ## sdk "boot script"
 
+
+When a new network of nodes is turned on, we need some actions to be taken before this new Entropy network is ready to use for tests.
+
+1. Give the nodes a moment to establish connections
+2. run "jump start", which establishes who the initial signing nodes are (the network automatically "reshares" these roles periodically after jump start)
+3. set up faucet program
+    - a) deploy faucet program to network
+    - b) install the faucet program for some faucet accounts
+    - c) fund the faucet accounts
+
 For convenience, at [./deploy-faucets.mjs](./deploy-faucets.mjs ) is a script we use to "deploy" and fund the faucets for our entropy network. You can refer to this section of the README and the script itself to deploy your own faucets! Here it is running with a dev environment setup from the root of this project:
 
 ```bash
