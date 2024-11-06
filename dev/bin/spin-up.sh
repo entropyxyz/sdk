@@ -4,7 +4,7 @@ source ./dev/bin/ENTROPY_CORE_VERSION.sh
 FILE="dev/docker-scripts/$1.yaml"
 
 spin_up() {
-  docker compose --file "$FILE" "$@" up --detach
+  docker compose --file "$FILE" --progress quiet up --detach "$@"
 
   if [ $? -ne 0 ]; then
     echo "Error: 'docker compose up' failed."
@@ -14,7 +14,7 @@ spin_up() {
 }
 
 if [ -n "$GITHUB_WORKSPACE" ]; then
-  spin_up --progress quiet --quiet-pull
+  spin_up --quiet-pull
 else
-  spin_up --progress quiet
+  spin_up
 fi
