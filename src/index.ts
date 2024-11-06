@@ -125,14 +125,14 @@ export default class Entropy {
    * Registers a new account with the provided parameters.
    *
    * @param {RegistrationParams} params - The registration parameters.
-   * @param {SS58Address} [params.programDeployer] - The account authorized to modify programs on behalf of the user.
+   * @param {SS58Address} [params.programModAddress] - The account authorized to modify programs on behalf of the user.
    * @param {ProgramInstance[]} [params.programData] - Optional initial programs associated with the user.
    * @returns {Promise<HexString>} A promise that resolves to the verifying key for the new account when the registration is complete.
    * @throws {Error} If the address is already registered or if there's a problem during registration.
    */
   async register (params?: RegistrationParams): Promise<HexString> {
     params = params || this.#getRegisterParamsDefault()
-    if (params.programDeployer && !isDeployer(params.programDeployer)) {
+    if (params.programModAddress && !isDeployer(params.programModAddress)) {
       throw new TypeError('Incompatible address type')
     }
 
@@ -165,7 +165,7 @@ export default class Entropy {
 
     return {
       programData: [defaultProgram],
-      programDeployer: this.keyring.accounts.registration.address,
+      programModAddress: this.keyring.accounts.registration.address,
     }
   }
 

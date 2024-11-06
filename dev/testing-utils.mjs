@@ -150,3 +150,20 @@ export async function spinNetworkDown (networkType = 'four-nodes') {
     return Promise.reject(err)
   }
 }
+
+export function createTimeLogProxy (extraStartData={}) {
+  let lastStepTime
+  let steps = 0
+  return new Proxy({ time: { start: (lastStepTime = Date.now()) }, ...extraStartData }, {
+    set: (o, k, v) => {
+      const now = Date.now()
+      if (k === 'finished') o.time['total time in seconds'] = (Date.now() - o.time.start)/1000
+      else if (k === 'step') {
+        o.time[`${steps} - ${v}`] = `${(now - lastStepTime)/1000}s`
+        ++steps
+        lastStepTime = now
+      }
+      return o[k] = v
+    }
+  })
+}

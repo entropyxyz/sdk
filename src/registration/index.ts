@@ -9,7 +9,7 @@ export interface RegistrationParams {
   /** initial programs associated with the user */
   programData: ProgramInstance[]
   /** The account authorized to modify programs on behalf of the user. */
-  programDeployer?: SS58Address
+  programModAddress?: SS58Address
 }
 
 /**
@@ -25,7 +25,7 @@ export interface AccountRegisteredSuccess {
  * */
 export interface RegisteredInfo {
   programsData: Uint8Array
-  programDeployer: SS58Address
+  programModAddress: SS58Address
   versionNumber: number
 }
 
@@ -72,14 +72,14 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
    *
    * @param {RegistrationParams} params - The registration parameters.
    * @param {ProgramInstance[]} params.programData - The initial program data associated with the user.
-   * @param {SS58Address} [params.programDeployer] - Optional. The account authorized to modify programs on behalf of the user.
+   * @param {SS58Address} [params.programModAddress] - Optional. The account authorized to modify programs on behalf of the user.
    *
    * @returns {Promise<HexString>} A promise that resolves to the verifying key of the registered account.
    * @throws {Error} If registration information is not found or any other error occurs during registration.
    */
 
   async register ({
-    programDeployer,
+    programModAddress,
     programData,
   }: RegistrationParams): Promise<HexString> {
     // this is sloppy
@@ -88,12 +88,12 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
 
     // Convert the program data to the appropriate format and create a registration transaction.
     const registerTx = this.substrate.tx.registry.register(
-      programDeployer,
+      programModAddress,
       programData.map(this.#formatProgramInfo)
     )
     // @ts-ignore: next line
     // Send the registration transaction and wait for the result.
-    const registrationTxResult = this.sendAndWaitFor(registerTx, {
+    const registrationTxResult = await this.sendAndWaitFor(registerTx, {
       section: 'registry',
       name: 'AccountRegistered',
     }).catch((error) => {
@@ -108,47 +108,10 @@ export default class RegistrationManager extends ExtrinsicBaseClass {
         throw error
       }
     })
-    const dataFromEvents = this.#getVerifiyingKeyFromRegisterEvent(
-      this.signer.pair.address
-    )
 
-    await registrationTxResult
-    const verifyingKey = await dataFromEvents
+    // @ts-ignore: not sure where the void is coming from
+    const verifyingKey = registrationTxResult.toHuman().event.data[1]
     return verifyingKey
-  }
-
-  /**
-   * Private method to get the verifying key from the registration event.
-   * @param {SS58Address} address - The address of the account.
-   * @returns {Promise<string>} A promise that resolves to the verifying key.
-   * @private
-   */
-
-  #getVerifiyingKeyFromRegisterEvent (address: SS58Address): Promise<string> {
-    const wantedMethods = ['FailedRegistration', 'AccountRegistered']
-    let unsub
-    return new Promise(async (res, reject) => {
-      unsub = await this.substrate.query.system.events((events) => {
-        events.forEach(async (record) => {
-          const { event } = record
-          const { method } = event
-          if (wantedMethods.includes(method.toString())) {
-            if (method === wantedMethods[0]) {
-              if (event?.data?.toHuman()[0] === address) {
-                reject(new Error('Registration Failed'))
-                unsub()
-              }
-            }
-            if (method === wantedMethods[1]) {
-              if (event?.data?.toHuman()[0] === address) {
-                res(event?.data?.toHuman()[1])
-                unsub()
-              }
-            }
-          }
-        })
-      })
-    })
   }
 
   #formatProgramInfo (programInfo): ProgramInstance {

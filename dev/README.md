@@ -152,3 +152,68 @@ yarn
 yarn version --patch # patch|minor|major
 npm publish
 ```
+
+## sdk "boot script"
+
+
+When a new network of nodes is turned on, we need some actions to be taken before this new Entropy network is ready to use for tests.
+
+1. Give the nodes a moment to establish connections
+2. run "jump start", which establishes who the initial signing nodes are (the network automatically "reshares" these roles periodically after jump start)
+3. set up faucet program
+    - a) deploy faucet program to network
+    - b) install the faucet program for some faucet accounts
+    - c) fund the faucet accounts
+
+For convenience, at [./deploy-faucets.mjs](./deploy-faucets.mjs ) is a script we use to "deploy" and fund the faucets for our entropy network. You can refer to this section of the README and the script itself to deploy your own faucets! Here it is running with a dev environment setup from the root of this project:
+
+```bash
+dev/bin/spin-up.sh four-nodes
+```
+I would take a deep breath here to allow for the 4 nodes to connect before running the next command bellow. On that note the deploy faucet script takes 3 arguments as you can see right now this script assumes you know what your doing if you are running it. So not a lot of bells and whitelist here.
+
+the first argument is the `endpoint` to target, the second is the `fundingSeed` and the third `faucetLookUpSeed` <!--yes seeds()! not mnemonic go play alone this script will never take a mnemonic maybe one day i'll make it preterite to use like asci fireworks or something else integrated with the cli-->
+
+```bash
+node dev/deploy-faucets.mjs ws://127.0.0.1:9944 0x786ad0e2df456fe43dd1f91ebca22e235bc162e0bb8d53c633e8c85b2af68b7a 0x20423b5ff4984bcb8922483c98afb7eaa056c40fc431f8a314211e3d94a4222f
+
+```
+this example above should run in a dev enviroment the funding seed is eve and the report looks something like this and will log to your console:
+
+```
+{
+  'jump start status at start': 'Ready',
+  'using faucet program pointer': '0x3a1d45fecdee990925286ccce71f78693ff2bb27eae62adf8cfb7d3d61e142aa',
+  'faucet program pointer from deployment': '0x3a1d45fecdee990925286ccce71f78693ff2bb27eae62adf8cfb7d3d61e142aa',
+  'faucet config': {
+    max_transfer_amount: 20000000000,
+    genesis_hash: 'a4b29c6895ae775fd291377fde31882f66244eaecbdc81e017ebb64d13b27b72'
+  },
+  'initial balance for funding account': 99999880954644628n,
+  'initial funding faucet amount': 24999970238661157n,
+  'modifiableKeys on chain': [
+    '0x03cd98af667e48b4912c66576f5cdf18aee3764c7aad1c40b9c61d5ac012acf1f6',
+    '0x0228aba3e529d3b78b0cd7454a5f694eb09a648ec488b0b4b8ce7cd9abedd96c28',
+    '0x03b7c87542f57895d37f1a37a3460e27ec74de7216e6ed48609ffd2fac976ea94a'
+  ],
+  'faucet look up address': '5EqZMUYz7jjaG2baQWJRzUzM7YhBP4E8TAj6GgqDqWdXriTn',
+  faucets: [
+    {
+      vk: '0x03cd98af667e48b4912c66576f5cdf18aee3764c7aad1c40b9c61d5ac012acf1f6',
+      address: '5Gm6JA2ikMK1FfNn3MRmUPLWfi4p6eBzcFtKE1dnJvQpJgpg',
+      balance: '24,999,970,238,661,157'
+    },
+    {
+      vk: '0x0228aba3e529d3b78b0cd7454a5f694eb09a648ec488b0b4b8ce7cd9abedd96c28',
+      address: '5FqourMb6c3z4rogDnaBb36Ku53ndy3eCiSdjRg2TUAztJ3X',
+      balance: '24,999,970,238,661,157'
+    },
+    {
+      vk: '0x03b7c87542f57895d37f1a37a3460e27ec74de7216e6ed48609ffd2fac976ea94a',
+      address: '5CUQuSMxTzx74Zb8gsDobhaYSte9vt9a3Db5X6oio4X1pSX1',
+      balance: '24,999,970,238,661,157'
+    }
+  ],
+  endpoint: 'ws://127.0.0.1:9944'
+}
+```
