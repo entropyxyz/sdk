@@ -17,8 +17,9 @@ Version header format: `[version] Name - year-month-day (entropy-core compatibil
 ### Fixed
 
 ### Changed
-- registration parmas now matchs core language programDeployer ->programModAddress
+
 ### Broke
+- registration parmas now matches core language `programDeployer` -> `programModAddress` when
 
 ### Dev
 
