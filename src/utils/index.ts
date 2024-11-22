@@ -120,7 +120,7 @@ export async function sendHttpPost (url: string, data: any): Promise<any> {
  * @returns {ApiPromise} Api tool to interact with protocol
  */
 
-export function getSubstrate (endpoint: string): ApiPromise {
+export function createSubstrate (endpoint: string): ApiPromise {
   const wsProvider = new WsProvider(endpoint)
   return new ApiPromise({ provider: wsProvider, noInitWarn: true })
 }
