@@ -13,7 +13,7 @@ Version header format: `[version] Name - year-month-day (entropy-core compatibil
 ## [UNRELEASED]
 
 ### Added
-- utility method to return substrate api instance to interact with without needing to instantiate entropy instance
+- utility method to return substrate api instance to interact with without needing to instantiate entropy instance (#435)[https://github.com/entropyxyz/sdk/pull/435]
 
 ### Fixed
 
