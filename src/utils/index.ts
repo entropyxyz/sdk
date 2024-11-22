@@ -114,7 +114,7 @@ export async function sendHttpPost (url: string, data: any): Promise<any> {
 }
 
 /**
- * Returns substrate api without needing to instantiate an entropy instance
+ * Creates substrate api provider without needing to instantiate an entropy instance
  * 
  * @param {string} endpoint - Endpoint for the api
  * @returns {ApiPromise} Api tool to interact with protocol
