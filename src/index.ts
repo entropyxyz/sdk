@@ -1,6 +1,6 @@
 import { ApiPromise } from '@polkadot/api'
 import xtend from 'xtend'
-import { getSubstrate, isValidSubstrateAddress as isDeployer } from './utils'
+import { createSubstrate, isValidSubstrateAddress as isDeployer } from './utils'
 import RegistrationManager, { RegistrationParams } from './registration'
 import SignatureRequestManager, { SigOps, SigWithAdaptersOps } from './signing'
 import { crypto, loadCryptoLib } from './utils/crypto'
@@ -96,7 +96,7 @@ export default class Entropy {
 
   async #init (opts: EntropyOpts) {
     this.keyring = opts.keyring
-    this.substrate = getSubstrate(opts.endpoint)
+    this.substrate = createSubstrate(opts.endpoint)
     await this.substrate.isReadyOrError // throws an error if fails
 
     this.registrationManager = new RegistrationManager({
