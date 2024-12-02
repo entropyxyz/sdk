@@ -1,3 +1,4 @@
+import { WsProvider, ApiPromise } from '@polkadot/api'
 import { decodeAddress, encodeAddress } from '@polkadot/keyring'
 import { hexToU8a, isHex } from '@polkadot/util'
 import Debug from 'debug'
@@ -112,7 +113,17 @@ export async function sendHttpPost (url: string, data: any): Promise<any> {
   return oks
 }
 
+/**
+ * Creates substrate api provider without needing to instantiate an entropy instance
+ * 
+ * @param {string} endpoint - Endpoint for the api
+ * @returns {ApiPromise} Api tool to interact with protocol
+ */
 
+export function createSubstrate (endpoint: string): ApiPromise {
+  const wsProvider = new WsProvider(endpoint)
+  return new ApiPromise({ provider: wsProvider, noInitWarn: true })
+}
 
 /**
  * Converts an ArrayBuffer to a hexadecimal string.
