@@ -2,7 +2,7 @@ import { ApiPromise } from '@polkadot/api'
 import xtend from 'xtend'
 import { createSubstrate, isValidSubstrateAddress as isDeployer } from './utils'
 import RegistrationManager, { RegistrationParams } from './registration'
-import SignatureRequestManager, { SigOps, SigWithAdaptersOps } from './signing'
+import SignatureRequestManager, { SigOps, SigWithAdaptersOps, SignatureData } from './signing'
 import { crypto, loadCryptoLib } from './utils/crypto'
 import { Adapter } from './signing/adapters/types'
 import ProgramManager from './programs'
@@ -203,7 +203,7 @@ export default class Entropy {
    * @throws {Error} If there's an error in the signing routine.
    */
 
-  async sign (params: SigOps): Promise<Uint8Array> {
+  async sign (params: SigOps): Promise<SignatureData> {
     await this.ready
     return this.signingManager.sign(params)
   }

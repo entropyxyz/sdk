@@ -9,13 +9,26 @@ import { CryptoLib } from '../utils/crypto/types'
 import Keyring from '../keys'
 
 /**
+ * Represents a signed message and the associated data.
+ */
+export interface SignatureData {
+  signarure: string
+  verifyingKey: string
+  hashingAlogrithm: string
+  messageHash: string
+}
+
+//preemptive typing for adapters
+export interface AdaptedSignatureData extends SignatureData {
+  messageParams: any // the original object or message
+}
+/**
  * Represents an encrypted message for transaction requests.
  */
 export interface EncMsg {
   msg: string
   url: string
   tss_account: string
-  // signature_verifying_key: number[]
 }
 
 
@@ -193,7 +206,7 @@ export default class SignatureRequestManager {
     hash,
     auxiliaryData,
     signatureVerifyingKey: signatureVerifyingKeyOverwrite,
-  }: SigOps): Promise<Uint8Array> {
+  }: SigOps): Promise<SignatureData> {
     const strippedsigRequestHash = stripHexPrefix(sigRequestHash)
     // @ts-ignore: next line
     const validators: string[] = (await this.substrate.query.session.validators()).toHuman()
@@ -219,8 +232,14 @@ export default class SignatureRequestManager {
 
     const message: EncMsg = await this.formatTxRequest(txRequest)
     const sigs = await this.submitTransactionRequest(message)
-    const sig = await this.#verifyAndPick(sigs, signingCommittee)
-    return Uint8Array.from(atob(sig), (c) => c.charCodeAt(0))
+    const base64Sig = await this.#verifyAndPick(sigs, signingCommittee)
+    const buffSig = Buffer.from(base64Sig, 'base64')
+    return {
+      signarure: buffSig.toString('hex'),
+      hashingAlogrithm: hash,
+      verifyingKey: signatureVerifyingKey,
+      messageHash: sigRequestHash
+    }
   }
 
   /**
