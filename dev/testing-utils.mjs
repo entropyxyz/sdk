@@ -31,7 +31,7 @@ export async function spinNetworkUp (networkType = 'four-nodes') {
 
 async function retryUntil (fn, isSuccess = Boolean, opts = {}) {
   const {
-    triesRemaining = process.env.GITHUB_WORKSPACE ? 60 : 10,
+    triesRemaining = process.env.GITHUB_WORKSPACE ? 60 : 20,
     timeout = 1 * SECONDS
   } = opts
   return fn()
