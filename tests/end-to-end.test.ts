@@ -170,7 +170,7 @@ test('End To End', async (t) => {
 
   const msgParam: MsgParams = { msg }
 
-  const signatureFromAdapter = await run(
+  const signatureDataFromAdapter = await run(
     'signWithAdaptersInOrder',
     entropy.signWithAdaptersInOrder({
       msg: msgParam,
@@ -179,7 +179,7 @@ test('End To End', async (t) => {
   )
 
   t.equal(
-    util.u8aToHex(signatureFromAdapter).length,
+    signatureDataFromAdapter.signature.length,
     132,
     'got a good sig from adapter'
   )
@@ -197,14 +197,15 @@ test('End To End', async (t) => {
     entropy.programs.get(verifyingKey)
   )
   t.equal(programsAftreRemoveDefault.length, 1, 'eve has 1 program')
-  const signature = await run(
+  const signatureData = await run(
     'sign',
     entropy.sign({
-      sigRequestHash: msg,
+      hexMessage: msg,
       hash: 'sha3',
     })
   )
-  t.equal(util.u8aToHex(signature).length, 132, 'got a good sig')
+  console.log(signatureData)
+  t.equal(signatureData.signature.length, 132, 'got a good sig')
 
   t.end()
 })

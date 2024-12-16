@@ -44,6 +44,21 @@ export function stripHexPrefix (str: string): string {
 }
 
 /**
+ * Removes the '0x' prefix from a hexadecimal string if it exists.
+ *
+ * @param {string} str - The hexadecimal string.
+ * @returns {string} The string without the '0x' prefix.
+ */
+
+export function addHexPrefix (str: string): string {
+  if (typeof str === 'string') {
+    if (str.startsWith('0x')) return str
+    return `0x${str}`
+  }
+  throw new TypeError('not a string')
+}
+
+/**
  * Validates whether a given address is a valid Substrate address.
  *
  * @param {Address} address - The address to validate.
