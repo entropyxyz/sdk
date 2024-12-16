@@ -204,7 +204,6 @@ test('End To End', async (t) => {
       hash: 'sha3',
     })
   )
-  console.log(signatureData)
   t.equal(signatureData.signature.length, 132, 'got a good sig')
 
   t.end()
