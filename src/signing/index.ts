@@ -238,7 +238,7 @@ export default class SignatureRequestManager {
       signature: addHexPrefix(buffSig.toString('hex')),
       hashingAlogrithm: hash,
       verifyingKey: signatureVerifyingKey,
-      message: hexMessage,
+      message: addHexPrefix(hexMessage),
     }
   }
 
