@@ -20,7 +20,7 @@ export interface SignatureData {
 
 //preemptive typing for adapters
 export interface AdaptedSignatureData extends SignatureData {
-  messageParams: any // the original object or message
+  messageParams?: any // the original object or message
 }
 /**
  * Represents an encrypted message for transaction requests.

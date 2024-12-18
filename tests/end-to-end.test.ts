@@ -19,7 +19,7 @@ const networkType = 'four-nodes'
 
 const msg = Buffer.from('Hello world: signature from entropy!').toString('hex')
 
-test.only('End To End', async (t) => {
+test('End To End', async (t) => {
   const run = promiseRunner(t)
   await run('network up', spinNetworkUp(networkType))
   t.teardown(async () => {
@@ -203,8 +203,8 @@ test.only('End To End', async (t) => {
       hash: 'blake2_256',
     })
   )
-  t.equal(signatureData.signature.length, 132, 'got a good sig')
-  console.log('signatures', signatureData, signatureDataFromAdapter)
+  await run('verified signature blake2_256', entropy.verify(signatureData))
+  await run(`verified signature ${signatureDataFromAdapter.hashType}`, entropy.verify(signatureDataFromAdapter))
 
   t.end()
 })
