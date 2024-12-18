@@ -58,7 +58,7 @@ test('Sign', async (t) => {
   t.true(!!signatureData, 'signatureData exists')
   t.true('signature' in signatureData, 'signatureData.signature exists')
   t.true('verifyingKey' in signatureData, 'signatureData.verifyingKey exists')
-  t.true('hashingAlogrithm' in signatureData, 'signatureData.hashingAlgorith exists')
+  t.true('hashType' in signatureData, 'signatureData.hashingAlgorith exists')
   t.true('message' in signatureData, 'signatureData.message exists')
   t.true(signatureData.signature.length > 32, 'signature has some body!')
   signatureData && console.log(signatureData)

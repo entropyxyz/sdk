@@ -14,7 +14,7 @@ import Keyring from '../keys'
 export interface SignatureData {
   signature: string
   verifyingKey: string
-  hashingAlogrithm: string
+  hashType: string
   message: string // hex string as bytes?
 }
 
@@ -236,7 +236,7 @@ export default class SignatureRequestManager {
     const buffSig = Buffer.from(base64Sig, 'base64')
     return {
       signature: addHexPrefix(buffSig.toString('hex')),
-      hashingAlogrithm: hash,
+      hashType: hash,
       verifyingKey: signatureVerifyingKey,
       message: addHexPrefix(hexMessage),
     }
