@@ -3,11 +3,25 @@ import { Signer } from '../keys/types/internal'
 import { defaultAdapters } from './adapters/default'
 import { Adapter } from './adapters/types'
 import { ValidatorInfo } from '../types/internal'
-import { stripHexPrefix, sendHttpPost, toHex, } from '../utils'
+import { stripHexPrefix, addHexPrefix, sendHttpPost, toHex, } from '../utils'
 import { crypto } from '../utils/crypto'
 import { CryptoLib } from '../utils/crypto/types'
 import Keyring from '../keys'
 
+/**
+ * Represents a signed message and the associated data.
+ */
+export interface SignatureData {
+  signature: string
+  verifyingKey: string
+  hashType: string
+  message: string // hex string as bytes?
+}
+
+//preemptive typing for adapters
+export interface AdaptedSignatureData extends SignatureData {
+  messageParams?: any // the original object or message
+}
 /**
  * Represents an encrypted message for transaction requests.
  */
@@ -15,7 +29,6 @@ export interface EncMsg {
   msg: string
   url: string
   tss_account: string
-  // signature_verifying_key: number[]
 }
 
 
@@ -42,7 +55,7 @@ export interface SigWithAdaptersOps extends SigMsgOps {
 }
 
 export interface SigOps {
-  sigRequestHash: string
+  hexMessage: string
   hash: string
   type?: string
   auxiliaryData?: unknown[]
@@ -153,7 +166,7 @@ export default class SignatureRequestManager {
       }
       return agg
     }, [])
-    // this is the named keys we care about from post sign. { sigRequestHash, auxilary_data }
+    // this is the named keys we care about from post sign. { hexMessage, auxilary_data }
     const results = await Promise.all(
       adaptersToRun.map((adapter) => {
         return adapter.preSign(this.signer, msg)
@@ -166,10 +179,10 @@ export default class SignatureRequestManager {
     })
     // flatten
     const auxiliaryData = [].concat(...auxiliaryDataCollection)
-    // grab the first sigRequestHash
-    const { sigRequestHash } = results[0]
+    // grab the first hexMessage
+    const { hexMessage } = results[0]
     const signature = await this.sign({
-      sigRequestHash,
+      hexMessage,
       hash: adaptersToRun[0].HASHING_ALGORITHM,
       auxiliaryData,
       signatureVerifyingKey,
@@ -181,7 +194,7 @@ export default class SignatureRequestManager {
    * Signs a given signature request hash.
    *
    * @param {SigOps} sigOps - Parameters for the signature operation.
-   * @param {string} sigOps.sigRequestHash - The hash of the signature request to be signed.
+   * @param {string} sigOps.hexMessage - The hash of the signature request to be signed.
    * @param {string} sigOps.hash - The name of the hashing algorithm used to hash the signature.
    * @param {unknown[]} sigOps.auxilaryData - Additional data for the signature operation.
    * @param {signatureVerifyingKey} sigOps.signatureVerifyingKey - The verifying key for the signature requested
@@ -189,12 +202,12 @@ export default class SignatureRequestManager {
    */
 
   async sign ({
-    sigRequestHash,
+    hexMessage,
     hash,
     auxiliaryData,
     signatureVerifyingKey: signatureVerifyingKeyOverwrite,
-  }: SigOps): Promise<Uint8Array> {
-    const strippedsigRequestHash = stripHexPrefix(sigRequestHash)
+  }: SigOps): Promise<SignatureData> {
+    const strippedHexMessage = stripHexPrefix(hexMessage)
     // @ts-ignore: next line
     const validators: string[] = (await this.substrate.query.session.validators()).toHuman()
     // @ts-ignore: next line
@@ -210,7 +223,7 @@ export default class SignatureRequestManager {
     const signatureVerifyingKey = signatureVerifyingKeyOverwrite || this.verifyingKey
 
     const txRequest = {
-      strippedsigRequestHash,
+      strippedHexMessage,
       auxiliaryData,
       validator: validatorInfo,
       hash,
@@ -219,8 +232,14 @@ export default class SignatureRequestManager {
 
     const message: EncMsg = await this.formatTxRequest(txRequest)
     const sigs = await this.submitTransactionRequest(message)
-    const sig = await this.#verifyAndPick(sigs, signingCommittee)
-    return Uint8Array.from(atob(sig), (c) => c.charCodeAt(0))
+    const base64Sig = await this.#verifyAndPick(sigs, signingCommittee)
+    const buffSig = Buffer.from(base64Sig, 'base64')
+    return {
+      signature: addHexPrefix(buffSig.toString('hex')),
+      hashType: hash,
+      verifyingKey: signatureVerifyingKey,
+      message: addHexPrefix(hexMessage),
+    }
   }
 
   /**
@@ -239,7 +258,7 @@ export default class SignatureRequestManager {
    * Generates transaction requests formatted for validators.
    *
    * @param {object} params - Parameters for generating the transaction request.
-   * @param {string} params.strippedsigRequestHash - Stripped signature request hash.
+   * @param {string} params.strippedHexMessage - Stripped signature request hash.
    * @param {unknown[]} [params.auxiliaryData] - Additional data for the transaction request.
    * @param {ValidatorInfo[]} params.validatorsInfo - Information about the validators.
    * @param {string} [params.hash] - The hash type.
@@ -248,20 +267,20 @@ export default class SignatureRequestManager {
    */
 
   async formatTxRequest ({
-    strippedsigRequestHash,
+    strippedHexMessage,
     auxiliaryData,
     validator,
     hash,
     signatureVerifyingKey,
   }: {
-    strippedsigRequestHash: string
+    strippedHexMessage: string
     auxiliaryData?: unknown[]
     validator: ValidatorInfo
     hash?: string
     signatureVerifyingKey: string
   }): Promise<EncMsg> {
     const txRequestData: UserSignatureRequest = {
-      message: stripHexPrefix(strippedsigRequestHash),
+      message: stripHexPrefix(strippedHexMessage),
       auxilary_data: auxiliaryData,
       block_number: await this.getBlockNumber(),
       hash,
@@ -318,7 +337,7 @@ export default class SignatureRequestManager {
   /**
    * Selects validators based on the signature request.
    *
-   * @param {string} sigRequest - The signature request hash.
+   * @param {string} hexMessage - The signature request hash.
    * @returns {Promise<ValidatorInfo[]>} A promise resolving to an array of validator information.
    */
 

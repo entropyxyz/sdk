@@ -20,7 +20,8 @@ Version header format: `[version] Name - year-month-day (entropy-core compatibil
 ### Changed
 
 ### Broke
-
+- sign and sign with adapters no longer returns just the signature. It now returns a object `SignatureData` that contains the signature and information pronating to it see the `SignatureData` interface in (./src/signing/index.ts)(./src/signing/index.ts)
+- `entropy.sign` and `entropy.signWithAdaptersInOrder` function argument interface key renamed `sigRequestHash` -> `hexMessage`
 ### Dev
 
 ### Meta

@@ -378,7 +378,7 @@ const verifyingKey = await entropy.getVerifyingKey(address)
 // signing manager
 
 await entropy.signingManager.sign({
-  sigRequestHash,
+  hexMessage,
   hash: this.adapters[type].hash,
   type,
 })
@@ -469,7 +469,7 @@ Will throw an error if the transaction type does not have a corresponding adapte
 // signing manager
 
 await entropy.signingManager.sign({
-  sigRequestHash,
+  hexMessage,
   hash: this.adapters[type].hash,
   type,
 })

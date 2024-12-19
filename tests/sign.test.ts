@@ -48,16 +48,20 @@ test('Sign', async (t) => {
 
   /* Sign */
 
-  const signature = await run(
+  const signatureData = await run(
     'sign',
     entropy.signWithAdaptersInOrder({
       msg: { msg },
       order: ['deviceKeyProxy'],
     })
   )
-
-  t.true(signature && signature.length > 32, 'signature has some body!')
-  signature && console.log(signature)
+  t.true(!!signatureData, 'signatureData exists')
+  t.true('signature' in signatureData, 'signatureData.signature exists')
+  t.true('verifyingKey' in signatureData, 'signatureData.verifyingKey exists')
+  t.true('hashType' in signatureData, 'signatureData.hashingAlgorith exists')
+  t.true('message' in signatureData, 'signatureData.message exists')
+  t.true(signatureData.signature.length > 32, 'signature has some body!')
+  signatureData && console.log(signatureData)
 
   t.end()
 })
@@ -74,7 +78,7 @@ test('Sign: Long Message', async t => {
   
   Adding some symbols for good measure: #$@%@#$@#%#@`;
 
-  const signature = await run(
+  const signatureData = await run(
     'sign',
     entropy.signWithAdaptersInOrder({
       msg: { msg: dummyLongMessage },
@@ -82,8 +86,8 @@ test('Sign: Long Message', async t => {
     })
   )
 
-  t.true(signature && signature.length > 32, 'signature has some body!')
-  signature && console.log(signature)
+  t.true(signatureData.signature.length > 32, 'signature has some body!')
+  signatureData && console.log(signatureData)
 
   t.end()
 })
@@ -147,7 +151,7 @@ test('Sign: custom signatureVerifyingKey', async (t) => {
 
   t.notEqual(signatureVerifyingKey, eveEntropy.signingManager.verifyingKey, 'choose non-default signatureVerifyingKey')
 
-  const signature = await run(
+  const signatureData = await run(
     'sign',
     eveEntropy.signWithAdaptersInOrder({
       msg: { msg },
@@ -156,8 +160,8 @@ test('Sign: custom signatureVerifyingKey', async (t) => {
     })
   )
 
-  t.true(signature && signature.length > 32, 'signature has some body!')
-  signature && console.log(signature)
+  t.true(signatureData.signature.length > 32, 'signature has some body!')
+  signatureData && console.log(signatureData)
 
   t.end()
 })

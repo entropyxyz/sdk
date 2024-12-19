@@ -15,7 +15,7 @@ export interface AUX_DATA {
  * and auxiliary data.
  */
 export interface PRESIGN_RESULT {
-  sigRequestHash: HexString
+  hexMessage: HexString
   auxilary_data: AUX_DATA[] | unknown[]
 }
 

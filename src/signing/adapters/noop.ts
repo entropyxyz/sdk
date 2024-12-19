@@ -26,7 +26,7 @@ export const PROGRAM_INTERFACE = {
 export const ADAPTER_PROGRAMS = [PROGRAM_INTERFACE]
 
 export interface PreSignResult extends PRESIGN_RESULT {
-  sigRequestHash: HexString
+  hexMessage: HexString
   auxilary_data: NoopAuxData[]
 }
 
@@ -37,9 +37,9 @@ export async function preSign (
   const stringMessage = JSON.stringify(message)
   // un comment for device key signature:
   // const signedMessage = deviceKey.pair.sign(stringMessage)
-  const sigRequestHash = toHex(stringMessage)
+  const hexMessage = toHex(stringMessage)
 
-  return { sigRequestHash, auxilary_data: PROGRAM_INTERFACE.auxilary_data }
+  return { hexMessage, auxilary_data: PROGRAM_INTERFACE.auxilary_data }
 }
 
 export const type = 'noop'
