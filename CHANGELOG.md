@@ -14,7 +14,7 @@ Version header format: `[version] Name - year-month-day (entropy-core compatibil
 
 ### Added
 - utility method to return substrate api instance to interact with without needing to instantiate entropy instance (#435)[https://github.com/entropyxyz/sdk/pull/435]
-
+- verifying method for signatures `keccak` and `blake2_256` hashed signatures
 ### Fixed
 
 ### Changed
