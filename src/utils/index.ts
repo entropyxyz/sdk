@@ -44,10 +44,10 @@ export function stripHexPrefix (str: string): string {
 }
 
 /**
- * Removes the '0x' prefix from a hexadecimal string if it exists.
+ * Adds the '0x' prefix to a string if it exists.
  *
  * @param {string} str - The hexadecimal string.
- * @returns {string} The string without the '0x' prefix.
+ * @returns {string} The string with the '0x' prefix.
  */
 
 export function addHexPrefix (str: string): string {
