@@ -44,42 +44,42 @@ Below is an example that instantiates Entropy, deploys a program, registers usin
 The example below walks you threw basic flow from registration of an account to requesting and verifying signatures. for more in depth walk threw flow see are [end-to-end test](./tests/end-to-end.test.ts)
 <!-- DO NOT CHANGE THE NEXT LINE WITHOUT CHANGING THE TEST PARSER! -->
 ```typescript
-import { Keyring } from '@entropyxyz/sdk/keys'
-import { wasmGlobalsReady, Entropy } from '@entropyxyz/sdk'
+import { Keyring } from '@entropyxyz/sdk/keys';
+import { wasmGlobalsReady, Entropy } from '@entropyxyz/sdk';
 
 async function basicExample () {
   // let wasam crypto libs load before use
-  await wasmGlobalsReady()
+  await wasmGlobalsReady();
 
-  const eveSeed = '0x786ad0e2df456fe43dd1f91ebca22e235bc162e0bb8d53c633e8c85b2af68b7a'
+  const seed = '0x786ad0e2df456fe43dd1f91ebca22e235bc162e0bb8d53c633e8c85b2af68b7a';
 
-  const keyStore = { seed: eveSeed }
-  const keyring = new Keyring(keyStore)
+  const keyStore = { seed };
+  const keyring = new Keyring(keyStore);
   const opts = {
-    endpoint: 'ws://127.0.0.1:9944', //defaults to 'ws://127.0.0.1:9944' if no value is provided.
-    keyring,
-  }
-  const entropy = new Entropy({keyring, endpoint})
+    // defaults to 'ws://127.0.0.1:9944' if no value is provided.
+    endpoint: 'ws://127.0.0.1:9944',
+    keyring
+  };
+  const entropy = new Entropy(opts);
 
-  await entropy.ready
+  await entropy.ready;
   // this is default program registration and configuration see deep dive docs for full explanation of function usage
   const msgObject = {
-    msg: Buffer.from('Hello world: signature from entropy!').toString('hex'),
-  }
-  const verifyingKey = await entropy.register()
+    msg: Buffer.from('Hello world: signature from entropy!').toString('hex')
+  };
+  const verifyingKey = await entropy.register();
   const signatureData = await entropy.signWithAdaptersInOrder({
     msg: msgObject,
-    order: ['deviceKeyProxy'],
-  })
-  if (!await entropy.verify(signatureData)) throw new Error('can not verify signature')
-  const { signature } = signatureData
+    order: ['deviceKeyProxy']
+  });
+  if (!await entropy.verify(signatureData)) throw new Error('can not verify signature');
+  const { signature } = signatureData;
   // do stuff with signature
-  /**your code here**/
   // close websocket connection
   await entropy.close()
 }
 
-basicExample()
+basicExample();
 ```
 
 This tool is early development. As such, a lot of things may not work as expected. Feel free to play around with it and report any issues at [github.com/entropyxyz/sdk](https://github.com/entropyxyz/sdk).
