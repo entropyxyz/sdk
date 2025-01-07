@@ -39,9 +39,7 @@ test.only('README basicExample', async (t) => {
   )
   await run('jump-start network', jumpStartNetwork(jumpEntropy))
   await run('close jumpEntropy', jumpEntropy.close())
-  const README = readFileSync('./README.md', 'utf-8')
-  t.ok(README, 'README should exist')
-  const codeExample = README.split('```typescript')[1].split('```')[0]
+
   async function basicExample (){
       // let wasam crypto libs load before use
       await wasmGlobalsReady()
@@ -71,8 +69,12 @@ test.only('README basicExample', async (t) => {
       await entropy.close()
     }
   await run('basicExample should be executable', basicExample())
+
   // parse code to remove import stamens and comments
   // and the run
+  const README = readFileSync('./README.md', 'utf-8')
+  t.ok(README, 'README should exist')
+  const codeExample = README.split('```typescript')[1].split('```')[0]
   const inReadmeBasicExample = codeExample.split('\n').reduce((a, i) => {
     if(i.includes('// ')) return a
     if(i.includes('import')) return a
