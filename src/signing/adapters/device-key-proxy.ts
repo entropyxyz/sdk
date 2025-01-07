@@ -47,7 +47,7 @@ export const DEVICE_KEY_PROXY_PROGRAM_INTERFACE = {
 // export const ADAPTER_PROGRAMS = [DEVICE_KEY_PROXY_PROGRAM_INTERFACE]
 
 export interface PreSignResult extends PRESIGN_RESULT {
-  sigRequestHash: HexString
+  hexMessage: HexString
   auxilary_data: [AuxData]
 }
 
@@ -57,7 +57,7 @@ export async function preSign (
 ): Promise<PreSignResult> {
   const stringMessage = JSON.stringify(message)
   const signedMessage = deviceKey.pair.sign(stringMessage)
-  const sigRequestHash = toHex(stringMessage)
+  const hexMessage = toHex(stringMessage)
 
   const convertedSig = btoa(String.fromCharCode.apply(null, signedMessage))
   // Base64 encoded string
@@ -75,7 +75,7 @@ export async function preSign (
     },
   ]
 
-  return { sigRequestHash, auxilary_data }
+  return { hexMessage, auxilary_data }
 }
 
 export const type = 'deviceKeyProxy'
