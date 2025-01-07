@@ -119,7 +119,7 @@ export async function verify (sigData: SignatureData | AdaptedSignatureData): Pr
 
   if (hashType.toLowerCase() === 'keccak') {
     const recoveredPk = SigningKey.recoverPublicKey(keccak256(message), signature)
-    return recoveredPk === SigningKey.computePublicKey(verifyingKey)
+    return SigningKey.computePublicKey(recoveredPk) === verifyingKey
   }
 
   if (hashType.toLowerCase() === 'blake2_256') {

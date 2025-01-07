@@ -203,8 +203,9 @@ test('End To End', async (t) => {
       hash: 'blake2_256',
     })
   )
-  await run('verified signature blake2_256', entropy.verify(signatureData))
-  await run(`verified signature ${signatureDataFromAdapter.hashType}`, entropy.verify(signatureDataFromAdapter))
-
+  const v1 = await run('verified signature blake2_256', entropy.verify(signatureData))
+  const v2 = await run(`verified signature ${signatureDataFromAdapter.hashType}`, entropy.verify(signatureDataFromAdapter))
+  t.ok(v1, 'should be valid blake2_256 signature')
+  t.ok(v2, `should be valid ${signatureDataFromAdapter.hashType} signature`)
   t.end()
 })
