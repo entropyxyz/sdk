@@ -40,34 +40,42 @@ test('README basicExample', async (t) => {
   await run('jump-start network', jumpStartNetwork(jumpEntropy))
   await run('close jumpEntropy', jumpEntropy.close())
 
-  async function basicExample (){
-      // let wasam crypto libs load before use
-      await wasmGlobalsReady()
-      const seed = '0x786ad0e2df456fe43dd1f91ebca22e235bc162e0bb8d53c633e8c85b2af68b7a'
-      const keyStore = { seed }
-      const keyring = new Keyring(keyStore)
+  async function basicExample() {
+      await wasmGlobalsReady();
+
+      const seed = '0x786ad0e2df456fe43dd1f91ebca22e235bc162e0bb8d53c633e8c85b2af68b7a';
+      const keyStore = { seed };
+      const keyring = new Keyring(keyStore);
       const opts = {
-        endpoint: 'ws://127.0.0.1:9944', //defaults to 'ws://127.0.0.1:9944' if no value is provided.
-        keyring
-      }
-      const entropy = new Entropy(opts)
-      await entropy.ready
-      // this is default program registration and configuration see deep dive docs for full explanation of function usage
+          endpoint: 'ws://127.0.0.1:9944',
+          keyring
+      };
+      const entropy = new Entropy(opts);
+
+      await entropy.ready;
+
+      // This is the default program registration and configuration.
       const msgObject = {
-        msg: Buffer.from('Hello world: signature from entropy!').toString('hex'),
-      }
-      const verifyingKey = await entropy.register()
+          msg: Buffer.from('Hello world: signature from entropy!').toString('hex')
+      };
+
+      const verifyingKey = await entropy.register();
       const signatureData = await entropy.signWithAdaptersInOrder({
-        msg: msgObject,
-        order: ['deviceKeyProxy']
-      })
-      if (!await entropy.verify(signatureData)) throw new Error('can not verify signature')
-      const { signature } = signatureData
-      // do stuff with signature
-      /**your code here**/
-      // close websocket connection
+          msg: msgObject,
+          order: ['deviceKeyProxy']
+      });
+
+      if (!await entropy.verify(signatureData)) throw new Error('can not verify signature');
+      const { signature } = signatureData;
+
+      // ------------------
+      // Here is where you
+      // could do stuff
+      // with the signature.
+      // ------------------
+
       await entropy.close()
-    }
+  }
   await run('basicExample should be executable', basicExample())
 
   // parse code to remove import stamens and comments
@@ -81,7 +89,8 @@ test('README basicExample', async (t) => {
     if(i.includes('basicExample()')) return a
     if (i.length === 0) return a
     return a+i
-  }, '').split(' ').join('').split('\'').join('"')
+  // all these splits and joins is to get rid of the 4 space tabs
+  }, 'async function basicExample() {').split(' ').join('').split('\'').join('"')
   const basicExampleString = basicExample.toString().split(' ').join('')
   t.equal(inReadmeBasicExample, basicExampleString, 'the basic example function should match README')
   t.end()
