@@ -16,7 +16,7 @@ const networkType = 'four-nodes'
 
 const msg = Buffer.from('Hello world: signature from entropy!').toString('hex')
 
-test.only('README basicExample', async (t) => {
+test('README basicExample', async (t) => {
   const run = promiseRunner(t)
   await run('network up', spinNetworkUp(networkType))
   t.teardown(async () => {
