@@ -146,7 +146,7 @@ export default class SignatureRequestManager {
     msg,
     order,
     signatureVerifyingKey
-  }: SigWithAdaptersOps): Promise<unknown> {
+  }: SigWithAdaptersOps): Promise<AdaptedSignatureData> {
     if (!order) {
       throw new Error(
         `must provide order: expecting a string[] of adapter types got: ${order}`

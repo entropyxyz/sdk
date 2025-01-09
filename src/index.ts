@@ -187,7 +187,7 @@ export default class Entropy {
    * @throws {Error} If no adapter is found for the specified transaction type.
    */
 
-  async signWithAdaptersInOrder (params: SigWithAdaptersOps): Promise<unknown> {
+  async signWithAdaptersInOrder (params: SigWithAdaptersOps): Promise<AdaptedSignatureData> {
     await this.ready
     return await this.signingManager.signWithAdaptersInOrder(params)
   }
