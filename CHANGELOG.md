@@ -27,7 +27,7 @@ Version header format: `[version] Name - year-month-day (entropy-core compatibil
 ## [0.4.1] Goumang - 2025-01-09 (entropy-core compatibility: 0.3.0)
 ### Added
 - utility method to return substrate api instance to interact with without needing to instantiate entropy instance (#435)[https://github.com/entropyxyz/sdk/pull/435]
-- verifying method for signatures `keccak` and `blake2_256` hashed signatures[#445](https://github.com/entropyxyz/sdk/pull/445)
+- verifying method for signatures `keccak` and `blake2_256` hashed signatures [#445](https://github.com/entropyxyz/sdk/pull/445)
 ### Fixed
 
 ### Changed
