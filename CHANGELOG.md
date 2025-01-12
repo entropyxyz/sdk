@@ -23,6 +23,8 @@ Version header format: `[version] Name - year-month-day (entropy-core compatibil
 
 ### Dev
 
+- patch upgrade of `rollup` [#444](https://github.com/entropyxyz/sdk/pull/444)
+
 ### Meta
 
 ## [0.4.0] Fa - 2024-11-05 (entropy-core compatibility: 0.3.0)
