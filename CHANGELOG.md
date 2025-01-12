@@ -15,6 +15,7 @@ Version header format: `[version] Name - year-month-day (entropy-core compatibil
 ### Added
 - utility method to return substrate api instance to interact with without needing to instantiate entropy instance (#435)[https://github.com/entropyxyz/sdk/pull/435]
 - verifying method for signatures `keccak` and `blake2_256` hashed signatures
+
 ### Fixed
 
 ### Changed
@@ -22,7 +23,15 @@ Version header format: `[version] Name - year-month-day (entropy-core compatibil
 ### Broke
 - sign and sign with adapters no longer returns just the signature. It now returns a object `SignatureData` that contains the signature and information pronating to it see the `SignatureData` interface in (./src/signing/index.ts)(./src/signing/index.ts)
 - `entropy.sign` and `entropy.signWithAdaptersInOrder` function argument interface key renamed `sigRequestHash` -> `hexMessage`
+
 ### Dev
+
+- added `dotenv` for handling ENV in tests. See `.env.template`
+  - new ENV:
+      - `ENTROPY_SDK_TESTS_RETRY_COUNT_DEFAULT` - default number of times to run `retryUntil` function
+      - `ENTROPY_SDK_TESTS_RETRY_TIMEOUT_DEFAULT` - default timeout between runs of `retryUntil` function
+  - renamed ENV:
+      - `ENTROPY_DONT_KILL` => `ENTROPY_SDK_TESTS_DONT_KILL`
 
 ### Meta
 
