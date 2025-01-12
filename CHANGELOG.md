@@ -14,13 +14,14 @@ Version header format: `[version] Name - year-month-day (entropy-core compatibil
 
 ### Added
 - utility method to return substrate api instance to interact with without needing to instantiate entropy instance (#435)[https://github.com/entropyxyz/sdk/pull/435]
-
+- verifying method for signatures `keccak` and `blake2_256` hashed signatures
 ### Fixed
 
 ### Changed
 
 ### Broke
-
+- sign and sign with adapters no longer returns just the signature. It now returns a object `SignatureData` that contains the signature and information pronating to it see the `SignatureData` interface in (./src/signing/index.ts)(./src/signing/index.ts)
+- `entropy.sign` and `entropy.signWithAdaptersInOrder` function argument interface key renamed `sigRequestHash` -> `hexMessage`
 ### Dev
 
 - patch upgrade of `rollup` [#444](https://github.com/entropyxyz/sdk/pull/444)
