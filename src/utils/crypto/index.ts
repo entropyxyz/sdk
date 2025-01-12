@@ -1,12 +1,15 @@
 import {
   cryptoWaitReady,
   decodeAddress,
+  encodeAddress,
   signatureVerify,
+  blake2AsHex,
 } from '@polkadot/util-crypto'
-
+import { keccak256, SigningKey } from 'ethers'
 import * as polkadotCryptoUtil from '@polkadot/util-crypto'
 import { CryptoLib, ResObjectType } from './types'
 import { u8aToHex } from '@polkadot/util'
+import { SignatureData, AdaptedSignatureData } from '../../signing'
 
 let cryptoLib
 const res: ResObjectType = {
@@ -96,4 +99,33 @@ async function verifySignature (
   const hexPublicKey = u8aToHex(publicKey)
 
   return signatureVerify(message, signature, hexPublicKey).isValid
+}
+
+/**
+ * Verifies the signature of a of a signed message coming from the signing method in the entropy class.
+ *
+ * @param {@link SignatureData} - The signature data to be verified.
+ * @returns A Promise that resolves to a boolean indicating whether the signature is valid.
+ */
+
+export async function verify (sigData: SignatureData | AdaptedSignatureData): Promise<boolean> {
+  const { hashType, message, verifyingKey, signature } = sigData
+
+  if (!hashType) throw new Error('hashType not include in the signature data')
+  if (!message) throw new Error('message not include in the signature data')
+  if (!verifyingKey) throw new Error('verifyingKey not include in the signature data')
+  if (!signature) throw new Error('signature not include in the signature data')
+
+
+  if (hashType.toLowerCase() === 'keccak') {
+    const recoveredPk = SigningKey.recoverPublicKey(keccak256(message), signature)
+    return SigningKey.computePublicKey(recoveredPk) === verifyingKey
+  }
+
+  if (hashType.toLowerCase() === 'blake2_256') {
+    const address = encodeAddress(blake2AsHex(verifyingKey))
+    return signatureVerify(message, signature, address).isValid
+  }
+
+  throw new Error(`unsupported hashType: ${hashType}`)
 }

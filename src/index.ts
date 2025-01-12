@@ -2,8 +2,8 @@ import { ApiPromise } from '@polkadot/api'
 import xtend from 'xtend'
 import { createSubstrate, isValidSubstrateAddress as isDeployer } from './utils'
 import RegistrationManager, { RegistrationParams } from './registration'
-import SignatureRequestManager, { SigOps, SigWithAdaptersOps } from './signing'
-import { crypto, loadCryptoLib } from './utils/crypto'
+import SignatureRequestManager, { SigOps, SigWithAdaptersOps, SignatureData, AdaptedSignatureData } from './signing'
+import { crypto, loadCryptoLib, verify } from './utils/crypto'
 import { Adapter } from './signing/adapters/types'
 import ProgramManager from './programs'
 import Keyring from './keys'
@@ -187,7 +187,7 @@ export default class Entropy {
    * @throws {Error} If no adapter is found for the specified transaction type.
    */
 
-  async signWithAdaptersInOrder (params: SigWithAdaptersOps): Promise<unknown> {
+  async signWithAdaptersInOrder (params: SigWithAdaptersOps): Promise<AdaptedSignatureData> {
     await this.ready
     return await this.signingManager.signWithAdaptersInOrder(params)
   }
@@ -199,13 +199,28 @@ export default class Entropy {
    * It returns the signature from the first validator after validation.
    *
    * @param {SigOps} params - The signature operation parameters.
-   * @returns {Promise<Uint8Array>} A promise that resolves to the signed hash as a Uint8Array.
+   * @returns {Promise<SignatureData>} A promise that resolves to the signed hash as a Uint8Array.
    * @throws {Error} If there's an error in the signing routine.
    */
 
-  async sign (params: SigOps): Promise<Uint8Array> {
+  async sign (params: SigOps): Promise<SignatureData> {
     await this.ready
     return this.signingManager.sign(params)
+  }
+  /**
+   * Verifies signature data.
+   * This method involves various steps including validator selection, transaction request formatting,
+   * and submission of these requests to validators for signing.
+   * It returns the signature from the first validator after validation.
+   *
+   * @param {SignatureData | AdaptedSignatureData} params - The signature operation parameters.
+   * @returns {Promise<Uint8Array>} A promise that resolves to the signed hash as a Uint8Array.
+   * @throws {Error} If there's an error in the verifying routine.
+   */
+
+  async verify (params: SignatureData | AdaptedSignatureData): Promise<boolean> {
+    await this.ready
+    return verify(params)
   }
 
   /**
