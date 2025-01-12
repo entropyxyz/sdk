@@ -3,10 +3,27 @@ import { fileURLToPath } from 'url';
 import { execFileSync } from 'child_process';
 import { WebSocket } from 'ws';
 import { promisify } from 'util'
+import 'dotenv/config'
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const moduleRoot = join(__dirname, '..')
+
+const {
+  GITHUB_WORKSPACE,
+  ENTROPY_SDK_TESTS_RETRY_COUNT_DEFAULT,
+  ENTROPY_SDK_TESTS_RETRY_TIMEOUT_DEFAULT
+} = process.env
+
 const SECONDS = 1000
+const DEFAULT_RETRY_COUNT = (
+  parseInt(ENTROPY_SDK_TESTS_RETRY_COUNT_DEFAULT) ||
+  GITHUB_WORKSPACE && 60 ||
+  20
+)
+const DEFAULT_RETRY_TIMEOUT = (
+  parseInt(ENTROPY_SDK_TESTS_RETRY_TIMEOUT_DEFAULT) ||
+  1 * SECONDS
+)
 
 // NOTE: you need to edit your /etc/hosts file to use these. See dev/README.md
 
@@ -31,9 +48,10 @@ export async function spinNetworkUp (networkType = 'four-nodes') {
 
 async function retryUntil (fn, isSuccess = Boolean, opts = {}) {
   const {
-    triesRemaining = process.env.GITHUB_WORKSPACE ? 60 : 20,
-    timeout = 1 * SECONDS
+    retryCount = DEFAULT_RETRY_COUNT,
+    retryTimeout = DEFAULT_RETRY_TIMEOUT
   } = opts
+
   return fn()
     .then(result => {
       if (isSuccess(result)) return result
@@ -41,15 +59,16 @@ async function retryUntil (fn, isSuccess = Boolean, opts = {}) {
     })
     .catch(async (err) => {
       // out of tries, do not recurse
-      if (triesRemaining === 1) throw err
-      await promisify(setTimeout)(timeout)
+      if (retryCount === 1) throw err
+      await promisify(setTimeout)(retryTimeout)
 
       return retryUntil(fn, isSuccess, {
-        triesRemaining: triesRemaining - 1,
-        timeout
+        retryCount: retryCount - 1,
+        retryTimeout
       })
     })
 }
+
 
 async function isWebSocketReady (endpoint) {
   return new Promise((resolve, reject) => {
@@ -136,8 +155,8 @@ total-block-time: ${headersSenseStart} blocks
 }
 
 export async function spinNetworkDown (networkType = 'four-nodes') {
-  if (process.env.ENTROPY_DONT_KILL) {
-    console.warn('$ENTROPY_DONT_KILL is set not spinning the network down')
+  if (process.env.ENTROPY_SDK_TESTS_DONT_KILL) {
+    console.warn('$ENTROPY_SDK_TESTS_DONT_KILL is set, so not spinning the network down')
     return false
   }
   try {

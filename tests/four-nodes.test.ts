@@ -1,16 +1,14 @@
 import test from 'tape'
-import { readFileSync } from 'fs'
+
 import Entropy, { wasmGlobalsReady } from '../src'
 import Keyring from '../src/keys'
-import * as util from '@polkadot/util'
 
 import {
-  sleep,
   promiseRunner,
   spinNetworkUp,
   jumpStartNetwork,
   eveSeed,
-  eveAddress,
+  // eveAddress,
   spinNetworkDown,
 } from './testing-utils'
 
@@ -20,8 +18,6 @@ test('test the four-nodes docker script', async (t) => {
   const run = promiseRunner(t)
   // context: all run does is checks that it runs
   await run('network up', spinNetworkUp(networkType))
-
-  await sleep(process.env.GITHUB_WORKSPACE ? 30_000 * 2 : 5_000 * 2)
 
   // this gets called after all tests are run
   t.teardown(async () => {
