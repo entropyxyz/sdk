@@ -25,6 +25,7 @@ Version header format: `[version] Name - year-month-day (entropy-core compatibil
 ### Dev
 
 - patch upgrade of `rollup` [#444](https://github.com/entropyxyz/sdk/pull/444)
+- patch upgrade of `cross-spawn` [#454](https://github.com/entropyxyz/sdk/pull/454)
 
 ### Meta
 
