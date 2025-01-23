@@ -165,8 +165,8 @@ test('Sign: custom signatureVerifyingKey', async (t) => {
 
   t.end()
 })
-
-test.skip('Sign: 100 sign loop use me for debuging', async (t) => {
+// this test is here encase i want to stress test signing
+test.skip('Sign: 20 sign loop use me for "debuging"', async (t) => {
   const run = promiseRunner(t)
 
   /* Setup Network */
@@ -196,7 +196,7 @@ test.skip('Sign: 100 sign loop use me for debuging', async (t) => {
   await run('register', eveEntropy.register())
   let count = 0
   const spl = []
-  while (count < 100) {
+  while (count < 20) {
       const msg = Buffer
     .from('Hello world: new signature from eveEntropy!' + count)
     .toString('hex')
