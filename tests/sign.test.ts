@@ -166,7 +166,7 @@ test('Sign: custom signatureVerifyingKey', async (t) => {
   t.end()
 })
 
-test('Sign: custom signatureVerifyingKey', async (t) => {
+test.skip('Sign: 100 sign loop use me for debuging', async (t) => {
   const run = promiseRunner(t)
 
   /* Setup Network */
@@ -182,9 +182,10 @@ test('Sign: custom signatureVerifyingKey', async (t) => {
   /* Setup Entropy */
   await run('wasm', wasmGlobalsReady())
   const eveEntropy = new Entropy({
-    keyring: eveSeed,
+    keyring: new Keyring({ seed:eveSeed }),
     endpoint: 'ws://127.0.0.1:9944',
   })
+
 
 
   await Promise.all([
@@ -192,6 +193,7 @@ test('Sign: custom signatureVerifyingKey', async (t) => {
   ])
   await run('jump-start network', jumpStartNetwork(eveEntropy))
 
+  await run('register', eveEntropy.register())
   let count = 0
   const spl = []
   while (count < 100) {
@@ -202,7 +204,6 @@ test('Sign: custom signatureVerifyingKey', async (t) => {
     spl.push(run(`sign loop ${count}`, eveEntropy.signWithAdaptersInOrder({
       msg: { msg },
       order: ['deviceKeyProxy'],
-      signatureVerifyingKey
     })))
     ++count
   }
