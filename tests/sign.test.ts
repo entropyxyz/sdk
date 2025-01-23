@@ -165,3 +165,51 @@ test('Sign: custom signatureVerifyingKey', async (t) => {
 
   t.end()
 })
+
+test('Sign: custom signatureVerifyingKey', async (t) => {
+  const run = promiseRunner(t)
+
+  /* Setup Network */
+  await run('network up', spinNetworkUp(NETWORK_TYPE))
+  t.teardown(async () => {
+    // this gets called after all tests are run
+    await eveEntropy.close()
+    await spinNetworkDown(NETWORK_TYPE).catch((error) =>
+      console.error('Error while spinning network down', error.message)
+    )
+  })
+
+  /* Setup Entropy */
+  await run('wasm', wasmGlobalsReady())
+  const eveEntropy = new Entropy({
+    keyring: eveSeed,
+    endpoint: 'ws://127.0.0.1:9944',
+  })
+
+
+  await Promise.all([
+    await run('eveEntropy ready', eveEntropy.ready),
+  ])
+  await run('jump-start network', jumpStartNetwork(eveEntropy))
+
+  let count = 0
+  const spl = []
+  while (count < 100) {
+      const msg = Buffer
+    .from('Hello world: new signature from eveEntropy!' + count)
+    .toString('hex')
+
+    spl.push(run(`sign loop ${count}`, eveEntropy.signWithAdaptersInOrder({
+      msg: { msg },
+      order: ['deviceKeyProxy'],
+      signatureVerifyingKey
+    })))
+    ++count
+  }
+
+  await Promise.all(spl)
+
+
+  t.end()
+})
+

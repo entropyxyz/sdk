@@ -124,7 +124,12 @@ export async function sendHttpPost (url: string, data: any): Promise<any> {
     )
   }
   const responseResult = await streamResponse.json()
-  const oks = responseResult.map(r => r.Ok)
+  // check if their is an Err
+  const oks = responseResult.map((r) => {
+    if (!r.Ok && !r.Err) throw new Error(`no Ok or Err in response result ${JSON.stringify(responseResult)}`)
+    if (r.Err) throw Error(`found an Err in result: ${JSON.stringify(responseResult)}`)
+    return r.Ok
+  })
   return oks
 }
 
