@@ -1,7 +1,6 @@
 import test, { Test } from 'tape'
 import Entropy, { wasmGlobalsReady } from '../src'
 import Keyring from '../src/keys'
-
 import {
   promiseRunner,
   spinNetworkUp,
@@ -166,7 +165,8 @@ test('Sign: custom signatureVerifyingKey', async (t) => {
   t.end()
 })
 // this test is here encase i want to stress test signing
-test.skip('Sign: 20 sign loop use me for "debuging"', async (t) => {
+let max
+test.skip(`Sign: ${max=100} sign loop use me for "debuging"`, async (t) => {
   const run = promiseRunner(t)
 
   /* Setup Network */
@@ -196,20 +196,46 @@ test.skip('Sign: 20 sign loop use me for "debuging"', async (t) => {
   await run('register', eveEntropy.register())
   let count = 0
   const spl = []
-  while (count < 20) {
-      const msg = Buffer
-    .from('Hello world: new signature from eveEntropy!' + count)
+  const report = {
+    sucessfull: 0,
+    failed: 0,
+    errors: {},
+    "full result":[],
+  }
+  const signAndReport = async (c) => {
+    await run('waiting to sign ' + c, new Promise((res) => {
+      setTimeout(() => { res(undefined) }, 100 * c)
+    }))
+    const msg = Buffer
+    .from('Hello world: new signature from eveEntropy!' + c)
     .toString('hex')
+    try {
+      const result = await eveEntropy.signWithAdaptersInOrder({
+        msg: { msg },
+        order: ['deviceKeyProxy'],
+      })
+      ++report.sucessfull
+      // report["full result"].push({run: c, result})
+    } catch (e) {
+      ++report.failed
+      if (!report.errors[e.message]) report.errors[e.message] = []
+      report.errors[e.message].push({ run: c, msg })
+      // report["full result"].push({run: c, result: e})
 
-    spl.push(run(`sign loop ${count}`, eveEntropy.signWithAdaptersInOrder({
-      msg: { msg },
-      order: ['deviceKeyProxy'],
-    })))
+      throw e
+    }
+  }
+  while (count < max) {
+    spl.push(signAndReport(count))
     ++count
   }
 
-  await Promise.all(spl)
-
+  const results = await Promise.allSettled(spl)
+  Object.keys(report.errors).forEach((e) => {
+    report.errors[e] = report.errors[e].sort((a, b) => a.run - b.run)
+    report.errors[e] = report.errors[e].map((a) => JSON.stringify(a))
+  })
+  console.log('Report:', report)
 
   t.end()
 })
