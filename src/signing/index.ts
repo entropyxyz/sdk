@@ -327,11 +327,22 @@ export default class SignatureRequestManager {
 
   async submitTransactionRequest (message: EncMsg): Promise<string[][]> {
     // Extract the required fields from parsedMsg
-    const sigProof = await sendHttpPost(
+    const sigProofResult = await sendHttpPost(
       `http://${message.url}/user/relay_tx`,
       message.msg
     )
-    return sigProof
+    const sigsCount = sigProofResult.length
+    const results = sigProofResult.reduce((agg, result) => {
+      if (result.Err) agg.err.push(result.Err)
+      if (result.Ok) agg.sigs.push(result.Ok)
+      return agg
+    }, { sigs: [], err: [] })
+    if (results.sigs.length) {
+      return results.sigs
+    } else if (results.err.length > 0 && results.err.length === sigsCount) {
+      throw new Error(`Did not receive a valid signature from tss nodes: ${JSON.stringify(sigProofResult)}`)
+    }
+    throw new Error(`results from tss node for sig request outside of strategy ${JSON.stringify(sigProofResult)}`)
   }
 
   /**
