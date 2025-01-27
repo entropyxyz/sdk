@@ -164,7 +164,7 @@ test('Sign: custom signatureVerifyingKey', async (t) => {
 
   t.end()
 })
-// this test is here encase i want to stress test signing
+// this test is here in case i want to stress test signing
 let max
 test.skip(`Sign: ${max=100} sign loop use me for "debuging"`, async (t) => {
   const run = promiseRunner(t)
