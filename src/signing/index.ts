@@ -206,10 +206,14 @@ export default class SignatureRequestManager {
     hash,
     auxiliaryData,
     signatureVerifyingKey: signatureVerifyingKeyOverwrite,
+
   }: SigOps): Promise<SignatureData> {
     const strippedHexMessage = stripHexPrefix(hexMessage)
+    // console.log('getValidator', global.entropyCount)
+
     // @ts-ignore: next line
     const validators: string[] = (await this.substrate.query.session.validators()).toHuman()
+    // console.log('pickValidator', global.entropyCount)
     // @ts-ignore: next line
     const signingCommittee: string[] = (await this.substrate.query.stakingExtension.signers()).toHuman()
     const validatorInfo: ValidatorInfo = await this.pickValidator(validators, signingCommittee)
@@ -229,11 +233,15 @@ export default class SignatureRequestManager {
       hash,
       signatureVerifyingKey,
     }
-
+    // console.log('formatTxRequest', global.entropyCount)
     const message: EncMsg = await this.formatTxRequest(txRequest)
+    // console.log('submitTransactionRequest', global.entropyCount)
     const sigs = await this.submitTransactionRequest(message)
+    // console.log('verifyAndPick', global.entropyCount)
     const base64Sig = await this.#verifyAndPick(sigs, signingCommittee)
+    // console.log('decoding sig', global.entropyCount)
     const buffSig = Buffer.from(base64Sig, 'base64')
+    // console.log('returning sig', global.entropyCount)
     return {
       signature: addHexPrefix(buffSig.toString('hex')),
       hashType: hash,

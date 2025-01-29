@@ -26,7 +26,6 @@ services:
       - "0.0.0.0:3001"
       - "--chain-endpoint"
       - "ws://alice-chain-node:9944"
-      - "--no-sync"
 
   alice-chain-node:
     image: entropyxyz/entropy:${ENTROPY_CORE_VERSION:-latest}
@@ -59,7 +58,6 @@ services:
       - "0.0.0.0:3002"
       - "--chain-endpoint"
       - "ws://bob-chain-node:9944"
-      - "--no-sync"
 
   # "Bob's chain node."
   bob-chain-node:
@@ -94,7 +92,6 @@ services:
       - "0.0.0.0:3003"
       - "--chain-endpoint"
       - "ws://charlie-chain-node:9944"
-      - "--no-sync"
 
   charlie-chain-node:
     image: entropyxyz/entropy:${ENTROPY_CORE_VERSION:-latest}
@@ -127,7 +124,6 @@ services:
       - "0.0.0.0:3004"
       - "--chain-endpoint"
       - "ws://dave-chain-node:9944"
-      - "--no-sync"
 
   dave-chain-node:
     image: entropyxyz/entropy:${ENTROPY_CORE_VERSION:-latest}

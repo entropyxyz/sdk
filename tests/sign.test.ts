@@ -166,7 +166,7 @@ test('Sign: custom signatureVerifyingKey', async (t) => {
 })
 // this test is here in case i want to stress test signing
 let max
-test.skip(`Sign: ${max=100} sign loop use me for "debuging"`, async (t) => {
+test.only(`Sign: ${max=25} sign loop use me for "debuging"`, async (t) => {
   const run = promiseRunner(t)
 
   /* Setup Network */
@@ -194,18 +194,19 @@ test.skip(`Sign: ${max=100} sign loop use me for "debuging"`, async (t) => {
   await run('jump-start network', jumpStartNetwork(eveEntropy))
 
   await run('register', eveEntropy.register())
-  let count = 0
+  global.entropyCount = 0
   const spl = []
-  const report = {
+  let report = {
     sucessfull: 0,
     failed: 0,
     errors: {},
     "full result":[],
   }
   const signAndReport = async (c) => {
-    await run('waiting to sign ' + c, new Promise((res) => {
-      setTimeout(() => { res(undefined) }, 100 * c)
-    }))
+    // if (c > 50) await new Promise((res) => {
+    //   setTimeout(() => { res(undefined) }, 10_000 )
+    // })
+    console.log('requesting sig loop:', c)
     const msg = Buffer
     .from('Hello world: new signature from eveEntropy!' + c)
     .toString('hex')
@@ -215,19 +216,22 @@ test.skip(`Sign: ${max=100} sign loop use me for "debuging"`, async (t) => {
         order: ['deviceKeyProxy'],
       })
       ++report.sucessfull
+      console.log('sucessfull sig loop:', c)
+
       // report["full result"].push({run: c, result})
     } catch (e) {
       ++report.failed
       if (!report.errors[e.message]) report.errors[e.message] = []
       report.errors[e.message].push({ run: c, msg })
       // report["full result"].push({run: c, result: e})
+      console.log('failed sig loop:', c)
 
       throw e
     }
   }
-  while (count < max) {
-    spl.push(signAndReport(count))
-    ++count
+  while (global.entropyCount < max) {
+    spl.push(signAndReport(global.entropyCount))
+    ++global.entropyCount
   }
 
   const results = await Promise.allSettled(spl)
@@ -235,7 +239,32 @@ test.skip(`Sign: ${max=100} sign loop use me for "debuging"`, async (t) => {
     report.errors[e] = report.errors[e].sort((a, b) => a.run - b.run)
     report.errors[e] = report.errors[e].map((a) => JSON.stringify(a))
   })
-  console.log('Report:', report)
+  // @ts-ignore
+  console.log('Report loop 1', report)
+  report = {
+    sucessfull: 0,
+    failed: 0,
+    errors: {},
+    "full result":[],
+  }
+  // await run('waited', new Promise((res) => {
+  //     setTimeout(() => { res(undefined) }, 10_000 )
+  //   }))
+  // const spl2 = []
+  // count = 0
+  // while (count < max + 1) {
+  //   spl2.push(signAndReport(count))
+  //   ++count
+  // }
+  // const results2 = await Promise.allSettled(spl2)
+
+  // Object.keys(report.errors).forEach((e) => {
+  //   report.errors[e] = report.errors[e].sort((a, b) => a.run - b.run)
+  //   report.errors[e] = report.errors[e].map((a) => JSON.stringify(a))
+  // })
+
+
+  // console.log('Report loop 2', report)
 
   t.end()
 })
